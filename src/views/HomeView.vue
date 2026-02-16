@@ -142,7 +142,7 @@ import profilePic from "@/assets/github.png";
           </a>
 
           <a
-            href="https://github.com/Jones8683/Jones-Site"
+            href="https://github.com/Jones8683/Portfolio-Site"
             target="_blank"
             class="repo-btn"
           >
