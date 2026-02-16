@@ -591,6 +591,7 @@ const handleKeydown = (event) => {
   }
   if (isGameOver) return;
   if (event.keyCode === 27) {
+    event.preventDefault();
     togglePause();
     return;
   }
