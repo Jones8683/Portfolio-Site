@@ -254,8 +254,6 @@ function arenaSweep() {
     }
 
     const points = base * level;
-    console.log(`${type}: ${level} x ${base} = ${points}.`);
-
     player.score += points;
     player.lines += rowCount;
     updateScore();
