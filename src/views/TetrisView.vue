@@ -17,7 +17,28 @@ const colors = [
 ];
 
 const arena = createMatrix(12, 20);
-const highScore = useStorage("tetris-best-score", 0);
+const highScore = useStorage("tetris-best-score", 0, localStorage, {
+  serializer: {
+    read: (v) => {
+      try {
+        if (!v) return 0;
+        const decoded = JSON.parse(atob(v));
+        if (decoded.k !== "tx9" || typeof decoded.v !== "number") return 0;
+        return decoded.v;
+      } catch (e) {
+        return 0;
+      }
+    },
+    write: (v) => {
+      const payload = {
+        v: v,
+        k: "tx9",
+        t: Date.now(),
+      };
+      return btoa(JSON.stringify(payload));
+    },
+  },
+});
 
 const player = {
   pos: { x: 0, y: 0 },
