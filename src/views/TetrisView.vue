@@ -18,29 +18,29 @@ const colors = [
 
 const arena = createMatrix(12, 20);
 
-const SALT = "TETRIS_SALT_KEY";
-const sign = (v) => {
+const SALT = "TETRIS_GAME_KEY";
+const sign = (val) => {
   let h = 0,
-    s = v + SALT;
+    s = val + SALT;
   for (let i = 0; i < s.length; i++)
     h = (Math.imul(31, h) + s.charCodeAt(i)) | 0;
-  return h.toString(16);
+  return h.toString(36);
 };
 
 const highScore = useStorage("tetris-best-score", 0, localStorage, {
   serializer: {
     read: (str) => {
       try {
-        const item = JSON.parse(str);
-        if (!item || typeof item.score !== "number") return 0;
-        return item.hash === sign(item.score) ? item.score : 0;
-      } catch (e) {
+        const item = JSON.parse(atob(str));
+        return item.h === sign(item.s) ? item.s : 0;
+      } catch {
         return 0;
       }
     },
-    write: (val) => {
-      return JSON.stringify({ score: val, hash: sign(val) });
-    },
+    write: (val) =>
+      btoa(
+        JSON.stringify({ s: val, h: sign(val), n: Math.random().toString(36) }),
+      ),
   },
 });
 
