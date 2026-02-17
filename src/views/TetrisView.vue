@@ -717,7 +717,7 @@ onUnmounted(() => {
           <div
             id="pauseMsg"
             class="overlay-msg"
-            style="display: none; background: rgba(0, 0, 0, 0.8)"
+            style="display: none; background: rgba(0, 0, 0, 0.85)"
           >
             <h2
               style="
