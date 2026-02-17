@@ -17,25 +17,29 @@ const colors = [
 ];
 
 const arena = createMatrix(12, 20);
+
+const SALT = "TETRIS_SALT_KEY";
+const sign = (v) => {
+  let h = 0,
+    s = v + SALT;
+  for (let i = 0; i < s.length; i++)
+    h = (Math.imul(31, h) + s.charCodeAt(i)) | 0;
+  return h.toString(16);
+};
+
 const highScore = useStorage("tetris-best-score", 0, localStorage, {
   serializer: {
-    read: (v) => {
+    read: (str) => {
       try {
-        if (!v) return 0;
-        const decoded = JSON.parse(atob(v));
-        if (decoded.k !== "tx9" || typeof decoded.v !== "number") return 0;
-        return decoded.v;
+        const item = JSON.parse(str);
+        if (!item || typeof item.score !== "number") return 0;
+        return item.hash === sign(item.score) ? item.score : 0;
       } catch (e) {
         return 0;
       }
     },
-    write: (v) => {
-      const payload = {
-        v: v,
-        k: "tx9",
-        t: Date.now(),
-      };
-      return btoa(JSON.stringify(payload));
+    write: (val) => {
+      return JSON.stringify({ score: val, hash: sign(val) });
     },
   },
 });
