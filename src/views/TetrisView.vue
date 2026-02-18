@@ -313,9 +313,9 @@ function playerDrop() {
 
 function playerLock() {
   merge(arena, player);
-  playerReset();
   arenaSweep();
   updateScore();
+  playerReset();
   player.canHold = true;
   dropCounter = 0;
   lockDelayCounter = 0;
@@ -385,9 +385,9 @@ function playerHardDrop() {
   lockMovesCounter = 0;
 
   merge(arena, player);
-  playerReset();
   arenaSweep();
   updateScore();
+  playerReset();
   player.canHold = true;
   dropCounter = 0;
 }
