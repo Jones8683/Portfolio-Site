@@ -582,9 +582,13 @@ function updateScore() {
     13: 0.92,
     14: 1.46,
     15: 2.36,
+    16: 3.91,
+    17: 6.61,
+    18: 11.43,
+    19: 20.0,
   };
 
-  const currentG = gValues[level] || (level > 15 ? 20.0 : 0.01667);
+  const currentG = gValues[level] || (level > 19 ? 20.0 : 0.01667);
   dropInterval = 1000 / (60 * currentG);
 
   if (level > lastLoggedLevel) {
