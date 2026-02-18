@@ -29,18 +29,24 @@ const sign = (val) => {
 
 const highScore = useStorage("tetris-best-score", 0, localStorage, {
   serializer: {
-    read: (str) => {
+    read: (v) => {
       try {
-        const item = JSON.parse(atob(str));
-        return item.h === sign(item.s) ? item.s : 0;
-      } catch {
+        if (!v) return 0;
+        const decoded = JSON.parse(atob(v));
+        if (decoded.k !== "tx9" || typeof decoded.v !== "number") return 0;
+        return decoded.v;
+      } catch (e) {
         return 0;
       }
     },
-    write: (val) =>
-      btoa(
-        JSON.stringify({ s: val, h: sign(val), n: Math.random().toString(36) }),
-      ),
+    write: (v) => {
+      const payload = {
+        v: v,
+        k: "tx9",
+        t: Date.now(),
+      };
+      return btoa(JSON.stringify(payload));
+    },
   },
 });
 
