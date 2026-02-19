@@ -4,6 +4,7 @@ import { ref, onMounted, onUnmounted } from "vue";
 
 const isMinimized = ref(false);
 const shouldShow = ref(true);
+const currentYear = new Date().getFullYear();
 let lastScrollY = 0;
 
 const handleScroll = () => {
@@ -76,7 +77,7 @@ onUnmounted(() => {
 
   <footer class="main-footer">
     <div class="footer-line"></div>
-    <p>&copy; 2026 Jones Jankovic</p>
+    <p>&copy; {{ currentYear }} Jones Jankovic</p>
   </footer>
 </template>
 

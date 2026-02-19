@@ -4,8 +4,13 @@
   box-sizing: border-box;
 }
 
+::selection {
+  background: rgba(58, 123, 213, 0.3);
+  color: white;
+}
+
 :root {
-  --scrollbar-thumb-bg: #475569;
+  --scrollbar-thumb-bg: #2a548e;
 }
 
 ::-webkit-scrollbar {
@@ -32,6 +37,7 @@ html {
   background-color: #1a1c24;
   height: 100%;
   overflow-y: auto;
+  scroll-behavior: smooth;
 }
 
 body {

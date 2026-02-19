@@ -62,7 +62,7 @@ const router = createRouter({
   ],
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, from) => {
   const pageTitle = to.meta.title;
 
   if (pageTitle === "404") {
@@ -72,8 +72,6 @@ router.beforeEach((to, from, next) => {
   } else {
     document.title = "Jones Jankovic";
   }
-
-  next();
 });
 
 export default router;
