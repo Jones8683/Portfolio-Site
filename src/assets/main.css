@@ -37,7 +37,6 @@ html {
   background-color: #1a1c24;
   height: 100%;
   overflow-y: auto;
-  scroll-behavior: smooth;
 }
 
 body {
