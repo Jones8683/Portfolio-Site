@@ -13,24 +13,34 @@
   --scrollbar-thumb-bg: #2a548e;
 }
 
+body::-webkit-scrollbar {
+  height: 0;
+}
+
 ::-webkit-scrollbar {
   width: 6px !important;
   height: 6px !important;
+  background: #0000;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent !important;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
   background-color: var(--scrollbar-thumb-bg);
   border-radius: 999px;
-  border: 1px solid transparent;
-  background-clip: content-box;
+  border: 2px solid var(--scrollbar-thumb-bg);
+  opacity: 0.5;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  --scrollbar-thumb-bg: #94a3b8;
+  background-color: #4d7cc7;
+  border-color: #4d7cc7;
 }
 
 html {
