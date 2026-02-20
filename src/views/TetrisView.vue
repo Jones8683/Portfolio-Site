@@ -666,6 +666,12 @@ const handleKeyup = (event) => {
   }
 };
 
+const handleBlur = () => {
+  if (!isPaused && !isGameOver) {
+    togglePause();
+  }
+};
+
 onMounted(() => {
   canvas = document.getElementById("gameCanvas");
   ctx = canvas.getContext("2d");
@@ -676,6 +682,7 @@ onMounted(() => {
   holdCtx.scale(25, 25);
   document.addEventListener("keydown", handleKeydown);
   document.addEventListener("keyup", handleKeyup);
+  window.addEventListener("blur", handleBlur);
   playerReset();
   updateScore();
   update();
@@ -684,6 +691,7 @@ onMounted(() => {
 onUnmounted(() => {
   document.removeEventListener("keydown", handleKeydown);
   document.removeEventListener("keyup", handleKeyup);
+  window.removeEventListener("blur", handleBlur);
   cancelAnimationFrame(animationId);
 });
 </script>
