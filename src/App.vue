@@ -45,6 +45,8 @@ onUnmounted(() => {
         <a
           href="https://discord.com/users/1378992101970280471"
           target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Discord Profile"
           class="nav-icon discord-icon"
         >
           <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -56,6 +58,8 @@ onUnmounted(() => {
         </a>
 
         <a
+          rel="noopener noreferrer"
+          aria-label="GitHub Profile"
           href="https://github.com/Jones8683"
           target="_blank"
           class="nav-icon github-icon"
