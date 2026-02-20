@@ -187,14 +187,22 @@ const handleKeydown = (e) => {
   if (e.key === "Escape") togglePause();
 };
 
+const handleBlur = () => {
+  if (gameStatus.value === "playing" && !isPaused.value) {
+    togglePause();
+  }
+};
+
 onMounted(() => {
   initGrid(DIFFICULTIES.medium);
   window.addEventListener("keydown", handleKeydown);
+  window.addEventListener("blur", handleBlur);
 });
 
 onUnmounted(() => {
   stopTimer();
   window.removeEventListener("keydown", handleKeydown);
+  window.removeEventListener("blur", handleBlur);
 });
 
 const gridStyle = computed(() => ({
