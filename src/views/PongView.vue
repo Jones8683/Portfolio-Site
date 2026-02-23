@@ -442,6 +442,9 @@ canvas {
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
   padding-bottom: 4px;
 }
+.control-item:last-child {
+  border-bottom: none;
+}
 .key {
   color: #fff;
   font-weight: 700;
@@ -451,6 +454,7 @@ canvas {
   font-size: 10px;
   min-width: 18px;
   text-align: center;
+  display: inline-block;
 }
 .overlay {
   display: none;

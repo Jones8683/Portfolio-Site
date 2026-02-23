@@ -148,6 +148,10 @@ const toggleFullscreen = () => {
   padding-bottom: 4px;
 }
 
+.control-item:last-child {
+  border-bottom: none;
+}
+
 .key {
   color: #fff;
   font-weight: 700;

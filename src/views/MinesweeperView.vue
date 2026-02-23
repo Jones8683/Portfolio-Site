@@ -461,6 +461,9 @@ const gridStyle = computed(() => ({
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
   padding-bottom: 4px;
 }
+.control-item:last-child {
+  border-bottom: none;
+}
 .key {
   color: #fff;
   font-weight: 700;
@@ -468,6 +471,9 @@ const gridStyle = computed(() => ({
   padding: 2px 6px;
   border-radius: 4px;
   font-size: 10px;
+  min-width: 18px;
+  text-align: center;
+  display: inline-block;
 }
 .overlay-msg {
   position: absolute;
