@@ -42,9 +42,9 @@ import profilePic from "@/assets/github.png";
         </p>
         <p>
           Beyond technology, I’m passionate about music, I love many kinds of
-          music and I play the piano. Some of my favorite TV showsare Star Wars
+          music and I play the piano. Some of my favorite TV shows are Star Wars
           and Loki. I love reading all kinds of books, especially The High
-          Republic serious, and my favorite videogames are Hollow Knight,
+          Republic series, and my favorite video games are Hollow Knight,
           Minecraft, and the Forza Horizon series.
         </p>
       </div>
