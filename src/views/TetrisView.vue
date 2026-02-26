@@ -473,17 +473,40 @@ function rotate(matrix, dir) {
 
 function playerHold() {
   if (!player.canHold) return;
+  function getPieceType(matrix) {
+    const types = ["I", "J", "L", "O", "S", "Z", "T"];
+    for (const type of types) {
+      const defaultMatrix = createPiece(type);
+      if (
+        matrix.length === defaultMatrix.length &&
+        matrix[0].length === defaultMatrix[0].length &&
+        matrix.every((row, y) => row.every((v, x) => v === defaultMatrix[y][x]))
+      ) {
+        return type;
+      }
+    }
+    for (const type of types) {
+      const val =
+        createPiece(type)[1][1] ||
+        createPiece(type)[0][1] ||
+        createPiece(type)[1][0];
+      if (matrix.flat().includes(val)) return type;
+    }
+    return null;
+  }
+
   if (player.hold === null) {
-    player.hold = player.matrix;
-    player.matrix = player.next;
+    player.hold = getPieceType(player.matrix);
+    player.matrix = createPiece(getPieceType(player.next));
     player.next = getNextPiece();
     drawPreview(nextCtx, player.next);
   } else {
-    const temp = player.matrix;
-    player.matrix = player.hold;
-    player.hold = temp;
+    const currentType = getPieceType(player.matrix);
+    const holdType = player.hold;
+    player.matrix = createPiece(holdType);
+    player.hold = currentType;
   }
-  drawPreview(holdCtx, player.hold);
+  drawPreview(holdCtx, createPiece(player.hold));
   player.pos.y = 0;
   player.pos.x =
     ((arena[0].length / 2) | 0) - ((player.matrix[0].length / 2) | 0);
