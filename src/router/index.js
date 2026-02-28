@@ -6,6 +6,7 @@ import TetrisView from "../views/TetrisView.vue";
 import MinesweeperView from "../views/MinesweeperView.vue";
 import StickManHookView from "../views/StickManHookView.vue";
 import NotFoundView from "../views/NotFoundView.vue";
+import MinecraftView from "../views/MinecraftView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -28,6 +29,12 @@ const router = createRouter({
       name: "games",
       component: GamesView,
       meta: { title: "Games" },
+    },
+    {
+      path: "/minecraft",
+      name: "minecraft",
+      component: MinecraftView,
+      meta: { title: "Minecraft" },
     },
     {
       path: "/games/tetris",
