@@ -6,12 +6,12 @@ const isCopied = ref(false);
 
 const mods = [
   "Iron's Spells 'n Spellbooks",
-  "Trinkets and Baubles",
   "Yung's Better Series",
   "Project E",
   "Waystones",
   "Sophisticated Backpacks",
   "Tom's Simple Storage",
+  "Player Animations",
   "Cosmetic Armor",
   "Corpse Mod",
 ];
