@@ -26,6 +26,8 @@ const copyToClipboard = () => {
 </script>
 
 <template>
+  <img src="/minecraft.png" class="mc-bg-overlay" loading="lazy" alt="" />
+
   <div class="content-wrap mc-page">
     <h1
       class="name-title"
@@ -53,7 +55,7 @@ const copyToClipboard = () => {
     </div>
 
     <div class="mc-content">
-      <section class="info-block">
+      <section class="info-block main-intro">
         <p class="description">
           A magic-focused survival experience built around
           <strong>Iron's Spells 'n Spellbooks</strong>. We are currently looking
@@ -73,19 +75,75 @@ const copyToClipboard = () => {
 
       <div class="divider"></div>
 
-      <section class="mod-section">
-        <h2 class="section-label">Included Mods</h2>
-        <div class="mod-grid">
-          <span v-for="mod in mods" :key="mod" class="mod-tag">{{ mod }}</span>
-        </div>
-      </section>
+      <div class="two-col-grid">
+        <section class="content-box">
+          <h2 class="section-label">Server Features</h2>
+          <ul class="clean-list">
+            <li>
+              <strong>SMP:</strong> Survival Multiplayer as our first release
+              gamemode.
+            </li>
+            <li>
+              <strong>Community:</strong> Regular events and competitions.
+            </li>
+            <li>
+              <strong>World Gen:</strong> Custom world generation to explore.
+            </li>
+            <li>
+              <strong>Maintenance:</strong> Regular updates to keep things
+              smooth.
+            </li>
+            <li>
+              <strong>Live Event:</strong> The End dimension will be enabled
+              during an upcoming live event!
+            </li>
+          </ul>
+        </section>
+
+        <section class="content-box">
+          <h2 class="section-label">Included Mods</h2>
+          <div class="mod-grid">
+            <span v-for="mod in mods" :key="mod" class="mod-tag">{{
+              mod
+            }}</span>
+          </div>
+        </section>
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.mc-page {
-  max-width: 800px;
+.mc-bg-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  object-fit: cover;
+  object-position: center top;
+  opacity: 0.2;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    transparent 16%,
+    black 35%,
+    black 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    transparent 16%,
+    black 35%,
+    black 100%
+  );
+}
+
+.mc-page.content-wrap {
+  width: min(95%, 1000px) !important;
+  max-width: 1000px !important;
   margin: 0 auto;
   padding-bottom: 80px;
   display: flex;
@@ -178,9 +236,10 @@ const copyToClipboard = () => {
   flex-direction: column;
   align-items: center;
   gap: 40px;
+  width: 100%;
 }
 
-.info-block {
+.main-intro {
   max-width: 600px;
   display: flex;
   flex-direction: column;
@@ -192,6 +251,38 @@ const copyToClipboard = () => {
   line-height: 1.6;
   color: #cbd5f5;
   margin-bottom: 30px;
+}
+
+.two-col-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  width: 100%;
+  align-items: stretch;
+}
+
+.content-box {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 20px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.clean-list {
+  list-style: disc inside;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  color: #cbd5f5;
+  font-size: 0.95rem;
+  text-align: left;
+  margin: 0;
 }
 
 .solid-discord-btn {
@@ -244,7 +335,6 @@ const copyToClipboard = () => {
   flex-wrap: wrap;
   justify-content: center;
   gap: 10px;
-  max-width: 700px;
 }
 
 .mod-tag {
@@ -260,6 +350,14 @@ const copyToClipboard = () => {
 .mod-tag:hover {
   background: rgba(255, 255, 255, 0.08);
   color: white;
+}
+
+@media (max-width: 900px) {
+  .two-col-grid {
+    grid-template-columns: 1fr;
+    max-width: 600px;
+    margin: 0 auto;
+  }
 }
 
 @media (max-width: 600px) {
