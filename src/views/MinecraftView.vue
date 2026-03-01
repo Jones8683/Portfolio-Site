@@ -79,24 +79,11 @@ const copyToClipboard = () => {
         <section class="content-box">
           <h2 class="section-label">Server Features</h2>
           <ul class="clean-list">
-            <li>
-              <strong>SMP:</strong> Survival Multiplayer as our first release
-              gamemode.
-            </li>
-            <li>
-              <strong>Community:</strong> Regular events and competitions.
-            </li>
-            <li>
-              <strong>World Gen:</strong> Custom world generation to explore.
-            </li>
-            <li>
-              <strong>Maintenance:</strong> Regular updates to keep things
-              smooth.
-            </li>
-            <li>
-              <strong>Live Event:</strong> The End dimension will be enabled
-              during an upcoming live event!
-            </li>
+            <li>Modded Survival Multiplayer as our main gamemode</li>
+            <li>Regular events and competitions.</li>
+            <li>Custom world generation to explore.</li>
+            <li>Regular updates to keep things smooth.</li>
+            <li>The End dimension will be enabled at an upcoming event!</li>
           </ul>
         </section>
 
