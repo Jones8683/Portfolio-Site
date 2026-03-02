@@ -5,23 +5,67 @@ let canvas, ctx, animationId;
 const WIN_SCORE = 7;
 const PADDLE_W = 12;
 const PADDLE_H = 85;
-const BALL_SIZE = 8;
+const BALL_R = 7;
 
 let gameMode = "cpu";
 let isPaused = false;
 let isRunning = false;
 let isResetting = false;
 
-const leftPaddle = { x: 20, y: 210, score: 0, speed: 7, aiSpeed: 5.8 };
-const rightPaddle = { x: 668, y: 210, score: 0, speed: 7 };
+const leftPaddle = {
+  x: 20,
+  y: 210,
+  score: 0,
+  speed: 7,
+  aiSpeed: 5.8,
+  flash: 0,
+};
+const rightPaddle = { x: 668, y: 210, score: 0, speed: 7, flash: 0 };
 const ball = { x: 350, y: 250, dx: 0, dy: 0, speed: 4, baseSpeed: 4 };
 
-const keys = {
-  w: false,
-  s: false,
-  ArrowUp: false,
-  ArrowDown: false,
-};
+let trail = [];
+let particles = [];
+let shakeFrames = 0;
+let shakeIntensity = 0;
+
+const audioCtx =
+  typeof AudioContext !== "undefined" ? new AudioContext() : null;
+
+function beep(freq, duration, type = "square", vol = 0.15) {
+  if (!audioCtx) return;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+  gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(
+    0.001,
+    audioCtx.currentTime + duration,
+  );
+  osc.start(audioCtx.currentTime);
+  osc.stop(audioCtx.currentTime + duration);
+}
+
+function spawnParticles(x, y, color) {
+  for (let i = 0; i < 18; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const speed = 1.5 + Math.random() * 4;
+    particles.push({
+      x,
+      y,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      life: 1,
+      decay: 0.03 + Math.random() * 0.04,
+      size: 2 + Math.random() * 3,
+      color,
+    });
+  }
+}
+
+const keys = { w: false, s: false, ArrowUp: false, ArrowDown: false };
 
 function showStartScreen() {
   isRunning = false;
@@ -31,25 +75,26 @@ function showStartScreen() {
   document.getElementById("startScreen").style.display = "flex";
   leftPaddle.score = 0;
   rightPaddle.score = 0;
+  trail = [];
+  particles = [];
   document.getElementById("scoreDiv").innerText = "0 - 0";
+  drawStatic();
 }
 
 function initGame(mode) {
+  if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
   gameMode = mode;
   leftPaddle.score = 0;
   rightPaddle.score = 0;
+  trail = [];
+  particles = [];
   document.getElementById("startScreen").style.display = "none";
   document.getElementById("gameOverMsg").style.display = "none";
   document.getElementById("pauseMsg").style.display = "none";
   document.getElementById("scoreDiv").innerText = "0 - 0";
   isRunning = true;
   isPaused = false;
-
-  keys.w = false;
-  keys.s = false;
-  keys.ArrowUp = false;
-  keys.ArrowDown = false;
-
+  keys.w = keys.s = keys.ArrowUp = keys.ArrowDown = false;
   resetPositions();
   gameLoop();
 }
@@ -62,14 +107,14 @@ function resetPositions() {
   ball.dy = 0;
   leftPaddle.y = canvas.height / 2 - PADDLE_H / 2;
   rightPaddle.y = canvas.height / 2 - PADDLE_H / 2;
+  trail = [];
   isResetting = true;
-
   setTimeout(() => {
     if (!isRunning) return;
     isResetting = false;
-    let dir = Math.random() > 0.5 ? 1 : -1;
+    const dir = Math.random() > 0.5 ? 1 : -1;
     ball.dx = dir * ball.speed;
-    ball.dy = (Math.random() * 2 - 1) * (ball.speed * 0.5);
+    ball.dy = (Math.random() * 2 - 1) * ball.speed * 0.5;
   }, 1000);
 }
 
@@ -79,6 +124,7 @@ function togglePause() {
   document.getElementById("pauseMsg").style.display = isPaused
     ? "flex"
     : "none";
+  if (!isPaused) gameLoop();
 }
 
 function update() {
@@ -88,13 +134,9 @@ function update() {
   if (keys.ArrowDown) rightPaddle.y += rightPaddle.speed;
 
   if (gameMode === "cpu") {
-    let targetY = ball.y - PADDLE_H / 2;
-    let diff = targetY - leftPaddle.y;
-    let move = diff * 0.2;
-
-    if (move > leftPaddle.aiSpeed) move = leftPaddle.aiSpeed;
-    if (move < -leftPaddle.aiSpeed) move = -leftPaddle.aiSpeed;
-
+    const target = ball.y - PADDLE_H / 2;
+    let move = (target - leftPaddle.y) * 0.18;
+    move = Math.max(-leftPaddle.aiSpeed, Math.min(leftPaddle.aiSpeed, move));
     leftPaddle.y += move;
   } else {
     if (keys.w) leftPaddle.y -= leftPaddle.speed;
@@ -107,48 +149,82 @@ function update() {
     Math.min(canvas.height - PADDLE_H, rightPaddle.y),
   );
 
+  if (leftPaddle.flash > 0) leftPaddle.flash--;
+  if (rightPaddle.flash > 0) rightPaddle.flash--;
+  if (shakeFrames > 0) shakeFrames--;
+
   if (!isResetting) {
+    trail.push({ x: ball.x, y: ball.y });
+    if (trail.length > 8) trail.shift();
+
     ball.x += ball.dx;
     ball.y += ball.dy;
-  }
 
-  if (ball.y < BALL_SIZE) {
-    ball.y = BALL_SIZE;
-    ball.dy *= -1;
-  } else if (ball.y > canvas.height - BALL_SIZE) {
-    ball.y = canvas.height - BALL_SIZE;
-    ball.dy *= -1;
-  }
+    if (ball.y - BALL_R < 0) {
+      ball.y = BALL_R;
+      ball.dy *= -1;
+      beep(220, 0.07);
+      shakeFrames = 4;
+      shakeIntensity = 2;
+    } else if (ball.y + BALL_R > canvas.height) {
+      ball.y = canvas.height - BALL_R;
+      ball.dy *= -1;
+      beep(220, 0.07);
+      shakeFrames = 4;
+      shakeIntensity = 2;
+    }
 
-  let paddle = ball.x < canvas.width / 2 ? leftPaddle : rightPaddle;
-  if (collision(ball, paddle)) {
-    let collidePoint = (ball.y - (paddle.y + PADDLE_H / 2)) / (PADDLE_H / 2);
+    const paddle = ball.x < canvas.width / 2 ? leftPaddle : rightPaddle;
+    if (collision(ball, paddle)) {
+      const cp = Math.max(
+        -1,
+        Math.min(1, (ball.y - (paddle.y + PADDLE_H / 2)) / (PADDLE_H / 2)),
+      );
+      const angle = (Math.PI / 4) * cp;
+      const dir = ball.x < canvas.width / 2 ? 1 : -1;
 
-    if (collidePoint > 1) collidePoint = 1;
-    if (collidePoint < -1) collidePoint = -1;
+      ball.speed = Math.min(ball.speed + 0.45, 16);
+      ball.dx = dir * ball.speed * Math.cos(angle);
+      ball.dy = ball.speed * Math.sin(angle);
 
-    let angleRad = (Math.PI / 4) * collidePoint;
-    let direction = ball.x < canvas.width / 2 ? 1 : -1;
+      if (paddle === leftPaddle) {
+        ball.x = leftPaddle.x + PADDLE_W + BALL_R;
+        leftPaddle.flash = 8;
+      } else {
+        ball.x = rightPaddle.x - BALL_R;
+        rightPaddle.flash = 8;
+      }
 
-    ball.speed += 0.5;
-    if (ball.speed > 15) ball.speed = 15;
+      beep(300 + Math.abs(cp) * 100, 0.07, "square");
+      shakeFrames = 6;
+      shakeIntensity = 3.5;
+    }
 
-    ball.dx = direction * ball.speed * Math.cos(angleRad);
-    ball.dy = ball.speed * Math.sin(angleRad);
-
-    if (paddle === leftPaddle) {
-      ball.x = leftPaddle.x + PADDLE_W + BALL_SIZE;
-    } else {
-      ball.x = rightPaddle.x - BALL_SIZE;
+    if (ball.x < 0) {
+      spawnParticles(0, ball.y, "rgba(255,100,100,0.9)");
+      rightPaddle.score++;
+      beep(140, 0.35, "sawtooth", 0.2);
+      shakeFrames = 14;
+      shakeIntensity = 7;
+      scoreUpdate();
+    } else if (ball.x > canvas.width) {
+      spawnParticles(canvas.width, ball.y, "rgba(100,200,255,0.9)");
+      leftPaddle.score++;
+      beep(140, 0.35, "sawtooth", 0.2);
+      shakeFrames = 14;
+      shakeIntensity = 7;
+      scoreUpdate();
     }
   }
 
-  if (ball.x < 0) {
-    rightPaddle.score++;
-    scoreUpdate();
-  } else if (ball.x > canvas.width) {
-    leftPaddle.score++;
-    scoreUpdate();
+  for (let i = particles.length - 1; i >= 0; i--) {
+    const p = particles[i];
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vx *= 0.92;
+    p.vy *= 0.92;
+    p.life -= p.decay;
+    if (p.life <= 0) particles.splice(i, 1);
   }
 }
 
@@ -160,53 +236,117 @@ function scoreUpdate() {
 }
 
 function checkWin() {
-  if (leftPaddle.score >= WIN_SCORE || rightPaddle.score >= WIN_SCORE) {
-    isRunning = false;
-    let name = "";
-    if (gameMode === "cpu") {
-      name = rightPaddle.score >= WIN_SCORE ? "YOU WIN!" : "COMPUTER WINS!";
-    } else {
-      name =
-        rightPaddle.score >= WIN_SCORE
-          ? "RIGHT PLAYER WINS!"
-          : "LEFT PLAYER WINS!";
-    }
-    document.getElementById("winnerName").innerText = name;
-    document.getElementById("gameOverMsg").style.display = "flex";
+  if (leftPaddle.score < WIN_SCORE && rightPaddle.score < WIN_SCORE) return;
+  isRunning = false;
+  let name = "";
+  if (gameMode === "cpu") {
+    name = rightPaddle.score >= WIN_SCORE ? "YOU WIN!" : "COMPUTER WINS!";
+  } else {
+    name =
+      rightPaddle.score >= WIN_SCORE
+        ? "RIGHT PLAYER WINS!"
+        : "LEFT PLAYER WINS!";
   }
+  document.getElementById("winnerName").innerText = name;
+  document.getElementById("gameOverMsg").style.display = "flex";
 }
 
 function collision(b, p) {
   return (
-    b.x + BALL_SIZE > p.x &&
-    b.x - BALL_SIZE < p.x + PADDLE_W &&
-    b.y + BALL_SIZE > p.y &&
-    b.y - BALL_SIZE < p.y + PADDLE_H
+    b.x + BALL_R > p.x &&
+    b.x - BALL_R < p.x + PADDLE_W &&
+    b.y + BALL_R > p.y &&
+    b.y - BALL_R < p.y + PADDLE_H
   );
 }
 
-function draw() {
+function drawStatic() {
   ctx.fillStyle = "#0d0d0d";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
+  drawCenterLine();
+}
 
-  ctx.fillStyle = "#333";
-  for (let i = 0; i < canvas.height; i += 30) {
-    ctx.fillRect(canvas.width / 2 - 1, i, 2, 20);
+function drawCenterLine() {
+  const segH = 18,
+    segGap = 12;
+  const totalSegs = Math.floor(canvas.height / (segH + segGap));
+  const startY = (canvas.height - totalSegs * (segH + segGap) + segGap) / 2;
+  ctx.fillStyle = "rgba(255,255,255,0.07)";
+  for (let i = 0; i < totalSegs; i++) {
+    const y = startY + i * (segH + segGap);
+    ctx.beginPath();
+    ctx.roundRect(canvas.width / 2 - 1.5, y, 3, segH, 2);
+    ctx.fill();
+  }
+}
+
+function draw() {
+  const sx = shakeFrames > 0 ? (Math.random() - 0.5) * shakeIntensity : 0;
+  const sy = shakeFrames > 0 ? (Math.random() - 0.5) * shakeIntensity : 0;
+
+  ctx.save();
+  ctx.translate(sx, sy);
+
+  ctx.fillStyle = "#0d0d0d";
+  ctx.fillRect(-10, -10, canvas.width + 20, canvas.height + 20);
+
+  drawCenterLine();
+
+  if (trail.length > 1) {
+    for (let i = 1; i < trail.length; i++) {
+      const frac = i / trail.length;
+      const alpha = frac * 0.45;
+      const width = BALL_R * 2 * frac * 0.75;
+      ctx.beginPath();
+      ctx.moveTo(trail[i - 1].x, trail[i - 1].y);
+      ctx.lineTo(trail[i].x, trail[i].y);
+      ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
+      ctx.lineWidth = Math.max(1, width);
+      ctx.lineCap = "round";
+      ctx.stroke();
+    }
   }
 
+  for (const p of particles) {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+    ctx.fillStyle = p.color.replace("0.9", String(p.life * 0.9));
+    ctx.fill();
+  }
+
+  const drawPaddle = (paddle) => {
+    const isFlashing = paddle.flash > 0;
+    ctx.save();
+    if (isFlashing) {
+      ctx.shadowColor = "white";
+      ctx.shadowBlur = 24;
+    }
+    ctx.fillStyle = isFlashing
+      ? `rgba(255,255,255,${0.7 + 0.3 * (paddle.flash / 8)})`
+      : "rgba(255,255,255,0.9)";
+    ctx.beginPath();
+    ctx.roundRect(paddle.x, paddle.y, PADDLE_W, PADDLE_H, 5);
+    ctx.fill();
+    ctx.restore();
+  };
+
+  drawPaddle(leftPaddle);
+  drawPaddle(rightPaddle);
+
+  ctx.save();
+  ctx.shadowColor = "rgba(255,255,255,0.9)";
+  ctx.shadowBlur = isResetting ? 0 : 18;
   ctx.fillStyle = "white";
   ctx.beginPath();
-  ctx.roundRect(leftPaddle.x, leftPaddle.y, PADDLE_W, PADDLE_H, 4);
-  ctx.roundRect(rightPaddle.x, rightPaddle.y, PADDLE_W, PADDLE_H, 4);
+  ctx.arc(ball.x, ball.y, BALL_R, 0, Math.PI * 2);
   ctx.fill();
+  ctx.restore();
 
-  ctx.beginPath();
-  ctx.arc(ball.x, ball.y, BALL_SIZE, 0, Math.PI * 2);
-  ctx.fill();
+  ctx.restore();
 }
 
 function gameLoop() {
-  if (!isRunning) return;
+  if (!isRunning || isPaused) return;
   update();
   draw();
   animationId = requestAnimationFrame(gameLoop);
@@ -218,7 +358,6 @@ const handleKeyDown = (e) => {
     togglePause();
     return;
   }
-
   if (e.key.toLowerCase() === "w") keys.w = true;
   if (e.key.toLowerCase() === "s") keys.s = true;
   if (e.key === "ArrowUp") keys.ArrowUp = true;
@@ -233,9 +372,7 @@ const handleKeyUp = (e) => {
 };
 
 const handleBlur = () => {
-  if (isRunning && !isPaused) {
-    togglePause();
-  }
+  if (isRunning && !isPaused) togglePause();
 };
 
 onMounted(() => {
@@ -244,7 +381,7 @@ onMounted(() => {
   window.addEventListener("keydown", handleKeyDown);
   window.addEventListener("keyup", handleKeyUp);
   window.addEventListener("blur", handleBlur);
-  draw();
+  drawStatic();
 });
 
 onUnmounted(() => {
