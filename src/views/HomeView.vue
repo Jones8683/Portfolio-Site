@@ -106,32 +106,63 @@ onUnmounted(() => {
           <p>
             Want to get in touch? Reach out via email or check out my socials:
           </p>
-          <ul class="contact-list">
-            <li>
-              Email:
-              <a href="mailto:jones@jonesjankovic.com" class="repo-link">
-                jones@jonesjankovic.com
-              </a>
-            </li>
-            <li>
-              Discord:
-              <a
-                href="https://discord.com/users/1378992101970280471"
-                target="_blank"
-                class="repo-link"
-                >Jones8683</a
-              >
-            </li>
-            <li>
-              GitHub:
-              <a
-                href="https://github.com/Jones8683"
-                target="_blank"
-                class="repo-link"
-                >Jones8683</a
-              >
-            </li>
-          </ul>
+          <div class="contact-list">
+            <a href="mailto:jones@jonesjankovic.com" class="contact-row">
+              <svg class="contact-row-icon" viewBox="0 0 24 24" fill="none">
+                <rect
+                  x="2"
+                  y="4"
+                  width="20"
+                  height="16"
+                  rx="3"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                />
+                <path
+                  d="M2 7l10 6 10-6"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              <span class="contact-row-label">Email</span>
+              <span class="contact-row-value">jones@jonesjankovic.com</span>
+              <span class="contact-row-arrow">→</span>
+            </a>
+            <a
+              href="https://discord.com/users/1378992101970280471"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="contact-row"
+            >
+              <svg class="contact-row-icon" viewBox="0 0 24 24">
+                <path
+                  d="M18.59 5.89C17.36 5.32 16.05 4.9 14.67 4.66c-.17.3-.37.71-.5 1.04-1.46-.22-2.91-.22-4.34 0-.14-.33-.34-.74-.51-1.04-1.38.24-2.69.66-3.92 1.23C2.92 9.63 2.25 13.28 2.58 16.87c1.65 1.23 3.24 1.97 4.81 2.46.39-.53.73-1.1 1.03-1.69-.56-.21-1.1-.48-1.61-.79.14-.1.27-.21.4-.31 3.13 1.46 6.52 1.46 9.61 0 .13.11.26.21.4.31-.51.31-1.05.58-1.61.79.3.59.64 1.16 1.03 1.69 1.57-.49 3.17-1.23 4.81-2.46.39-4.17-.67-7.78-2.82-10.98zM8.84 14.67c-1.17 0-2.13-.99-2.13-2.21s.94-2.21 2.13-2.21 2.13.99 2.12 2.21-.94 2.21-2.12 2.21zm6.31 0c-1.17 0-2.13-.99-2.13-2.21s.94-2.21 2.13-2.21 2.13.99 2.12 2.21-.94 2.21-2.12 2.21z"
+                  fill="currentColor"
+                />
+              </svg>
+              <span class="contact-row-label">Discord</span>
+              <span class="contact-row-value">Jones8683</span>
+              <span class="contact-row-arrow">→</span>
+            </a>
+            <a
+              href="https://github.com/Jones8683"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="contact-row"
+            >
+              <svg class="contact-row-icon" viewBox="0 0 24 24">
+                <path
+                  d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.041-1.416-4.041-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"
+                  fill="currentColor"
+                />
+              </svg>
+              <span class="contact-row-label">GitHub</span>
+              <span class="contact-row-value">Jones8683</span>
+              <span class="contact-row-arrow">→</span>
+            </a>
+          </div>
           <p style="margin-top: 12px">
             Feel free to reach out if you want to talk!
           </p>
