@@ -1,15 +1,16 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import ArcadeView from "../views/ArcadeView.vue";
-import PongView from "../views/PongView.vue";
-import TetrisView from "../views/TetrisView.vue";
-import MinesweeperView from "../views/MinesweeperView.vue";
-import StickManHookView from "../views/StickManHookView.vue";
-import NotFoundView from "../views/NotFoundView.vue";
-import MinecraftView from "../views/MinecraftView.vue";
-import Game2048View from "@/views/Game2048View.vue";
-import HangmanView from "@/views/HangmanView.vue";
-import NoughtsAndCrossesView from "@/views/NoughtsAndCrossesView.vue";
+
+const PongView = () => import("../views/PongView.vue");
+const TetrisView = () => import("../views/TetrisView.vue");
+const MinesweeperView = () => import("../views/MinesweeperView.vue");
+const StickManHookView = () => import("../views/StickManHookView.vue");
+const NotFoundView = () => import("../views/NotFoundView.vue");
+const MinecraftView = () => import("../views/MinecraftView.vue");
+const Game2048View = () => import("@/views/Game2048View.vue");
+const HangmanView = () => import("@/views/HangmanView.vue");
+const NoughtsAndCrossesView = () => import("@/views/NoughtsAndCrossesView.vue");
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
