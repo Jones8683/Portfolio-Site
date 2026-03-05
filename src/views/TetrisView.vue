@@ -18,15 +18,6 @@ const colors = [
 
 const arena = createMatrix(12, 20);
 
-const SALT = "TETRIS_GAME_KEY";
-const sign = (val) => {
-  let h = 0,
-    s = val + SALT;
-  for (let i = 0; i < s.length; i++)
-    h = (Math.imul(31, h) + s.charCodeAt(i)) | 0;
-  return h.toString(36);
-};
-
 const highScore = useStorage("tetris-best-score", 0, localStorage, {
   serializer: {
     read: (v) => {
@@ -203,11 +194,6 @@ function drawMatrix(matrix, offset, context, isGhost = false) {
           context.fillStyle = "rgba(255, 255, 255, 0.1)";
           context.fillRect(bx, by, 1, 1);
           return;
-        }
-
-        if (isLanded && context === ctx && matrix === player.matrix) {
-          const now = Date.now();
-          const intensity = (Math.sin(now / 50) + 1) / 2;
         }
 
         context.fillStyle = fillStyle;
@@ -521,6 +507,7 @@ function togglePause() {
     if (msg) msg.style.display = "flex";
   } else {
     if (msg) msg.style.display = "none";
+    lastTime = performance.now();
     update();
   }
 }
@@ -562,6 +549,7 @@ function update(time = 0) {
   dropCounter += deltaTime;
   if (dropCounter > dropInterval) {
     playerDrop();
+    dropCounter = 0;
   }
 
   player.pos.y++;

@@ -65,7 +65,6 @@ function initGame(difficultyKey) {
   isFirstClick = true;
   isPaused.value = false;
   stopTimer();
-  startTimer();
   initGrid(currentDiff.value);
 }
 
@@ -117,6 +116,7 @@ function handleLeftClick(cell) {
   if (isFirstClick) {
     placeMines(cell.x, cell.y);
     isFirstClick = false;
+    startTimer();
   }
   if (cell.isMine) gameOver(false);
   else {

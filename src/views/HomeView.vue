@@ -83,6 +83,7 @@ onUnmounted(() => {
             <a
               href="https://github.com/BetterSEQTA/BetterSEQTA-Plus"
               target="_blank"
+              rel="noopener noreferrer"
               class="repo-link"
               >BetterSEQTA+</a
             >, a web extension for SEQTA that improves and reimagines user
@@ -178,6 +179,7 @@ onUnmounted(() => {
             <a
               href="https://github.com/BetterSEQTA/BetterSEQTA-Plus"
               target="_blank"
+              rel="noopener noreferrer"
               class="repo-btn"
             >
               <img
@@ -198,6 +200,7 @@ onUnmounted(() => {
             <a
               href="https://github.com/BetterSEQTA/DesQTA"
               target="_blank"
+              rel="noopener noreferrer"
               class="repo-btn"
             >
               <img
@@ -218,6 +221,7 @@ onUnmounted(() => {
             <a
               href="https://github.com/Jones8683/Portfolio-Site"
               target="_blank"
+              rel="noopener noreferrer"
               class="repo-btn"
             >
               <img
@@ -239,6 +243,7 @@ onUnmounted(() => {
             <a
               href="https://github.com/Jones8683/Arduino-Buzzer-Music"
               target="_blank"
+              rel="noopener noreferrer"
               class="repo-btn"
             >
               <img

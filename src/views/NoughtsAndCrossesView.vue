@@ -62,7 +62,7 @@ const resetGame = () => {
 };
 
 const handleKeydown = (event) => {
-  if (event.key.toLowerCase() === "r" && !winner.value && !isDraw.value) {
+  if (event.key.toLowerCase() === "r") {
     resetGame();
   }
 };

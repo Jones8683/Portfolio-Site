@@ -28,24 +28,29 @@ let particles = [];
 let shakeFrames = 0;
 let shakeIntensity = 0;
 
-const audioCtx =
-  typeof AudioContext !== "undefined" ? new AudioContext() : null;
+let audioCtx = null;
+
+function getAudioCtx() {
+  if (!audioCtx && typeof AudioContext !== "undefined") {
+    audioCtx = new AudioContext();
+  }
+  if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+  return audioCtx;
+}
 
 function beep(freq, duration, type = "square", vol = 0.15) {
-  if (!audioCtx) return;
-  const osc = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
+  const ctx = getAudioCtx();
+  if (!ctx) return;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
   osc.connect(gain);
-  gain.connect(audioCtx.destination);
+  gain.connect(ctx.destination);
   osc.type = type;
-  osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-  gain.gain.setValueAtTime(vol, audioCtx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(
-    0.001,
-    audioCtx.currentTime + duration,
-  );
-  osc.start(audioCtx.currentTime);
-  osc.stop(audioCtx.currentTime + duration);
+  osc.frequency.setValueAtTime(freq, ctx.currentTime);
+  gain.gain.setValueAtTime(vol, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+  osc.start(ctx.currentTime);
+  osc.stop(ctx.currentTime + duration);
 }
 
 function spawnParticles(x, y, color) {
@@ -82,7 +87,6 @@ function showStartScreen() {
 }
 
 function initGame(mode) {
-  if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
   gameMode = mode;
   leftPaddle.score = 0;
   rightPaddle.score = 0;

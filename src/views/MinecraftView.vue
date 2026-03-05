@@ -61,6 +61,7 @@ const copyToClipboard = () => {
         <a
           href="https://discord.gg/7CUxY6AWEP"
           target="_blank"
+          rel="noopener noreferrer"
           class="solid-discord-btn"
         >
           <span class="btn-title">Join Discord to Whitelist</span>

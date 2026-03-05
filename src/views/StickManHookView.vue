@@ -32,6 +32,7 @@ const toggleFullscreen = () => {
             ref="gameIframe"
             src="/gameassets/stickmanhook.html"
             class="game-iframe"
+            title="Stickman Hook game"
             frameborder="0"
             scrolling="no"
             allow="fullscreen"

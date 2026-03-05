@@ -92,6 +92,7 @@ onUnmounted(() => {
             ref="gameIframe"
             src="/gameassets/2048.html"
             class="game-iframe"
+            title="2048 game"
             frameborder="0"
             scrolling="no"
           ></iframe>
