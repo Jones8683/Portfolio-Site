@@ -29,7 +29,7 @@ const MAX_FALL = 9;
 const PIPE_SPEED = 2.85;
 const PIPE_W = 56;
 const PIPE_GAP = 120;
-const PIPE_EVERY = 1100;
+const PIPE_EVERY = 1200;
 const TARGET_FPS = 60;
 const STEP = 1000 / TARGET_FPS;
 
