@@ -184,7 +184,10 @@ function stopTimer() {
 
 const handleKeydown = (e) => {
   if (e.key.toLowerCase() === "r") resetToStart();
-  if (e.key === "Escape") togglePause();
+  if (e.key === "Escape") {
+    e.preventDefault();
+    togglePause();
+  }
 };
 
 const handleBlur = () => {

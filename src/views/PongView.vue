@@ -362,6 +362,7 @@ function gameLoop(ts = performance.now()) {
 const handleKeyDown = (e) => {
   if (["ArrowUp", "ArrowDown", "Space"].includes(e.code)) e.preventDefault();
   if (e.key === "Escape") {
+    e.preventDefault();
     togglePause();
     return;
   }
