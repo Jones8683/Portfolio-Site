@@ -627,22 +627,42 @@ function resetGame() {
   update();
 }
 
-const handleKeydown = (event) => {
-  if (
-    [
-      "Space",
-      "ArrowUp",
-      "ArrowDown",
-      "ArrowLeft",
-      "ArrowRight",
-      "KeyW",
-      "KeyA",
-      "KeyS",
-      "KeyD",
-    ].includes(event.code)
-  ) {
-    event.preventDefault();
+const preventDefaultKeys = (event) => {
+  const defaultKeys = [
+    "Space",
+    "ArrowUp",
+    "ArrowDown",
+    "ArrowLeft",
+    "ArrowRight",
+    "KeyW",
+    "KeyA",
+    "KeyS",
+    "KeyD",
+  ];
+  if (defaultKeys.includes(event.code)) event.preventDefault();
+};
+
+const handleMovementKey = (event, isLeft, isRight, isDown) => {
+  if (event.repeat) return;
+  const targetKey = isLeft ? 37 : isRight ? 39 : 40;
+  keys[targetKey].down = true;
+  keys[targetKey].timer = 0;
+  if (isLeft) playerMove(-1);
+  if (isRight) playerMove(1);
+  if (isDown && playerDrop()) {
+    player.score += 1;
+    updateScore();
   }
+};
+
+const handleActionKey = (event, isUp) => {
+  if (isUp) playerRotate(1);
+  else if (event.keyCode === 32) playerHardDrop();
+  else if (event.keyCode === 67) playerHold();
+};
+
+const handleKeydown = (event) => {
+  preventDefaultKeys(event);
   if (isGameOver) return;
   if (event.keyCode === 27) {
     event.preventDefault();
@@ -651,36 +671,16 @@ const handleKeydown = (event) => {
   }
   if (isPaused) return;
 
-  const isLeft = event.keyCode === 37 || event.keyCode === 65; // Left or A
-  const isRight = event.keyCode === 39 || event.keyCode === 68; // Right or D
-  const isDown = event.keyCode === 40 || event.keyCode === 83; // Down or S
-  const isUp = event.keyCode === 38 || event.keyCode === 87; // Up or W
+  const isLeft = event.keyCode === 37 || event.keyCode === 65;
+  const isRight = event.keyCode === 39 || event.keyCode === 68;
+  const isDown = event.keyCode === 40 || event.keyCode === 83;
+  const isUp = event.keyCode === 38 || event.keyCode === 87;
 
   if (isLeft || isRight || isDown) {
-    if (event.repeat) return;
-
-    const targetKey = isLeft ? 37 : isRight ? 39 : 40;
-
-    keys[targetKey].down = true;
-    keys[targetKey].timer = 0;
-    if (isLeft) playerMove(-1);
-    if (isRight) playerMove(1);
-    if (isDown) {
-      if (playerDrop()) {
-        player.score += 1;
-        updateScore();
-      }
-    }
+    handleMovementKey(event, isLeft, isRight, isDown);
     return;
   }
-
-  if (isUp) {
-    playerRotate(1);
-  } else if (event.keyCode === 32) {
-    playerHardDrop();
-  } else if (event.keyCode === 67) {
-    playerHold();
-  }
+  handleActionKey(event, isUp);
 };
 
 const handleKeyup = (event) => {
