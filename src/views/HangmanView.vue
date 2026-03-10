@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from "vue";
+import GameMobileMessage from "../components/GameMobileMessage.vue";
 
 const phase = ref("input");
 const secretWord = ref("");
@@ -87,28 +88,7 @@ const bodyVisible = computed(() => ({
 
 <template>
   <div class="hangman-wrapper">
-    <div class="mobile-msg">
-      <div class="content-wrap">
-        <h1
-          style="
-            font-size: 32px;
-            margin-bottom: 16px;
-            letter-spacing: -1px;
-            margin-top: 60px;
-            width: 100%;
-            color: white;
-          "
-        >
-          Not supported on mobile
-        </h1>
-        <RouterLink
-          to="/arcade"
-          style="font-size: 14px; color: lightskyblue; text-decoration: none"
-        >
-          ← Back to arcade
-        </RouterLink>
-      </div>
-    </div>
+    <GameMobileMessage />
 
     <div class="desktop-game">
       <div class="game-layout">

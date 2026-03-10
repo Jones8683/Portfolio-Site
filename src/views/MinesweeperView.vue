@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, onUnmounted, onMounted } from "vue";
 import { useStorage } from "@vueuse/core";
+import GameMobileMessage from "../components/GameMobileMessage.vue";
 
 const DIFFICULTIES = {
   easy: { rows: 9, cols: 9, mines: 10 },
@@ -215,19 +216,7 @@ const gridStyle = computed(() => ({
 
 <template>
   <div class="mines-wrapper">
-    <div class="mobile-msg">
-      <div class="content-wrap">
-        <h1 class="name-title" style="font-size: 32px; margin-top: 60px">
-          Not supported on mobile
-        </h1>
-        <RouterLink
-          to="/arcade"
-          class="repo-link"
-          style="color: lightskyblue; text-decoration: none"
-          >← Back to arcade</RouterLink
-        >
-      </div>
-    </div>
+    <GameMobileMessage />
 
     <div class="desktop-game">
       <div class="game-wrapper">

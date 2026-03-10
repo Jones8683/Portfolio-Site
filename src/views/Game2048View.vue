@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
 import { useStorage } from "@vueuse/core";
+import GameMobileMessage from "../components/GameMobileMessage.vue";
 
 const gameIframe = ref(null);
 const score = ref(0);
@@ -78,12 +79,7 @@ onUnmounted(() => {
 
 <template>
   <div class="game2048-wrapper">
-    <div class="mobile-msg">
-      <div class="content-wrap">
-        <h1 class="name-title">Not supported on mobile</h1>
-        <RouterLink to="/arcade" class="repo-link">← Back to arcade</RouterLink>
-      </div>
-    </div>
+    <GameMobileMessage />
 
     <div class="desktop-game">
       <div class="game-wrapper">

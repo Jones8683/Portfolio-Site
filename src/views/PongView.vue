@@ -1,5 +1,6 @@
 <script setup>
 import { onMounted, onUnmounted } from "vue";
+import GameMobileMessage from "../components/GameMobileMessage.vue";
 
 let canvas, ctx, animationId;
 
@@ -420,34 +421,7 @@ onUnmounted(() => {
 
 <template>
   <div class="pong-container">
-    <div class="mobile-msg">
-      <div class="content-wrap">
-        <h1
-          class="name-title"
-          style="
-            font-size: 32px;
-            margin-bottom: 16px;
-            letter-spacing: -1px;
-            margin-top: 60px;
-            width: 100%;
-          "
-        >
-          Not supported on mobile
-        </h1>
-        <RouterLink
-          to="/arcade"
-          class="repo-link"
-          style="
-            font-size: 14px;
-            display: inline-block;
-            color: lightskyblue;
-            text-decoration: none;
-          "
-        >
-          ← Back to arcade
-        </RouterLink>
-      </div>
-    </div>
+    <GameMobileMessage />
 
     <div class="desktop-game">
       <div class="game-wrapper">

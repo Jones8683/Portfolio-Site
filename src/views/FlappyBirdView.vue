@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, onUnmounted, ref } from "vue";
 import { useStorage } from "@vueuse/core";
+import GameMobileMessage from "../components/GameMobileMessage.vue";
 
 const highScore = useStorage("flappy-best-score", 0, localStorage, {
   serializer: {
@@ -538,32 +539,7 @@ onUnmounted(() => {
 
 <template>
   <div class="flappy-wrapper">
-    <div class="mobile-msg">
-      <div class="content-wrap">
-        <h1
-          style="
-            font-size: 32px;
-            margin-bottom: 16px;
-            letter-spacing: -1px;
-            margin-top: 60px;
-            width: 100%;
-          "
-        >
-          Not supported on mobile
-        </h1>
-        <RouterLink
-          to="/arcade"
-          style="
-            font-size: 14px;
-            display: inline-block;
-            color: lightskyblue;
-            text-decoration: none;
-          "
-        >
-          ← Back to arcade
-        </RouterLink>
-      </div>
-    </div>
+    <GameMobileMessage />
 
     <div class="desktop-game">
       <div class="game-wrapper">

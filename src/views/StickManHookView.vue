@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from "vue";
+import GameMobileMessage from "../components/GameMobileMessage.vue";
 
 const gameIframe = ref(null);
 
@@ -18,12 +19,7 @@ const toggleFullscreen = () => {
 
 <template>
   <div class="stickman-wrapper">
-    <div class="mobile-msg">
-      <div class="content-wrap">
-        <h1 class="name-title">Not supported on mobile</h1>
-        <RouterLink to="/arcade" class="repo-link">← Back to arcade</RouterLink>
-      </div>
-    </div>
+    <GameMobileMessage />
 
     <div class="desktop-game">
       <div class="game-wrapper">

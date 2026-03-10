@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
-import { RouterLink } from "vue-router";
+import GameMobileMessage from "../components/GameMobileMessage.vue";
 
 const board = ref(Array(9).fill(null));
 const currentPlayer = ref("X");
@@ -78,33 +78,7 @@ onUnmounted(() => {
 
 <template>
   <div class="game-page-wrapper">
-    <div class="mobile-msg">
-      <div class="content-wrap">
-        <h1
-          class="name-title"
-          style="
-            font-size: 32px;
-            margin-bottom: 16px;
-            letter-spacing: -1px;
-            margin-top: 60px;
-            width: 100%;
-          "
-        >
-          Not supported on mobile
-        </h1>
-        <RouterLink
-          to="/arcade"
-          class="repo-link"
-          style="
-            font-size: 14px;
-            display: inline-block;
-            color: lightskyblue;
-            text-decoration: none;
-          "
-          >← Back to arcade</RouterLink
-        >
-      </div>
-    </div>
+    <GameMobileMessage />
 
     <div class="desktop-game">
       <div class="game-wrapper">
