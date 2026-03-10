@@ -308,7 +308,8 @@ function drawBird() {
   ctx.arc(0, 0, R, 0, Math.PI * 2);
   ctx.stroke();
 
-  const wingY = gameState.value === "dead" ? 0 : Math.sin(Date.now() * 0.015) * 3.5;
+  const wingY =
+    gameState.value === "dead" ? 0 : Math.sin(Date.now() * 0.015) * 3.5;
   ctx.fillStyle = "#d98c10";
   ctx.beginPath();
   ctx.ellipse(-2, 2 + wingY, 9, 5, -0.3, 0, Math.PI * 2);
