@@ -21,11 +21,11 @@ const leftPaddle = {
   x: 20,
   y: 210,
   score: 0,
-  speed: 10,
+  speed: 10.5,
   aiSpeed: 5.8,
   flash: 0,
 };
-const rightPaddle = { x: 668, y: 210, score: 0, speed: 10, flash: 0 };
+const rightPaddle = { x: 668, y: 210, score: 0, speed: 10.6, flash: 0 };
 const ball = { x: 350, y: 250, dx: 0, dy: 0, speed: 4, baseSpeed: 4 };
 
 let trail = [];
