@@ -625,7 +625,8 @@ function resetGame() {
   const pMsg = document.getElementById("pauseMsg");
   if (pMsg) pMsg.style.display = "none";
   playerReset();
-  update();
+  draw();
+  setTimeout(() => update(), 0);
 }
 
 const preventDefaultKeys = (event) => {
