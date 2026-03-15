@@ -186,7 +186,6 @@ onUnmounted(() => {
                 src="https://github.com/BetterSEQTA.png"
                 alt=""
                 class="repo-logo"
-                loading="lazy"
                 decoding="async"
               />
               <div class="repo-info">
@@ -207,7 +206,6 @@ onUnmounted(() => {
                 src="https://github.com/BetterSEQTA.png"
                 alt=""
                 class="repo-logo"
-                loading="lazy"
                 decoding="async"
               />
               <div class="repo-info">
@@ -228,7 +226,6 @@ onUnmounted(() => {
                 src="https://github.com/Jones8683.png"
                 alt=""
                 class="repo-logo"
-                loading="lazy"
                 decoding="async"
               />
               <div class="repo-info">
@@ -250,7 +247,6 @@ onUnmounted(() => {
                 src="https://github.com/Jones8683.png"
                 alt=""
                 class="repo-logo"
-                loading="lazy"
                 decoding="async"
               />
               <div class="repo-info">
