@@ -75,8 +75,8 @@ onUnmounted(() => {
             computing. I enjoy learning how things work and continuously
             improving my skills. I love exploring artificial intelligence and
             discovering and testing the latest advancements in it. I enjoy
-            experimenting with new software, and using technology to creatively
-            build, improve, or just figure things out.
+            experimenting with new software and using technology to explore,
+            solve problems, and just see what it can do.
           </p>
           <p>
             I've done a bit of work on a few projects including
