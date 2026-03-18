@@ -26,6 +26,9 @@ coverage/
 *.sln
 *.sw?
 
+.env
+.env.local
+.env.*.local
 *.tsbuildinfo
 .eslintcache
 /cypress/videos/
