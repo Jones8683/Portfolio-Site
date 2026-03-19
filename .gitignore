@@ -7,8 +7,10 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules/
-.DS_Store
+# Temp files
+*.tmp
+*.temp
+.cache/
 
 # Build output
 dist/
@@ -29,9 +31,13 @@ coverage/
 .env
 .env.local
 .env.*.local
+
 *.tsbuildinfo
 .eslintcache
 /cypress/videos/
 /cypress/screenshots/
 __screenshots__/
 *.timestamp-*-*.mjs
+
+node_modules/
+.DS_Store
