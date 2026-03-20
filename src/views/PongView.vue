@@ -22,7 +22,7 @@ const leftPaddle = {
   y: 210,
   score: 0,
   speed: 10.5,
-  aiSpeed: 5.8,
+  aiSpeed: 5.7,
   flash: 0,
 };
 const rightPaddle = { x: 668, y: 210, score: 0, speed: 10.5, flash: 0 };
