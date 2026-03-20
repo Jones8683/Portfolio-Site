@@ -380,7 +380,7 @@ function gameLoop(ts = performance.now()) {
 
 const handleKeyDown = (e) => {
   if (["ArrowUp", "ArrowDown", "Space"].includes(e.code)) e.preventDefault();
-  if (e.key === "Escape") {
+  if (e.key === "Escape" || e.key.toLowerCase() === "p") {
     e.preventDefault();
     togglePause();
     return;

@@ -185,7 +185,7 @@ function stopTimer() {
 
 const handleKeydown = (e) => {
   if (e.key.toLowerCase() === "r") resetToStart();
-  if (e.key === "Escape") {
+  if (e.key === "Escape" || e.key.toLowerCase() === "p") {
     e.preventDefault();
     togglePause();
   }

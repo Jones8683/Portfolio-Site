@@ -666,7 +666,7 @@ const handleActionKey = (event, isUp) => {
 const handleKeydown = (event) => {
   preventDefaultKeys(event);
   if (isGameOver) return;
-  if (event.keyCode === 27) {
+  if (event.keyCode === 27 || event.key === "p" || event.key === "P") {
     event.preventDefault();
     togglePause();
     return;

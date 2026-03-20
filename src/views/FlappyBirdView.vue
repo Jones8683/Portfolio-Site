@@ -499,7 +499,7 @@ function jump() {
 }
 
 const onKey = (e) => {
-  if (e.code === "Escape") {
+  if (e.code === "Escape" || e.code === "KeyP") {
     e.preventDefault();
     togglePause();
     return;
