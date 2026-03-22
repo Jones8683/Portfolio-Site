@@ -48,8 +48,19 @@ onUnmounted(() => {
           decoding="async"
         />
       </div>
+    </div>
 
-      <div class="scroll-cue" :class="{ hidden: scrolled }">
+    <div
+      class="scroll-cue"
+      :style="{
+        opacity: scrolled ? 0 : 1,
+        transform: scrolled
+          ? 'translateX(-50%) translateY(-20px)'
+          : 'translateX(-50%) translateY(0px)',
+        pointerEvents: scrolled ? 'none' : 'auto',
+      }"
+    >
+      <div class="scroll-cue-bounce">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
           <path
             d="M6 9l6 6 6-6"
@@ -271,7 +282,7 @@ onUnmounted(() => {
 }
 
 .above-fold {
-  min-height: calc(100vh - 160px);
+  min-height: calc(100vh - 90px);
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -402,21 +413,16 @@ onUnmounted(() => {
 }
 
 .scroll-cue {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 1;
-  transition: opacity 0.5s ease;
-  padding-bottom: 4px;
-  margin-top: auto;
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  z-index: 100;
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s ease;
 }
 
-.scroll-cue.hidden {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.scroll-cue svg {
+.scroll-cue-bounce {
   animation: bounce-cue 2s ease-in-out infinite;
 }
 
@@ -461,11 +467,9 @@ onUnmounted(() => {
   0%,
   100% {
     transform: translateY(0);
-    opacity: 0.6;
   }
   50% {
     transform: translateY(6px);
-    opacity: 1;
   }
 }
 
