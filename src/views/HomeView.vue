@@ -37,8 +37,6 @@ onUnmounted(() => {
         <h1 class="name-title">Jones Jankovic</h1>
 
         <div class="hero-tag">Student | Australia</div>
-
-        <div class="hero-divider"></div>
       </div>
 
       <div class="snake-wrap">
@@ -383,13 +381,6 @@ onUnmounted(() => {
   border: 1px solid rgba(58, 123, 213, 0.25);
   padding: 6px 14px;
   border-radius: 100px;
-}
-
-.hero-divider {
-  width: 40px;
-  height: 2px;
-  background: linear-gradient(90deg, #5a9eff, rgba(21, 224, 214, 0.5));
-  border-radius: 2px;
 }
 
 .snake-wrap {
