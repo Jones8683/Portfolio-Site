@@ -1,7 +1,7 @@
 {
   "name": "portfolio-site",
   "version": "1.0.0",
-  "description": "My personal site",
+  "description": "My personal website and portfolio",
   "private": true,
   "type": "module",
   "scripts": {
