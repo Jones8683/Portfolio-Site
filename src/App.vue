@@ -21,15 +21,25 @@ const afVisible = ref(false);
 const afShowClose = ref(false);
 let triggered = false;
 
+const isAprilFools = () => {
+  const now = new Date();
+  return (
+    now.getMonth() === 2 &&
+    now.getDate() === 23 &&
+    now.getHours() === 20 &&
+    now.getMinutes() >= 4
+  );
+};
+
 const trigger = () => {
-  if (triggered) return;
+  if (triggered || !isAprilFools()) return;
   triggered = true;
   removeListeners();
   afVisible.value = true;
   document.documentElement.style.overflow = "hidden";
   setTimeout(() => {
     afShowClose.value = true;
-  }, 8000);
+  }, 5000);
 };
 
 const removeListeners = () => {
