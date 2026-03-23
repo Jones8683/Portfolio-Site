@@ -17,16 +17,67 @@ const handleScroll = () => {
   lastScrollY = currentScrollY;
 };
 
+document.documentElement.style.overflow = "hidden";
+
+const afVisible = ref(true);
+const afLoading = ref(true);
+const afShowClose = ref(false);
+
 onMounted(() => {
   window.addEventListener("scroll", handleScroll);
+
+  setTimeout(() => {
+    afLoading.value = false;
+    setTimeout(() => {
+      afShowClose.value = true;
+    }, 5000);
+  }, 1200);
 });
 
 onUnmounted(() => {
   window.removeEventListener("scroll", handleScroll);
+  document.documentElement.style.overflow = "";
 });
+
+const closeAf = () => {
+  afVisible.value = false;
+  document.documentElement.style.overflow = "";
+};
 </script>
 
 <template>
+  <Transition name="af">
+    <div v-if="afVisible" class="af-overlay">
+      <Transition name="af-inner">
+        <div v-if="afLoading" class="af-loading">
+          <div class="af-spinner"></div>
+        </div>
+      </Transition>
+      <Transition name="af-inner">
+        <div v-if="!afLoading" class="af-video-wrap">
+          <iframe
+            class="af-video"
+            src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&rel=0&modestbranding=1&controls=0&disablekb=1"
+            allow="autoplay; encrypted-media"
+            allowfullscreen
+            frameborder="0"
+          ></iframe>
+          <div class="af-blocker"></div>
+          <Transition name="af-close">
+            <button
+              v-if="afShowClose"
+              class="af-close"
+              @click="closeAf"
+              aria-label="Close"
+            >
+              ✕
+            </button>
+          </Transition>
+        </div>
+      </Transition>
+    </div>
+  </Transition>
+
   <header
     class="main-header"
     id="navbar"
@@ -43,7 +94,6 @@ onUnmounted(() => {
           <RouterLink to="/minecraft" class="glass-btn">Minecraft</RouterLink>
         </div>
       </div>
-
       <div class="nav-right">
         <a
           href="https://discord.com/users/1378992101970280471"
@@ -59,7 +109,6 @@ onUnmounted(() => {
             ></path>
           </svg>
         </a>
-
         <a
           rel="noopener noreferrer"
           aria-label="GitHub Profile"
@@ -88,4 +137,108 @@ onUnmounted(() => {
   </footer>
 </template>
 
-<style scoped></style>
+<style scoped>
+.af-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: #0a0b0e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.af-loading {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.af-spinner {
+  width: 44px;
+  height: 44px;
+  border: 3px solid rgba(90, 158, 255, 0.15);
+  border-top-color: #5a9eff;
+  border-radius: 50%;
+  animation: af-spin 0.8s linear infinite;
+}
+
+.af-video-wrap {
+  position: fixed;
+  inset: 0;
+}
+
+.af-video {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
+.af-blocker {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+
+.af-close {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(30, 30, 40, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #94a3b8;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+  z-index: 3;
+}
+
+.af-close:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.af-enter-active,
+.af-leave-active {
+  transition: opacity 0.4s ease;
+}
+.af-enter-from,
+.af-leave-to {
+  opacity: 0;
+}
+
+.af-inner-enter-active,
+.af-inner-leave-active {
+  transition: opacity 0.35s ease;
+}
+.af-inner-enter-from,
+.af-inner-leave-to {
+  opacity: 0;
+}
+
+.af-close-enter-active {
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease;
+}
+.af-close-enter-from {
+  opacity: 0;
+  transform: scale(0.5);
+}
+
+@keyframes af-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+</style>
