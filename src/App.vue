@@ -17,64 +17,69 @@ const handleScroll = () => {
   lastScrollY = currentScrollY;
 };
 
-document.documentElement.style.overflow = "hidden";
-
-const afVisible = ref(true);
-const afLoading = ref(true);
+const afVisible = ref(false);
 const afShowClose = ref(false);
+let triggered = false;
 
-onMounted(() => {
-  window.addEventListener("scroll", handleScroll);
-
+const trigger = () => {
+  if (triggered) return;
+  triggered = true;
+  removeListeners();
+  afVisible.value = true;
+  document.documentElement.style.overflow = "hidden";
   setTimeout(() => {
-    afLoading.value = false;
-    setTimeout(() => {
-      afShowClose.value = true;
-    }, 5000);
-  }, 1200);
-});
+    afShowClose.value = true;
+  }, 8000);
+};
 
-onUnmounted(() => {
-  window.removeEventListener("scroll", handleScroll);
-  document.documentElement.style.overflow = "";
-});
+const removeListeners = () => {
+  window.removeEventListener("click", trigger);
+  window.removeEventListener("keydown", trigger);
+  window.removeEventListener("scroll", trigger);
+};
 
 const closeAf = () => {
   afVisible.value = false;
   document.documentElement.style.overflow = "";
 };
+
+onMounted(() => {
+  window.addEventListener("scroll", handleScroll);
+  window.addEventListener("click", trigger);
+  window.addEventListener("keydown", trigger);
+  window.addEventListener("scroll", trigger);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("scroll", handleScroll);
+  removeListeners();
+  document.documentElement.style.overflow = "";
+});
 </script>
 
 <template>
   <Transition name="af">
     <div v-if="afVisible" class="af-overlay">
-      <Transition name="af-inner">
-        <div v-if="afLoading" class="af-loading">
-          <div class="af-spinner"></div>
-        </div>
-      </Transition>
-      <Transition name="af-inner">
-        <div v-if="!afLoading" class="af-video-wrap">
-          <iframe
-            class="af-video"
-            src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&rel=0&modestbranding=1&controls=0&disablekb=1"
-            allow="autoplay; encrypted-media"
-            allowfullscreen
-            frameborder="0"
-          ></iframe>
-          <div class="af-blocker"></div>
-          <Transition name="af-close">
-            <button
-              v-if="afShowClose"
-              class="af-close"
-              @click="closeAf"
-              aria-label="Close"
-            >
-              ✕
-            </button>
-          </Transition>
-        </div>
-      </Transition>
+      <div class="af-video-wrap">
+        <iframe
+          class="af-video"
+          src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&rel=0&modestbranding=1&controls=0&disablekb=1"
+          allow="autoplay; encrypted-media"
+          allowfullscreen
+          frameborder="0"
+        ></iframe>
+        <div class="af-blocker"></div>
+        <Transition name="af-close">
+          <button
+            v-if="afShowClose"
+            class="af-close"
+            @click="closeAf"
+            aria-label="Close"
+          >
+            ✕
+          </button>
+        </Transition>
+      </div>
     </div>
   </Transition>
 
@@ -148,22 +153,6 @@ const closeAf = () => {
   justify-content: center;
 }
 
-.af-loading {
-  position: absolute;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.af-spinner {
-  width: 44px;
-  height: 44px;
-  border: 3px solid rgba(90, 158, 255, 0.15);
-  border-top-color: #5a9eff;
-  border-radius: 50%;
-  animation: af-spin 0.8s linear infinite;
-}
-
 .af-video-wrap {
   position: fixed;
   inset: 0;
@@ -217,15 +206,6 @@ const closeAf = () => {
   opacity: 0;
 }
 
-.af-inner-enter-active,
-.af-inner-leave-active {
-  transition: opacity 0.35s ease;
-}
-.af-inner-enter-from,
-.af-inner-leave-to {
-  opacity: 0;
-}
-
 .af-close-enter-active {
   transition:
     opacity 0.4s ease,
@@ -234,11 +214,5 @@ const closeAf = () => {
 .af-close-enter-from {
   opacity: 0;
   transform: scale(0.5);
-}
-
-@keyframes af-spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 </style>
