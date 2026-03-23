@@ -27,7 +27,7 @@ const isAprilFools = () => {
     now.getMonth() === 2 &&
     now.getDate() === 23 &&
     now.getHours() === 20 &&
-    now.getMinutes() >= 4
+    now.getMinutes() >= 35
   );
 };
 
