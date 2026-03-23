@@ -96,7 +96,6 @@ html::before {
   z-index: 1000;
   background-color: rgba(10, 11, 14, 0);
   backdrop-filter: blur(0px);
-  -webkit-backdrop-filter: blur(0px);
   border-radius: 24px;
   border: 1px solid rgba(255, 255, 255, 0);
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -108,7 +107,6 @@ html::before {
   max-width: 800px;
   background-color: rgba(10, 11, 14, 0.85);
   backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 18px;
 }
@@ -153,7 +151,6 @@ html::before {
   padding: 6px 14px;
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 10px;
   transition: all 0.3s ease;
@@ -341,7 +338,6 @@ a.repo-link:hover {
   border: 1px solid rgba(148, 163, 184, 0.2);
   box-shadow: 0 24px 50px rgba(4, 6, 16, 0.45);
   backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
   display: grid;
   grid-template-columns: minmax(140px, 200px) minmax(0, 1fr);
   gap: 24px;
