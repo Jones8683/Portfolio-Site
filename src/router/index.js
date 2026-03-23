@@ -13,6 +13,7 @@ import NoughtsAndCrossesView from "@/views/NoughtsAndCrossesView.vue";
 import FlappyBirdView from "@/views/FlappyBirdView.vue";
 import SnakeView from "@/views/SnakeView.vue";
 import BreakoutView from "@/views/BreakoutView.vue";
+import DuckHuntView from "@/views/DuckHuntView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -101,6 +102,12 @@ const router = createRouter({
       name: "breakout",
       component: BreakoutView,
       meta: { title: "Breakout" },
+    },
+    {
+      path: "/play/duck-hunt",
+      name: "duck-hunt",
+      component: DuckHuntView,
+      meta: { title: "Duck Hunt" },
     },
     {
       path: "/:pathMatch(.*)*",
