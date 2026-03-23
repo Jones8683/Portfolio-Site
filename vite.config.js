@@ -5,6 +5,9 @@ import vue from "@vitejs/plugin-vue";
 
 export default defineConfig({
   plugins: [vueDevTools(), vue()],
+  css: {
+    transformer: "postcss",
+  },
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
