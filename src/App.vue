@@ -23,12 +23,7 @@ let triggered = false;
 
 const isAprilFools = () => {
   const now = new Date();
-  return (
-    now.getMonth() === 2 &&
-    now.getDate() === 23 &&
-    now.getHours() === 20 &&
-    now.getMinutes() >= 39
-  );
+  return now.getMonth() === 3 && now.getDate() === 1;
 };
 
 const trigger = () => {
