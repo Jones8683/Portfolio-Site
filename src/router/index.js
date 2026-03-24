@@ -13,7 +13,7 @@ import NoughtsAndCrossesView from "@/views/NoughtsAndCrossesView.vue";
 import FlappyBirdView from "@/views/FlappyBirdView.vue";
 import SnakeView from "@/views/SnakeView.vue";
 import BreakoutView from "@/views/BreakoutView.vue";
-import QuackAttachView from "@/views/QuackAttackView.vue";
+import QuackAttackView from "@/views/QuackAttackView.vue";
 import Connect4View from "@/views/Connect4View.vue";
 
 const router = createRouter({
