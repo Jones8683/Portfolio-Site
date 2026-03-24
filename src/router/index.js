@@ -11,14 +11,18 @@ import Game2048View from "@/views/Game2048View.vue";
 import HangmanView from "@/views/HangmanView.vue";
 import NoughtsAndCrossesView from "@/views/NoughtsAndCrossesView.vue";
 import FlappyBirdView from "@/views/FlappyBirdView.vue";
+import SnakeView from "@/views/SnakeView.vue";
+import BreakoutView from "@/views/BreakoutView.vue";
+import DuckHuntView from "@/views/DuckHuntView.vue";
+import Connect4View from "@/views/Connect4View.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
-      return savedPosition;
+      return { ...savedPosition, behavior: "smooth" };
     } else {
-      return { top: 0 };
+      return { top: 0, behavior: "smooth" };
     }
   },
   routes: [
@@ -87,6 +91,30 @@ const router = createRouter({
       name: "flappy-bird",
       component: FlappyBirdView,
       meta: { title: "Flappy Bird" },
+    },
+    {
+      path: "/play/snake",
+      name: "snake",
+      component: SnakeView,
+      meta: { title: "Snake" },
+    },
+    {
+      path: "/play/breakout",
+      name: "breakout",
+      component: BreakoutView,
+      meta: { title: "Breakout" },
+    },
+    {
+      path: "/play/duck-hunt",
+      name: "duck-hunt",
+      component: DuckHuntView,
+      meta: { title: "Duck Hunt" },
+    },
+    {
+      path: "/play/connect-4",
+      name: "connect-4",
+      component: Connect4View,
+      meta: { title: "Connect 4" },
     },
     {
       path: "/:pathMatch(.*)*",
