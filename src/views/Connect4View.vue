@@ -16,11 +16,44 @@ const winningCells = ref([]);
 const hoveredCol = ref(null);
 const scores = ref({ 1: 0, 2: 0 });
 const droppingCell = ref(null);
+const isProcessing = ref(false);
 
 const playerColors = { 1: "#0dc2ff", 2: "#ff0d72" };
 
+const getGhostRow = (col) => {
+  if (col === null || col === undefined) return null;
+  for (let r = ROWS - 1; r >= 0; r--) {
+    if (!board.value[r][col]) return r;
+  }
+  return null;
+};
+
+const isGhostCell = (r, c) => {
+  if (winner.value || isDraw.value || isProcessing.value) return false;
+  return hoveredCol.value === c && getGhostRow(c) === r;
+};
+
+const isDropTarget = (r, c) =>
+  droppingCell.value?.row === r && droppingCell.value?.col === c;
+
+const getDropStyle = (r, c) => {
+  if (
+    !droppingCell.value ||
+    droppingCell.value.row !== r ||
+    droppingCell.value.col !== c
+  )
+    return {};
+  const cellSize = 62;
+  const dist = r * cellSize || 30;
+  const dur = r === 0 ? 0.1 : 0.08 + Math.sqrt(r) * 0.09;
+  return {
+    "--drop-dist": `-${dist}px`,
+    "--drop-dur": `${dur}s`,
+  };
+};
+
 const makeMove = (col) => {
-  if (winner.value || isDraw.value) return;
+  if (winner.value || isDraw.value || isProcessing.value) return;
 
   let row = -1;
   for (let r = ROWS - 1; r >= 0; r--) {
@@ -31,12 +64,9 @@ const makeMove = (col) => {
   }
   if (row === -1) return;
 
+  isProcessing.value = true;
   droppingCell.value = { row, col };
   board.value[row][col] = currentPlayer.value;
-
-  setTimeout(() => {
-    droppingCell.value = null;
-  }, 200);
 
   const win = checkWinner(row, col);
   if (win) {
@@ -48,6 +78,11 @@ const makeMove = (col) => {
   } else {
     currentPlayer.value = currentPlayer.value === 1 ? 2 : 1;
   }
+
+  setTimeout(() => {
+    droppingCell.value = null;
+    isProcessing.value = false;
+  }, 500);
 };
 
 const checkWinner = (row, col) => {
@@ -109,6 +144,7 @@ const resetGame = () => {
   isDraw.value = false;
   winningCells.value = [];
   droppingCell.value = null;
+  isProcessing.value = false;
   if (document.activeElement instanceof HTMLElement)
     document.activeElement.blur();
 };
@@ -146,12 +182,26 @@ onUnmounted(() => window.removeEventListener("keydown", handleKeydown));
             >
               <div v-for="row in ROWS" :key="row" class="cell">
                 <div
+                  v-if="isDropTarget(row - 1, col - 1)"
+                  class="drop-target"
+                  :class="{
+                    'ghost-p1': board[row - 1][col - 1] === 1,
+                    'ghost-p2': board[row - 1][col - 1] === 2,
+                  }"
+                ></div>
+                <div
                   class="piece"
+                  :style="getDropStyle(row - 1, col - 1)"
                   :class="{
                     p1: board[row - 1][col - 1] === 1,
                     p2: board[row - 1][col - 1] === 2,
                     'winning-piece': isWinningCell(row - 1, col - 1),
                     dropping: isDroppingCell(row - 1, col - 1),
+                    ghost: isGhostCell(row - 1, col - 1),
+                    'ghost-p1':
+                      isGhostCell(row - 1, col - 1) && currentPlayer === 1,
+                    'ghost-p2':
+                      isGhostCell(row - 1, col - 1) && currentPlayer === 2,
                   }"
                 ></div>
               </div>
@@ -279,6 +329,26 @@ onUnmounted(() => window.removeEventListener("keydown", handleKeydown));
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: visible;
+  position: relative;
+}
+
+.drop-target {
+  position: absolute;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.drop-target.ghost-p1 {
+  background: rgba(13, 194, 255, 0.25);
+  box-shadow: 0 0 8px rgba(13, 194, 255, 0.15);
+}
+
+.drop-target.ghost-p2 {
+  background: rgba(255, 13, 114, 0.25);
+  box-shadow: 0 0 8px rgba(255, 13, 114, 0.15);
 }
 
 .piece {
@@ -301,18 +371,44 @@ onUnmounted(() => window.removeEventListener("keydown", handleKeydown));
   box-shadow: 0 0 10px rgba(255, 13, 114, 0.35);
 }
 
+.piece.ghost {
+  pointer-events: none;
+}
+
+.piece.ghost-p1 {
+  background: rgba(13, 194, 255, 0.25);
+  box-shadow: 0 0 8px rgba(13, 194, 255, 0.15);
+}
+
+.piece.ghost-p2 {
+  background: rgba(255, 13, 114, 0.25);
+  box-shadow: 0 0 8px rgba(255, 13, 114, 0.15);
+}
+
 .piece.dropping {
-  animation: drop-in 0.18s ease-out;
+  position: relative;
+  z-index: 10;
+  animation: drop-in var(--drop-dur, 0.25s) forwards;
 }
 
 @keyframes drop-in {
-  from {
-    transform: scale(0.5);
-    opacity: 0.4;
+  0% {
+    transform: translateY(var(--drop-dist, -200px));
+    animation-timing-function: cubic-bezier(0.55, 0, 1, 0.6);
   }
-  to {
-    transform: scale(1);
-    opacity: 1;
+  82% {
+    transform: translateY(0);
+    animation-timing-function: cubic-bezier(0.33, 1, 0.66, 1);
+  }
+  91% {
+    transform: translateY(5px);
+    animation-timing-function: ease-out;
+  }
+  96% {
+    transform: translateY(-2px);
+  }
+  100% {
+    transform: translateY(0);
   }
 }
 
