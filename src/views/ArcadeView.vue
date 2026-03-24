@@ -110,9 +110,9 @@ import { RouterLink } from "vue-router";
       <div class="arcade-card">
         <div class="arcade-card-top">
           <span class="arcade-icon">🦆</span>
-          <h3 class="arcade-name">Duck Hunt</h3>
+          <h3 class="arcade-name">Quack Attack</h3>
         </div>
-        <RouterLink to="/play/duck-hunt" class="arcade-card-bottom blue-btn">
+        <RouterLink to="/play/quack-attack" class="arcade-card-bottom blue-btn">
           Play Now
         </RouterLink>
       </div>
