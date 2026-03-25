@@ -12,7 +12,7 @@ import HangmanView from "@/views/HangmanView.vue";
 import NoughtsAndCrossesView from "@/views/NoughtsAndCrossesView.vue";
 import FlappyBirdView from "@/views/FlappyBirdView.vue";
 import SnakeView from "@/views/SnakeView.vue";
-import BreakoutView from "@/views/BreakoutView.vue";
+import CrossyRoadView from "@/views/CrossyRoadView.vue";
 import QuackAttackView from "@/views/QuackAttackView.vue";
 import Connect4View from "@/views/Connect4View.vue";
 
@@ -99,10 +99,10 @@ const router = createRouter({
       meta: { title: "Snake" },
     },
     {
-      path: "/play/breakout",
-      name: "breakout",
-      component: BreakoutView,
-      meta: { title: "Breakout" },
+      path: "/play/crossy-road",
+      name: "crossy-road",
+      component: CrossyRoadView,
+      meta: { title: "Crossy Road" },
     },
     {
       path: "/play/quack-attack",

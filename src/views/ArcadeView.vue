@@ -33,6 +33,19 @@ import { RouterLink } from "vue-router";
 
       <div class="arcade-card">
         <div class="arcade-card-top">
+          <span class="arcade-icon">🐤</span>
+          <h3 class="arcade-name">Crossy Road</h3>
+        </div>
+        <RouterLink
+          to="/play/crossy-road"
+          class="arcade-card-bottom yellow-btn"
+        >
+          Play Now
+        </RouterLink>
+      </div>
+
+      <div class="arcade-card">
+        <div class="arcade-card-top">
           <span class="arcade-icon">💣</span>
           <h3 class="arcade-name">Minesweeper</h3>
         </div>
@@ -56,10 +69,20 @@ import { RouterLink } from "vue-router";
 
       <div class="arcade-card">
         <div class="arcade-card-top">
+          <span class="arcade-icon">🐦</span>
+          <h3 class="arcade-name">Flappy Bird</h3>
+        </div>
+        <RouterLink to="/play/flappy-bird" class="arcade-card-bottom green-btn">
+          Play Now
+        </RouterLink>
+      </div>
+
+      <div class="arcade-card">
+        <div class="arcade-card-top">
           <span class="arcade-icon">🧍</span>
           <h3 class="arcade-name">Hangman</h3>
         </div>
-        <RouterLink to="/play/hangman" class="arcade-card-bottom green-btn">
+        <RouterLink to="/play/hangman" class="arcade-card-bottom red-btn">
           Play Now
         </RouterLink>
       </div>
@@ -69,7 +92,7 @@ import { RouterLink } from "vue-router";
           <span class="arcade-icon">🔢</span>
           <h3 class="arcade-name">2048</h3>
         </div>
-        <RouterLink to="/play/2048" class="arcade-card-bottom yellow-btn">
+        <RouterLink to="/play/2048" class="arcade-card-bottom blue-btn">
           Play Now
         </RouterLink>
       </div>
@@ -86,27 +109,6 @@ import { RouterLink } from "vue-router";
           Play Now
         </RouterLink>
       </div>
-
-      <div class="arcade-card">
-        <div class="arcade-card-top">
-          <span class="arcade-icon">🐦</span>
-          <h3 class="arcade-name">Flappy Bird</h3>
-        </div>
-        <RouterLink to="/play/flappy-bird" class="arcade-card-bottom blue-btn">
-          Play Now
-        </RouterLink>
-      </div>
-
-      <div class="arcade-card">
-        <div class="arcade-card-top">
-          <span class="arcade-icon">🎾</span>
-          <h3 class="arcade-name">Breakout</h3>
-        </div>
-        <RouterLink to="/play/breakout" class="arcade-card-bottom red-btn">
-          Play Now
-        </RouterLink>
-      </div>
-
       <div class="arcade-card">
         <div class="arcade-card-top">
           <span class="arcade-icon">🦆</span>
@@ -119,20 +121,20 @@ import { RouterLink } from "vue-router";
 
       <div class="arcade-card">
         <div class="arcade-card-top">
-          <span class="arcade-icon">🐍</span>
-          <h3 class="arcade-name">Snake</h3>
+          <span class="arcade-icon">🟡</span>
+          <h3 class="arcade-name">Connect 4</h3>
         </div>
-        <RouterLink to="/play/snake" class="arcade-card-bottom green-btn">
+        <RouterLink to="/play/connect-4" class="arcade-card-bottom yellow-btn">
           Play Now
         </RouterLink>
       </div>
 
       <div class="arcade-card">
         <div class="arcade-card-top">
-          <span class="arcade-icon">🟡</span>
-          <h3 class="arcade-name">Connect 4</h3>
+          <span class="arcade-icon">🐍</span>
+          <h3 class="arcade-name">Snake</h3>
         </div>
-        <RouterLink to="/play/connect-4" class="arcade-card-bottom yellow-btn">
+        <RouterLink to="/play/snake" class="arcade-card-bottom green-btn">
           Play Now
         </RouterLink>
       </div>
