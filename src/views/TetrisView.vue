@@ -50,6 +50,7 @@ const player = {
   next: null,
   hold: null,
   canHold: true,
+  rotState: 0,
 };
 
 let dropCounter = 0;
@@ -403,6 +404,7 @@ function playerReset() {
   player.pos.y = 0;
   player.pos.x =
     ((arena[0].length / 2) | 0) - ((player.matrix[0].length / 2) | 0);
+  player.rotState = 0;
   if (collide(arena, player)) {
     isGameOver = true;
     if (player.score > highScore.value) {
@@ -413,39 +415,162 @@ function playerReset() {
   }
 }
 
+// SRS kick tables (screen coordinates: x right, y down)
+const KICKS_JLSTZ = {
+  "01": [
+    [0, 0],
+    [-1, 0],
+    [-1, -1],
+    [0, 2],
+    [-1, 2],
+  ],
+  12: [
+    [0, 0],
+    [1, 0],
+    [1, 1],
+    [0, -2],
+    [1, -2],
+  ],
+  23: [
+    [0, 0],
+    [1, 0],
+    [1, -1],
+    [0, 2],
+    [1, 2],
+  ],
+  30: [
+    [0, 0],
+    [-1, 0],
+    [-1, 1],
+    [0, -2],
+    [-1, -2],
+  ],
+  10: [
+    [0, 0],
+    [1, 0],
+    [1, 1],
+    [0, -2],
+    [1, -2],
+  ],
+  21: [
+    [0, 0],
+    [-1, 0],
+    [-1, -1],
+    [0, 2],
+    [-1, 2],
+  ],
+  32: [
+    [0, 0],
+    [-1, 0],
+    [-1, 1],
+    [0, -2],
+    [-1, -2],
+  ],
+  "03": [
+    [0, 0],
+    [1, 0],
+    [1, -1],
+    [0, 2],
+    [1, 2],
+  ],
+};
+
+const KICKS_I = {
+  "01": [
+    [0, 0],
+    [-2, 0],
+    [1, 0],
+    [-2, 1],
+    [1, -2],
+  ],
+  12: [
+    [0, 0],
+    [-1, 0],
+    [2, 0],
+    [-1, -2],
+    [2, 1],
+  ],
+  23: [
+    [0, 0],
+    [2, 0],
+    [-1, 0],
+    [2, -1],
+    [-1, 2],
+  ],
+  30: [
+    [0, 0],
+    [1, 0],
+    [-2, 0],
+    [1, 2],
+    [-2, -1],
+  ],
+  10: [
+    [0, 0],
+    [2, 0],
+    [-1, 0],
+    [2, -1],
+    [-1, 2],
+  ],
+  21: [
+    [0, 0],
+    [1, 0],
+    [-2, 0],
+    [1, 2],
+    [-2, -1],
+  ],
+  32: [
+    [0, 0],
+    [-2, 0],
+    [1, 0],
+    [-2, 1],
+    [1, -2],
+  ],
+  "03": [
+    [0, 0],
+    [-1, 0],
+    [2, 0],
+    [-1, -2],
+    [2, 1],
+  ],
+};
+
 function playerRotate(dir) {
-  const pos = player.pos.x;
-  const initY = player.pos.y;
-  let offset = 1;
+  const prevState = player.rotState;
+  const nextState = (prevState + (dir > 0 ? 1 : -1) + 4) % 4;
+  const key = `${prevState}${nextState}`;
+
+  const isIPiece = player.matrix.length === 4;
+  const isOPiece = player.matrix.length === 2;
+
+  if (isOPiece) return;
+
+  const kicks = isIPiece ? KICKS_I[key] : KICKS_JLSTZ[key];
+
   rotate(player.matrix, dir);
-  while (collide(arena, player)) {
-    player.pos.x += offset;
-    offset = -(offset + (offset > 0 ? 1 : -1));
-    if (offset > player.matrix[0].length) {
-      player.pos.x = pos;
-      player.pos.y--;
-      if (!collide(arena, player)) {
-        lockDelayCounter = 0;
-        lockMovesCounter = 0;
-        return;
-      }
+
+  const initY = player.pos.y;
+
+  for (const [kx, ky] of kicks) {
+    player.pos.x += kx;
+    player.pos.y += ky;
+    if (!collide(arena, player)) {
+      player.rotState = nextState;
       player.pos.y++;
-      player.pos.x = pos;
-      rotate(player.matrix, -dir);
+      if (collide(arena, player)) {
+        if (lockMovesCounter < MAX_LOCK_MOVES) {
+          lockDelayCounter = 0;
+          lockMovesCounter++;
+        }
+      }
+      player.pos.y--;
       return;
     }
+    player.pos.x -= kx;
+    player.pos.y -= ky;
   }
 
-  if (player.pos.y === initY) {
-    player.pos.y++;
-    if (collide(arena, player)) {
-      if (lockMovesCounter < MAX_LOCK_MOVES) {
-        lockDelayCounter = 0;
-        lockMovesCounter++;
-      }
-    }
-    player.pos.y--;
-  }
+  // No valid kick found, undo
+  rotate(player.matrix, -dir);
 }
 
 function rotate(matrix, dir) {
@@ -497,6 +622,7 @@ function playerHold() {
   player.pos.y = 0;
   player.pos.x =
     ((arena[0].length / 2) | 0) - ((player.matrix[0].length / 2) | 0);
+  player.rotState = 0;
   player.canHold = false;
 }
 
