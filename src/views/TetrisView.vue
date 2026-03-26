@@ -64,7 +64,7 @@ const MAX_LOCK_MOVES = 15;
 let isLanded = false;
 
 const DAS = 170;
-const ARR = 50;
+const ARR = 33;
 const SOFT_DROP_ARR = 30;
 const keys = {
   37: { down: false, timer: 0 },
