@@ -87,10 +87,11 @@ onUnmounted(() => window.removeEventListener("scroll", handleScroll));
   top: 15px;
   width: 90%;
   max-width: 800px;
-  background-color: rgba(10, 11, 14, 0.85);
+  background-color: rgba(27, 27, 27, 0.9);
   backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 18px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
 }
 
 .main-header[data-show="false"] {
