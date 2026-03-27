@@ -87,9 +87,6 @@ html::before {
 
 /* Main Layout */
 
-.repo-btn {
-  text-decoration: none !important;
-}
 
 main {
   flex: 1;
