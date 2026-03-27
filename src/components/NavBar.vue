@@ -1,5 +1,5 @@
 <script setup>
-import { RouterLink, useRoute } from "vue-router";
+import { RouterLink } from "vue-router";
 import { ref, onMounted, onUnmounted } from "vue";
 
 const isMinimized = ref(false);
@@ -66,3 +66,175 @@ onUnmounted(() => window.removeEventListener("scroll", handleScroll));
     </div>
   </header>
 </template>
+
+<style scoped>
+.main-header {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 1400px;
+  z-index: 1000;
+  background-color: rgba(10, 11, 14, 0);
+  backdrop-filter: blur(0px);
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.main-header.minimized {
+  top: 15px;
+  width: 90%;
+  max-width: 800px;
+  background-color: rgba(10, 11, 14, 0.85);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 18px;
+}
+
+.main-header[data-show="false"] {
+  transform: translate(-50%, -120px);
+}
+
+.main-header[data-show="true"] {
+  transform: translate(-50%, 0);
+}
+
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 80px;
+  transition: padding 0.5s ease;
+}
+
+.main-header.minimized .nav-container {
+  padding: 2px 20px;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.glass-nav {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.glass-btn {
+  text-decoration: none !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+  font-size: 0.85rem;
+  font-weight: 400;
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.glass-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #ffffff !important;
+  transform: translateY(-1px);
+}
+
+.nav-name-link {
+  text-decoration: none !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: opacity 0.3s ease;
+}
+
+.nav-name-link:hover {
+  opacity: 0.75;
+}
+
+.nav-name {
+  font-weight: 700;
+  font-size: 1.4rem;
+  color: #ffffff;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.nav-right {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.nav-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border-radius: 999px;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    background-color 0.3s ease;
+}
+
+.nav-icon:hover {
+  transform: translateY(-2px);
+  background-color: rgba(148, 163, 184, 0.12);
+  box-shadow: 0 10px 24px rgba(30, 58, 138, 0.25);
+}
+
+.nav-icon svg {
+  width: 26px;
+  height: 26px;
+  display: block;
+}
+
+.nav-left a,
+.nav-item,
+.nav-link-item {
+  text-decoration: none !important;
+}
+
+@media (max-width: 650px) {
+  .nav-name {
+    display: none !important;
+  }
+
+  .nav-container {
+    padding: 10px 16px !important;
+    justify-content: space-between !important;
+  }
+
+  .nav-left {
+    gap: 0 !important;
+  }
+
+  .glass-nav {
+    gap: 8px !important;
+  }
+
+  .glass-btn {
+    padding: 8px 14px !important;
+    font-size: 0.8rem !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+  }
+
+  .nav-right {
+    gap: 12px !important;
+  }
+
+  .nav-icon svg {
+    width: 22px !important;
+    height: 22px !important;
+  }
+}
+</style>

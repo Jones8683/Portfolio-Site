@@ -282,7 +282,6 @@ onUnmounted(() => {
 }
 
 .above-fold {
-  min-height: calc(100vh - 90px);
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -291,6 +290,7 @@ onUnmounted(() => {
   gap: 20px;
   padding: 4px 40px 0;
   box-sizing: border-box;
+  min-height: calc(100vh - var(--nav-height));
 }
 
 .hero-block {
