@@ -374,7 +374,7 @@ onUnmounted(() => {
   letter-spacing: -0.03em;
   line-height: 1;
   text-align: center;
-  background: linear-gradient(135deg, #5a9eff 0%, #15e0d6 100%);
+  background: linear-gradient(130deg, #5a9eff 0%, #15c5e0 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -388,8 +388,8 @@ onUnmounted(() => {
   font-weight: 500;
   color: #64a8ff;
   letter-spacing: 0.04em;
-  background: rgba(58, 123, 213, 0.1);
-  border: 1px solid rgba(58, 123, 213, 0.25);
+  background: rgba(58, 123, 213, 0.14);
+  border: 1px solid rgba(58, 123, 213, 0.438);
   padding: 6px 14px;
   border-radius: 100px;
 }
