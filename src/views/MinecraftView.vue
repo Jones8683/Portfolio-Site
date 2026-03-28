@@ -26,7 +26,7 @@ const copyToClipboard = () => {
 </script>
 
 <template>
-  <img src="/minecraft.png" class="mc-bg-overlay" alt="" />
+  <img src="@/assets/minecraft.png" class="mc-bg-overlay" alt="" />
 
   <div class="content-wrap mc-page">
     <h1 class="name-title">Minecraft Server</h1>
