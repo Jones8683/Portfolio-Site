@@ -87,7 +87,7 @@ onUnmounted(() => window.removeEventListener("scroll", handleScroll));
   top: 15px;
   width: 90%;
   max-width: 800px;
-  background-color: rgba(25, 25, 25, 0.9);
+  background-color: rgba(22, 22, 22, 0.9);
   backdrop-filter: blur(20px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 18px;
