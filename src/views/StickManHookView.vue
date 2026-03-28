@@ -1,8 +1,13 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import GameMobileMessage from "../components/GameMobileMessage.vue";
 
 const gameIframe = ref(null);
+const showIframe = ref(false);
+
+onMounted(() => {
+  showIframe.value = true;
+});
 
 const toggleFullscreen = () => {
   if (gameIframe.value) {
@@ -25,6 +30,7 @@ const toggleFullscreen = () => {
       <div class="game-wrapper">
         <div class="left-section">
           <iframe
+            v-if="showIframe"
             ref="gameIframe"
             src="/gameassets/stickmanhook.html"
             class="game-iframe"

@@ -1,7 +1,8 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import GameMobileMessage from "../components/GameMobileMessage.vue";
 
+const showIframe = ref(false);
 const gameIframe = ref(null);
 
 const toggleFullscreen = () => {
@@ -15,6 +16,10 @@ const toggleFullscreen = () => {
     }
   }
 };
+
+onMounted(() => {
+  showIframe.value = true;
+});
 </script>
 
 <template>
@@ -25,6 +30,7 @@ const toggleFullscreen = () => {
       <div class="game-wrapper">
         <div class="left-section">
           <iframe
+            v-if="showIframe"
             ref="gameIframe"
             src="/gameassets/crossyroad.html"
             class="game-iframe"

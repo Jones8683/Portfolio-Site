@@ -4,6 +4,7 @@ import { useStorage } from "@vueuse/core";
 import GameMobileMessage from "../components/GameMobileMessage.vue";
 
 const gameIframe = ref(null);
+const showIframe = ref(false);
 const score = ref(0);
 const bestScore = useStorage("2048-best-score", 0, localStorage, {
   serializer: {
@@ -64,6 +65,7 @@ const handleVisibilityChange = () => {
 };
 
 onMounted(() => {
+  showIframe.value = true;
   window.addEventListener("keydown", preventScroll, { passive: false });
   window.addEventListener("message", handleMessage);
   document.addEventListener("visibilitychange", handleVisibilityChange);
@@ -85,6 +87,7 @@ onUnmounted(() => {
       <div class="game-wrapper">
         <div class="left-section" @click="focusIframe">
           <iframe
+            v-if="showIframe"
             ref="gameIframe"
             src="/gameassets/2048.html"
             class="game-iframe"

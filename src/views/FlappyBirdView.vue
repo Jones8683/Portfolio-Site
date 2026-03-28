@@ -154,30 +154,24 @@ function drawCity() {
       if (rx + b.w < 0 || rx > W) continue;
       const by = GROUND_Y - b.h;
 
-      // building body — slightly darker than sky for silhouette depth
       ctx.fillStyle = "#3ea8b4";
       ctx.fillRect(rx, by, b.w, b.h);
 
-      // subtle left highlight
       ctx.fillStyle = "#48bcc8";
       ctx.fillRect(rx, by, 3, b.h);
 
-      // subtle right shadow
       ctx.fillStyle = "#329aa6";
       ctx.fillRect(rx + b.w - 3, by, 3, b.h);
 
-      // rooftop line
       ctx.fillStyle = "#52cad6";
       ctx.fillRect(rx, by, b.w, 2);
 
-      // antenna on tall buildings
       if (b.style === "tall") {
         ctx.fillStyle = "#3ea8b4";
         ctx.fillRect(rx + Math.floor(b.w / 2) - 1, by - 12, 2, 12);
         ctx.fillRect(rx + Math.floor(b.w / 2) - 3, by - 14, 6, 3);
       }
 
-      // windows
       if (b.windows) {
         const ww = 5,
           wh = 5,
@@ -191,7 +185,6 @@ function drawCity() {
           for (let col = 0; col < cols; col++) {
             const wx = startX + col * (ww + gx);
             const wy = by + 8 + row * (wh + gy);
-            // pseudo-random lit/unlit based on position
             const lit = (row * 3 + col * 7 + b.x) % 5 !== 0;
             ctx.fillStyle = lit
               ? "rgba(255, 240, 180, 0.55)"
