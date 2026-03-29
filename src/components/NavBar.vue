@@ -89,7 +89,7 @@ onUnmounted(() => window.removeEventListener("scroll", handleScroll));
   max-width: 800px;
   background-color: rgba(22, 22, 22, 0.9);
   backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 2px solid rgba(132, 132, 132, 0.12);
   border-radius: 18px;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
 }
