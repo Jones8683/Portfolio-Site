@@ -827,8 +827,6 @@ onMounted(() => {
   dropInterval = 1000;
   isGameOver = false;
   isPaused = false;
-  window.player = player;
-  window.updateScore = updateScore;
   playerReset();
   updateScore();
   update(performance.now());
