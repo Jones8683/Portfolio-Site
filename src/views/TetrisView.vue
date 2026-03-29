@@ -849,6 +849,8 @@ onMounted(() => {
   window.addEventListener("blur", handleBlur);
   playerReset();
   updateScore();
+  window.player = player;
+  window.updateScore = updateScore;
   update();
 });
 
