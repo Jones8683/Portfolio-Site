@@ -4,7 +4,7 @@ import vueDevTools from "vite-plugin-vue-devtools";
 import vue from "@vitejs/plugin-vue";
 
 export default defineConfig({
-  plugins: [vueDevTools(), vue()],
+  plugins: [vue(), vueDevTools()],
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
