@@ -6,8 +6,6 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
 
     <script>
-      
-
       !(function (e) {
         if ("object" == typeof exports && "undefined" != typeof module)
           module.exports = e();
@@ -6684,600 +6682,740 @@
           return blobUrlss[trimmed] || original;
         }
       });
-    </script><script nonce="2KHli9LrFFijH2jCb5SkMw">
-(function(){
-  const storageBucketKey = "crossy-road-storage";
-  const legacyStorageBucketKeys = ["__crossyroad_storage__"];
-  const standaloneSaveKey = "standalone_save";
-  const dataListeners = new Set();
-  const audioListeners = new Set();
-  const pauseListeners = new Set();
-  const resumeListeners = new Set();
-  const originalStorage = (() => {
-    try {
-      return window.localStorage;
-    } catch (error) {
-      return null;
-    }
-  })();
-  let bucket = readBucket();
-  let audioEnabled = false;
-  let paused = document.hidden;
-  function readBucket() {
-    if (!originalStorage) return {};
-    const bucketKeys = [storageBucketKey].concat(legacyStorageBucketKeys);
-    for (let index = 0; index < bucketKeys.length; index += 1) {
-      try {
-        const raw = originalStorage.getItem(bucketKeys[index]);
-        if (!raw) continue;
-        const parsed = JSON.parse(raw);
-        if (parsed && typeof parsed === "object") {
-          return parsed;
-        }
-      } catch (error) {}
-    }
-    return {};
-  }
-  function writeBucket() {
-    if (!originalStorage) return;
-    try {
-      originalStorage.setItem(storageBucketKey, JSON.stringify(bucket));
-      legacyStorageBucketKeys.forEach(function(key) {
-        if (key !== storageBucketKey) {
-          originalStorage.removeItem(key);
-        }
-      });
-    } catch (error) {}
-  }
-  function cleanupLegacyStorage() {
-    if (!originalStorage) return;
-    try {
-      const legacyKeys = [
-        "crossyroad_standalone_save",
-        "ads_watched",
-        "coins",
-        "crossyScore",
-        "currCharacter",
-        "deathsSinceLastCharacterUnlock",
-        "first_round_finished",
-        "firstRoundFinished",
-        "giftsGiven",
-        "hasPlayedBefore",
-        "hasSeenCarousel",
-        "isSound",
-        "isSoundEnabled",
-        "lastGiftTime",
-        "mute",
-        "second_round_started",
-        "secondRoundFinished",
-        "selectedChar",
-        "topScore",
-        "unlockedCharacters",
-        "upsellWasClicked"
-      ];
-      legacyKeys.forEach(function(key) {
-        const legacyValue = originalStorage.getItem(key);
-        if (legacyValue === null) return;
-        if (key === "crossyroad_standalone_save") {
-          if (!Object.prototype.hasOwnProperty.call(bucket, standaloneSaveKey)) {
-            bucket[standaloneSaveKey] = String(legacyValue);
+    </script>
+    <script nonce="2KHli9LrFFijH2jCb5SkMw">
+      (function () {
+        const storageBucketKey = "crossy-road-storage";
+        const legacyStorageBucketKeys = ["__crossyroad_storage__"];
+        const standaloneSaveKey = "standalone_save";
+        const dataListeners = new Set();
+        const audioListeners = new Set();
+        const pauseListeners = new Set();
+        const resumeListeners = new Set();
+        const originalStorage = (() => {
+          try {
+            return window.localStorage;
+          } catch (error) {
+            return null;
           }
-          return;
-        }
-        if (!Object.prototype.hasOwnProperty.call(bucket, key)) {
-          bucket[key] = String(legacyValue);
-        }
-      });
-      writeBucket();
-      legacyKeys.forEach(function(key) {
-        originalStorage.removeItem(key);
-      });
-      originalStorage.removeItem("test");
-    } catch (error) {}
-  }
-  const storageApi = {
-    getItem: function(key) {
-      key = String(key);
-      return Object.prototype.hasOwnProperty.call(bucket, key) ? String(bucket[key]) : null;
-    },
-    setItem: function(key, value) {
-      bucket[String(key)] = String(value);
-      writeBucket();
-    },
-    removeItem: function(key) {
-      delete bucket[String(key)];
-      writeBucket();
-    },
-    clear: function() {
-      bucket = {};
-      writeBucket();
-    },
-    key: function(index) {
-      const keys = Object.keys(bucket);
-      return keys[index] || null;
-    }
-  };
-  const sandboxStorage = new Proxy(storageApi, {
-    get: function(target, prop) {
-      if (prop === "length") return Object.keys(bucket).length;
-      if (prop in target) return target[prop];
-      if (typeof prop === "string") return target.getItem(prop);
-      return undefined;
-    },
-    set: function(target, prop, value) {
-      if (typeof prop === "string" && !(prop in target)) {
-        target.setItem(prop, value);
-        return true;
-      }
-      target[prop] = value;
-      return true;
-    },
-    deleteProperty: function(target, prop) {
-      if (typeof prop === "string" && !(prop in target)) {
-        target.removeItem(prop);
-        return true;
-      }
-      return delete target[prop];
-    },
-    ownKeys: function(target) {
-      return Reflect.ownKeys(target).concat(Object.keys(bucket));
-    },
-    has: function(target, prop) {
-      return prop in target || Object.prototype.hasOwnProperty.call(bucket, prop);
-    },
-    getOwnPropertyDescriptor: function(target, prop) {
-      if (prop === "length") {
-        return { configurable: true, enumerable: false, value: Object.keys(bucket).length };
-      }
-      if (typeof prop === "string" && Object.prototype.hasOwnProperty.call(bucket, prop)) {
-        return { configurable: true, enumerable: true, value: String(bucket[prop]), writable: true };
-      }
-      return Object.getOwnPropertyDescriptor(target, prop);
-    }
-  });
-  try {
-    Object.defineProperty(window, "localStorage", {
-      configurable: true,
-      enumerable: true,
-      writable: false,
-      value: sandboxStorage
-    });
-  } catch (error) {}
-  cleanupLegacyStorage();
-  if (console && typeof console.log === "function") {
-    console.log = function() {};
-  }
-  if (console && typeof console.debug === "function") {
-    console.debug = function() {};
-  }
-  const audioWarningText = "The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page.";
-  if (console && typeof console.warn === "function") {
-    const originalWarn = console.warn.bind(console);
-    console.warn = function() {
-      if (arguments[0] === audioWarningText) return;
-      return originalWarn.apply(console, arguments);
-    };
-  }
-  if (console && typeof console.error === "function") {
-    const originalError = console.error.bind(console);
-    console.error = function() {
-      if (arguments[0] === audioWarningText) return;
-      return originalError.apply(console, arguments);
-    };
-  }
-  function notify(listeners, value) {
-    listeners.forEach(function(listener) {
-      try {
-        listener(value);
-      } catch (error) {
-        setTimeout(function() {
-          throw error;
-        }, 0);
-      }
-    });
-  }
-  function addListener(listeners, callback, initialValue) {
-    if (typeof callback !== "function") {
-      return function() {};
-    }
-    listeners.add(callback);
-    if (arguments.length === 3) {
-      try {
-        callback(initialValue);
-      } catch (error) {
-        setTimeout(function() {
-          throw error;
-        }, 0);
-      }
-    }
-    return function() {
-      listeners.delete(callback);
-    };
-  }
-  document.addEventListener("visibilitychange", function() {
-    const nextPaused = document.hidden;
-    if (nextPaused === paused) return;
-    paused = nextPaused;
-    notify(nextPaused ? pauseListeners : resumeListeners);
-  });
-  const mediaProto = window.HTMLMediaElement && window.HTMLMediaElement.prototype;
-  if (mediaProto) {
-    mediaProto.play = function() {
-      return Promise.resolve();
-    };
-    mediaProto.pause = function() {};
-    try {
-      Object.defineProperty(mediaProto, "muted", {
-        configurable: true,
-        get: function() { return true; },
-        set: function() {}
-      });
-    } catch (error) {}
-    try {
-      Object.defineProperty(mediaProto, "volume", {
-        configurable: true,
-        get: function() { return 0; },
-        set: function() {}
-      });
-    } catch (error) {}
-  }
-  if (window.Audio && window.Audio.prototype) {
-    window.Audio.prototype.play = function() {
-      return Promise.resolve();
-    };
-    window.Audio.prototype.pause = function() {};
-  }
-  function createSilentParam(initialValue) {
-    return {
-      value: initialValue,
-      defaultValue: initialValue,
-      setValueAtTime: function(value) {
-        this.value = value;
-        return this;
-      },
-      linearRampToValueAtTime: function(value) {
-        this.value = value;
-        return this;
-      },
-      exponentialRampToValueAtTime: function(value) {
-        this.value = value;
-        return this;
-      },
-      setTargetAtTime: function(value) {
-        this.value = value;
-        return this;
-      },
-      setValueCurveAtTime: function() {
-        return this;
-      },
-      cancelScheduledValues: function() {
-        return this;
-      },
-      cancelAndHoldAtTime: function() {
-        return this;
-      }
-    };
-  }
-  function createSilentNode() {
-    return {
-      connect: function() { return this; },
-      disconnect: function() {},
-      start: function() {},
-      stop: function() {
-        if (typeof this.onended === "function") {
-          this.onended();
-        }
-      },
-      noteOn: function() {},
-      noteOff: function() {},
-      gain: createSilentParam(0),
-      playbackRate: createSilentParam(1),
-      frequency: createSilentParam(0),
-      detune: createSilentParam(0),
-      Q: createSilentParam(0),
-      pan: createSilentParam(0),
-      delayTime: createSilentParam(0),
-      attack: createSilentParam(0),
-      knee: createSilentParam(0),
-      ratio: createSilentParam(1),
-      reduction: 0,
-      release: createSilentParam(0),
-      threshold: createSilentParam(0),
-      buffer: null,
-      loop: false,
-      loopStart: 0,
-      loopEnd: 0,
-      onended: null
-    };
-  }
-  function SilentAudioContext() {
-    this.state = "suspended";
-    this.currentTime = 0;
-    this.destination = createSilentNode();
-    this.listener = {};
-    this.sampleRate = 44100;
-  }
-  SilentAudioContext.prototype.resume = function() {
-    this.state = "suspended";
-    return Promise.resolve();
-  };
-  SilentAudioContext.prototype.suspend = function() {
-    this.state = "suspended";
-    return Promise.resolve();
-  };
-  SilentAudioContext.prototype.close = function() {
-    this.state = "closed";
-    return Promise.resolve();
-  };
-  SilentAudioContext.prototype.createGain = createSilentNode;
-  SilentAudioContext.prototype.createBufferSource = createSilentNode;
-  SilentAudioContext.prototype.createAnalyser = createSilentNode;
-  SilentAudioContext.prototype.createDynamicsCompressor = createSilentNode;
-  SilentAudioContext.prototype.createBiquadFilter = createSilentNode;
-  SilentAudioContext.prototype.createPanner = createSilentNode;
-  SilentAudioContext.prototype.createStereoPanner = createSilentNode;
-  SilentAudioContext.prototype.createConvolver = createSilentNode;
-  SilentAudioContext.prototype.createDelay = createSilentNode;
-  SilentAudioContext.prototype.createOscillator = createSilentNode;
-  SilentAudioContext.prototype.createWaveShaper = createSilentNode;
-  SilentAudioContext.prototype.createChannelSplitter = createSilentNode;
-  SilentAudioContext.prototype.createChannelMerger = createSilentNode;
-  SilentAudioContext.prototype.createMediaElementSource = createSilentNode;
-  SilentAudioContext.prototype.createMediaStreamSource = createSilentNode;
-  SilentAudioContext.prototype.createScriptProcessor = createSilentNode;
-  SilentAudioContext.prototype.createBuffer = function() {
-    return {
-      duration: 0,
-      numberOfChannels: 0,
-      length: 0,
-      sampleRate: 44100,
-      getChannelData: function() {
-        return new Float32Array(0);
-      }
-    };
-  };
-  SilentAudioContext.prototype.decodeAudioData = function(data, successCallback) {
-    const buffer = this.createBuffer();
-    if (typeof successCallback === "function") {
-      setTimeout(function() {
-        successCallback(buffer);
-      }, 0);
-    }
-    return Promise.resolve(buffer);
-  };
-  window.AudioContext = SilentAudioContext;
-  window.webkitAudioContext = SilentAudioContext;
-  function createSilentAudioManager() {
-    return {
-      listener: {
-        setMasterVolume: function() {},
-        context: {
-          state: "suspended",
-          resume: function() {
-            return Promise.resolve();
+        })();
+        let bucket = readBucket();
+        let audioEnabled = false;
+        let paused = document.hidden;
+        function readBucket() {
+          if (!originalStorage) return {};
+          const bucketKeys = [storageBucketKey].concat(legacyStorageBucketKeys);
+          for (let index = 0; index < bucketKeys.length; index += 1) {
+            try {
+              const raw = originalStorage.getItem(bucketKeys[index]);
+              if (!raw) continue;
+              const parsed = JSON.parse(raw);
+              if (parsed && typeof parsed === "object") {
+                return parsed;
+              }
+            } catch (error) {}
           }
+          return {};
         }
-      },
-      SetVolume: function() {},
-      GetAudio: function() { return null; },
-      GetPositionalAudio: function() { return null; },
-      CacheSound: function() {},
-      stopAllSounds: function() {},
-      StopSound: function() {},
-      PlaySound: function() { return null; },
-      PlaySoundVariation: function() { return null; },
-      resumeAudioContext: function() {
-        return Promise.resolve();
-      }
-    };
-  }
-  function persistSilentFlags() {
-    try { sandboxStorage.setItem("isSound", "false"); } catch (error) {}
-    try { sandboxStorage.setItem("isSoundEnabled", "false"); } catch (error) {}
-    try { sandboxStorage.setItem("mute", "true"); } catch (error) {}
-  }
-  function patchAudioManagerPrototype() {
-    if (typeof window.AudioManager !== "function" || !window.AudioManager.prototype) return;
-    const proto = window.AudioManager.prototype;
-    proto.resumeAudioContext = function() {
-      return Promise.resolve();
-    };
-    proto.SetVolume = function() {};
-    proto.GetAudio = function() { return null; };
-    proto.GetPositionalAudio = function() { return null; };
-    proto.CacheSound = function() {};
-    proto.stopAllSounds = function() {};
-    proto.StopSound = function() {};
-    proto.PlaySound = function() { return null; };
-    proto.PlaySoundVariation = function() { return null; };
-  }
-  function applySilentGameState() {
-    persistSilentFlags();
-    try { if (typeof window.isSound !== "undefined") window.isSound = false; } catch (error) {}
-    try { if (typeof window.isYouTubeAudioEnabled !== "undefined") window.isYouTubeAudioEnabled = false; } catch (error) {}
-    patchAudioManagerPrototype();
-    try {
-      if (window.Game) {
-        window.Game.mute = true;
-        window.Game.isSoundEnabled = false;
-        if (!window.Game.audioManager) {
-          window.Game.audioManager = createSilentAudioManager();
+        function writeBucket() {
+          if (!originalStorage) return;
+          try {
+            originalStorage.setItem(storageBucketKey, JSON.stringify(bucket));
+            legacyStorageBucketKeys.forEach(function (key) {
+              if (key !== storageBucketKey) {
+                originalStorage.removeItem(key);
+              }
+            });
+          } catch (error) {}
         }
-        const manager = window.Game.audioManager;
-        if (manager) {
-          manager.SetVolume = function() {};
-          manager.GetAudio = function() { return null; };
-          manager.GetPositionalAudio = function() { return null; };
-          manager.CacheSound = function() {};
-          manager.stopAllSounds = function() {};
-          manager.StopSound = function() {};
-          manager.PlaySound = function() { return null; };
-          manager.PlaySoundVariation = function() { return null; };
-          manager.resumeAudioContext = function() { return Promise.resolve(); };
-          if (!manager.listener) {
-            manager.listener = createSilentAudioManager().listener;
-          }
-          if (manager.listener) {
-            manager.listener.setMasterVolume = function() {};
-            if (!manager.listener.context) {
-              manager.listener.context = {
-                state: "suspended",
-                resume: function() { return Promise.resolve(); }
+        function cleanupLegacyStorage() {
+          if (!originalStorage) return;
+          try {
+            const legacyKeys = [
+              "crossyroad_standalone_save",
+              "ads_watched",
+              "coins",
+              "crossyScore",
+              "currCharacter",
+              "deathsSinceLastCharacterUnlock",
+              "first_round_finished",
+              "firstRoundFinished",
+              "giftsGiven",
+              "hasPlayedBefore",
+              "hasSeenCarousel",
+              "isSound",
+              "isSoundEnabled",
+              "lastGiftTime",
+              "mute",
+              "second_round_started",
+              "secondRoundFinished",
+              "selectedChar",
+              "topScore",
+              "unlockedCharacters",
+              "upsellWasClicked",
+            ];
+            legacyKeys.forEach(function (key) {
+              const legacyValue = originalStorage.getItem(key);
+              if (legacyValue === null) return;
+              if (key === "crossyroad_standalone_save") {
+                if (
+                  !Object.prototype.hasOwnProperty.call(
+                    bucket,
+                    standaloneSaveKey,
+                  )
+                ) {
+                  bucket[standaloneSaveKey] = String(legacyValue);
+                }
+                return;
+              }
+              if (!Object.prototype.hasOwnProperty.call(bucket, key)) {
+                bucket[key] = String(legacyValue);
+              }
+            });
+            writeBucket();
+            legacyKeys.forEach(function (key) {
+              originalStorage.removeItem(key);
+            });
+            originalStorage.removeItem("test");
+          } catch (error) {}
+        }
+        const storageApi = {
+          getItem: function (key) {
+            key = String(key);
+            return Object.prototype.hasOwnProperty.call(bucket, key)
+              ? String(bucket[key])
+              : null;
+          },
+          setItem: function (key, value) {
+            bucket[String(key)] = String(value);
+            writeBucket();
+          },
+          removeItem: function (key) {
+            delete bucket[String(key)];
+            writeBucket();
+          },
+          clear: function () {
+            bucket = {};
+            writeBucket();
+          },
+          key: function (index) {
+            const keys = Object.keys(bucket);
+            return keys[index] || null;
+          },
+        };
+        const sandboxStorage = new Proxy(storageApi, {
+          get: function (target, prop) {
+            if (prop === "length") return Object.keys(bucket).length;
+            if (prop in target) return target[prop];
+            if (typeof prop === "string") return target.getItem(prop);
+            return undefined;
+          },
+          set: function (target, prop, value) {
+            if (typeof prop === "string" && !(prop in target)) {
+              target.setItem(prop, value);
+              return true;
+            }
+            target[prop] = value;
+            return true;
+          },
+          deleteProperty: function (target, prop) {
+            if (typeof prop === "string" && !(prop in target)) {
+              target.removeItem(prop);
+              return true;
+            }
+            return delete target[prop];
+          },
+          ownKeys: function (target) {
+            return Reflect.ownKeys(target).concat(Object.keys(bucket));
+          },
+          has: function (target, prop) {
+            return (
+              prop in target ||
+              Object.prototype.hasOwnProperty.call(bucket, prop)
+            );
+          },
+          getOwnPropertyDescriptor: function (target, prop) {
+            if (prop === "length") {
+              return {
+                configurable: true,
+                enumerable: false,
+                value: Object.keys(bucket).length,
               };
-            } else {
-              manager.listener.context.resume = function() { return Promise.resolve(); };
+            }
+            if (
+              typeof prop === "string" &&
+              Object.prototype.hasOwnProperty.call(bucket, prop)
+            ) {
+              return {
+                configurable: true,
+                enumerable: true,
+                value: String(bucket[prop]),
+                writable: true,
+              };
+            }
+            return Object.getOwnPropertyDescriptor(target, prop);
+          },
+        });
+        try {
+          Object.defineProperty(window, "localStorage", {
+            configurable: true,
+            enumerable: true,
+            writable: false,
+            value: sandboxStorage,
+          });
+        } catch (error) {}
+        cleanupLegacyStorage();
+        if (console && typeof console.log === "function") {
+          console.log = function () {};
+        }
+        if (console && typeof console.debug === "function") {
+          console.debug = function () {};
+        }
+        const audioWarningText =
+          "The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page.";
+        if (console && typeof console.warn === "function") {
+          const originalWarn = console.warn.bind(console);
+          console.warn = function () {
+            if (arguments[0] === audioWarningText) return;
+            return originalWarn.apply(console, arguments);
+          };
+        }
+        if (console && typeof console.error === "function") {
+          const originalError = console.error.bind(console);
+          console.error = function () {
+            if (arguments[0] === audioWarningText) return;
+            return originalError.apply(console, arguments);
+          };
+        }
+        function notify(listeners, value) {
+          listeners.forEach(function (listener) {
+            try {
+              listener(value);
+            } catch (error) {
+              setTimeout(function () {
+                throw error;
+              }, 0);
+            }
+          });
+        }
+        function addListener(listeners, callback, initialValue) {
+          if (typeof callback !== "function") {
+            return function () {};
+          }
+          listeners.add(callback);
+          if (arguments.length === 3) {
+            try {
+              callback(initialValue);
+            } catch (error) {
+              setTimeout(function () {
+                throw error;
+              }, 0);
             }
           }
-        }
-        if (typeof window.Game.playSfx === "function") window.Game.playSfx = function() { return null; };
-        if (typeof window.Game.playLoopedSfx === "function") window.Game.playLoopedSfx = function() { return null; };
-        if (typeof window.Game.playPositionalSfx === "function") window.Game.playPositionalSfx = function() { return null; };
-      }
-    } catch (error) {}
-    try {
-      if (typeof window.mute !== "undefined" && window.mute) {
-        window.mute.visible = false;
-        window.mute.alpha = 0;
-        window.mute.width = 0;
-        window.mute.height = 0;
-      }
-      if (window.CrossyUI) {
-        window.CrossyUI.ButtonSound = function() {};
-        window.CrossyUI.ToggleMute = function() {
-          applySilentGameState();
-          return false;
-        };
-        window.CrossyUI.OpenShowMore = function() {
-          if (typeof window.isShowingMore !== "undefined") window.isShowingMore = true;
-          if (typeof window.showUpsell !== "undefined" && window.showUpsell) window.showUpsell.visible = true;
-          if (typeof window.mute !== "undefined" && window.mute) window.mute.visible = false;
-          if (typeof window.showMore !== "undefined" && window.showMore && typeof window.showMore.setAssetPath === "function") {
-            window.showMore.setAssetPath("arrow-up_toggle.png");
-            window.showMore.defaultSprite = window.showMore.assetPath;
-            window.showMore.blinkSprite = "arrow-up_toggle-blink.png";
-          }
-        };
-        window.CrossyUI.CloseShowMore = function() {
-          if (typeof window.isShowingMore !== "undefined") window.isShowingMore = false;
-          if (typeof window.showUpsell !== "undefined" && window.showUpsell) window.showUpsell.visible = false;
-          if (typeof window.mute !== "undefined" && window.mute) window.mute.visible = false;
-          if (typeof window.showMore !== "undefined" && window.showMore && typeof window.showMore.setAssetPath === "function") {
-            window.showMore.setAssetPath("arrow-up.png");
-            window.showMore.defaultSprite = window.showMore.assetPath;
-            window.showMore.blinkSprite = "arrow-up-blink.png";
-          }
-        };
-        if (typeof window.CrossyUI.showMain === "function" && !window.CrossyUI.showMain.__silentWrapped) {
-          const originalShowMain = window.CrossyUI.showMain;
-          const wrappedShowMain = function() {
-            const result = originalShowMain.apply(this, arguments);
-            try { if (typeof window.mute !== "undefined" && window.mute) window.mute.visible = false; } catch (error) {}
-            return result;
+          return function () {
+            listeners.delete(callback);
           };
-          wrappedShowMain.__silentWrapped = true;
-          window.CrossyUI.showMain = wrappedShowMain;
         }
-      }
-    } catch (error) {}
-    try { if (typeof window.doMute === "function") window.doMute = function() { applySilentGameState(); }; } catch (error) {}
-    try { if (typeof window.doUnmute === "function") window.doUnmute = function() { applySilentGameState(); }; } catch (error) {}
-    try { if (typeof window.recheckAudio === "function") window.recheckAudio = function() { applySilentGameState(); }; } catch (error) {}
-    try { if (typeof window.initAudioListeners === "function") window.initAudioListeners = function() { applySilentGameState(); return function() {}; }; } catch (error) {}
-  }
-  window.applySilentGameState = applySilentGameState;
-  window.createSilentAudioManager = createSilentAudioManager;
-  function scheduleSilentAudioStabilization() {
-    [0, 50, 250, 1000].forEach(function(delay) {
-      setTimeout(function() {
-        applySilentGameState();
-      }, delay);
-    });
-  }
-  applySilentGameState();
-  scheduleSilentAudioStabilization();
-  window.addEventListener("load", applySilentGameState, { once: true });
-  const ytgame = {
-    IN_PLAYABLES_ENV: false,
-    SDK_VERSION: "standalone",
-    SdkError: function StandaloneSdkError() {},
-    SdkErrorType: {},
-    ads: {
-      requestAd: function() {
-        return Promise.resolve(0);
-      }
-    },
-    engagement: {
-      sendScore: function() {
-        return Promise.resolve();
-      },
-      openYTContent: function() {
-        return Promise.resolve();
-      }
-    },
-    game: {
-      saveData: function(value) {
-        const serialized = value == null ? "" : String(value);
-        try {
-          sandboxStorage.setItem(standaloneSaveKey, serialized);
-          notify(dataListeners, serialized);
+        document.addEventListener("visibilitychange", function () {
+          const nextPaused = document.hidden;
+          if (nextPaused === paused) return;
+          paused = nextPaused;
+          notify(nextPaused ? pauseListeners : resumeListeners);
+        });
+        const mediaProto =
+          window.HTMLMediaElement && window.HTMLMediaElement.prototype;
+        if (mediaProto) {
+          mediaProto.play = function () {
+            return Promise.resolve();
+          };
+          mediaProto.pause = function () {};
+          try {
+            Object.defineProperty(mediaProto, "muted", {
+              configurable: true,
+              get: function () {
+                return true;
+              },
+              set: function () {},
+            });
+          } catch (error) {}
+          try {
+            Object.defineProperty(mediaProto, "volume", {
+              configurable: true,
+              get: function () {
+                return 0;
+              },
+              set: function () {},
+            });
+          } catch (error) {}
+        }
+        if (window.Audio && window.Audio.prototype) {
+          window.Audio.prototype.play = function () {
+            return Promise.resolve();
+          };
+          window.Audio.prototype.pause = function () {};
+        }
+        function createSilentParam(initialValue) {
+          return {
+            value: initialValue,
+            defaultValue: initialValue,
+            setValueAtTime: function (value) {
+              this.value = value;
+              return this;
+            },
+            linearRampToValueAtTime: function (value) {
+              this.value = value;
+              return this;
+            },
+            exponentialRampToValueAtTime: function (value) {
+              this.value = value;
+              return this;
+            },
+            setTargetAtTime: function (value) {
+              this.value = value;
+              return this;
+            },
+            setValueCurveAtTime: function () {
+              return this;
+            },
+            cancelScheduledValues: function () {
+              return this;
+            },
+            cancelAndHoldAtTime: function () {
+              return this;
+            },
+          };
+        }
+        function createSilentNode() {
+          return {
+            connect: function () {
+              return this;
+            },
+            disconnect: function () {},
+            start: function () {},
+            stop: function () {
+              if (typeof this.onended === "function") {
+                this.onended();
+              }
+            },
+            noteOn: function () {},
+            noteOff: function () {},
+            gain: createSilentParam(0),
+            playbackRate: createSilentParam(1),
+            frequency: createSilentParam(0),
+            detune: createSilentParam(0),
+            Q: createSilentParam(0),
+            pan: createSilentParam(0),
+            delayTime: createSilentParam(0),
+            attack: createSilentParam(0),
+            knee: createSilentParam(0),
+            ratio: createSilentParam(1),
+            reduction: 0,
+            release: createSilentParam(0),
+            threshold: createSilentParam(0),
+            buffer: null,
+            loop: false,
+            loopStart: 0,
+            loopEnd: 0,
+            onended: null,
+          };
+        }
+        function SilentAudioContext() {
+          this.state = "suspended";
+          this.currentTime = 0;
+          this.destination = createSilentNode();
+          this.listener = {};
+          this.sampleRate = 44100;
+        }
+        SilentAudioContext.prototype.resume = function () {
+          this.state = "suspended";
           return Promise.resolve();
-        } catch (error) {
-          return Promise.reject(error);
+        };
+        SilentAudioContext.prototype.suspend = function () {
+          this.state = "suspended";
+          return Promise.resolve();
+        };
+        SilentAudioContext.prototype.close = function () {
+          this.state = "closed";
+          return Promise.resolve();
+        };
+        SilentAudioContext.prototype.createGain = createSilentNode;
+        SilentAudioContext.prototype.createBufferSource = createSilentNode;
+        SilentAudioContext.prototype.createAnalyser = createSilentNode;
+        SilentAudioContext.prototype.createDynamicsCompressor =
+          createSilentNode;
+        SilentAudioContext.prototype.createBiquadFilter = createSilentNode;
+        SilentAudioContext.prototype.createPanner = createSilentNode;
+        SilentAudioContext.prototype.createStereoPanner = createSilentNode;
+        SilentAudioContext.prototype.createConvolver = createSilentNode;
+        SilentAudioContext.prototype.createDelay = createSilentNode;
+        SilentAudioContext.prototype.createOscillator = createSilentNode;
+        SilentAudioContext.prototype.createWaveShaper = createSilentNode;
+        SilentAudioContext.prototype.createChannelSplitter = createSilentNode;
+        SilentAudioContext.prototype.createChannelMerger = createSilentNode;
+        SilentAudioContext.prototype.createMediaElementSource =
+          createSilentNode;
+        SilentAudioContext.prototype.createMediaStreamSource = createSilentNode;
+        SilentAudioContext.prototype.createScriptProcessor = createSilentNode;
+        SilentAudioContext.prototype.createBuffer = function () {
+          return {
+            duration: 0,
+            numberOfChannels: 0,
+            length: 0,
+            sampleRate: 44100,
+            getChannelData: function () {
+              return new Float32Array(0);
+            },
+          };
+        };
+        SilentAudioContext.prototype.decodeAudioData = function (
+          data,
+          successCallback,
+        ) {
+          const buffer = this.createBuffer();
+          if (typeof successCallback === "function") {
+            setTimeout(function () {
+              successCallback(buffer);
+            }, 0);
+          }
+          return Promise.resolve(buffer);
+        };
+        window.AudioContext = SilentAudioContext;
+        window.webkitAudioContext = SilentAudioContext;
+        function createSilentAudioManager() {
+          return {
+            listener: {
+              setMasterVolume: function () {},
+              context: {
+                state: "suspended",
+                resume: function () {
+                  return Promise.resolve();
+                },
+              },
+            },
+            SetVolume: function () {},
+            GetAudio: function () {
+              return null;
+            },
+            GetPositionalAudio: function () {
+              return null;
+            },
+            CacheSound: function () {},
+            stopAllSounds: function () {},
+            StopSound: function () {},
+            PlaySound: function () {
+              return null;
+            },
+            PlaySoundVariation: function () {
+              return null;
+            },
+            resumeAudioContext: function () {
+              return Promise.resolve();
+            },
+          };
         }
-      },
-      loadData: function() {
-        try {
-          return Promise.resolve(sandboxStorage.getItem(standaloneSaveKey) || "");
-        } catch (error) {
-          return Promise.resolve("");
+        function persistSilentFlags() {
+          try {
+            sandboxStorage.setItem("isSound", "false");
+          } catch (error) {}
+          try {
+            sandboxStorage.setItem("isSoundEnabled", "false");
+          } catch (error) {}
+          try {
+            sandboxStorage.setItem("mute", "true");
+          } catch (error) {}
         }
-      },
-      firstFrameReady: function() {
-        return Promise.resolve();
-      },
-      gameReady: function() {
-        return Promise.resolve();
-      },
-      onGameDataAvailable: function(callback) {
-        return addListener(dataListeners, callback);
-      },
-      shareInviteCode: function() {
-        return Promise.resolve();
-      }
-    },
-    health: {
-      logError: function() {},
-      logWarning: function() {}
-    },
-    system: {
-      onAudioEnabledChange: function(callback) {
-        return addListener(audioListeners, callback, [false]);
-      },
-      isAudioEnabled: function() {
-        return false;
-      },
-      onPause: function(callback) {
-        return addListener(pauseListeners, callback);
-      },
-      onResume: function(callback) {
-        return addListener(resumeListeners, callback);
-      },
-      getLanguage: function() {
-        const language = (navigator.language || "en").split("-")[0] || "en";
-        return Promise.resolve(language);
-      }
-    }
-  };
-  window.ytgame = ytgame;
-})();
-</script>
-<style>
+        function patchAudioManagerPrototype() {
+          if (
+            typeof window.AudioManager !== "function" ||
+            !window.AudioManager.prototype
+          )
+            return;
+          const proto = window.AudioManager.prototype;
+          proto.resumeAudioContext = function () {
+            return Promise.resolve();
+          };
+          proto.SetVolume = function () {};
+          proto.GetAudio = function () {
+            return null;
+          };
+          proto.GetPositionalAudio = function () {
+            return null;
+          };
+          proto.CacheSound = function () {};
+          proto.stopAllSounds = function () {};
+          proto.StopSound = function () {};
+          proto.PlaySound = function () {
+            return null;
+          };
+          proto.PlaySoundVariation = function () {
+            return null;
+          };
+        }
+        function applySilentGameState() {
+          persistSilentFlags();
+          try {
+            if (typeof window.isSound !== "undefined") window.isSound = false;
+          } catch (error) {}
+          try {
+            if (typeof window.isYouTubeAudioEnabled !== "undefined")
+              window.isYouTubeAudioEnabled = false;
+          } catch (error) {}
+          patchAudioManagerPrototype();
+          try {
+            if (window.Game) {
+              window.Game.mute = true;
+              window.Game.isSoundEnabled = false;
+              if (!window.Game.audioManager) {
+                window.Game.audioManager = createSilentAudioManager();
+              }
+              const manager = window.Game.audioManager;
+              if (manager) {
+                manager.SetVolume = function () {};
+                manager.GetAudio = function () {
+                  return null;
+                };
+                manager.GetPositionalAudio = function () {
+                  return null;
+                };
+                manager.CacheSound = function () {};
+                manager.stopAllSounds = function () {};
+                manager.StopSound = function () {};
+                manager.PlaySound = function () {
+                  return null;
+                };
+                manager.PlaySoundVariation = function () {
+                  return null;
+                };
+                manager.resumeAudioContext = function () {
+                  return Promise.resolve();
+                };
+                if (!manager.listener) {
+                  manager.listener = createSilentAudioManager().listener;
+                }
+                if (manager.listener) {
+                  manager.listener.setMasterVolume = function () {};
+                  if (!manager.listener.context) {
+                    manager.listener.context = {
+                      state: "suspended",
+                      resume: function () {
+                        return Promise.resolve();
+                      },
+                    };
+                  } else {
+                    manager.listener.context.resume = function () {
+                      return Promise.resolve();
+                    };
+                  }
+                }
+              }
+              if (typeof window.Game.playSfx === "function")
+                window.Game.playSfx = function () {
+                  return null;
+                };
+              if (typeof window.Game.playLoopedSfx === "function")
+                window.Game.playLoopedSfx = function () {
+                  return null;
+                };
+              if (typeof window.Game.playPositionalSfx === "function")
+                window.Game.playPositionalSfx = function () {
+                  return null;
+                };
+            }
+          } catch (error) {}
+          try {
+            if (typeof window.mute !== "undefined" && window.mute) {
+              window.mute.visible = false;
+              window.mute.alpha = 0;
+              window.mute.width = 0;
+              window.mute.height = 0;
+            }
+            if (window.CrossyUI) {
+              window.CrossyUI.ButtonSound = function () {};
+              window.CrossyUI.ToggleMute = function () {
+                applySilentGameState();
+                return false;
+              };
+              window.CrossyUI.OpenShowMore = function () {
+                if (typeof window.isShowingMore !== "undefined")
+                  window.isShowingMore = true;
+                if (
+                  typeof window.showUpsell !== "undefined" &&
+                  window.showUpsell
+                )
+                  window.showUpsell.visible = true;
+                if (typeof window.mute !== "undefined" && window.mute)
+                  window.mute.visible = false;
+                if (
+                  typeof window.showMore !== "undefined" &&
+                  window.showMore &&
+                  typeof window.showMore.setAssetPath === "function"
+                ) {
+                  window.showMore.setAssetPath("arrow-up_toggle.png");
+                  window.showMore.defaultSprite = window.showMore.assetPath;
+                  window.showMore.blinkSprite = "arrow-up_toggle-blink.png";
+                }
+              };
+              window.CrossyUI.CloseShowMore = function () {
+                if (typeof window.isShowingMore !== "undefined")
+                  window.isShowingMore = false;
+                if (
+                  typeof window.showUpsell !== "undefined" &&
+                  window.showUpsell
+                )
+                  window.showUpsell.visible = false;
+                if (typeof window.mute !== "undefined" && window.mute)
+                  window.mute.visible = false;
+                if (
+                  typeof window.showMore !== "undefined" &&
+                  window.showMore &&
+                  typeof window.showMore.setAssetPath === "function"
+                ) {
+                  window.showMore.setAssetPath("arrow-up.png");
+                  window.showMore.defaultSprite = window.showMore.assetPath;
+                  window.showMore.blinkSprite = "arrow-up-blink.png";
+                }
+              };
+              if (
+                typeof window.CrossyUI.showMain === "function" &&
+                !window.CrossyUI.showMain.__silentWrapped
+              ) {
+                const originalShowMain = window.CrossyUI.showMain;
+                const wrappedShowMain = function () {
+                  const result = originalShowMain.apply(this, arguments);
+                  try {
+                    if (typeof window.mute !== "undefined" && window.mute)
+                      window.mute.visible = false;
+                  } catch (error) {}
+                  return result;
+                };
+                wrappedShowMain.__silentWrapped = true;
+                window.CrossyUI.showMain = wrappedShowMain;
+              }
+            }
+          } catch (error) {}
+          try {
+            if (typeof window.doMute === "function")
+              window.doMute = function () {
+                applySilentGameState();
+              };
+          } catch (error) {}
+          try {
+            if (typeof window.doUnmute === "function")
+              window.doUnmute = function () {
+                applySilentGameState();
+              };
+          } catch (error) {}
+          try {
+            if (typeof window.recheckAudio === "function")
+              window.recheckAudio = function () {
+                applySilentGameState();
+              };
+          } catch (error) {}
+          try {
+            if (typeof window.initAudioListeners === "function")
+              window.initAudioListeners = function () {
+                applySilentGameState();
+                return function () {};
+              };
+          } catch (error) {}
+        }
+        window.applySilentGameState = applySilentGameState;
+        window.createSilentAudioManager = createSilentAudioManager;
+        function scheduleSilentAudioStabilization() {
+          [0, 50, 250, 1000].forEach(function (delay) {
+            setTimeout(function () {
+              applySilentGameState();
+            }, delay);
+          });
+        }
+        applySilentGameState();
+        scheduleSilentAudioStabilization();
+        window.addEventListener("load", applySilentGameState, { once: true });
+        const ytgame = {
+          IN_PLAYABLES_ENV: false,
+          SDK_VERSION: "standalone",
+          SdkError: function StandaloneSdkError() {},
+          SdkErrorType: {},
+          ads: {
+            requestAd: function () {
+              return Promise.resolve(0);
+            },
+          },
+          engagement: {
+            sendScore: function () {
+              return Promise.resolve();
+            },
+            openYTContent: function () {
+              return Promise.resolve();
+            },
+          },
+          game: {
+            saveData: function (value) {
+              const serialized = value == null ? "" : String(value);
+              try {
+                sandboxStorage.setItem(standaloneSaveKey, serialized);
+                notify(dataListeners, serialized);
+                return Promise.resolve();
+              } catch (error) {
+                return Promise.reject(error);
+              }
+            },
+            loadData: function () {
+              try {
+                return Promise.resolve(
+                  sandboxStorage.getItem(standaloneSaveKey) || "",
+                );
+              } catch (error) {
+                return Promise.resolve("");
+              }
+            },
+            firstFrameReady: function () {
+              return Promise.resolve();
+            },
+            gameReady: function () {
+              return Promise.resolve();
+            },
+            onGameDataAvailable: function (callback) {
+              return addListener(dataListeners, callback);
+            },
+            shareInviteCode: function () {
+              return Promise.resolve();
+            },
+          },
+          health: {
+            logError: function () {},
+            logWarning: function () {},
+          },
+          system: {
+            onAudioEnabledChange: function (callback) {
+              return addListener(audioListeners, callback, [false]);
+            },
+            isAudioEnabled: function () {
+              return false;
+            },
+            onPause: function (callback) {
+              return addListener(pauseListeners, callback);
+            },
+            onResume: function (callback) {
+              return addListener(resumeListeners, callback);
+            },
+            getLanguage: function () {
+              const language =
+                (navigator.language || "en").split("-")[0] || "en";
+              return Promise.resolve(language);
+            },
+          },
+        };
+        window.ytgame = ytgame;
+      })();
+    </script>
+    <style>
       html,
       body {
         margin: 0;
         width: 100%;
         height: 100%;
-        overflow: hidden; 
+        overflow: hidden;
         background: #5dc7e7
           url(data:image/png;base64,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);
       }
@@ -7287,516 +7425,510 @@
       }
 
       .pixelated {
-        image-rendering: optimizeSpeed; 
-        image-rendering: -moz-crisp-edges; 
-        image-rendering: -o-crisp-edges; 
-        image-rendering: -webkit-optimize-contrast; 
-        image-rendering: pixelated; 
-        image-rendering: optimize-contrast; 
-        -ms-interpolation-mode: nearest-neighbor; 
+        image-rendering: optimizeSpeed;
+        image-rendering: -moz-crisp-edges;
+        image-rendering: -o-crisp-edges;
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: pixelated;
+        image-rendering: optimize-contrast;
+        -ms-interpolation-mode: nearest-neighbor;
       }
 
       #container {
-        width: 100%; 
-        height: 100%; 
-        position: fixed; 
-        top: 0; 
-        left: 0; 
-        overflow: hidden; 
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        overflow: hidden;
         box-shadow: #31b8e0 0px 0px 50px;
       }
 
       #wrapper {
         width: 100%;
         height: 100%;
-        position: relative; 
+        position: relative;
         min-height: 100vh;
-        overflow: hidden; 
+        overflow: hidden;
       }
-
-      
     </style>
 
     <script nonce="2KHli9LrFFijH2jCb5SkMw">
-
       setTimeout(function () {
-         (function (modules) {
-           var installedModules = {};
-           function __webpack_require__(moduleId) {
-             if (installedModules[moduleId]) {
-               return installedModules[moduleId].exports;
+        (function (modules) {
+          var installedModules = {};
+          function __webpack_require__(moduleId) {
+            if (installedModules[moduleId]) {
+              return installedModules[moduleId].exports;
             }
-             var module = (installedModules[moduleId] = {
-               i: moduleId,
-               l: false,
-               exports: {},
+            var module = (installedModules[moduleId] = {
+              i: moduleId,
+              l: false,
+              exports: {},
             });
-             modules[moduleId].call(
+            modules[moduleId].call(
               module.exports,
               module,
               module.exports,
               __webpack_require__,
             );
-             module.l = true;
-             return module.exports;
+            module.l = true;
+            return module.exports;
           }
-           __webpack_require__.m = modules;
-           __webpack_require__.c = installedModules;
-           __webpack_require__.i = function (value) {
+          __webpack_require__.m = modules;
+          __webpack_require__.c = installedModules;
+          __webpack_require__.i = function (value) {
             return value;
           };
-           __webpack_require__.d = function (exports, name, getter) {
-             if (!__webpack_require__.o(exports, name)) {
-               Object.defineProperty(exports, name, {
-                 configurable: false,
-                 enumerable: true,
-                 get: getter,
+          __webpack_require__.d = function (exports, name, getter) {
+            if (!__webpack_require__.o(exports, name)) {
+              Object.defineProperty(exports, name, {
+                configurable: false,
+                enumerable: true,
+                get: getter,
               });
             }
           };
-           __webpack_require__.n = function (module) {
-             var getter =
+          __webpack_require__.n = function (module) {
+            var getter =
               module && module.__esModule
-                ?  function getDefault() {
+                ? function getDefault() {
                     return module["default"];
                   }
-                :  function getModuleExports() {
+                : function getModuleExports() {
                     return module;
                   };
-             __webpack_require__.d(getter, "a", getter);
-             return getter;
+            __webpack_require__.d(getter, "a", getter);
+            return getter;
           };
-           __webpack_require__.o = function (object, property) {
+          __webpack_require__.o = function (object, property) {
             return Object.prototype.hasOwnProperty.call(object, property);
           };
-           __webpack_require__.p = "";
-           return __webpack_require__((__webpack_require__.s = 16));
-        })(
-           {
-             16:  function (module, exports, __webpack_require__) {
-               window.firstIterationToggle = true;
-              window.devToolsEnabled = !true;
-              window.pokiDebug = !true;
-              window.minAspect = 9 / 16;
-              window.maxAspect = 16 / 9;
-              var skipPreroll = true; 
-              var loaderBg = "#7bcbed";
-              var minDimensions = { width: 0, height: 0 };
-              var maxDimensions = { width: Infinity, height: Infinity };
-               var audioContextCheck =
-                typeof AudioContext !== "undefined"
-                  ? AudioContext
-                  : typeof webkitAudioContext !== "undefined"
-                    ? webkitAudioContext
-                    : undefined; 
-              var DOMReadyTime,
-                loadingScreen,
-                hipsterWhale,
-                wrapper,
-                loadingDone,
-                brandingDone,
-                started; 
-              wrapper = document.createElement("div");
-              wrapper.id = "container";
-              wrapper.style.position = "absolute";
-              wrapper.style.left = "50%";
-              wrapper.style.top = "50%";
-              wrapper.style.background = loaderBg; 
-              onDOMReady(function () {
-                DOMReadyTime = performance.now();
-                window.bodyRect = document.body.getBoundingClientRect();
-                document.body.appendChild(wrapper);
-                resize();
-                window.addEventListener("resize", resize); 
-                loadScript("scripts/asset-loader.min.js", loadPreroll);
-              }); 
-              window.onload = function () {
-                window.bodyRect = document.body.getBoundingClientRect();
-              }; 
-              function showHipsterSplash() {
-                hipsterWhale.show();
-                hipsterWhale.play(function () {
-                  brandingDone = true;
-                  loadingScreen.show(skipPreroll);
-                  attemptStart();
-                });
-              }
-              function loadPreroll() {
-                AssetLoader.add.script("scripts/loading-flow.min.js");
-                AssetLoader.add.image("sprites/poki-icon.png");
-                AssetLoader.add.image("sprites/poki-logo.png");
-                AssetLoader.load(function () {
-                  var preroll = new PokiPreroll();
-                  preroll.wrapper = wrapper;
-                  preroll.logoSrc = AssetLoader.getAssetById(
-                    "sprites/poki-logo.png",
-                  ).src;
-                  preroll.createElements();
-                  if (!skipPreroll) {
-                    preroll.play(showHipsterSplash);
-                  } 
-                  AssetLoader.add.image("sprites/hipster-1.png");
-                  AssetLoader.add.image("sprites/hipster-2.png");
-                  AssetLoader.add.image("sprites/hipster-3.png");
-                  AssetLoader.add.image("sprites/whale-1.png");
-                  AssetLoader.add.image("sprites/whale-2.png");
-                  AssetLoader.add.image("sprites/whale-3.png");
-                  AssetLoader.add.image("sprites/hipster-whale.png");
-                  AssetLoader.add.script("scripts/tween.min.js");
-                  AssetLoader.add.plainAudio("plain-audio/splashintro.mp4");
-                  AssetLoader.load(function () {
-                    preroll.allowClose();
-                    hipsterWhaleBranding();
-                  });
-                }); 
-                AssetLoader.loader.script("scripts/three.min.js");
-              }
-              function hipsterWhaleBranding() {
-                hipsterWhale = new HipsterWhale();
-                hipsterWhale.wrapper = wrapper;
-                hipsterWhale.logoSrc = AssetLoader.getAssetById(
-                  "sprites/hipster-whale.png",
-                );
-                hipsterWhale.hipsters = [
-                  AssetLoader.getAssetById("sprites/hipster-1.png"),
-                  AssetLoader.getAssetById("sprites/hipster-2.png"),
-                  AssetLoader.getAssetById("sprites/hipster-3.png"),
-                ];
-                hipsterWhale.whales = [
-                  AssetLoader.getAssetById("sprites/whale-1.png"),
-                  AssetLoader.getAssetById("sprites/whale-2.png"),
-                  AssetLoader.getAssetById("sprites/whale-3.png"),
-                ]; 
-                AssetLoader.add.image("sprites/crossy-road-logo.png");
-                AssetLoader.add.webFont("EditUndoBrk", "fonts/EditUndoBrk.css");
-                AssetLoader.add.webFont("8bitwonder", "fonts/8bitwonder.css");
-                AssetLoader.add.script("scripts/three.min.js"); 
-                AssetLoader.load(function () {
-                  hipsterWhale.allowClose();
-                  loadGame();
-                });
-              } 
-              function loadGame() {
-                loadingScreen = new LoadingScreen();
-                loadingScreen.bgColor = loaderBg;
-                loadingScreen.wrapper = wrapper;
-                loadingScreen.gameLogoSrc = hipsterWhale.logoSrc.src;
-                loadingScreen.pokiLogoSrc = AssetLoader.getAssetById(
+          __webpack_require__.p = "";
+          return __webpack_require__((__webpack_require__.s = 16));
+        })({
+          16: function (module, exports, __webpack_require__) {
+            window.firstIterationToggle = true;
+            window.devToolsEnabled = !true;
+            window.pokiDebug = !true;
+            window.minAspect = 9 / 16;
+            window.maxAspect = 16 / 9;
+            var skipPreroll = true;
+            var loaderBg = "#7bcbed";
+            var minDimensions = { width: 0, height: 0 };
+            var maxDimensions = { width: Infinity, height: Infinity };
+            var audioContextCheck =
+              typeof AudioContext !== "undefined"
+                ? AudioContext
+                : typeof webkitAudioContext !== "undefined"
+                  ? webkitAudioContext
+                  : undefined;
+            var DOMReadyTime,
+              loadingScreen,
+              hipsterWhale,
+              wrapper,
+              loadingDone,
+              brandingDone,
+              started;
+            wrapper = document.createElement("div");
+            wrapper.id = "container";
+            wrapper.style.position = "absolute";
+            wrapper.style.left = "50%";
+            wrapper.style.top = "50%";
+            wrapper.style.background = loaderBg;
+            onDOMReady(function () {
+              DOMReadyTime = performance.now();
+              window.bodyRect = document.body.getBoundingClientRect();
+
+              document.body.appendChild(wrapper);
+              resize();
+              window.addEventListener("resize", resize);
+              loadScript("scripts/asset-loader.min.js", loadPreroll);
+            });
+            window.onload = function () {
+              window.bodyRect = document.body.getBoundingClientRect();
+            };
+            function showHipsterSplash() {
+              hipsterWhale.show();
+              hipsterWhale.play(function () {
+                brandingDone = true;
+                loadingScreen.show(skipPreroll);
+                attemptStart();
+              });
+            }
+            function loadPreroll() {
+              AssetLoader.add.script("scripts/loading-flow.min.js");
+              AssetLoader.add.image("sprites/poki-icon.png");
+              AssetLoader.add.image("sprites/poki-logo.png");
+              AssetLoader.load(function () {
+                var preroll = new PokiPreroll();
+                preroll.wrapper = wrapper;
+                preroll.logoSrc = AssetLoader.getAssetById(
                   "sprites/poki-logo.png",
                 ).src;
-                AssetLoader.progressListener =
-                  loadingScreen.updateProgress.bind(loadingScreen);
-                AssetLoader.maxConcurrency = 5; 
-                AssetLoader.add.script("scripts/game.min.js"); 
-                AssetLoader.add.spriteSheet(
-                  "sprites/CrossyUI.png",
-                  "sprites/CrossyUI.json",
-                );
-                AssetLoader.add.bitmapText(
-                  "fonts/8-bit-wonder.png",
-                  "fonts/8-bit-wonder.json",
-                );
-                AssetLoader.add.bitmapText(
-                  "fonts/8-bit-wonder-yellow.png",
-                  "fonts/8-bit-wonder.json",
-                );
-                AssetLoader.add.image("sprites/particles.png");
-                AssetLoader.add.image("sprites/trex.png");
-                AssetLoader.add.image("sprites/trex-phone.png");
-                if (
-                  !true ||
-                  typeof audioContextCheck === "undefined" ||
-                  typeof audioContextCheck.prototype === "undefined" ||
-                  typeof audioContextCheck.prototype.decodeAudioData ===
-                    "undefined"
-                ) {
-                  var audioFiles = [
-                    "GameReward.mp4",
-                    "coinhop.mp4",
-                    "rapidsdeath3.mp4",
-                    "TrainAlarm.mp4",
-                    "coinhop2.mp4",
-                    "rapidsdeath9.mp4",
-                    "TrainBell2.mp4",
-                    "drown1.mp4",
-                    "river.mp4",
-                    "TrainBell.mp4",
-                    "drown2.mp4",
-                    "scoretop.mp4",
-                    "birdflyaway.mp4",
-                    "eaglehit.mp4",
-                    "car-horn.mp4",
-                    "hawk-screech-02.mp4",
-                    "trainbell3.mp4",
-                    "car1.mp4",
-                    "hop2.mp4",
-                    "trainpassnohorn.mp4",
-                    "car2.mp4",
-                    "insertcoin.mp4",
-                    "trainpassshorter.mp4",
-                    "car3.mp4",
-                    "lilysplash.mp4",
-                    "trainsplat.mp4",
-                    "carhit.mp4",
-                    "logjump.mp4",
-                    "watersplash.mp4",
-                    "carsquish.mp4",
-                    "logjump2.mp4",
-                    "watersplashlow.mp4",
-                    "carsquish3.mp4",
-                    "logjump3.mp4",
-                    "GetCoin79wav.mp4",
-                    "coin2.mp4",
-                    "logjump4.mp4",
-                    "Pop_1.mp4",
-                    "Pop_3.mp4",
-                    "Pop_5.mp4",
-                    "Pop_7.mp4",
-                    "Pop_9.mp4",
-                    "Pop_2.mp4",
-                    "Pop_4.mp4",
-                    "Pop_6.mp4",
-                    "Pop_8.mp4",
-                    "robot/Pulses_Electric_Spark_02.mp4",
-                    "robot/robothop4.mp4",
-                    "robot/grenade1.mp4",
-                    "robot/robothopshort2.mp4",
-                    "robot/robothop1.mp4",
-                    "robot/robothopshort.mp4",
-                    "robot/robothop2.mp4",
-                    "robot/robotexplode.mp4",
-                    "robot/robothop3.mp4",
-                    "robot/robotloop.mp4",
-                    "cat/cat1.mp4",
-                    "cat/cat2.mp4",
-                    "cat/cat3.mp4",
-                    "cat/cat4.mp4",
-                    "chicken/buck1.mp4",
-                    "chicken/buck5.mp4",
-                    "chicken/buck10.mp4",
-                    "chicken/buck6.mp4",
-                    "chicken/buck11.mp4",
-                    "chicken/buck7.mp4",
-                    "chicken/buck12.mp4",
-                    "chicken/buck8.mp4",
-                    "chicken/buck2.mp4",
-                    "chicken/buck9.mp4",
-                    "chicken/buck3.mp4",
-                    "chicken/chickendeath.mp4",
-                    "chicken/buck4.mp4",
-                    "chicken/chickendeath2.mp4",
-                    "mallard/quack1.mp4",
-                    "mallard/quack3.mp4",
-                    "mallard/quack5.mp4",
-                    "mallard/quack2.mp4",
-                    "mallard/quack4.mp4",
-                    "bannerhit3-g.mp4",
-                    "prize/counting-of-money-short.mp4",
-                    "prize/insert-coin.mp4",
-                    "prize/SlotMachineInsert.mp4",
-                    "prize/InsertingCoinIntoMachinev1.mp4",
-                    "prize/InsertingCoinIntoMachinev2.mp4",
-                    "prize/InsertingCoinIntoMachinev3.mp4",
-                    "prize/InsertingCoinIntoMachinev4.mp4",
-                    "prize/coininsert3.mp4",
-                    "prize/PrizeWheel.mp4",
-                    "prize/casinomachine.mp4",
-                    "prize/UnlockPlain.mp4",
-                    "prize/clickball.mp4",
-                    "prize/prizewinner.mp4",
-                    "prize/playslotsmachine.mp4",
-                    "gift/openbox.mp4",
-                    "gift/emptyingthepiggybank2.mp4",
-                    "gift/Earn_Points.mp4",
-                    "gift/booktap.mp4",
-                  ];
-                  audioFiles.forEach(function (element, idx) {
-                    AssetLoader.add.audio("audio/" + element); 
-                    if (false) {
-                      AssetLoader.queueNext();
-                    }
-                  });
-                } else {
-                  AssetLoader.setupAudioLoader();
-                  AssetLoader.add.archive("audio.zip", function (zip) {
-                    Object.keys(zip.files).forEach(function (key) {
-                      var file = zip.files[key]; 
-                      if (file.name.split(".").pop() !== "mp4") return;
-                      file.async("base64").then(function (content) {
-                        AssetLoader.audioLoader.load(
-                          "data:audio/mp4;base64," + content,
-                          function (buffer) {
-                            AssetLoader.loadedAssets[file.name] = buffer;
-                          },
-                        );
-                      });
+                preroll.createElements();
+                if (!skipPreroll) {
+                  preroll.play(showHipsterSplash);
+                }
+                AssetLoader.add.image("sprites/hipster-1.png");
+                AssetLoader.add.image("sprites/hipster-2.png");
+                AssetLoader.add.image("sprites/hipster-3.png");
+                AssetLoader.add.image("sprites/whale-1.png");
+                AssetLoader.add.image("sprites/whale-2.png");
+                AssetLoader.add.image("sprites/whale-3.png");
+                AssetLoader.add.image("sprites/hipster-whale.png");
+                AssetLoader.add.script("scripts/tween.min.js");
+                AssetLoader.add.plainAudio("plain-audio/splashintro.mp4");
+                AssetLoader.load(function () {
+                  preroll.allowClose();
+                  hipsterWhaleBranding();
+                });
+              });
+              AssetLoader.loader.script("scripts/three.min.js");
+            }
+            function hipsterWhaleBranding() {
+              hipsterWhale = new HipsterWhale();
+              hipsterWhale.wrapper = wrapper;
+              hipsterWhale.logoSrc = AssetLoader.getAssetById(
+                "sprites/hipster-whale.png",
+              );
+              hipsterWhale.hipsters = [
+                AssetLoader.getAssetById("sprites/hipster-1.png"),
+                AssetLoader.getAssetById("sprites/hipster-2.png"),
+                AssetLoader.getAssetById("sprites/hipster-3.png"),
+              ];
+              hipsterWhale.whales = [
+                AssetLoader.getAssetById("sprites/whale-1.png"),
+                AssetLoader.getAssetById("sprites/whale-2.png"),
+                AssetLoader.getAssetById("sprites/whale-3.png"),
+              ];
+              AssetLoader.add.image("sprites/crossy-road-logo.png");
+              AssetLoader.add.webFont("EditUndoBrk", "fonts/EditUndoBrk.css");
+              AssetLoader.add.webFont("8bitwonder", "fonts/8bitwonder.css");
+              AssetLoader.add.script("scripts/three.min.js");
+              AssetLoader.load(function () {
+                hipsterWhale.allowClose();
+                loadGame();
+              });
+            }
+            function loadGame() {
+              loadingScreen = new LoadingScreen();
+              loadingScreen.bgColor = loaderBg;
+              loadingScreen.wrapper = wrapper;
+              loadingScreen.gameLogoSrc = hipsterWhale.logoSrc.src;
+              loadingScreen.pokiLogoSrc = AssetLoader.getAssetById(
+                "sprites/poki-logo.png",
+              ).src;
+              AssetLoader.progressListener =
+                loadingScreen.updateProgress.bind(loadingScreen);
+              AssetLoader.maxConcurrency = 5;
+              AssetLoader.add.script("scripts/game.min.js");
+              AssetLoader.add.spriteSheet(
+                "sprites/CrossyUI.png",
+                "sprites/CrossyUI.json",
+              );
+              AssetLoader.add.bitmapText(
+                "fonts/8-bit-wonder.png",
+                "fonts/8-bit-wonder.json",
+              );
+              AssetLoader.add.bitmapText(
+                "fonts/8-bit-wonder-yellow.png",
+                "fonts/8-bit-wonder.json",
+              );
+              AssetLoader.add.image("sprites/particles.png");
+              AssetLoader.add.image("sprites/trex.png");
+              AssetLoader.add.image("sprites/trex-phone.png");
+              if (
+                !true ||
+                typeof audioContextCheck === "undefined" ||
+                typeof audioContextCheck.prototype === "undefined" ||
+                typeof audioContextCheck.prototype.decodeAudioData ===
+                  "undefined"
+              ) {
+                var audioFiles = [
+                  "GameReward.mp4",
+                  "coinhop.mp4",
+                  "rapidsdeath3.mp4",
+                  "TrainAlarm.mp4",
+                  "coinhop2.mp4",
+                  "rapidsdeath9.mp4",
+                  "TrainBell2.mp4",
+                  "drown1.mp4",
+                  "river.mp4",
+                  "TrainBell.mp4",
+                  "drown2.mp4",
+                  "scoretop.mp4",
+                  "birdflyaway.mp4",
+                  "eaglehit.mp4",
+                  "car-horn.mp4",
+                  "hawk-screech-02.mp4",
+                  "trainbell3.mp4",
+                  "car1.mp4",
+                  "hop2.mp4",
+                  "trainpassnohorn.mp4",
+                  "car2.mp4",
+                  "insertcoin.mp4",
+                  "trainpassshorter.mp4",
+                  "car3.mp4",
+                  "lilysplash.mp4",
+                  "trainsplat.mp4",
+                  "carhit.mp4",
+                  "logjump.mp4",
+                  "watersplash.mp4",
+                  "carsquish.mp4",
+                  "logjump2.mp4",
+                  "watersplashlow.mp4",
+                  "carsquish3.mp4",
+                  "logjump3.mp4",
+                  "GetCoin79wav.mp4",
+                  "coin2.mp4",
+                  "logjump4.mp4",
+                  "Pop_1.mp4",
+                  "Pop_3.mp4",
+                  "Pop_5.mp4",
+                  "Pop_7.mp4",
+                  "Pop_9.mp4",
+                  "Pop_2.mp4",
+                  "Pop_4.mp4",
+                  "Pop_6.mp4",
+                  "Pop_8.mp4",
+                  "robot/Pulses_Electric_Spark_02.mp4",
+                  "robot/robothop4.mp4",
+                  "robot/grenade1.mp4",
+                  "robot/robothopshort2.mp4",
+                  "robot/robothop1.mp4",
+                  "robot/robothopshort.mp4",
+                  "robot/robothop2.mp4",
+                  "robot/robotexplode.mp4",
+                  "robot/robothop3.mp4",
+                  "robot/robotloop.mp4",
+                  "cat/cat1.mp4",
+                  "cat/cat2.mp4",
+                  "cat/cat3.mp4",
+                  "cat/cat4.mp4",
+                  "chicken/buck1.mp4",
+                  "chicken/buck5.mp4",
+                  "chicken/buck10.mp4",
+                  "chicken/buck6.mp4",
+                  "chicken/buck11.mp4",
+                  "chicken/buck7.mp4",
+                  "chicken/buck12.mp4",
+                  "chicken/buck8.mp4",
+                  "chicken/buck2.mp4",
+                  "chicken/buck9.mp4",
+                  "chicken/buck3.mp4",
+                  "chicken/chickendeath.mp4",
+                  "chicken/buck4.mp4",
+                  "chicken/chickendeath2.mp4",
+                  "mallard/quack1.mp4",
+                  "mallard/quack3.mp4",
+                  "mallard/quack5.mp4",
+                  "mallard/quack2.mp4",
+                  "mallard/quack4.mp4",
+                  "bannerhit3-g.mp4",
+                  "prize/counting-of-money-short.mp4",
+                  "prize/insert-coin.mp4",
+                  "prize/SlotMachineInsert.mp4",
+                  "prize/InsertingCoinIntoMachinev1.mp4",
+                  "prize/InsertingCoinIntoMachinev2.mp4",
+                  "prize/InsertingCoinIntoMachinev3.mp4",
+                  "prize/InsertingCoinIntoMachinev4.mp4",
+                  "prize/coininsert3.mp4",
+                  "prize/PrizeWheel.mp4",
+                  "prize/casinomachine.mp4",
+                  "prize/UnlockPlain.mp4",
+                  "prize/clickball.mp4",
+                  "prize/prizewinner.mp4",
+                  "prize/playslotsmachine.mp4",
+                  "gift/openbox.mp4",
+                  "gift/emptyingthepiggybank2.mp4",
+                  "gift/Earn_Points.mp4",
+                  "gift/booktap.mp4",
+                ];
+                audioFiles.forEach(function (element, idx) {
+                  AssetLoader.add.audio("audio/" + element);
+                  if (false) {
+                    AssetLoader.queueNext();
+                  }
+                });
+              } else {
+                AssetLoader.setupAudioLoader();
+                AssetLoader.add.archive("audio.zip", function (zip) {
+                  Object.keys(zip.files).forEach(function (key) {
+                    var file = zip.files[key];
+                    if (file.name.split(".").pop() !== "mp4") return;
+                    file.async("base64").then(function (content) {
+                      AssetLoader.audioLoader.load(
+                        "data:audio/mp4;base64," + content,
+                        function (buffer) {
+                          AssetLoader.loadedAssets[file.name] = buffer;
+                        },
+                      );
                     });
                   });
-                } 
-                loadingScreen.init();
-                if (skipPreroll) {
-                  loadingScreen.show(skipPreroll);
-                } 
-                AssetLoader.load(function () {
-                  loadingScreen.forceSkip = true; 
-                  loadingDone = true;
-                  attemptStart();
                 });
-              } 
-              function startGame() {
-                var loadingTimeTotal = performance.now() - DOMReadyTime;
-                var loadingTimeLoadingScreen =
-                  performance.now() -
-                  (loadingScreen.startTime || performance.now()); 
-                window.container = wrapper;
-                if (typeof window.applySilentGameState === "function") {
-                  window.applySilentGameState();
-                }
-                window.start();
               }
-              function attemptStart() {
-                if (started) return;
-                if (!loadingDone || (!brandingDone && !skipPreroll)) return;
-                started = true; 
-                startGame();
-                loadingScreen.destroy();
+              loadingScreen.init();
+              if (skipPreroll) {
+                loadingScreen.show(skipPreroll);
               }
-               function loadScript(src, callback) {
-                var el = document.createElement("script");
-                el.src = typeof rewriteURL === "function" ? rewriteURL(src) : src;
-                el.onload = callback;
-                document.head.appendChild(el);
+              AssetLoader.load(function () {
+                loadingScreen.forceSkip = true;
+                loadingDone = true;
+                attemptStart();
+              });
+            }
+            function startGame() {
+              var loadingTimeTotal = performance.now() - DOMReadyTime;
+              var loadingTimeLoadingScreen =
+                performance.now() -
+                (loadingScreen.startTime || performance.now());
+              window.container = wrapper;
+              if (typeof window.applySilentGameState === "function") {
+                window.applySilentGameState();
               }
-               function onDOMReady(callback) {
+              window.start();
+            }
+            function attemptStart() {
+              if (started) return;
+              if (!loadingDone || (!brandingDone && !skipPreroll)) return;
+              started = true;
+              startGame();
+              loadingScreen.destroy();
+            }
+            function loadScript(src, callback) {
+              var el = document.createElement("script");
+              el.src = typeof rewriteURL === "function" ? rewriteURL(src) : src;
+              el.onload = callback;
+              document.head.appendChild(el);
+            }
+            function onDOMReady(callback) {
+              if (
+                document.attachEvent
+                  ? document.readyState === "complete"
+                  : document.readyState !== "loading"
+              ) {
+                callback();
+              } else {
+                document.addEventListener("DOMContentLoaded", callback);
+              }
+            }
+            function resize() {
+              window.bodyRect = document.body.getBoundingClientRect();
+              var windowAspect = bodyRect.width / bodyRect.height;
+              var wrapperAspect = Clamp(
+                windowAspect,
+                window.minAspect,
+                window.maxAspect,
+              );
+              var width, height;
+              if (windowAspect > wrapperAspect) {
+                height = bodyRect.height;
+                width = height * wrapperAspect;
+              } else {
+                width = bodyRect.width;
+                height = width / wrapperAspect;
+              }
+              width = Clamp(width, minDimensions.width, maxDimensions.width);
+              height = Clamp(
+                height,
+                minDimensions.height,
+                maxDimensions.height,
+              );
+              wrapper.style.width = width + "px";
+              wrapper.style.height = height + "px";
+              wrapper.style.marginLeft = -width * 0.5 + "px";
+              wrapper.style.marginTop = -height * 0.5 + "px";
+            }
+            function checkVisible(callback) {
+              if (bodyRect.width === 0 || bodyRect.height === 0) {
+                window.setTimeout(function () {
+                  checkVisible(callback);
+                }, 100);
+              } else {
+                callback();
+              }
+            }
+            function Clamp(value, min, max) {
+              return Math.min(Math.max(value, min), max);
+            }
+            window.isMobile = (function () {
+              var check = false;
+              (function (a) {
                 if (
-                  document.attachEvent
-                    ? document.readyState === "complete"
-                    : document.readyState !== "loading"
-                ) {
-                  callback();
-                } else {
-                  document.addEventListener("DOMContentLoaded", callback);
-                }
-              }
-               function resize() {
-                window.bodyRect = document.body.getBoundingClientRect();
-                var windowAspect = bodyRect.width / bodyRect.height;
-                var wrapperAspect = Clamp(
-                  windowAspect,
-                  window.minAspect,
-                  window.maxAspect,
-                );
-                var width, height;
-                if (windowAspect > wrapperAspect) {
-                  height = bodyRect.height;
-                  width = height * wrapperAspect;
-                } else {
-                  width = bodyRect.width;
-                  height = width / wrapperAspect;
-                }
-                width = Clamp(width, minDimensions.width, maxDimensions.width);
-                height = Clamp(
-                  height,
-                  minDimensions.height,
-                  maxDimensions.height,
-                );
-                wrapper.style.width = width + "px";
-                wrapper.style.height = height + "px";
-                wrapper.style.marginLeft = -width * 0.5 + "px";
-                wrapper.style.marginTop = -height * 0.5 + "px"; 
-              }
-               function checkVisible(callback) {
-                if (bodyRect.width === 0 || bodyRect.height === 0) {
-                  window.setTimeout(function () {
-                    checkVisible(callback);
-                  }, 100);
-                } else {
-                  callback();
-                }
-              }
-               function Clamp(value, min, max) {
-                return Math.min(Math.max(value, min), max);
-              }
-              window.isMobile = (function () {
-                var check = false;
-                (function (a) {
-                  if (
-                    /(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk/i.test(
-                      a,
-                    ) ||
-                    /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(
-                      a.substr(0, 4),
-                    )
+                  /(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk/i.test(
+                    a,
+                  ) ||
+                  /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(
+                    a.substr(0, 4),
                   )
-                    check = true;
-                })(navigator.userAgent || navigator.vendor || window.opera);
-                return check;
-              })();
-              window.isFirefox = (function () {
-                return /firefox/i.test(navigator.userAgent);
-              })();
-              window.isChrome = (function () {
-                var isChromium = window.chrome,
-                  winNav = window.navigator,
-                  vendorName = winNav.vendor,
-                  isOpera = winNav.userAgent.indexOf("OPR") > -1,
-                  isIEedge = winNav.userAgent.indexOf("Edge") > -1,
-                  isIOSChrome = winNav.userAgent.match("CriOS");
-                if (isIOSChrome) {
-                  return true;
-                } else if (
-                  isChromium !== null &&
-                  isChromium !== undefined &&
-                  vendorName === "Google Inc." &&
-                  isOpera == false &&
-                  isIEedge == false
-                ) {
-                  return true;
-                }
-                return false;
-              })();
-              window.isSilkBrowser = (function () {
-                var match =
-                  /(?:; ([^;)]+) Build\/.*)?\bSilk\/([0-9._-]+)\b(.*\bMobile Safari\b)?/.exec(
-                    navigator.userAgent,
-                  );
-                return !!match;
-              })(); 
-              if (!window.performance || !window.performance.now) {
-                Date.now ||
-                  (Date.now = function () {
-                    return new this().getTime();
-                  });
-                (window.performance || (window.performance = {})).now =
-                  function () {
-                    return Date.now() - offset;
-                  };
-                var offset =
-                  (
-                    window.performance.timing ||
-                    (window.performance.timing = {})
-                  ).navigatorStart ||
-                  (window.performance.timing.navigatorStart = Date.now());
+                )
+                  check = true;
+              })(navigator.userAgent || navigator.vendor || window.opera);
+              return check;
+            })();
+            window.isFirefox = (function () {
+              return /firefox/i.test(navigator.userAgent);
+            })();
+            window.isChrome = (function () {
+              var isChromium = window.chrome,
+                winNav = window.navigator,
+                vendorName = winNav.vendor,
+                isOpera = winNav.userAgent.indexOf("OPR") > -1,
+                isIEedge = winNav.userAgent.indexOf("Edge") > -1,
+                isIOSChrome = winNav.userAgent.match("CriOS");
+              if (isIOSChrome) {
+                return true;
+              } else if (
+                isChromium !== null &&
+                isChromium !== undefined &&
+                vendorName === "Google Inc." &&
+                isOpera == false &&
+                isIEedge == false
+              ) {
+                return true;
               }
-              function getQueryVariable(variable) {
-                var query = window.location.search.substring(1);
-                var vars = query.split("&");
-                for (var i = 0; i < vars.length; i++) {
-                  var pair = vars[i].split("=");
-                  if (pair[0] == variable) {
-                    return pair[1];
-                  }
+              return false;
+            })();
+            window.isSilkBrowser = (function () {
+              var match =
+                /(?:; ([^;)]+) Build\/.*)?\bSilk\/([0-9._-]+)\b(.*\bMobile Safari\b)?/.exec(
+                  navigator.userAgent,
+                );
+              return !!match;
+            })();
+            if (!window.performance || !window.performance.now) {
+              Date.now ||
+                (Date.now = function () {
+                  return new this().getTime();
+                });
+              (window.performance || (window.performance = {})).now =
+                function () {
+                  return Date.now() - offset;
+                };
+              var offset =
+                (window.performance.timing || (window.performance.timing = {}))
+                  .navigatorStart ||
+                (window.performance.timing.navigatorStart = Date.now());
+            }
+            function getQueryVariable(variable) {
+              var query = window.location.search.substring(1);
+              var vars = query.split("&");
+              for (var i = 0; i < vars.length; i++) {
+                var pair = vars[i].split("=");
+                if (pair[0] == variable) {
+                  return pair[1];
                 }
-                return false;
               }
-            },
+              return false;
+            }
           },
-        );
+        });
       }, 2000);
-</script>
+    </script>
   </head>
 
   <body>
     <canvas id="canvas"></canvas>
-</body>
+  </body>
 </html>
