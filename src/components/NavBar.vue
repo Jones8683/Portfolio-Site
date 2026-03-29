@@ -188,9 +188,8 @@ onUnmounted(() => window.removeEventListener("scroll", handleScroll));
 }
 
 .nav-icon:hover {
-  transform: translateY(-2px);
+  transform: translateY(-1px);
   background-color: rgba(148, 163, 184, 0.12);
-  box-shadow: 0 10px 24px rgba(30, 58, 138, 0.25);
 }
 
 .nav-icon svg {

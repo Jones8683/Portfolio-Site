@@ -257,20 +257,10 @@ function arenaSweep() {
   if (rowCount > 0) {
     const level = Math.floor(player.lines / 10) + 1;
     let base = 0;
-    let type = "";
-    if (rowCount === 1) {
-      base = 100;
-      type = "Single";
-    } else if (rowCount === 2) {
-      base = 300;
-      type = "Double";
-    } else if (rowCount === 3) {
-      base = 500;
-      type = "Triple";
-    } else if (rowCount === 4) {
-      base = 800;
-      type = "Tetris";
-    }
+    if (rowCount === 1) base = 100;
+    else if (rowCount === 2) base = 300;
+    else if (rowCount === 3) base = 500;
+    else if (rowCount === 4) base = 800;
 
     const points = base * level;
     player.score += points;
@@ -308,23 +298,6 @@ function playerLock() {
   dropCounter = 0;
   lockDelayCounter = 0;
   lockMovesCounter = 0;
-}
-
-function getPieceBounds(matrix) {
-  let minX = matrix[0].length;
-  let maxX = 0;
-  let found = false;
-  for (let y = 0; y < matrix.length; y++) {
-    for (let x = 0; x < matrix[y].length; x++) {
-      if (matrix[y][x] !== 0) {
-        if (x < minX) minX = x;
-        if (x > maxX) maxX = x;
-        found = true;
-      }
-    }
-  }
-  if (!found) return { xOffset: 0, width: matrix[0].length };
-  return { xOffset: minX, width: maxX - minX + 1 };
 }
 
 function playerHardDrop() {
@@ -547,8 +520,6 @@ function playerRotate(dir) {
 
   rotate(player.matrix, dir);
 
-  const initY = player.pos.y;
-
   for (const [kx, ky] of kicks) {
     player.pos.x += kx;
     player.pos.y += ky;
@@ -633,7 +604,7 @@ function togglePause() {
   } else {
     if (msg) msg.style.display = "none";
     lastTime = performance.now();
-    update();
+    update(performance.now());
   }
 }
 
@@ -750,7 +721,8 @@ function resetGame() {
   if (pMsg) pMsg.style.display = "none";
   playerReset();
   draw();
-  setTimeout(() => update(), 0);
+  lastTime = performance.now();
+  setTimeout(() => update(performance.now()), 0);
 }
 
 const preventDefaultKeys = (event) => {
@@ -845,11 +817,21 @@ onMounted(() => {
   document.addEventListener("keydown", handleKeydown);
   document.addEventListener("keyup", handleKeyup);
   window.addEventListener("blur", handleBlur);
-  playerReset();
-  updateScore();
+  arena.forEach((row) => row.fill(0));
+  dropCounter = 0;
+  lastTime = performance.now();
+  player.lines = 0;
+  player.score = 0;
+  player.hold = null;
+  player.next = null;
+  dropInterval = 1000;
+  isGameOver = false;
+  isPaused = false;
   window.player = player;
   window.updateScore = updateScore;
-  update();
+  playerReset();
+  updateScore();
+  update(performance.now());
 });
 
 onUnmounted(() => {
