@@ -442,10 +442,6 @@ onUnmounted(() => {
   outline: none;
 }
 
-.mobile-msg {
-  display: none;
-}
-
 .desktop-game {
   display: block;
 }
@@ -453,14 +449,6 @@ onUnmounted(() => {
 @media (max-width: 850px) {
   .desktop-game {
     display: none !important;
-  }
-  .mobile-msg {
-    display: flex !important;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    text-align: center;
-    padding: 0 20px;
   }
 }
 </style>

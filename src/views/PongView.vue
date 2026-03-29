@@ -626,17 +626,13 @@ canvas {
   margin: 5px;
   min-width: 140px;
 }
-.mobile-msg {
-  display: none;
+.desktop-game {
+  display: block;
 }
-@media (max-width: 900px) {
+
+@media (max-width: 850px) {
   .desktop-game {
     display: none !important;
-  }
-  .mobile-msg {
-    display: flex !important;
-    flex-direction: column;
-    align-items: center;
   }
 }
 </style>
