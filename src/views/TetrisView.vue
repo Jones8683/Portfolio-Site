@@ -415,7 +415,6 @@ function playerReset() {
   }
 }
 
-// SRS kick tables (screen coordinates: x right, y down)
 const KICKS_JLSTZ = {
   "01": [
     [0, 0],
@@ -569,7 +568,6 @@ function playerRotate(dir) {
     player.pos.y -= ky;
   }
 
-  // No valid kick found, undo
   rotate(player.matrix, -dir);
 }
 
