@@ -355,10 +355,6 @@ const bodyVisible = computed(() => ({
   background: transparent;
 }
 
-.desktop-game {
-  display: block;
-}
-
 .game-layout {
   display: flex;
   gap: 30px;
