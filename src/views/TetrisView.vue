@@ -699,18 +699,34 @@ function updateScore() {
   dropInterval = 1000 / (60 * currentG);
 
   if (level > lastLoggedLevel) {
-    console.log(`Level ${level}: Current G: ${currentG}`);
     lastLoggedLevel = level;
   }
 }
 
 function resetGame() {
+  cancelAnimationFrame(animationId);
+  animationId = null;
+
   lastLoggedLevel = 0;
   arena.forEach((row) => row.fill(0));
   player.score = 0;
   player.lines = 0;
   player.hold = null;
   player.next = null;
+  player.canHold = true;
+  dropCounter = 0;
+  dropInterval = 1000;
+  lockDelayCounter = 0;
+  lockMovesCounter = 0;
+  isLanded = false;
+  hardDropEffect = { active: false, alpha: 0, trails: [] };
+  keys[37].down = false;
+  keys[37].timer = 0;
+  keys[39].down = false;
+  keys[39].timer = 0;
+  keys[40].down = false;
+  keys[40].timer = 0;
+
   drawPreview(holdCtx, null);
   updateScore();
   isGameOver = false;
@@ -722,7 +738,7 @@ function resetGame() {
   playerReset();
   draw();
   lastTime = performance.now();
-  setTimeout(() => update(performance.now()), 0);
+  update(performance.now());
 }
 
 const preventDefaultKeys = (event) => {
