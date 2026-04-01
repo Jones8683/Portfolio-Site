@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
-import GameMobileMessage from "../components/GameMobileMessage.vue";
-import GameControls from "../components/GameControls.vue";
+import GameMobileMessage from "@/components/GameMobileMessage.vue";
+import GameControls from "@/components/GameControls.vue";
 
 const ROWS = 6;
 const COLS = 7;
@@ -270,34 +270,16 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-.game-page-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 85vh;
-  width: 100%;
-  text-align: center;
-  background: transparent;
-}
-
-.game-wrapper {
-  display: flex;
-  gap: 30px;
-  align-items: flex-start;
-  justify-content: center;
-}
-
 .left-section {
-  position: relative;
-  padding: 12px;
-  background: #1a1a1a;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 6px;
+}
+
+.game-title {
+  font-size: 48px;
+  letter-spacing: -2px;
 }
 
 .board {
@@ -358,9 +340,7 @@ onUnmounted(() => {
   height: 42px;
   border-radius: 50%;
   background: transparent;
-  transition:
-    background 0.1s ease,
-    box-shadow 0.1s ease;
+  transition: background 0.1s ease, box-shadow 0.1s ease;
 }
 
 .piece.p1 {
@@ -429,89 +409,23 @@ onUnmounted(() => {
   }
 }
 
-.right-section {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  width: 240px;
-  text-align: left;
-}
-
 .row {
   display: flex;
   gap: 15px;
   width: 100%;
 }
 
-.game-title {
-  font-size: 48px;
-  margin: 0 0 10px;
-  letter-spacing: -2px;
-  font-weight: 900;
-  color: white;
-  line-height: 1;
-  text-align: left;
-}
-
 .info-box {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
   flex: 1;
   aspect-ratio: 1;
 }
 
-.score-box {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 215, 0, 0.05),
-    rgba(255, 215, 0, 0.01)
-  );
-  border: 1px solid rgba(255, 215, 0, 0.3);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-}
-
 .turn-box {
   aspect-ratio: auto;
   min-height: 60px;
   padding: 8px;
-}
-
-.label {
-  font-size: 10px;
-  color: #94a3b8;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 8px;
-  width: 100%;
-  text-align: center;
-  font-weight: 700;
-}
-
-.score-label {
-  margin-bottom: 4px;
-}
-
-.value {
-  font-size: 32px;
-  font-weight: 900;
-  color: white;
-  word-break: break-all;
-  line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.score-value {
-  font-size: 32px;
-  color: #ffd700;
-  text-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
 }
 
 .turn-piece {
@@ -528,35 +442,5 @@ onUnmounted(() => {
 .turn-piece.p2 {
   background: #ff0d72;
   box-shadow: 0 0 10px rgba(255, 13, 114, 0.35);
-}
-
-.overlay-msg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.85);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-  border-radius: 16px;
-}
-
-.retry-btn {
-  background: white;
-  color: black;
-  border: none;
-  padding: 10px 20px;
-  font-weight: bold;
-  cursor: pointer;
-  border-radius: 4px;
-  outline: none;
-}
-
-.retry-btn:focus {
-  outline: none;
 }
 </style>

@@ -1,56 +1,9 @@
 <script setup>
 import { onMounted, onUnmounted } from "vue";
 import { useStorage } from "@vueuse/core";
-import GameMobileMessage from "../components/GameMobileMessage.vue";
-import GameControls from "../components/GameControls.vue";
-
-const STORAGE_TOKEN = "arcade-unity-v1";
-
-function scoreSig(payload, ts) {
-  const raw = `${STORAGE_TOKEN}:${payload}:${ts}`;
-  let h = 5381;
-  for (let i = 0; i < raw.length; i++) {
-    h = (h * 33) ^ raw.charCodeAt(i);
-  }
-  return (h >>> 0).toString(36).padStart(15, "0").slice(0, 15);
-}
-
-function toBase64Url(text) {
-  return btoa(text).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
-}
-
-function fromBase64Url(text) {
-  const b64 = text.replace(/-/g, "+").replace(/_/g, "/");
-  const pad = "=".repeat((4 - (b64.length % 4)) % 4);
-  return atob(b64 + pad);
-}
-
-function packValue(value) {
-  const ts = Date.now();
-  const safe = Number.isInteger(value) && value >= 0 ? value : 0;
-  const payload = `j${toBase64Url(JSON.stringify(safe))}`;
-  const sig = scoreSig(payload, ts);
-  const body = `${ts.toString(36)}:${sig}:${payload}`;
-  return `au1${toBase64Url(body)}`;
-}
-
-function unpackValue(raw) {
-  if (typeof raw !== "string" || !raw.startsWith("au1")) return null;
-  const body = fromBase64Url(raw.slice(3));
-  const firstSep = body.indexOf(":");
-  const secondSep = body.indexOf(":", firstSep + 1);
-  if (firstSep <= 0 || secondSep <= firstSep + 1) return null;
-  const ts = Number.parseInt(body.slice(0, firstSep), 36);
-  const sig = body.slice(firstSep + 1, secondSep);
-  const payload = body.slice(secondSep + 1);
-  if (!Number.isInteger(ts) || ts <= 0) return null;
-  if (sig !== scoreSig(payload, ts)) return null;
-  if (!payload.startsWith("j")) return null;
-  const parsed = JSON.parse(fromBase64Url(payload.slice(1)));
-  return Number.isInteger(parsed) && parsed >= 0 && parsed <= 9_999_999
-    ? parsed
-    : null;
-}
+import GameMobileMessage from "@/components/GameMobileMessage.vue";
+import GameControls from "@/components/GameControls.vue";
+import { createScoreSerializer } from "@/scoreStorage.js";
 
 let canvas, ctx, nextCtx, holdCtx;
 let animationId = null;
@@ -70,21 +23,7 @@ const colors = [
 const arena = createMatrix(12, 20);
 
 const highScore = useStorage("tetris-best-score", 0, localStorage, {
-  serializer: {
-    read: (v) => {
-      try {
-        if (!v) return 0;
-        const parsed = unpackValue(v);
-        if (Number.isInteger(parsed) && parsed >= 0) return parsed;
-        localStorage.removeItem("tetris-best-score");
-        return 0;
-      } catch (e) {
-        localStorage.removeItem("tetris-best-score");
-        return 0;
-      }
-    },
-    write: (v) => packValue(v),
-  },
+  serializer: createScoreSerializer("tetris-best-score"),
 });
 
 const player = {
@@ -1008,130 +947,20 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-.tetris-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 85vh;
-  width: 100%;
-  text-align: center;
-  background: transparent;
-}
-.game-wrapper {
-  display: flex;
-  gap: 30px;
-  align-items: flex-start;
-  justify-content: center;
-}
-.left-section {
-  position: relative;
-  padding: 12px;
-  background: #1a1a1a;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
-}
-.right-section {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  width: 240px;
-  text-align: left;
-}
-.row {
-  display: flex;
-  gap: 15px;
-  width: 100%;
-}
-.game-title {
-  font-size: 72px;
-  margin: 0 0 10px;
-  letter-spacing: -4px;
-  font-weight: 900;
-  color: white;
-  line-height: 1;
-  text-align: left;
-}
 .info-box {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   flex: 1;
   aspect-ratio: 1;
 }
+
 .score-box {
   aspect-ratio: auto;
-  min-height: 120px;
-  width: 100%;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 215, 0, 0.05),
-    rgba(255, 215, 0, 0.01)
-  );
-  border: 1px solid rgba(255, 215, 0, 0.3);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-}
-.label {
-  font-size: 10px;
-  color: #94a3b8;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 8px;
-  width: 100%;
-  text-align: center;
-  font-weight: 700;
-}
-.score-label {
-  color: #ffd700;
-  margin-bottom: 4px;
-}
-.value {
-  font-size: 20px;
-  font-weight: 900;
-  color: white;
-  word-break: break-all;
-  line-height: 1;
-}
-.score-value {
-  font-size: 42px;
-  color: #fff;
-  text-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
-}
-canvas {
-  display: block;
-  background-color: #0d0d0d;
-  border-radius: 4px;
-}
-.side-canvas {
-  background-color: transparent;
 }
 
-.overlay-msg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.85);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-  border-radius: 16px;
+#gameCanvas {
+  background-color: #0d0d0d;
 }
-.retry-btn {
-  background: white;
-  color: black;
-  border: none;
-  padding: 10px 20px;
-  font-weight: bold;
-  cursor: pointer;
-  border-radius: 4px;
+
+.side-canvas {
+  background-color: transparent;
 }
 </style>

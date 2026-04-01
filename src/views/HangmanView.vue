@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from "vue";
-import GameMobileMessage from "../components/GameMobileMessage.vue";
-import GameControls from "../components/GameControls.vue";
+import GameMobileMessage from "@/components/GameMobileMessage.vue";
+import GameControls from "@/components/GameControls.vue";
 
 const phase = ref("input");
 const secretWord = ref("");
@@ -340,35 +340,10 @@ const bodyVisible = computed(() => ({
 </template>
 
 <style scoped>
-* {
-  box-sizing: border-box;
-}
-
-.hangman-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 85vh;
-  width: 100%;
-  text-align: center;
-  background: transparent;
-}
-
-.game-layout {
-  display: flex;
-  gap: 30px;
-  align-items: flex-start;
-  justify-content: center;
-}
-
 .left-section {
   width: 420px;
-  background: #1a1a1a;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
   overflow: hidden;
-  position: relative;
+  padding: 0;
 }
 
 .panel-header {
@@ -397,12 +372,7 @@ const bodyVisible = computed(() => ({
 }
 
 .game-title {
-  font-size: 72px;
   margin: 0 0 14px;
-  letter-spacing: -4px;
-  font-weight: 900;
-  color: white;
-  line-height: 1;
   padding-bottom: 4px;
 }
 
@@ -464,6 +434,7 @@ const bodyVisible = computed(() => ({
   opacity: 0.2;
   cursor: not-allowed;
 }
+
 .submit-btn:not(:disabled):hover {
   opacity: 0.85;
 }
@@ -493,12 +464,8 @@ const bodyVisible = computed(() => ({
 }
 
 @keyframes pop-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .word-display {
@@ -518,9 +485,7 @@ const bodyVisible = computed(() => ({
   font-weight: 900;
   color: #2d3748;
   border-bottom: 2px solid rgba(255, 255, 255, 0.12);
-  transition:
-    color 0.2s,
-    border-color 0.2s;
+  transition: color 0.2s, border-color 0.2s;
 }
 
 .letter-slot.revealed {
@@ -548,6 +513,7 @@ const bodyVisible = computed(() => ({
 .outcome-inner {
   text-align: center;
 }
+
 .outcome-emoji {
   font-size: 52px;
   margin-bottom: 12px;
@@ -570,13 +536,7 @@ const bodyVisible = computed(() => ({
 }
 
 .retry-btn {
-  background: white;
-  color: black;
-  border: none;
   padding: 10px 28px;
-  font-weight: 800;
-  cursor: pointer;
-  border-radius: 4px;
   font-size: 12px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
@@ -590,17 +550,13 @@ const bodyVisible = computed(() => ({
 .slide-up-enter-active {
   transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
 .slide-up-enter-from {
   opacity: 0;
   transform: translateY(20px);
 }
 
 .right-section {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  width: 240px;
-  text-align: left;
   transition: opacity 0.3s;
   padding-top: 1px;
 }
@@ -611,26 +567,13 @@ const bodyVisible = computed(() => ({
 }
 
 .info-box {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 10px 12px;
-  display: flex;
-  flex-direction: column;
   gap: 7px;
+  padding: 10px 12px;
 }
 
 .danger-box {
   background: linear-gradient(135deg, rgba(255, 107, 107, 0.07), transparent);
   border-color: rgba(255, 107, 107, 0.18);
-}
-
-.label {
-  font-size: 10px;
-  color: #94a3b8;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-weight: 700;
 }
 
 .red-lbl {
@@ -648,9 +591,7 @@ const bodyVisible = computed(() => ({
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  transition:
-    background 0.25s,
-    box-shadow 0.25s;
+  transition: background 0.25s, box-shadow 0.25s;
 }
 
 .pip.dead {

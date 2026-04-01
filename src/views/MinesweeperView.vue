@@ -1,8 +1,8 @@
 <script setup>
 import { ref, computed, onUnmounted, onMounted } from "vue";
 import { useStorage } from "@vueuse/core";
-import GameMobileMessage from "../components/GameMobileMessage.vue";
-import GameControls from "../components/GameControls.vue";
+import GameMobileMessage from "@/components/GameMobileMessage.vue";
+import GameControls from "@/components/GameControls.vue";
 
 const DIFFICULTIES = {
   easy: { rows: 9, cols: 9, mines: 10 },
@@ -329,61 +329,33 @@ const gridStyle = computed(() => ({
 </template>
 
 <style scoped>
-.mines-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 85vh;
-  width: 100%;
-  text-align: center;
-  background: transparent;
-}
-.game-wrapper {
-  display: flex;
-  gap: 30px;
-  align-items: flex-start;
-  justify-content: center;
-}
 .left-section {
-  position: relative;
-  padding: 12px;
-  background: #1a1a1a;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
   min-width: 300px;
   min-height: 300px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.right-section {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  width: 240px;
-  text-align: left;
-}
+
 .game-title {
   font-size: 48px;
-  margin: 0 0 10px;
   letter-spacing: -2px;
-  font-weight: 900;
-  color: white;
-  line-height: 1;
 }
+
 .grid-frame {
   background: #444;
   padding: 10px;
   border-radius: 4px;
   border: 1px solid #333;
 }
+
 .grid {
   display: grid;
   gap: 0;
   background: #666;
   border: 2px solid #666;
 }
+
 .cell {
   width: 26px;
   height: 26px;
@@ -399,64 +371,14 @@ const gridStyle = computed(() => ({
   border-bottom: 2px solid rgba(0, 0, 0, 0.5);
   border-right: 2px solid rgba(0, 0, 0, 0.5);
 }
+
 .cell.revealed {
   background: #222;
   border: 1px solid #333;
 }
+
 .cell.mine {
   background: #cc0000;
   border: 1px solid #990000;
-}
-.info-box {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-}
-.score-box {
-  min-height: 120px;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 215, 0, 0.05),
-    rgba(255, 215, 0, 0.01)
-  );
-}
-.label {
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-weight: 700;
-}
-.value {
-  font-weight: 900;
-  line-height: 1;
-}
-
-.overlay-msg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.85);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-  border-radius: 16px;
-}
-.retry-btn {
-  background: white;
-  color: black;
-  border: none;
-  padding: 10px 20px;
-  font-weight: bold;
-  cursor: pointer;
-  border-radius: 4px;
 }
 </style>

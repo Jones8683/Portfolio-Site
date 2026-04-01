@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, onUnmounted } from "vue";
-import GameMobileMessage from "../components/GameMobileMessage.vue";
-import GameControls from "../components/GameControls.vue";
+import GameMobileMessage from "@/components/GameMobileMessage.vue";
+import GameControls from "@/components/GameControls.vue";
 
 let canvas, ctx, animationId;
 
@@ -489,125 +489,30 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-.pong-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 85vh;
-  width: 100%;
-  text-align: center;
-  background: transparent;
-}
-.game-wrapper {
-  display: flex;
-  gap: 30px;
-  align-items: flex-start;
-  justify-content: center;
-}
 .left-section {
-  position: relative;
-  padding: 12px;
-  background: #1a1a1a;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
   width: 724px;
   height: 524px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
 .right-section {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
   width: 220px;
-  text-align: left;
 }
-.game-title {
-  font-size: 72px;
-  margin: 0 0 10px;
-  letter-spacing: -4px;
-  font-weight: 900;
-  color: white;
-  line-height: 1;
-}
-canvas {
+
+#gameCanvas {
   background-color: #0d0d0d;
   border-radius: 8px;
-  display: block;
   box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.5);
   border: 1px solid #333;
 }
-.info-box {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-}
+
 .score-box {
   min-height: 100px;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 215, 0, 0.05),
-    rgba(255, 215, 0, 0.01)
-  );
-  border: 1px solid rgba(255, 215, 0, 0.3);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-}
-.label {
-  font-size: 10px;
-  color: #94a3b8;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 8px;
-  width: 100%;
-  text-align: center;
-  font-weight: 700;
-}
-.score-label {
-  color: #ffd700;
-}
-.score-value {
-  font-size: 42px;
-  color: #fff;
-  font-weight: 900;
-  text-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
 }
 
 .overlay {
   display: none;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.85);
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-  border-radius: 16px;
-}
-.menu-title {
-  font-size: 32px;
-  color: white;
-  margin-bottom: 20px;
-}
-.menu-btn {
-  background: white;
-  color: black;
-  border: none;
-  padding: 12px 24px;
-  font-weight: 800;
-  cursor: pointer;
-  border-radius: 4px;
-  margin: 5px;
-  min-width: 140px;
 }
 </style>

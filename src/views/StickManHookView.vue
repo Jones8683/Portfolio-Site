@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
-import GameMobileMessage from "../components/GameMobileMessage.vue";
-import GameControls from "../components/GameControls.vue";
+import GameMobileMessage from "@/components/GameMobileMessage.vue";
+import GameControls from "@/components/GameControls.vue";
 
 const gameIframe = ref(null);
 const showIframe = ref(false);
@@ -96,32 +96,8 @@ const toggleFullscreen = () => {
 </template>
 
 <style scoped>
-.stickman-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 85vh;
-  width: 100%;
-  text-align: center;
-  background: transparent;
-  padding-top: 0;
-}
-
-.game-wrapper {
-  display: flex;
-  gap: 30px;
-  align-items: flex-start;
-  justify-content: center;
-  margin-top: 0;
-}
-
-.left-section {
-  position: relative;
-  padding: 12px;
-  background: #1a1a1a;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+.right-section {
+  width: 260px;
 }
 
 .game-iframe {
@@ -130,24 +106,6 @@ const toggleFullscreen = () => {
   border-radius: 4px;
   display: block;
   background: #000;
-}
-
-.right-section {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  width: 260px;
-  text-align: left;
-}
-
-.game-title {
-  font-size: 72px;
-  margin: 0 0 10px;
-  letter-spacing: -4px;
-  font-weight: 900;
-  color: white;
-  line-height: 1;
-  text-align: left;
 }
 
 .glass-btn {
@@ -175,21 +133,6 @@ const toggleFullscreen = () => {
   background: rgba(255, 255, 255, 0.1);
   border-color: rgba(255, 255, 255, 0.2);
   transform: translateY(-2px);
-}
-
-.name-title {
-  font-size: 32px;
-  margin-bottom: 16px;
-  letter-spacing: -1px;
-  margin-top: 60px;
-  color: white;
-}
-
-.repo-link {
-  font-size: 14px;
-  display: inline-block;
-  color: lightskyblue;
-  text-decoration: none;
 }
 
 @media (max-width: 1200px) {
