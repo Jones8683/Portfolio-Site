@@ -29,7 +29,6 @@ onUnmounted(() => window.removeEventListener("scroll", handleScroll));
           <span class="nav-name">Jones Jankovic</span>
         </RouterLink>
         <div class="glass-nav">
-          <RouterLink to="/" class="glass-btn">Home</RouterLink>
           <RouterLink to="/projects" class="glass-btn">Projects</RouterLink>
           <RouterLink to="/play" class="glass-btn">Arcade</RouterLink>
         </div>
