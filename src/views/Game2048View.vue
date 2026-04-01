@@ -1,55 +1,17 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
-import { useStorage } from "@vueuse/core";
 import GameMobileMessage from "../components/GameMobileMessage.vue";
 import GameControls from "../components/GameControls.vue";
 
 const gameIframe = ref(null);
 const showIframe = ref(false);
 const score = ref(0);
-const bestScore = useStorage("2048-best-score", 0, localStorage, {
-  serializer: {
-    read: (v) => {
-      try {
-        if (!v) return 0;
-        const decoded = JSON.parse(atob(v));
-        if (decoded.k !== "g48" || typeof decoded.v !== "number") return 0;
-        return decoded.v;
-      } catch (e) {
-        return 0;
-      }
-    },
-    write: (v) => {
-      const payload = {
-        v: v,
-        k: "g48",
-        t: Date.now(),
-      };
-      return btoa(JSON.stringify(payload));
-    },
-  },
-});
-const gameOver = ref(false);
-const gameWon = ref(false);
+const bestScore = ref(0);
 
 const handleMessage = (event) => {
   if (event.data && event.data.type === "2048-update") {
     score.value = event.data.score;
-    if (event.data.score > bestScore.value) {
-      bestScore.value = event.data.score;
-    }
-    gameOver.value = !!event.data.over;
-    gameWon.value = !!event.data.won;
-  }
-};
-
-const preventScroll = (e) => {
-  if (
-    ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Space"].includes(
-      e.code,
-    )
-  ) {
-    e.preventDefault();
+    bestScore.value = event.data.bestScore;
   }
 };
 
@@ -59,24 +21,16 @@ const focusIframe = () => {
   }
 };
 
-const handleVisibilityChange = () => {
-  if (!document.hidden) {
-    focusIframe();
-  }
-};
-
 onMounted(() => {
   showIframe.value = true;
-  window.addEventListener("keydown", preventScroll, { passive: false });
   window.addEventListener("message", handleMessage);
-  document.addEventListener("visibilitychange", handleVisibilityChange);
-  focusIframe();
+  setTimeout(() => {
+    focusIframe();
+  }, 100);
 });
 
 onUnmounted(() => {
-  window.removeEventListener("keydown", preventScroll);
   window.removeEventListener("message", handleMessage);
-  document.removeEventListener("visibilitychange", handleVisibilityChange);
 });
 </script>
 
@@ -257,34 +211,22 @@ onUnmounted(() => {
   display: block;
 }
 
-.name-title {
-  font-size: 32px;
-  margin-bottom: 16px;
-  letter-spacing: -1px;
-  margin-top: 60px;
-  color: white;
-}
-
-.repo-link {
-  font-size: 14px;
-  display: inline-block;
-  color: lightskyblue;
-  text-decoration: none;
-}
-
-@media (max-width: 1000px) {
+@media (max-width: 1200px) {
   .game-wrapper {
     flex-direction: column;
+    gap: 20px;
     align-items: center;
   }
+
   .right-section {
     width: 100%;
     max-width: 550px;
+    text-align: center;
   }
-}
 
-.desktop-game {
-  display: block;
+  .game-title {
+    text-align: center;
+  }
 }
 
 @media (max-width: 850px) {
