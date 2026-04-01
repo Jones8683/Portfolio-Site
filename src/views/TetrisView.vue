@@ -609,47 +609,38 @@ function togglePause() {
   }
 }
 
-function update(time = 0) {
-  if (isGameOver || isPaused) return;
-  const deltaTime = time - lastTime;
-  lastTime = time;
-  animationFrame++;
+function handleHorizontalInput(keyCode, direction, deltaTime) {
+  if (!keys[keyCode].down) return;
+  keys[keyCode].timer += deltaTime;
+  if (keys[keyCode].timer > DAS) {
+    while (keys[keyCode].timer > DAS + ARR) {
+      playerMove(direction);
+      keys[keyCode].timer -= ARR;
+    }
+  }
+}
 
-  if (keys[37].down) {
-    keys[37].timer += deltaTime;
-    if (keys[37].timer > DAS) {
-      while (keys[37].timer > DAS + ARR) {
-        playerMove(-1);
-        keys[37].timer -= ARR;
-      }
+function handleSoftDrop(deltaTime) {
+  if (!keys[40].down) return;
+  keys[40].timer += deltaTime;
+  while (keys[40].timer > SOFT_DROP_ARR) {
+    if (playerDrop()) {
+      player.score += 1;
+      updateScore();
     }
+    keys[40].timer -= SOFT_DROP_ARR;
   }
-  if (keys[39].down) {
-    keys[39].timer += deltaTime;
-    if (keys[39].timer > DAS) {
-      while (keys[39].timer > DAS + ARR) {
-        playerMove(1);
-        keys[39].timer -= ARR;
-      }
-    }
-  }
-  if (keys[40].down) {
-    keys[40].timer += deltaTime;
-    while (keys[40].timer > SOFT_DROP_ARR) {
-      if (playerDrop()) {
-        player.score += 1;
-        updateScore();
-      }
-      keys[40].timer -= SOFT_DROP_ARR;
-    }
-  }
+}
 
+function handleGravityDrop(deltaTime) {
   dropCounter += deltaTime;
   if (dropCounter > dropInterval) {
     playerDrop();
     dropCounter = 0;
   }
+}
 
+function checkCollisionAndLand(deltaTime) {
   player.pos.y++;
   if (collide(arena, player)) {
     player.pos.y--;
@@ -663,6 +654,19 @@ function update(time = 0) {
     isLanded = false;
     lockDelayCounter = 0;
   }
+}
+
+function update(time = 0) {
+  if (isGameOver || isPaused) return;
+  const deltaTime = time - lastTime;
+  lastTime = time;
+  animationFrame++;
+
+  handleHorizontalInput(37, -1, deltaTime);
+  handleHorizontalInput(39, 1, deltaTime);
+  handleSoftDrop(deltaTime);
+  handleGravityDrop(deltaTime);
+  checkCollisionAndLand(deltaTime);
 
   draw();
   if (animationId) cancelAnimationFrame(animationId);
