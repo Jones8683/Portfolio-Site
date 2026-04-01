@@ -68,6 +68,9 @@
         height: 500px;
         box-sizing: border-box;
       }
+      .game-container:focus {
+        outline: none;
+      }
       .game-container .game-message {
         display: none;
         position: absolute;
@@ -1050,8 +1053,59 @@
       };
     </script>
     <script>
+      var STORAGE_TOKEN = "arcade-unity-v1";
+
+      function scoreSig(payload, ts) {
+        var raw = STORAGE_TOKEN + ":" + payload + ":" + ts;
+        var h = 5381;
+        for (var i = 0; i < raw.length; i++) {
+          h = (h * 33) ^ raw.charCodeAt(i);
+        }
+        return (h >>> 0).toString(36).padStart(15, "0").slice(0, 15);
+      }
+
+      function toBase64Url(text) {
+        return btoa(text)
+          .replace(/\+/g, "-")
+          .replace(/\//g, "_")
+          .replace(/=+$/g, "");
+      }
+
+      function fromBase64Url(text) {
+        var b64 = text.replace(/-/g, "+").replace(/_/g, "/");
+        var pad = "=".repeat((4 - (b64.length % 4)) % 4);
+        return atob(b64 + pad);
+      }
+
+      function packValue(value) {
+        var ts = Date.now();
+        var safe = Number.isInteger(value) && value >= 0 ? value : 0;
+        var payload = "j" + toBase64Url(JSON.stringify(safe));
+        var sig = scoreSig(payload, ts);
+        var body = ts.toString(36) + ":" + sig + ":" + payload;
+        return "au1" + toBase64Url(body);
+      }
+
+      function unpackValue(raw) {
+        if (typeof raw !== "string" || !raw.startsWith("au1")) return null;
+        var body = fromBase64Url(raw.slice(3));
+        var firstSep = body.indexOf(":");
+        var secondSep = body.indexOf(":", firstSep + 1);
+        if (firstSep <= 0 || secondSep <= firstSep + 1) return null;
+        var ts = Number.parseInt(body.slice(0, firstSep), 36);
+        var sig = body.slice(firstSep + 1, secondSep);
+        var payload = body.slice(secondSep + 1);
+        if (!Number.isInteger(ts) || ts <= 0) return null;
+        if (sig !== scoreSig(payload, ts)) return null;
+        if (!payload.startsWith("j")) return null;
+        var parsed = JSON.parse(fromBase64Url(payload.slice(1)));
+        return Number.isInteger(parsed) && parsed >= 0 && parsed <= 9999999
+          ? parsed
+          : null;
+      }
+
       function StorageManager() {
-        this.storageKey = "2048-best-score";
+        this.storageKey = "game-2048-best-score";
         this.bestScore = this.loadBestScore();
       }
 
@@ -1059,10 +1113,14 @@
         try {
           var stored = localStorage.getItem(this.storageKey);
           if (!stored) return 0;
-          var decoded = JSON.parse(atob(stored));
-          if (decoded.k !== "g48" || typeof decoded.v !== "number") return 0;
-          return decoded.v;
+          var parsed = unpackValue(stored);
+          if (!Number.isInteger(parsed) || parsed < 0) {
+            this.setBestScore(0);
+            return 0;
+          }
+          return parsed;
         } catch (e) {
+          this.setBestScore(0);
           return 0;
         }
       };
@@ -1072,14 +1130,10 @@
       };
 
       StorageManager.prototype.setBestScore = function (score) {
-        this.bestScore = score;
+        var safe = Number.isInteger(score) && score >= 0 ? score : 0;
+        this.bestScore = safe;
         try {
-          var payload = {
-            v: score,
-            k: "g48",
-            t: Date.now(),
-          };
-          localStorage.setItem(this.storageKey, btoa(JSON.stringify(payload)));
+          localStorage.setItem(this.storageKey, packValue(safe));
         } catch (e) {
           // Silent fail if localStorage is unavailable
         }

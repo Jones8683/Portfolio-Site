@@ -6,8 +6,17 @@ import GameControls from "../components/GameControls.vue";
 const gameIframe = ref(null);
 const showIframe = ref(false);
 
+const focusIframe = () => {
+  if (gameIframe.value) {
+    gameIframe.value.focus();
+  }
+};
+
 onMounted(() => {
   showIframe.value = true;
+  setTimeout(() => {
+    focusIframe();
+  }, 100);
 });
 
 const toggleFullscreen = () => {
@@ -29,7 +38,7 @@ const toggleFullscreen = () => {
 
     <div class="desktop-game">
       <div class="game-wrapper">
-        <div class="left-section">
+        <div class="left-section" @click="focusIframe">
           <iframe
             v-if="showIframe"
             ref="gameIframe"
@@ -39,6 +48,7 @@ const toggleFullscreen = () => {
             frameborder="0"
             scrolling="no"
             allow="fullscreen"
+            @load="focusIframe"
           ></iframe>
         </div>
 

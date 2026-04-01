@@ -49,6 +49,7 @@ onUnmounted(() => {
             title="2048 game"
             frameborder="0"
             scrolling="no"
+            @load="focusIframe"
           ></iframe>
         </div>
 

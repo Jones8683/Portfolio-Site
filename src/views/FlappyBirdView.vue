@@ -4,18 +4,69 @@ import { useStorage } from "@vueuse/core";
 import GameMobileMessage from "../components/GameMobileMessage.vue";
 import GameControls from "../components/GameControls.vue";
 
+const STORAGE_TOKEN = "arcade-unity-v1";
+
+function scoreSig(payload, ts) {
+  const raw = `${STORAGE_TOKEN}:${payload}:${ts}`;
+  let h = 5381;
+  for (let i = 0; i < raw.length; i++) {
+    h = (h * 33) ^ raw.charCodeAt(i);
+  }
+  return (h >>> 0).toString(36).padStart(15, "0").slice(0, 15);
+}
+
+function toBase64Url(text) {
+  return btoa(text).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+}
+
+function fromBase64Url(text) {
+  const b64 = text.replace(/-/g, "+").replace(/_/g, "/");
+  const pad = "=".repeat((4 - (b64.length % 4)) % 4);
+  return atob(b64 + pad);
+}
+
+function packValue(value) {
+  const ts = Date.now();
+  const safe = Number.isInteger(value) && value >= 0 ? value : 0;
+  const payload = `j${toBase64Url(JSON.stringify(safe))}`;
+  const sig = scoreSig(payload, ts);
+  const body = `${ts.toString(36)}:${sig}:${payload}`;
+  return `au1${toBase64Url(body)}`;
+}
+
+function unpackValue(raw) {
+  if (typeof raw !== "string" || !raw.startsWith("au1")) return null;
+  const body = fromBase64Url(raw.slice(3));
+  const firstSep = body.indexOf(":");
+  const secondSep = body.indexOf(":", firstSep + 1);
+  if (firstSep <= 0 || secondSep <= firstSep + 1) return null;
+  const ts = Number.parseInt(body.slice(0, firstSep), 36);
+  const sig = body.slice(firstSep + 1, secondSep);
+  const payload = body.slice(secondSep + 1);
+  if (!Number.isInteger(ts) || ts <= 0) return null;
+  if (sig !== scoreSig(payload, ts)) return null;
+  if (!payload.startsWith("j")) return null;
+  const parsed = JSON.parse(fromBase64Url(payload.slice(1)));
+  return Number.isInteger(parsed) && parsed >= 0 && parsed <= 9_999_999
+    ? parsed
+    : null;
+}
+
 const highScore = useStorage("flappy-best-score", 0, localStorage, {
   serializer: {
     read: (v) => {
       try {
         if (!v) return 0;
-        const d = JSON.parse(atob(v));
-        return d.k === "fb7" ? d.v : 0;
+        const parsed = unpackValue(v);
+        if (Number.isInteger(parsed) && parsed >= 0) return parsed;
+        localStorage.removeItem("flappy-best-score");
+        return 0;
       } catch {
+        localStorage.removeItem("flappy-best-score");
         return 0;
       }
     },
-    write: (v) => btoa(JSON.stringify({ v, k: "fb7", t: Date.now() })),
+    write: (v) => packValue(v),
   },
 });
 
