@@ -34,7 +34,7 @@ onUnmounted(() => {
           <div class="avatar-glow"></div>
         </div>
 
-        <h1 class="name-title">Oliver Morris</h1>
+        <h1 class="name-title">Jones Jankovic</h1>
 
         <div class="hero-tag">Student | Australia</div>
       </div>
