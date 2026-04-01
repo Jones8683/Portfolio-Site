@@ -7,8 +7,10 @@ const gameIframe = ref(null);
 const showIframe = ref(false);
 const score = ref(0);
 const bestScore = ref(0);
+let focusTimer = null;
 
 const handleMessage = (event) => {
+  if (event.source !== gameIframe.value?.contentWindow) return;
   if (event.data && event.data.type === "2048-update") {
     score.value = event.data.score;
     bestScore.value = event.data.bestScore;
@@ -24,12 +26,16 @@ const focusIframe = () => {
 onMounted(() => {
   showIframe.value = true;
   window.addEventListener("message", handleMessage);
-  setTimeout(() => {
+  focusTimer = setTimeout(() => {
     focusIframe();
   }, 100);
 });
 
 onUnmounted(() => {
+  if (focusTimer) {
+    clearTimeout(focusTimer);
+    focusTimer = null;
+  }
   window.removeEventListener("message", handleMessage);
 });
 </script>

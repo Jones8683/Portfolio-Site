@@ -1,10 +1,11 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import GameMobileMessage from "../components/GameMobileMessage.vue";
 import GameControls from "../components/GameControls.vue";
 
 const gameIframe = ref(null);
 const showIframe = ref(false);
+let focusTimer = null;
 
 const focusIframe = () => {
   if (gameIframe.value) {
@@ -14,9 +15,16 @@ const focusIframe = () => {
 
 onMounted(() => {
   showIframe.value = true;
-  setTimeout(() => {
+  focusTimer = setTimeout(() => {
     focusIframe();
   }, 100);
+});
+
+onUnmounted(() => {
+  if (focusTimer) {
+    clearTimeout(focusTimer);
+    focusTimer = null;
+  }
 });
 
 const toggleFullscreen = () => {
