@@ -147,6 +147,7 @@ const filteredProjects = computed(() => {
   margin-bottom: 6px;
   font-size: clamp(2.2rem, 7vw, 3.8rem);
   line-height: 1;
+  animation: pull-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .projects-subtitle {
@@ -154,6 +155,8 @@ const filteredProjects = computed(() => {
   font-size: 1.02rem;
   margin-bottom: 20px;
   text-align: center;
+  animation: pull-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: 0.06s;
 }
 
 .projects-tools {
@@ -161,6 +164,8 @@ const filteredProjects = computed(() => {
   display: flex;
   justify-content: center;
   margin-bottom: 20px;
+  animation: pull-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: 0.12s;
 }
 
 .search-box {
@@ -232,6 +237,23 @@ const filteredProjects = computed(() => {
     border-color 0.25s ease,
     box-shadow 0.25s ease,
     transform 0.25s ease;
+  animation: pull-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.project-row:nth-child(1) {
+  animation-delay: 0.18s;
+}
+
+.project-row:nth-child(2) {
+  animation-delay: 0.24s;
+}
+
+.project-row:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.project-row:nth-child(4) {
+  animation-delay: 0.36s;
 }
 
 .project-row:hover {
@@ -343,6 +365,29 @@ const filteredProjects = computed(() => {
   margin-top: 18px;
   text-align: center;
   color: #94a3b8;
+  animation: pull-up 0.45s ease both;
+}
+
+@keyframes pull-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .projects-title,
+  .projects-subtitle,
+  .projects-tools,
+  .project-row,
+  .no-results {
+    animation: none !important;
+  }
 }
 
 @media (max-width: 860px) {
