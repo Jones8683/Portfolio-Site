@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
 import GameMobileMessage from "../components/GameMobileMessage.vue";
+import GameControls from "../components/GameControls.vue";
 
 const ROWS = 6;
 const COLS = 7;
@@ -12,6 +13,7 @@ const board = ref(createBoard());
 const currentPlayer = ref(1);
 const winner = ref(null);
 const isDraw = ref(false);
+let moveTimeout = null;
 const winningCells = ref([]);
 const hoveredCol = ref(null);
 const scores = ref({ 1: 0, 2: 0 });
@@ -79,7 +81,8 @@ const makeMove = (col) => {
     currentPlayer.value = currentPlayer.value === 1 ? 2 : 1;
   }
 
-  setTimeout(() => {
+  if (moveTimeout) clearTimeout(moveTimeout);
+  moveTimeout = setTimeout(() => {
     droppingCell.value = null;
     isProcessing.value = false;
   }, 500);
@@ -154,7 +157,10 @@ const handleKeydown = (e) => {
 };
 
 onMounted(() => window.addEventListener("keydown", handleKeydown));
-onUnmounted(() => window.removeEventListener("keydown", handleKeydown));
+onUnmounted(() => {
+  window.removeEventListener("keydown", handleKeydown);
+  if (moveTimeout) clearTimeout(moveTimeout);
+});
 </script>
 
 <template>
@@ -251,16 +257,12 @@ onUnmounted(() => window.removeEventListener("keydown", handleKeydown));
             </div>
           </div>
 
-          <div class="controls-container">
-            <div class="control-item">
-              <span>Drop Piece</span>
-              <div><span class="key">CLICK</span></div>
-            </div>
-            <div class="control-item">
-              <span>Restart</span>
-              <span class="key">R</span>
-            </div>
-          </div>
+          <GameControls
+            :controls="[
+              { action: 'Drop Piece', key: 'CLICK' },
+              { action: 'Restart', key: 'R' },
+            ]"
+          />
         </div>
       </div>
     </div>
@@ -526,38 +528,6 @@ onUnmounted(() => window.removeEventListener("keydown", handleKeydown));
 .turn-piece.p2 {
   background: #ff0d72;
   box-shadow: 0 0 10px rgba(255, 13, 114, 0.35);
-}
-
-.controls-container {
-  margin-top: 5px;
-  padding: 0 5px;
-}
-
-.control-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 11px;
-  color: #64748b;
-  margin-bottom: 6px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-  padding-bottom: 4px;
-}
-
-.control-item:last-child {
-  border-bottom: none;
-}
-
-.key {
-  color: #fff;
-  font-weight: 700;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 10px;
-  min-width: 18px;
-  text-align: center;
-  display: inline-block;
 }
 
 .overlay-msg {

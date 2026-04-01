@@ -2,6 +2,7 @@
 import { onMounted, onUnmounted, ref } from "vue";
 import { useStorage } from "@vueuse/core";
 import GameMobileMessage from "../components/GameMobileMessage.vue";
+import GameControls from "../components/GameControls.vue";
 
 const highScore = useStorage("flappy-best-score", 0, localStorage, {
   serializer: {
@@ -44,6 +45,7 @@ let canvas,
   rafIdle,
   lastTs = 0;
 let bird, pipes, score, lastPipeTs, deathTimer, isNewBest;
+let wingFrame = 0;
 
 let isPaused = false;
 let pauseTs = 0;
@@ -302,7 +304,7 @@ function drawBird() {
   ctx.stroke();
 
   const wingY =
-    gameState.value === "dead" ? 0 : Math.sin(Date.now() * 0.015) * 3.5;
+    gameState.value === "dead" ? 0 : Math.sin(wingFrame * 0.15) * 3.5;
   ctx.fillStyle = "#d98c10";
   ctx.beginPath();
   ctx.ellipse(-2, 2 + wingY, 9, 5, -0.3, 0, Math.PI * 2);
@@ -368,7 +370,7 @@ function drawScore() {
 }
 
 function drawIdle() {
-  const a = 0.8 + Math.sin(Date.now() * 0.005) * 0.2;
+  const a = 0.8 + Math.sin(wingFrame * 0.05) * 0.2;
   ctx.globalAlpha = a;
   txt("Tap or press SPACE", W / 2, GROUND_Y / 2 + 60, 16, "#fff", "#2a1a00");
   ctx.globalAlpha = 1;
@@ -385,7 +387,7 @@ function drawDead() {
   txt("GAME OVER", W / 2, GROUND_Y / 2 - 10, 32, "#fff", "#3a2a10");
 
   if (deathTimer > 50) {
-    const a = 0.7 + Math.sin(Date.now() * 0.007) * 0.3;
+    const a = 0.7 + Math.sin(wingFrame * 0.07) * 0.3;
     ctx.globalAlpha = a;
     txt("Tap to retry", W / 2, GROUND_Y / 2 + 36, 16, "#fff", "#3a2a10");
     ctx.globalAlpha = 1;
@@ -408,6 +410,7 @@ function gameLoop(ts) {
   if (isPaused) return;
   const dt = Math.min(ts - lastTs, 50) / STEP;
   lastTs = ts;
+  wingFrame++;
 
   if (gameState.value === "playing") {
     groundOff += PIPE_SPEED * 1.1 * dt;
@@ -440,6 +443,7 @@ function gameLoop(ts) {
   }
 
   render();
+  if (raf) cancelAnimationFrame(raf);
   raf = requestAnimationFrame(gameLoop);
 }
 
@@ -454,6 +458,7 @@ function togglePause() {
     const pausedFor = performance.now() - pauseTs;
     lastTs = performance.now();
     lastPipeTs += pausedFor;
+    if (raf) cancelAnimationFrame(raf);
     raf = requestAnimationFrame(gameLoop);
   }
 }
@@ -463,30 +468,36 @@ const onBlur = () => {
 };
 
 function idleLoop() {
-  bird.y = GROUND_Y / 2 + Math.sin(Date.now() * 0.003) * 8;
+  bird.y = GROUND_Y / 2 + Math.sin(wingFrame * 0.03) * 8;
   bird.angle = 0;
   bird.flapT += 0.08;
   cloudOff += 0.15;
+  wingFrame++;
   render();
+  if (rafIdle) cancelAnimationFrame(rafIdle);
   rafIdle = requestAnimationFrame(idleLoop);
 }
 
 function jump() {
   if (isPaused) return;
   if (gameState.value === "idle") {
-    cancelAnimationFrame(rafIdle);
+    if (rafIdle) cancelAnimationFrame(rafIdle);
     gameState.value = "playing";
     bird.vy = JUMP_VY;
     lastPipeTs = performance.now();
     lastTs = performance.now();
+    wingFrame = 0;
+    if (raf) cancelAnimationFrame(raf);
     raf = requestAnimationFrame(gameLoop);
   } else if (gameState.value === "playing") {
     bird.vy = JUMP_VY;
   } else if (gameState.value === "dead" && deathTimer > 50) {
-    cancelAnimationFrame(raf);
+    if (raf) cancelAnimationFrame(raf);
     initState();
     gameState.value = "idle";
+    wingFrame = 0;
     render();
+    if (rafIdle) cancelAnimationFrame(rafIdle);
     rafIdle = requestAnimationFrame(idleLoop);
   }
 }
@@ -506,6 +517,10 @@ const onKey = (e) => {
 
 onMounted(() => {
   canvas = document.getElementById("flappyCanvas");
+  if (!canvas) {
+    console.error("FlappyBird: Canvas element not found");
+    return;
+  }
   ctx = canvas.getContext("2d");
   dpr = window.devicePixelRatio || 1;
   canvas.width = W * dpr;
@@ -519,6 +534,7 @@ onMounted(() => {
   window.addEventListener("blur", onBlur);
   initState();
   render();
+  if (rafIdle) cancelAnimationFrame(rafIdle);
   rafIdle = requestAnimationFrame(idleLoop);
 });
 
@@ -526,8 +542,8 @@ onUnmounted(() => {
   document.removeEventListener("keydown", onKey);
   canvas?.removeEventListener("mousedown", jump);
   window.removeEventListener("blur", onBlur);
-  cancelAnimationFrame(raf);
-  cancelAnimationFrame(rafIdle);
+  if (raf) cancelAnimationFrame(raf);
+  if (rafIdle) cancelAnimationFrame(rafIdle);
 });
 </script>
 
@@ -586,20 +602,13 @@ onUnmounted(() => {
               {{ highScore }}
             </div>
           </div>
-          <div class="controls-container">
-            <div class="control-item">
-              <span>Jump</span>
-              <span class="key">Click</span>
-            </div>
-            <div class="control-item">
-              <span>Alternative</span>
-              <span class="key">SPACE</span>
-            </div>
-            <div class="control-item">
-              <span>Pause</span>
-              <span class="key">ESC</span>
-            </div>
-          </div>
+          <GameControls
+            :controls="[
+              { action: 'Jump', key: 'Click' },
+              { action: 'Alternative', key: 'SPACE' },
+              { action: 'Pause', key: 'ESC' },
+            ]"
+          />
         </div>
       </div>
     </div>
@@ -697,34 +706,7 @@ canvas {
   border-radius: 4px;
   cursor: pointer;
 }
-.controls-container {
-  margin-top: 5px;
-  padding: 0 5px;
-}
-.control-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 11px;
-  color: #64748b;
-  margin-bottom: 6px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-  padding-bottom: 4px;
-}
-.control-item:last-child {
-  border-bottom: none;
-}
-.key {
-  color: #fff;
-  font-weight: 700;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 10px;
-  min-width: 18px;
-  text-align: center;
-  display: inline-block;
-}
+
 .overlay-msg {
   position: absolute;
   top: 0;

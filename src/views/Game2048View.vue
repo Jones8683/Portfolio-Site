@@ -2,6 +2,7 @@
 import { ref, onMounted, onUnmounted } from "vue";
 import { useStorage } from "@vueuse/core";
 import GameMobileMessage from "../components/GameMobileMessage.vue";
+import GameControls from "../components/GameControls.vue";
 
 const gameIframe = ref(null);
 const showIframe = ref(false);
@@ -110,30 +111,13 @@ onUnmounted(() => {
             <div class="value high-score-value">{{ bestScore }}</div>
           </div>
 
-          <div class="controls-container">
-            <div class="control-item">
-              <span>Move Tiles</span>
-              <div>
-                <span class="key">↑</span>
-                <span class="key">↓</span>
-                <span class="key">←</span>
-                <span class="key">→</span>
-              </div>
-            </div>
-            <div class="control-item">
-              <span>Alternative</span>
-              <div>
-                <span class="key">W</span>
-                <span class="key">A</span>
-                <span class="key">S</span>
-                <span class="key">D</span>
-              </div>
-            </div>
-            <div class="control-item">
-              <span>Restart</span>
-              <span class="key">R</span>
-            </div>
-          </div>
+          <GameControls
+            :controls="[
+              { action: 'Move Tiles', key: ['↑', '↓', '←', '→'] },
+              { action: 'Alternative', key: ['W', 'A', 'S', 'D'] },
+              { action: 'Restart', key: 'R' },
+            ]"
+          />
         </div>
       </div>
     </div>
@@ -267,39 +251,6 @@ onUnmounted(() => {
   font-size: 24px;
   color: #ffd700;
   text-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
-}
-
-.controls-container {
-  margin-top: 5px;
-  padding: 0 5px;
-}
-
-.control-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 11px;
-  color: #64748b;
-  margin-bottom: 6px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-  padding-bottom: 4px;
-}
-
-.control-item:last-child {
-  border-bottom: none;
-}
-
-.key {
-  color: #fff;
-  font-weight: 700;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 10px;
-  min-width: 18px;
-  text-align: center;
-  display: inline-block;
-  margin-left: 4px;
 }
 
 .desktop-game {

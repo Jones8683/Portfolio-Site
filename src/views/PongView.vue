@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, onUnmounted } from "vue";
 import GameMobileMessage from "../components/GameMobileMessage.vue";
+import GameControls from "../components/GameControls.vue";
 
 let canvas, ctx, animationId;
 
@@ -79,15 +80,19 @@ const keys = { w: false, s: false, ArrowUp: false, ArrowDown: false };
 
 function showStartScreen() {
   isRunning = false;
-  cancelAnimationFrame(animationId);
-  document.getElementById("gameOverMsg").style.display = "none";
-  document.getElementById("pauseMsg").style.display = "none";
-  document.getElementById("startScreen").style.display = "flex";
+  if (animationId) cancelAnimationFrame(animationId);
+  const goMsg = document.getElementById("gameOverMsg");
+  const pMsg = document.getElementById("pauseMsg");
+  const startScr = document.getElementById("startScreen");
+  const scoreDiv = document.getElementById("scoreDiv");
+  if (goMsg) goMsg.style.display = "none";
+  if (pMsg) pMsg.style.display = "none";
+  if (startScr) startScr.style.display = "flex";
   leftPaddle.score = 0;
   rightPaddle.score = 0;
   trail = [];
   particles = [];
-  document.getElementById("scoreDiv").innerText = "0 - 0";
+  if (scoreDiv) scoreDiv.innerText = "0 - 0";
   drawStatic();
 }
 
@@ -97,17 +102,22 @@ function initGame(mode) {
   rightPaddle.score = 0;
   trail = [];
   particles = [];
-  document.getElementById("startScreen").style.display = "none";
-  document.getElementById("gameOverMsg").style.display = "none";
-  document.getElementById("pauseMsg").style.display = "none";
-  document.getElementById("scoreDiv").innerText = "0 - 0";
+  const startScr = document.getElementById("startScreen");
+  const goMsg = document.getElementById("gameOverMsg");
+  const pMsg = document.getElementById("pauseMsg");
+  const scoreDiv = document.getElementById("scoreDiv");
+  if (startScr) startScr.style.display = "none";
+  if (goMsg) goMsg.style.display = "none";
+  if (pMsg) pMsg.style.display = "none";
+  if (scoreDiv) scoreDiv.innerText = "0 - 0";
   isRunning = true;
   isPaused = false;
   keys.w = keys.s = keys.ArrowUp = keys.ArrowDown = false;
   getAudioCtx();
   resetPositions();
   lastTs = performance.now();
-  gameLoop();
+  if (animationId) cancelAnimationFrame(animationId);
+  animationId = requestAnimationFrame(gameLoop);
 }
 
 function resetPositions() {
@@ -375,6 +385,7 @@ function gameLoop(ts = performance.now()) {
   const dt = Math.min(raw, 50) / STEP;
   update(dt);
   draw();
+  if (animationId) cancelAnimationFrame(animationId);
   animationId = requestAnimationFrame(gameLoop);
 }
 
@@ -404,6 +415,10 @@ const handleBlur = () => {
 
 onMounted(() => {
   canvas = document.getElementById("gameCanvas");
+  if (!canvas) {
+    console.error("Pong: Canvas element not found");
+    return;
+  }
   ctx = canvas.getContext("2d");
   window.addEventListener("keydown", handleKeyDown);
   window.addEventListener("keyup", handleKeyUp);
@@ -415,7 +430,10 @@ onUnmounted(() => {
   window.removeEventListener("keydown", handleKeyDown);
   window.removeEventListener("keyup", handleKeyUp);
   window.removeEventListener("blur", handleBlur);
-  cancelAnimationFrame(animationId);
+  if (animationId) cancelAnimationFrame(animationId);
+  if (audioCtx && audioCtx.state !== "closed") {
+    audioCtx.close();
+  }
 });
 </script>
 
@@ -457,20 +475,13 @@ onUnmounted(() => {
             <div class="label score-label">Score</div>
             <div class="value score-value" id="scoreDiv">0 - 0</div>
           </div>
-          <div class="controls-container">
-            <div class="control-item">
-              <span>Left Paddle</span>
-              <div><span class="key">W</span> <span class="key">S</span></div>
-            </div>
-            <div class="control-item">
-              <span>Right Paddle</span>
-              <div><span class="key">↑</span> <span class="key">↓</span></div>
-            </div>
-            <div class="control-item">
-              <span>Pause</span>
-              <span class="key">ESC</span>
-            </div>
-          </div>
+          <GameControls
+            :controls="[
+              { action: 'Left Paddle', key: ['W', 'S'] },
+              { action: 'Right Paddle', key: ['↑', '↓'] },
+              { action: 'Pause', key: 'ESC' },
+            ]"
+          />
         </div>
       </div>
     </div>
@@ -568,34 +579,7 @@ canvas {
   font-weight: 900;
   text-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
 }
-.controls-container {
-  margin-top: 5px;
-  padding: 0 5px;
-}
-.control-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 11px;
-  color: #64748b;
-  margin-bottom: 6px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-  padding-bottom: 4px;
-}
-.control-item:last-child {
-  border-bottom: none;
-}
-.key {
-  color: #fff;
-  font-weight: 700;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 10px;
-  min-width: 18px;
-  text-align: center;
-  display: inline-block;
-}
+
 .overlay {
   display: none;
   position: absolute;

@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import GameMobileMessage from "../components/GameMobileMessage.vue";
+import GameControls from "../components/GameControls.vue";
 
 const gameIframe = ref(null);
 const showIframe = ref(false);
@@ -44,16 +45,12 @@ const toggleFullscreen = () => {
         <div class="right-section">
           <h1 class="game-title">Stickman Hook</h1>
 
-          <div class="controls-container">
-            <div class="control-item">
-              <span>Swing / Hook</span>
-              <span class="key">LEFT CLICK</span>
-            </div>
-            <div class="control-item">
-              <span>Alternative</span>
-              <span class="key">SPACE</span>
-            </div>
-          </div>
+          <GameControls
+            :controls="[
+              { action: 'Swing / Hook', key: 'LEFT CLICK' },
+              { action: 'Alternative', key: 'SPACE' },
+            ]"
+          />
 
           <button @click="toggleFullscreen" class="glass-btn">
             <svg
@@ -133,38 +130,6 @@ const toggleFullscreen = () => {
   color: white;
   line-height: 1;
   text-align: left;
-}
-
-.controls-container {
-  margin-top: 5px;
-  padding: 0 5px;
-}
-
-.control-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 11px;
-  color: #64748b;
-  margin-bottom: 6px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-  padding-bottom: 4px;
-}
-
-.control-item:last-child {
-  border-bottom: none;
-}
-
-.key {
-  color: #fff;
-  font-weight: 700;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 10px;
-  min-width: 18px;
-  text-align: center;
-  display: inline-block;
 }
 
 .glass-btn {

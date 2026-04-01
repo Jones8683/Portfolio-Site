@@ -2,9 +2,11 @@
 import { onMounted, onUnmounted } from "vue";
 import { useStorage } from "@vueuse/core";
 import GameMobileMessage from "../components/GameMobileMessage.vue";
+import GameControls from "../components/GameControls.vue";
 
 let canvas, ctx, nextCtx, holdCtx;
 let animationId = null;
+let animationFrame = 0;
 
 const colors = [
   null,
@@ -202,8 +204,7 @@ function drawMatrix(matrix, offset, context, isGhost = false) {
         context.fillRect(bx, by, 1, 1);
 
         if (isLanded && context === ctx && matrix === player.matrix) {
-          const now = Date.now();
-          const alpha = 0.3 + 0.3 * Math.sin(now / 75);
+          const alpha = 0.3 + 0.3 * Math.sin(animationFrame * 0.08);
           context.fillStyle = `rgba(0, 0, 0, ${alpha})`;
           context.fillRect(bx, by, 1, 1);
         }
@@ -612,6 +613,7 @@ function update(time = 0) {
   if (isGameOver || isPaused) return;
   const deltaTime = time - lastTime;
   lastTime = time;
+  animationFrame++;
 
   if (keys[37].down) {
     keys[37].timer += deltaTime;
@@ -663,6 +665,7 @@ function update(time = 0) {
   }
 
   draw();
+  if (animationId) cancelAnimationFrame(animationId);
   animationId = requestAnimationFrame(update);
 }
 
@@ -704,8 +707,9 @@ function updateScore() {
 }
 
 function resetGame() {
-  cancelAnimationFrame(animationId);
+  if (animationId) cancelAnimationFrame(animationId);
   animationId = null;
+  animationFrame = 0;
 
   lastLoggedLevel = 0;
   arena.forEach((row) => row.fill(0));
@@ -738,7 +742,8 @@ function resetGame() {
   playerReset();
   draw();
   lastTime = performance.now();
-  update(performance.now());
+  if (animationId) cancelAnimationFrame(animationId);
+  animationId = requestAnimationFrame(update);
 }
 
 const preventDefaultKeys = (event) => {
@@ -940,24 +945,15 @@ onUnmounted(() => {
               {{ highScore }}
             </div>
           </div>
-          <div class="controls-container">
-            <div class="control-item">
-              <span>Move</span>
-              <div><span class="key">←</span> <span class="key">→</span></div>
-            </div>
-            <div class="control-item">
-              <span>Rotate</span> <span class="key">↑</span>
-            </div>
-            <div class="control-item">
-              <span>Hard Drop</span> <span class="key">SPACE</span>
-            </div>
-            <div class="control-item">
-              <span>Hold</span> <span class="key">C</span>
-            </div>
-            <div class="control-item">
-              <span>Pause</span> <span class="key">ESC</span>
-            </div>
-          </div>
+          <GameControls
+            :controls="[
+              { action: 'Move', key: ['←', '→'] },
+              { action: 'Rotate', key: '↑' },
+              { action: 'Hard Drop', key: 'SPACE' },
+              { action: 'Hold', key: 'C' },
+              { action: 'Pause', key: 'ESC' },
+            ]"
+          />
         </div>
       </div>
     </div>
@@ -1067,34 +1063,7 @@ canvas {
 .side-canvas {
   background-color: transparent;
 }
-.controls-container {
-  margin-top: 5px;
-  padding: 0 5px;
-}
-.control-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 11px;
-  color: #64748b;
-  margin-bottom: 6px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-  padding-bottom: 4px;
-}
-.control-item:last-child {
-  border-bottom: none;
-}
-.key {
-  color: #fff;
-  font-weight: 700;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 10px;
-  min-width: 18px;
-  text-align: center;
-  display: inline-block;
-}
+
 .overlay-msg {
   position: absolute;
   top: 0;

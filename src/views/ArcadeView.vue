@@ -23,23 +23,20 @@ import { RouterLink } from "vue-router";
 
       <div class="arcade-card">
         <div class="arcade-card-top">
-          <span class="arcade-icon">🏓</span>
-          <h3 class="arcade-name">Pong</h3>
+          <span class="arcade-icon">🔢</span>
+          <h3 class="arcade-name">2048</h3>
         </div>
-        <RouterLink to="/play/pong" class="arcade-card-bottom blue-btn">
+        <RouterLink to="/play/2048" class="arcade-card-bottom blue-btn">
           Play Now
         </RouterLink>
       </div>
 
       <div class="arcade-card">
         <div class="arcade-card-top">
-          <span class="arcade-icon">🐤</span>
-          <h3 class="arcade-name">Crossy Road</h3>
+          <span class="arcade-icon">🏓</span>
+          <h3 class="arcade-name">Pong</h3>
         </div>
-        <RouterLink
-          to="/play/crossy-road"
-          class="arcade-card-bottom yellow-btn"
-        >
+        <RouterLink to="/play/pong" class="arcade-card-bottom yellow-btn">
           Play Now
         </RouterLink>
       </div>
@@ -89,56 +86,10 @@ import { RouterLink } from "vue-router";
 
       <div class="arcade-card">
         <div class="arcade-card-top">
-          <span class="arcade-icon">🔢</span>
-          <h3 class="arcade-name">2048</h3>
-        </div>
-        <RouterLink to="/play/2048" class="arcade-card-bottom blue-btn">
-          Play Now
-        </RouterLink>
-      </div>
-
-      <div class="arcade-card">
-        <div class="arcade-card-top">
-          <span class="arcade-icon">⭕</span>
-          <h3 class="arcade-name">Noughts & Crosses</h3>
-        </div>
-        <RouterLink
-          to="/play/noughts-and-crosses"
-          class="arcade-card-bottom red-btn"
-        >
-          Play Now
-        </RouterLink>
-      </div>
-
-      <div class="arcade-card">
-        <div class="arcade-card-top">
           <span class="arcade-icon">🔵</span>
           <h3 class="arcade-name">Connect 4</h3>
         </div>
         <RouterLink to="/play/connect-4" class="arcade-card-bottom blue-btn">
-          Play Now
-        </RouterLink>
-      </div>
-
-      <div class="arcade-card">
-        <div class="arcade-card-top">
-          <span class="arcade-icon">🦆</span>
-          <h3 class="arcade-name">Quack Attack</h3>
-        </div>
-        <RouterLink
-          to="/play/quack-attack"
-          class="arcade-card-bottom yellow-btn"
-        >
-          Play Now
-        </RouterLink>
-      </div>
-
-      <div class="arcade-card">
-        <div class="arcade-card-top">
-          <span class="arcade-icon">🐍</span>
-          <h3 class="arcade-name">Snake</h3>
-        </div>
-        <RouterLink to="/play/snake" class="arcade-card-bottom green-btn">
           Play Now
         </RouterLink>
       </div>

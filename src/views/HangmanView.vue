@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import GameMobileMessage from "../components/GameMobileMessage.vue";
+import GameControls from "../components/GameControls.vue";
 
 const phase = ref("input");
 const secretWord = ref("");
@@ -329,11 +330,9 @@ const bodyVisible = computed(() => ({
             </button>
           </div>
 
-          <div class="controls-list">
-            <div class="ctrl-row">
-              <span>Guess letter</span><span class="kbd">A – Z</span>
-            </div>
-          </div>
+          <GameControls
+            :controls="[{ action: 'Guess letter', key: 'A - Z' }]"
+          />
         </div>
       </div>
     </div>
@@ -746,38 +745,5 @@ const bodyVisible = computed(() => ({
   .desktop-game {
     display: none !important;
   }
-}
-
-.controls-list {
-  margin-top: 5px;
-  padding: 0 5px;
-}
-
-.ctrl-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 11px;
-  color: #64748b;
-  margin-bottom: 6px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-  padding-bottom: 4px;
-}
-
-.ctrl-row:last-child {
-  border-bottom: none;
-  margin-bottom: 0;
-}
-
-.kbd {
-  color: #fff;
-  font-weight: 700;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 10px;
-  min-width: 18px;
-  text-align: center;
-  display: inline-block;
 }
 </style>

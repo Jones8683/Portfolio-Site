@@ -2,6 +2,7 @@
 import { ref, computed, onUnmounted, onMounted } from "vue";
 import { useStorage } from "@vueuse/core";
 import GameMobileMessage from "../components/GameMobileMessage.vue";
+import GameControls from "../components/GameControls.vue";
 
 const DIFFICULTIES = {
   easy: { rows: 9, cols: 9, mines: 10 },
@@ -133,7 +134,8 @@ function handleRightClick(cell) {
   flagsPlaced.value += cell.isFlagged ? 1 : -1;
 }
 
-function revealCell(x, y) {
+function revealCell(x, y, depth = 0) {
+  if (depth > 500) return; // Prevent stack overflow
   if (
     x < 0 ||
     x >= currentDiff.value.cols ||
@@ -146,7 +148,7 @@ function revealCell(x, y) {
   cell.isRevealed = true;
   if (cell.neighborCount === 0 && !cell.isMine) {
     for (let dy = -1; dy <= 1; dy++) {
-      for (let dx = -1; dx <= 1; dx++) revealCell(x + dx, y + dy);
+      for (let dx = -1; dx <= 1; dx++) revealCell(x + dx, y + dy, depth + 1);
     }
   }
 }
@@ -312,20 +314,14 @@ const gridStyle = computed(() => ({
             </div>
           </div>
 
-          <div class="controls-container">
-            <div class="control-item">
-              <span>Reveal</span><span class="key">Left Click</span>
-            </div>
-            <div class="control-item">
-              <span>Flag</span><span class="key">Right Click</span>
-            </div>
-            <div class="control-item">
-              <span>Pause</span><span class="key">ESC</span>
-            </div>
-            <div class="control-item">
-              <span>Restart</span><span class="key">R</span>
-            </div>
-          </div>
+          <GameControls
+            :controls="[
+              { action: 'Reveal', key: 'Left Click' },
+              { action: 'Flag', key: 'Right Click' },
+              { action: 'Pause', key: 'ESC' },
+              { action: 'Restart', key: 'R' },
+            ]"
+          />
         </div>
       </div>
     </div>
@@ -439,34 +435,7 @@ const gridStyle = computed(() => ({
   font-weight: 900;
   line-height: 1;
 }
-.controls-container {
-  margin-top: 5px;
-  padding: 0 5px;
-}
-.control-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 11px;
-  color: #64748b;
-  margin-bottom: 6px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-  padding-bottom: 4px;
-}
-.control-item:last-child {
-  border-bottom: none;
-}
-.key {
-  color: #fff;
-  font-weight: 700;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 10px;
-  min-width: 18px;
-  text-align: center;
-  display: inline-block;
-}
+
 .overlay-msg {
   position: absolute;
   top: 0;

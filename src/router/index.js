@@ -2,15 +2,11 @@ import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "@/views/HomeView.vue";
 import ArcadeView from "@/views/ArcadeView.vue";
 import Connect4View from "@/views/Connect4View.vue";
-import CrossyRoadView from "@/views/CrossyRoadView.vue";
 import FlappyBirdView from "@/views/FlappyBirdView.vue";
 import Game2048View from "@/views/Game2048View.vue";
 import HangmanView from "@/views/HangmanView.vue";
 import MinesweeperView from "@/views/MinesweeperView.vue";
-import NoughtsAndCrossesView from "@/views/NoughtsAndCrossesView.vue";
 import PongView from "@/views/PongView.vue";
-import QuackAttackView from "@/views/QuackAttackView.vue";
-import SnakeView from "@/views/SnakeView.vue";
 import StickManHookView from "@/views/StickManHookView.vue";
 import TetrisView from "@/views/TetrisView.vue";
 import NotFoundView from "@/views/NotFoundView.vue";
@@ -50,12 +46,6 @@ const router = createRouter({
       meta: { title: "Connect 4" },
     },
     {
-      path: "/play/crossy-road",
-      name: "crossy-road",
-      component: CrossyRoadView,
-      meta: { title: "Crossy Road" },
-    },
-    {
       path: "/play/flappy-bird",
       name: "flappy-bird",
       component: FlappyBirdView,
@@ -74,28 +64,10 @@ const router = createRouter({
       meta: { title: "Minesweeper" },
     },
     {
-      path: "/play/noughts-and-crosses",
-      name: "noughts-and-crosses",
-      component: NoughtsAndCrossesView,
-      meta: { title: "Noughts and Crosses" },
-    },
-    {
       path: "/play/pong",
       name: "pong",
       component: PongView,
       meta: { title: "Pong" },
-    },
-    {
-      path: "/play/quack-attack",
-      name: "quack-attack",
-      component: QuackAttackView,
-      meta: { title: "Quack Attack" },
-    },
-    {
-      path: "/play/snake",
-      name: "snake",
-      component: SnakeView,
-      meta: { title: "Snake" },
     },
     {
       path: "/play/stickman-hook",
