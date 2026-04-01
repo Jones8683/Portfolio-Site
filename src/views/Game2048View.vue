@@ -214,10 +214,6 @@ onUnmounted(() => {
   text-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
 }
 
-.desktop-game {
-  display: block;
-}
-
 @media (max-width: 1200px) {
   .game-wrapper {
     flex-direction: column;
@@ -233,12 +229,6 @@ onUnmounted(() => {
 
   .game-title {
     text-align: center;
-  }
-}
-
-@media (max-width: 850px) {
-  .desktop-game {
-    display: none !important;
   }
 }
 </style>

@@ -736,14 +736,4 @@ const bodyVisible = computed(() => ({
 .key-btn:disabled:not(.correct):not(.wrong) {
   cursor: default;
 }
-
-.desktop-game {
-  display: block;
-}
-
-@media (max-width: 850px) {
-  .desktop-game {
-    display: none !important;
-  }
-}
 </style>

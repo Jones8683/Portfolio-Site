@@ -459,13 +459,4 @@ const gridStyle = computed(() => ({
   cursor: pointer;
   border-radius: 4px;
 }
-.desktop-game {
-  display: block;
-}
-
-@media (max-width: 850px) {
-  .desktop-game {
-    display: none !important;
-  }
-}
 </style>

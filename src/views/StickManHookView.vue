@@ -177,10 +177,6 @@ const toggleFullscreen = () => {
   transform: translateY(-2px);
 }
 
-.desktop-game {
-  display: block;
-}
-
 .name-title {
   font-size: 32px;
   margin-bottom: 16px;
@@ -215,16 +211,6 @@ const toggleFullscreen = () => {
   .right-section {
     width: 100%;
     max-width: 580px;
-  }
-}
-
-.desktop-game {
-  display: block;
-}
-
-@media (max-width: 850px) {
-  .desktop-game {
-    display: none !important;
   }
 }
 </style>

@@ -559,14 +559,4 @@ onUnmounted(() => {
 .retry-btn:focus {
   outline: none;
 }
-
-.desktop-game {
-  display: block;
-}
-
-@media (max-width: 1000px) {
-  .desktop-game {
-    display: none !important;
-  }
-}
 </style>
