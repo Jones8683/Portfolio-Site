@@ -1,9 +1,5 @@
 {
   "version": 1,
   "include": ["/*"],
-  "exclude": [
-    "/favicon.png",
-    "/social-card.png",
-    "/gameassets/*"
-  ]
+  "exclude": ["/favicon.png", "/social-card.png", "/gameassets/*"]
 }

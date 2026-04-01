@@ -340,7 +340,9 @@ onUnmounted(() => {
   height: 42px;
   border-radius: 50%;
   background: transparent;
-  transition: background 0.1s ease, box-shadow 0.1s ease;
+  transition:
+    background 0.1s ease,
+    box-shadow 0.1s ease;
 }
 
 .piece.p1 {

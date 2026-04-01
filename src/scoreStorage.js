@@ -1,5 +1,6 @@
 function hash(str) {
-  let a = 0x9e3779b9, b = 0x85ebca6b;
+  let a = 0x9e3779b9,
+    b = 0x85ebca6b;
   for (let i = 0; i < str.length; i++) {
     a ^= str.charCodeAt(i) * 0xcc9e2d51;
     a = (a << 13) | (a >>> 19);

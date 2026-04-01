@@ -464,8 +464,12 @@ const bodyVisible = computed(() => ({
 }
 
 @keyframes pop-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .word-display {
@@ -485,7 +489,9 @@ const bodyVisible = computed(() => ({
   font-weight: 900;
   color: #2d3748;
   border-bottom: 2px solid rgba(255, 255, 255, 0.12);
-  transition: color 0.2s, border-color 0.2s;
+  transition:
+    color 0.2s,
+    border-color 0.2s;
 }
 
 .letter-slot.revealed {
@@ -591,7 +597,9 @@ const bodyVisible = computed(() => ({
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  transition: background 0.25s, box-shadow 0.25s;
+  transition:
+    background 0.25s,
+    box-shadow 0.25s;
 }
 
 .pip.dead {
