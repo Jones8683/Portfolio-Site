@@ -1,9 +1,15 @@
 <script setup>
-import { onMounted, onUnmounted } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import GameMobileMessage from "@/components/GameMobileMessage.vue";
 import GameControls from "@/components/GameControls.vue";
 
 let canvas, ctx, animationId;
+const canvasEl = ref(null);
+const startScreenEl = ref(null);
+const gameOverEl = ref(null);
+const pauseEl = ref(null);
+const scoreEl = ref(null);
+const winnerEl = ref(null);
 
 const WIN_SCORE = 7;
 const PADDLE_W = 12;
@@ -78,21 +84,25 @@ function spawnParticles(x, y, color) {
 
 const keys = { w: false, s: false, ArrowUp: false, ArrowDown: false };
 
+function setDisplay(elRef, value) {
+  if (elRef.value) elRef.value.style.display = value;
+}
+
+function setText(elRef, value) {
+  if (elRef.value) elRef.value.innerText = value;
+}
+
 function showStartScreen() {
   isRunning = false;
   if (animationId) cancelAnimationFrame(animationId);
-  const goMsg = document.getElementById("gameOverMsg");
-  const pMsg = document.getElementById("pauseMsg");
-  const startScr = document.getElementById("startScreen");
-  const scoreDiv = document.getElementById("scoreDiv");
-  if (goMsg) goMsg.style.display = "none";
-  if (pMsg) pMsg.style.display = "none";
-  if (startScr) startScr.style.display = "flex";
+  setDisplay(gameOverEl, "none");
+  setDisplay(pauseEl, "none");
+  setDisplay(startScreenEl, "flex");
   leftPaddle.score = 0;
   rightPaddle.score = 0;
   trail = [];
   particles = [];
-  if (scoreDiv) scoreDiv.innerText = "0 - 0";
+  setText(scoreEl, "0 - 0");
   drawStatic();
 }
 
@@ -102,14 +112,10 @@ function initGame(mode) {
   rightPaddle.score = 0;
   trail = [];
   particles = [];
-  const startScr = document.getElementById("startScreen");
-  const goMsg = document.getElementById("gameOverMsg");
-  const pMsg = document.getElementById("pauseMsg");
-  const scoreDiv = document.getElementById("scoreDiv");
-  if (startScr) startScr.style.display = "none";
-  if (goMsg) goMsg.style.display = "none";
-  if (pMsg) pMsg.style.display = "none";
-  if (scoreDiv) scoreDiv.innerText = "0 - 0";
+  setDisplay(startScreenEl, "none");
+  setDisplay(gameOverEl, "none");
+  setDisplay(pauseEl, "none");
+  setText(scoreEl, "0 - 0");
   isRunning = true;
   isPaused = false;
   keys.w = keys.s = keys.ArrowUp = keys.ArrowDown = false;
@@ -142,9 +148,7 @@ function resetPositions() {
 function togglePause() {
   if (!isRunning) return;
   isPaused = !isPaused;
-  document.getElementById("pauseMsg").style.display = isPaused
-    ? "flex"
-    : "none";
+  setDisplay(pauseEl, isPaused ? "flex" : "none");
   if (!isPaused) {
     lastTs = performance.now();
     gameLoop();
@@ -268,8 +272,7 @@ function update(dt) {
 }
 
 function scoreUpdate() {
-  document.getElementById("scoreDiv").innerText =
-    `${leftPaddle.score} - ${rightPaddle.score}`;
+  setText(scoreEl, `${leftPaddle.score} - ${rightPaddle.score}`);
   checkWin();
   if (isRunning) resetPositions();
 }
@@ -286,8 +289,8 @@ function checkWin() {
         ? "RIGHT PLAYER WINS!"
         : "LEFT PLAYER WINS!";
   }
-  document.getElementById("winnerName").innerText = name;
-  document.getElementById("gameOverMsg").style.display = "flex";
+  setText(winnerEl, name);
+  setDisplay(gameOverEl, "flex");
 }
 
 function collision(b, p) {
@@ -414,7 +417,7 @@ const handleBlur = () => {
 };
 
 onMounted(() => {
-  canvas = document.getElementById("gameCanvas");
+  canvas = canvasEl.value;
   if (!canvas) {
     console.error("Pong: Canvas element not found");
     return;
@@ -444,23 +447,35 @@ onUnmounted(() => {
     <div class="desktop-game">
       <div class="game-wrapper">
         <div class="left-section">
-          <canvas id="gameCanvas" width="700" height="500"></canvas>
-          <div id="startScreen" class="overlay" style="display: flex">
+          <canvas
+            ref="canvasEl"
+            id="gameCanvas"
+            width="700"
+            height="500"
+          ></canvas>
+          <div
+            ref="startScreenEl"
+            id="startScreen"
+            class="overlay"
+            style="display: flex"
+          >
             <h2 class="menu-title">PONG</h2>
             <button class="menu-btn" @click="initGame('cpu')">1 PLAYER</button>
             <button class="menu-btn" @click="initGame('pvp')">2 PLAYERS</button>
           </div>
-          <div id="gameOverMsg" class="overlay">
+          <div ref="gameOverEl" id="gameOverMsg" class="overlay">
             <h2 class="menu-title">GAME OVER</h2>
             <div
               style="color: #94a3b8; margin-bottom: 20px; font-size: 14px"
               id="winnerName"
+              ref="winnerEl"
             >
               PLAYER 1 WINS
             </div>
             <button class="menu-btn" @click="showStartScreen">MENU</button>
           </div>
           <div
+            ref="pauseEl"
             id="pauseMsg"
             class="overlay"
             style="background: rgba(0, 0, 0, 0.6)"
@@ -473,7 +488,9 @@ onUnmounted(() => {
           <h1 class="game-title">Pong</h1>
           <div class="info-box score-box">
             <div class="label score-label">Score</div>
-            <div class="value score-value" id="scoreDiv">0 - 0</div>
+            <div ref="scoreEl" class="value score-value" id="scoreDiv">
+              0 - 0
+            </div>
           </div>
           <GameControls
             :controls="[

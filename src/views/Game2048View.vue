@@ -7,6 +7,7 @@ const gameIframe = ref(null);
 const showIframe = ref(false);
 const score = ref(0);
 const bestScore = ref(0);
+const gameSrc = `${import.meta.env.BASE_URL}gameassets/2048.html`;
 let focusTimer = null;
 
 const handleMessage = (event) => {
@@ -50,7 +51,7 @@ onUnmounted(() => {
           <iframe
             v-if="showIframe"
             ref="gameIframe"
-            src="/gameassets/2048.html"
+            :src="gameSrc"
             class="game-iframe"
             title="2048 game"
             frameborder="0"

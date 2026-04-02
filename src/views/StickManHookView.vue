@@ -5,6 +5,7 @@ import GameControls from "@/components/GameControls.vue";
 
 const gameIframe = ref(null);
 const showIframe = ref(false);
+const gameSrc = `${import.meta.env.BASE_URL}gameassets/stickmanhook.html`;
 let focusTimer = null;
 
 const focusIframe = () => {
@@ -50,7 +51,7 @@ const toggleFullscreen = () => {
           <iframe
             v-if="showIframe"
             ref="gameIframe"
-            src="/gameassets/stickmanhook.html"
+            :src="gameSrc"
             class="game-iframe"
             title="Stickman Hook game"
             frameborder="0"
