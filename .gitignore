@@ -15,8 +15,6 @@ dist-ssr/
 coverage/
 *.local
 
-.vscode/*
-!.vscode/extensions.json
 .idea/
 *.suo
 *.ntvs*
