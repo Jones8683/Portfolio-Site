@@ -153,7 +153,7 @@ onUnmounted(() => {
                 />
               </svg>
               <span class="contact-row-label">Discord</span>
-              <span class="contact-row-value">Jones8683</span>
+              <span class="contact-row-value">Jones</span>
               <span class="contact-row-arrow">→</span>
             </a>
             <a
