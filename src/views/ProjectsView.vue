@@ -198,61 +198,64 @@ const projects = [
 
 .project-btn {
   margin-top: auto;
-  border: 1px solid rgba(90, 158, 255, 0.45);
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 10px;
-  padding: 10px 12px;
-  background: rgba(90, 158, 255, 0.09);
-  color: #8fbeff;
-  font-weight: 700;
-  font-size: 0.8rem;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.025);
+  color: #94a3b8;
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0;
   text-decoration: none;
-  cursor: pointer;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
+  justify-content: space-between;
+  gap: 14px;
+  overflow: hidden;
   transition:
-    background 0.2s ease,
-    border-color 0.2s ease,
-    color 0.2s ease,
-    transform 0.2s ease;
+    background 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .project-btn:hover {
-  background: #5a9eff;
-  border-color: #5a9eff;
-  color: #ffffff;
-  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.045);
+  border-color: rgba(135, 206, 250, 0.2);
+  transform: translateX(4px);
 }
 
 .project-btn:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(90, 158, 255, 0.3);
+  box-shadow: 0 0 0 3px rgba(135, 206, 250, 0.22);
 }
 
 .project-btn-label {
-  transition: transform 0.22s ease;
+  min-width: 0;
+  transition: color 0.25s ease;
 }
 
 .project-btn-arrow {
-  width: 15px;
-  height: 15px;
-  opacity: 0.8;
-  transform: translateX(0);
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  color: #3a4f6a;
+  opacity: 0;
+  transform: translateX(-6px);
   transition:
-    transform 0.22s ease,
-    opacity 0.22s ease;
+    opacity 0.25s ease,
+    transform 0.25s ease,
+    color 0.25s ease;
 }
 
 .project-btn:hover .project-btn-label {
-  transform: translateX(-1px);
+  color: #cbd5f5;
 }
 
 .project-btn:hover .project-btn-arrow {
   opacity: 1;
-  transform: translateX(3px);
+  transform: translateX(0);
+  color: lightskyblue;
 }
 
 @keyframes pull-up {
@@ -290,10 +293,6 @@ const projects = [
   .projects-page {
     width: min(95%, 980px);
     padding-bottom: 44px;
-  }
-
-  .project-btn {
-    text-align: center;
   }
 }
 </style>
