@@ -48,7 +48,13 @@ const projects = [
         class="project-row"
       >
         <div class="project-main">
-          <img :src="project.logo" :alt="project.name" class="project-logo" />
+          <img
+            :src="project.logo"
+            :alt="project.name"
+            class="project-logo"
+            loading="lazy"
+            decoding="async"
+          />
 
           <div class="project-meta">
             <p class="project-kicker">{{ project.type }}</p>
@@ -217,6 +223,10 @@ const projects = [
     background 0.25s ease,
     border-color 0.25s ease,
     transform 0.25s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.project-btn:visited {
+  color: #94a3b8;
 }
 
 .project-btn:hover {
