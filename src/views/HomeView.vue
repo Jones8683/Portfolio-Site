@@ -80,30 +80,17 @@ onUnmounted(() => {
         </div>
         <div class="about-body">
           <p>
-            I'm Jones, a student with a strong interest in technology and
-            computing. I enjoy learning how things work and continuously
-            improving my skills. I love exploring artificial intelligence and
-            discovering and testing the latest advancements in it. I enjoy
-            experimenting with new software and using technology to explore,
-            solve problems, and just see what it can do.
+            I'm Jones, a student based in Adelaide with an interest in computers
+            and technology, along with a mix of other things I get into. I'm a
+            member of the Tjuringa Orienteers, and I love spending time out in
+            nature and getting into a bit of art on the side.
           </p>
           <p>
-            I've done a bit of work on a few projects including
-            <a
-              href="https://github.com/BetterSEQTA/BetterSEQTA-Plus"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="repo-link"
-              >BetterSEQTA+</a
-            >, a web extension for SEQTA that improves and reimagines user
-            experience for over 60,000 students across the world.
-          </p>
-          <p>
-            Beyond technology, I'm passionate about music, I love many kinds of
-            music and I play the piano. Some of my favorite TV shows are Star
-            Wars and Loki. I love reading all kinds of books, especially The
-            High Republic series, and my favorite video games are Hollow Knight,
-            Minecraft, and the Forza Horizon series.
+            I love reading all kinds of books, especially The High Republic
+            series, Keeper of the Lost Cities, and Tom Clancy's John Clark
+            novels. Some of my favorite movies and shows are Star Wars, the Dune
+            films, Andor, and The Rookie. My top video games are Minecraft,
+            Hollow Knight, Jedi Survivor, and Rainbow Six Siege.
           </p>
         </div>
       </section>
