@@ -1,6 +1,4 @@
 <script setup>
-import { computed, ref } from "vue";
-
 const projects = [
   {
     name: "BetterSEQTA+",
@@ -34,61 +32,18 @@ const projects = [
     type: "Software",
   },
 ];
-
-const searchQuery = ref("");
-
-const filteredProjects = computed(() => {
-  const query = searchQuery.value.trim().toLowerCase();
-  if (!query) {
-    return projects;
-  }
-
-  return projects.filter((project) => {
-    const text = `${project.name} ${project.description} ${project.type}`;
-    return text.toLowerCase().includes(query);
-  });
-});
 </script>
 
 <template>
   <section class="projects-page">
     <h1 class="name-title projects-title">Contributions &amp; Projects</h1>
     <p class="projects-subtitle">
-      A collection of projects I have made and contributed to.
+      A collection of projects I have made or contributed to.
     </p>
-
-    <div class="projects-tools">
-      <div class="search-box">
-        <label for="project-search" class="sr-only">Search projects</label>
-        <svg
-          class="search-icon"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          aria-hidden="true"
-        >
-          <circle cx="11" cy="11" r="8" stroke-width="2"></circle>
-          <path
-            d="m21 21-4.35-4.35"
-            stroke-width="2"
-            stroke-linecap="round"
-          ></path>
-        </svg>
-        <input
-          id="project-search"
-          v-model="searchQuery"
-          name="project-search"
-          type="search"
-          placeholder="Search projects"
-          class="search-input"
-          autocomplete="off"
-        />
-      </div>
-    </div>
 
     <div class="project-list">
       <article
-        v-for="project in filteredProjects"
+        v-for="project in projects"
         :key="project.name"
         class="project-row"
       >
@@ -126,10 +81,6 @@ const filteredProjects = computed(() => {
         </a>
       </article>
     </div>
-
-    <div v-if="filteredProjects.length === 0" class="no-results">
-      <p>No projects match your search.</p>
-    </div>
   </section>
 </template>
 
@@ -157,63 +108,6 @@ const filteredProjects = computed(() => {
   text-align: center;
   animation: pull-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
   animation-delay: 0.06s;
-}
-
-.projects-tools {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
-  animation: pull-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
-  animation-delay: 0.12s;
-}
-
-.search-box {
-  position: relative;
-  width: min(100%, 560px);
-}
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-
-.search-icon {
-  position: absolute;
-  left: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 17px;
-  height: 17px;
-  color: #64748b;
-  pointer-events: none;
-}
-
-.search-input {
-  width: 100%;
-  height: 42px;
-  padding: 0 14px 0 40px;
-  border: 1px solid rgba(255, 255, 255, 0.13);
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.03);
-  color: #f8fafc;
-  font-size: 0.95rem;
-}
-
-.search-input::placeholder {
-  color: #64748b;
-}
-
-.search-input:focus {
-  outline: none;
-  border-color: rgba(148, 163, 184, 0.45);
 }
 
 .project-list {
@@ -361,13 +255,6 @@ const filteredProjects = computed(() => {
   transform: translateX(3px);
 }
 
-.no-results {
-  margin-top: 18px;
-  text-align: center;
-  color: #94a3b8;
-  animation: pull-up 0.45s ease both;
-}
-
 @keyframes pull-up {
   from {
     opacity: 0;
@@ -383,9 +270,8 @@ const filteredProjects = computed(() => {
 @media (prefers-reduced-motion: reduce) {
   .projects-title,
   .projects-subtitle,
-  .projects-tools,
   .project-row,
-  .no-results {
+  .project-list {
     animation: none !important;
   }
 }
