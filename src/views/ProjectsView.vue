@@ -35,7 +35,7 @@ const projects = [
 </script>
 
 <template>
-  <section class="projects-page">
+  <section class="content-wrap projects-page">
     <h1 class="name-title projects-title">Contributions &amp; Projects</h1>
     <p class="projects-subtitle">
       A collection of projects I have made or contributed to.
@@ -93,24 +93,21 @@ const projects = [
 <style scoped>
 .projects-page {
   width: min(92%, 980px);
-  padding: 12px 0 56px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  padding: 0 0 56px;
 }
 
 .projects-title {
-  margin-top: 12px;
-  margin-bottom: 6px;
+  margin-top: 20px;
+  margin-bottom: 4px;
   font-size: clamp(2.2rem, 7vw, 3.8rem);
-  line-height: 1;
   animation: pull-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .projects-subtitle {
   color: #94a3b8;
   font-size: 1.02rem;
-  margin-bottom: 20px;
+  margin-top: 0;
+  margin-bottom: 24px;
   text-align: center;
   animation: pull-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
   animation-delay: 0.06s;
