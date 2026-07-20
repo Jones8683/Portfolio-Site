@@ -1,3 +1,3 @@
-# Personal Portfolio Site
+# My Portfolio Site
 
 https://JonesJankovic.com. Built with Vue 3 and Vite.
