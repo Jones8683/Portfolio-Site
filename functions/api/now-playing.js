@@ -41,9 +41,12 @@ export async function onRequestGet(context) {
   try {
     const accessToken = await getAccessToken(env);
 
-    const nowRes = await fetch("https://api.spotify.com/v1/me/player/currently-playing", {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
+    const nowRes = await fetch(
+      "https://api.spotify.com/v1/me/player/currently-playing",
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      },
+    );
 
     if (nowRes.status === 200) {
       const nowData = await nowRes.json();
