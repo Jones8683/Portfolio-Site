@@ -35,3 +35,4 @@ __screenshots__/
 *.timestamp-*-*.mjs
 node_modules/
 .DS_Store
+.wrangler
