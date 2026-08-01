@@ -105,7 +105,7 @@ onUnmounted(() => {
             Want to get in touch? Reach out via email or check out my socials:
           </p>
           <div class="contact-list">
-            <a href="mailto:outerrim1977@gmail.com" class="contact-row">
+            <a href="mailto:contact@jjank.com" class="contact-row">
               <svg class="contact-row-icon" viewBox="0 0 24 24" fill="none">
                 <rect
                   x="2"
@@ -125,7 +125,7 @@ onUnmounted(() => {
                 />
               </svg>
               <span class="contact-row-label">Email</span>
-              <span class="contact-row-value">outerrim1977@gmail.com</span>
+              <span class="contact-row-value">contact@jjank.com</span>
               <span class="contact-row-arrow">→</span>
             </a>
             <a
