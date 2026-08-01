@@ -87,7 +87,7 @@ onUnmounted(() => {
           </span>
           Listening to Spotify
         </div>
-        <div class="np-track">{{ track.title }} | {{ track.artist }}</div>
+        <div class="np-track">{{ track.title }} - {{ track.artist }}</div>
       </div>
     </a>
     <div v-else-if="props.fallbackText" class="now-playing-badge fallback-pill">
