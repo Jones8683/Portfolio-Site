@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
 import profilePic from "@/assets/github.png";
+import NowPlayingBadge from "@/components/NowPlayingBadge.vue";
 
 const visible = ref(false);
 const scrolled = ref(false);
@@ -36,7 +37,7 @@ onUnmounted(() => {
 
         <h1 class="name-title">Jones Jankovic</h1>
 
-        <div class="hero-tag">Student | Australia</div>
+        <NowPlayingBadge fallback-text="Student | Australia" />
       </div>
 
       <div class="snake-wrap">
@@ -296,22 +297,9 @@ onUnmounted(() => {
   background-clip: text;
 }
 
-.hero-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 12px;
-  font-weight: 500;
-  color: #64a8ff;
-  letter-spacing: 0.04em;
-  background: rgba(58, 123, 213, 0.14);
-  border: 1px solid rgba(58, 123, 213, 0.438);
-  padding: 6px 14px;
-  border-radius: 100px;
-}
-
 .snake-wrap {
   width: min(100%, 900px);
+  margin-top: -6px;
   opacity: 0;
   transform: translateY(16px);
   transition:

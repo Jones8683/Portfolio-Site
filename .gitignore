@@ -25,6 +25,7 @@ coverage/
 .env
 .env.local
 .env.*.local
+.dev.vars
 
 *.tsbuildinfo
 .eslintcache
