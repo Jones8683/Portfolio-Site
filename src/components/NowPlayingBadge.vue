@@ -9,14 +9,9 @@ const props = defineProps({
   },
 });
 
-const { track, hasFetchedOnce, startPolling, stopPolling, fetchNowPlaying } =
-  useNowPlaying();
+const { track, startPolling, stopPolling } = useNowPlaying();
 
-const badgeKey = computed(() => {
-  if (!hasFetchedOnce.value) return "loading";
-  if (track.value) return "track";
-  return "fallback";
-});
+const badgeKey = computed(() => (track.value ? "track" : "fallback"));
 
 function handleVisibilityChange() {
   if (document.hidden) {
@@ -24,7 +19,6 @@ function handleVisibilityChange() {
     return;
   }
 
-  fetchNowPlaying();
   startPolling();
 }
 
@@ -66,18 +60,6 @@ onUnmounted(() => {
           <div class="np-track">{{ track.title }} - {{ track.artist }}</div>
         </div>
       </a>
-
-      <div
-        v-else-if="!hasFetchedOnce"
-        key="loading"
-        class="now-playing-badge is-loading"
-      >
-        <div class="np-art np-art-skeleton"></div>
-        <div class="np-text">
-          <div class="np-label-skeleton"></div>
-          <div class="np-track-skeleton"></div>
-        </div>
-      </div>
 
       <div
         v-else-if="props.fallbackText"
@@ -123,50 +105,6 @@ onUnmounted(() => {
   font-weight: 500;
   letter-spacing: 0.04em;
   color: #64a8ff;
-}
-
-.is-loading {
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  color: #64a8ff;
-}
-
-.is-loading {
-  gap: 10px;
-}
-
-.np-art-skeleton,
-.np-label-skeleton,
-.np-track-skeleton {
-  border-radius: 4px;
-  background: rgba(100, 168, 255, 0.22);
-  animation: np-shimmer 1.3s ease-in-out infinite;
-}
-
-.np-art-skeleton {
-  border-radius: 6px;
-}
-
-.np-label-skeleton {
-  width: 90px;
-  height: 9px;
-  margin-bottom: 6px;
-}
-
-.np-track-skeleton {
-  width: 130px;
-  height: 11px;
-}
-
-@keyframes np-shimmer {
-  0%,
-  100% {
-    opacity: 0.5;
-  }
-  50% {
-    opacity: 1;
-  }
 }
 
 .np-art {

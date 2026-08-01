@@ -1,7 +1,6 @@
 import { ref } from "vue";
 
 const track = ref(null);
-const hasFetchedOnce = ref(false);
 
 let pollTimer = null;
 let isFetching = false;
@@ -43,7 +42,6 @@ async function fetchNowPlaying() {
     }
   } finally {
     isFetching = false;
-    hasFetchedOnce.value = true;
   }
 }
 
@@ -64,5 +62,5 @@ function stopPolling() {
 }
 
 export function useNowPlaying() {
-  return { track, hasFetchedOnce, startPolling, stopPolling, fetchNowPlaying };
+  return { track, startPolling, stopPolling };
 }
