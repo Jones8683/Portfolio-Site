@@ -1,5 +1,6 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { onMounted, onUnmounted, computed } from "vue";
+import { useNowPlaying } from "@/composables/useNowPlaying";
 
 const props = defineProps({
   fallbackText: {
@@ -8,40 +9,14 @@ const props = defineProps({
   },
 });
 
-const track = ref(null);
-let pollTimer = null;
-let isFetching = false;
+const { track, hasFetchedOnce, startPolling, stopPolling, fetchNowPlaying } =
+  useNowPlaying();
 
-async function fetchNowPlaying() {
-  if (isFetching) return;
-  isFetching = true;
-
-  try {
-    const res = await fetch("/api/now-playing");
-    if (!res.ok) {
-      track.value = null;
-      return;
-    }
-
-    const data = await res.json();
-    track.value = data.isPlaying ? data : null;
-  } catch {
-    track.value = null;
-  } finally {
-    isFetching = false;
-  }
-}
-
-function startPolling() {
-  if (pollTimer) return;
-  pollTimer = setInterval(fetchNowPlaying, 2000);
-}
-
-function stopPolling() {
-  if (!pollTimer) return;
-  clearInterval(pollTimer);
-  pollTimer = null;
-}
+const badgeKey = computed(() => {
+  if (!hasFetchedOnce.value) return "loading";
+  if (track.value) return "track";
+  return "fallback";
+});
 
 function handleVisibilityChange() {
   if (document.hidden) {
@@ -54,7 +29,6 @@ function handleVisibilityChange() {
 }
 
 onMounted(() => {
-  fetchNowPlaying();
   startPolling();
   document.addEventListener("visibilitychange", handleVisibilityChange);
 });
@@ -67,32 +41,52 @@ onUnmounted(() => {
 
 <template>
   <div class="badge-slot">
-    <a
-      v-if="track"
-      :href="track.songUrl ?? undefined"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="now-playing-badge"
-    >
-      <img
-        v-if="track.albumArt"
-        :src="track.albumArt"
-        class="np-art"
-        :alt="track.album ?? 'Album art'"
-      />
-      <div class="np-text">
-        <div class="np-label">
-          <span class="np-bars" aria-hidden="true">
-            <span></span><span></span><span></span>
-          </span>
-          Listening to Spotify
+    <Transition name="np-fade" mode="out-in">
+      <a
+        v-if="track"
+        :key="badgeKey"
+        :href="track.songUrl ?? undefined"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="now-playing-badge"
+      >
+        <img
+          v-if="track.albumArt"
+          :src="track.albumArt"
+          class="np-art"
+          :alt="track.album ?? 'Album art'"
+        />
+        <div class="np-text">
+          <div class="np-label">
+            <span class="np-bars" aria-hidden="true">
+              <span></span><span></span><span></span>
+            </span>
+            Listening to Spotify
+          </div>
+          <div class="np-track">{{ track.title }} - {{ track.artist }}</div>
         </div>
-        <div class="np-track">{{ track.title }} - {{ track.artist }}</div>
+      </a>
+
+      <div
+        v-else-if="!hasFetchedOnce"
+        key="loading"
+        class="now-playing-badge is-loading"
+      >
+        <div class="np-art np-art-skeleton"></div>
+        <div class="np-text">
+          <div class="np-label-skeleton"></div>
+          <div class="np-track-skeleton"></div>
+        </div>
       </div>
-    </a>
-    <div v-else-if="props.fallbackText" class="now-playing-badge fallback-pill">
-      {{ props.fallbackText }}
-    </div>
+
+      <div
+        v-else-if="props.fallbackText"
+        key="fallback"
+        class="now-playing-badge fallback-pill"
+      >
+        {{ props.fallbackText }}
+      </div>
+    </Transition>
   </div>
 </template>
 
@@ -129,6 +123,50 @@ onUnmounted(() => {
   font-weight: 500;
   letter-spacing: 0.04em;
   color: #64a8ff;
+}
+
+.is-loading {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: #64a8ff;
+}
+
+.is-loading {
+  gap: 10px;
+}
+
+.np-art-skeleton,
+.np-label-skeleton,
+.np-track-skeleton {
+  border-radius: 4px;
+  background: rgba(100, 168, 255, 0.22);
+  animation: np-shimmer 1.3s ease-in-out infinite;
+}
+
+.np-art-skeleton {
+  border-radius: 6px;
+}
+
+.np-label-skeleton {
+  width: 90px;
+  height: 9px;
+  margin-bottom: 6px;
+}
+
+.np-track-skeleton {
+  width: 130px;
+  height: 11px;
+}
+
+@keyframes np-shimmer {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 .np-art {
@@ -205,5 +243,22 @@ onUnmounted(() => {
   75% {
     transform: scaleY(0.65);
   }
+}
+
+.np-fade-enter-active,
+.np-fade-leave-active {
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+.np-fade-enter-from {
+  opacity: 0;
+  transform: translateY(4px) scale(0.98);
+}
+
+.np-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-4px) scale(0.98);
 }
 </style>
