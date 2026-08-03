@@ -7,7 +7,7 @@ let isFetching = false;
 let consecutiveFailures = 0;
 let activeConsumers = 0;
 
-const POLL_MS = 2000;
+const POLL_MS = 1000;
 const FAILURE_TOLERANCE = 2;
 
 function tracksEqual(a, b) {
