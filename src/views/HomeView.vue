@@ -299,7 +299,7 @@ onUnmounted(() => {
 
 .snake-wrap {
   width: min(100%, 900px);
-  margin-top: -6px;
+  margin-top: -18px;
   opacity: 0;
   transform: translateY(16px);
   transition:
