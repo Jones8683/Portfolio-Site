@@ -300,7 +300,6 @@ a.repo-link:hover {
 .contact-row-icon {
   width: 22px;
   height: 22px;
-  flex-shrink: 0;
   color: #4a5e7a;
   transition: color 0.25s ease;
   flex-shrink: 0;
