@@ -92,7 +92,7 @@ onUnmounted(() => {
             series, Keeper of the Lost Cities, and Tom Clancy's John Clark
             novels. Some of my favorite movies and shows are Star Wars, the Dune
             films, Andor, and The Rookie. My top video games are Minecraft,
-            Hollow Knight, Jedi Survivor, and Rainbow Six Siege.
+            Hollow Knight, Jedi Survivor, Halo, and Rainbow Six Siege.
           </p>
         </div>
       </section>
