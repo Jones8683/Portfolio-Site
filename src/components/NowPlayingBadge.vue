@@ -18,7 +18,6 @@ function handleVisibilityChange() {
     stopPolling();
     return;
   }
-
   startPolling();
 }
 
@@ -152,23 +151,25 @@ onUnmounted(() => {
 
 .np-bars span {
   width: 2px;
+  height: var(--peak);
   background: #64a8ff;
-  border-radius: 1px;
+  border-radius: 999px;
   transform-origin: center;
-  animation: np-bounce 0.9s ease-in-out infinite;
+  will-change: transform;
+  animation: np-bounce 1.1s linear infinite;
 }
 
 .np-bars span:nth-child(1) {
-  height: 6px;
-  animation-delay: -0.2s;
+  --peak: 6px;
+  animation-delay: -0.6s;
 }
 .np-bars span:nth-child(2) {
-  height: 10px;
-  animation-delay: 0s;
+  --peak: 10px;
+  animation-delay: -0.3s;
 }
 .np-bars span:nth-child(3) {
-  height: 6px;
-  animation-delay: -0.2s;
+  --peak: 6px;
+  animation-delay: 0s;
 }
 
 @keyframes np-bounce {
@@ -176,11 +177,35 @@ onUnmounted(() => {
   100% {
     transform: scaleY(0.45);
   }
+  10% {
+    transform: scaleY(0.52);
+  }
+  20% {
+    transform: scaleY(0.64);
+  }
+  30% {
+    transform: scaleY(0.79);
+  }
+  40% {
+    transform: scaleY(0.92);
+  }
   50% {
     transform: scaleY(1);
   }
+  60% {
+    transform: scaleY(0.9);
+  }
+  70% {
+    transform: scaleY(0.72);
+  }
   75% {
     transform: scaleY(0.65);
+  }
+  85% {
+    transform: scaleY(0.55);
+  }
+  90% {
+    transform: scaleY(0.5);
   }
 }
 
