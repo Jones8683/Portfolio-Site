@@ -13615,37 +13615,71 @@
           }
         },
         function (t, e) {
-          t.exports = function (t) {
-            var e = "undefined" != typeof window && window.location;
-            if (!e) throw new Error("fixUrls requires window.location");
-            if (!t || "string" != typeof t) return t;
-            var n = e.protocol + "//" + e.host,
-              r = n + e.pathname.replace(/\/[^\/]*$/, "/");
-            return t.replace(
-              /url\s*\(((?:[^)(]|\((?:[^)(]+|\([^)(]*\))*\))*)\)/gi,
-              function (t, e) {
-                var i,
-                  o = e
-                    .trim()
-                    .replace(/^"(.*)"$/, function (t, e) {
-                      return e;
-                    })
-                    .replace(/^'(.*)'$/, function (t, e) {
-                      return e;
-                    });
-                return /^(#|data:|http:\/\/|https:\/\/|file:\/\/\/|\s*$)/i.test(
-                  o,
+          t.exports = function (source) {
+            var loc = "undefined" != typeof window && window.location;
+            if (!loc) throw new Error("fixUrls requires window.location");
+            if (!source || "string" != typeof source) return source;
+            var baseUrl = loc.protocol + "//" + loc.host,
+              currentDir = baseUrl + loc.pathname.replace(/\/[^\/]*$/, "/");
+            function rewrite(inner, full) {
+              var trimmed = inner
+                .trim()
+                .replace(/^"(.*)"$/, function (m, g) {
+                  return g;
+                })
+                .replace(/^'(.*)'$/, function (m, g) {
+                  return g;
+                });
+              if (
+                /^(#|data:|http:\/\/|https:\/\/|file:\/\/\/|\s*$)/i.test(
+                  trimmed,
                 )
-                  ? t
-                  : ((i =
-                      0 === o.indexOf("//")
-                        ? o
-                        : 0 === o.indexOf("/")
-                          ? n + o
-                          : r + o.replace(/^\.\//, "")),
-                    "url(" + JSON.stringify(i) + ")");
-              },
-            );
+              )
+                return full;
+              var resolved =
+                0 === trimmed.indexOf("//")
+                  ? trimmed
+                  : 0 === trimmed.indexOf("/")
+                    ? baseUrl + trimmed
+                    : currentDir + trimmed.replace(/^\.\//, "");
+              return "url(" + JSON.stringify(resolved) + ")";
+            }
+            var urlOpenRe = /url\s*\(/gi,
+              out = "",
+              lastEnd = 0,
+              match;
+            while ((match = urlOpenRe.exec(source))) {
+              var matchStart = match.index,
+                contentStart = urlOpenRe.lastIndex,
+                i = contentStart,
+                depth = 0,
+                quote = null;
+              for (; i < source.length; i++) {
+                var ch = source[i];
+                if (quote) {
+                  if (ch === quote && "\\" !== source[i - 1]) quote = null;
+                } else if ('"' === ch || "'" === ch) {
+                  quote = ch;
+                } else if ("(" === ch) {
+                  depth++;
+                } else if (")" === ch) {
+                  if (0 === depth) break;
+                  depth--;
+                }
+              }
+              if (i >= source.length) {
+                out += source.slice(lastEnd, contentStart);
+                lastEnd = contentStart;
+                urlOpenRe.lastIndex = contentStart;
+                continue;
+              }
+              var inner = source.slice(contentStart, i),
+                full = source.slice(matchStart, i + 1);
+              out += source.slice(lastEnd, matchStart) + rewrite(inner, full);
+              lastEnd = i + 1;
+              urlOpenRe.lastIndex = lastEnd;
+            }
+            return out + source.slice(lastEnd);
           };
         },
         function (t, e) {
