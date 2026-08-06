@@ -1,4 +1,11 @@
+let cachedAccessToken = null;
+let cachedTokenExpiresAt = 0;
+
 async function getAccessToken(env) {
+  if (cachedAccessToken && Date.now() < cachedTokenExpiresAt) {
+    return cachedAccessToken;
+  }
+
   const res = await fetch("https://accounts.spotify.com/api/token", {
     method: "POST",
     headers: {
@@ -17,7 +24,9 @@ async function getAccessToken(env) {
   }
 
   const data = await res.json();
-  return data.access_token;
+  cachedAccessToken = data.access_token;
+  cachedTokenExpiresAt = Date.now() + (data.expires_in - 60) * 1000;
+  return cachedAccessToken;
 }
 
 function trackPayload(item) {

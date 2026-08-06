@@ -39,10 +39,11 @@ onUnmounted(() => {
       <a
         v-if="track"
         :key="badgeKey"
-        :href="track.songUrl ?? undefined"
+        href="https://spotiqueue.com/mwrrowv"
         target="_blank"
         rel="noopener noreferrer"
         class="now-playing-badge"
+        :aria-label="`Now playing: ${track.title} by ${track.artist}`"
       >
         <img
           v-if="track.albumArt"
