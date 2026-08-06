@@ -632,7 +632,7 @@
             (o.prototype.format = function () {
               var t = this.auth || "";
               t &&
-                ((t = (t = encodeURIComponent(t)).replace(/%3A/i, ":")),
+                ((t = (t = encodeURIComponent(t)).replace(/%3A/gi, ":")),
                 (t += "@"));
               var e = this.protocol || "",
                 n = this.pathname || "",
@@ -666,7 +666,7 @@
                   (n = n.replace(/[?#]/g, function (t) {
                     return encodeURIComponent(t);
                   })) +
-                  (s = s.replace("#", "%23")) +
+                  (s = s.replace(/#/g, "%23")) +
                   r
               );
             }),
@@ -13285,7 +13285,10 @@
               : (/^['"].*['"]$/.test(t) && (t = t.slice(1, -1)),
                 /["'() \t\n]/.test(t) || e
                   ? '"'.concat(
-                      t.replace(/"/g, '\\"').replace(/\n/g, "\\n"),
+                      t
+                        .replace(/\\/g, "\\\\")
+                        .replace(/"/g, '\\"')
+                        .replace(/\n/g, "\\n"),
                       '"',
                     )
                   : t);
