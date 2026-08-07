@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, onUnmounted, computed } from "vue";
+import { onMounted, onUnmounted, computed, ref, watch, nextTick } from "vue";
 import { useNowPlaying } from "@/composables/useNowPlaying";
 
 const props = defineProps({
@@ -12,6 +12,7 @@ const props = defineProps({
 const { track, startPolling, stopPolling } = useNowPlaying();
 
 const badgeKey = computed(() => (track.value ? "track" : "fallback"));
+const badgeRef = ref(null);
 
 function handleVisibilityChange() {
   if (document.hidden) {
@@ -20,6 +21,38 @@ function handleVisibilityChange() {
   }
   startPolling();
 }
+
+watch(
+  () => track.value,
+  (newTrack, oldTrack) => {
+    const el = badgeRef.value;
+    if (!el || !oldTrack || !newTrack) return;
+
+    const startWidth = el.getBoundingClientRect().width;
+
+    nextTick(() => {
+      const endWidth = el.getBoundingClientRect().width;
+      if (Math.abs(endWidth - startWidth) < 1) return;
+
+      el.style.transition = "none";
+      el.style.width = `${startWidth}px`;
+      void el.offsetWidth;
+
+      requestAnimationFrame(() => {
+        el.style.transition = "width 0.35s ease, background 0.2s ease";
+        el.style.width = `${endWidth}px`;
+      });
+
+      const clearInlineWidth = (event) => {
+        if (event.propertyName !== "width") return;
+        el.style.transition = "";
+        el.style.width = "";
+        el.removeEventListener("transitionend", clearInlineWidth);
+      };
+      el.addEventListener("transitionend", clearInlineWidth);
+    });
+  },
+);
 
 onMounted(() => {
   startPolling();
@@ -37,6 +70,7 @@ onUnmounted(() => {
     <Transition name="np-fade" mode="out-in">
       <a
         v-if="track"
+        ref="badgeRef"
         :key="badgeKey"
         href="https://spotiqueue.com/mwrrowv"
         target="_blank"
