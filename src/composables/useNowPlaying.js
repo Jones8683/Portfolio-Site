@@ -10,12 +10,19 @@ let activeConsumers = 0;
 const POLL_MS = 1000;
 const FAILURE_TOLERANCE = 2;
 
+function arraysEqual(a, b) {
+  if (a === b) return true;
+  if (!Array.isArray(a) || !Array.isArray(b)) return false;
+  if (a.length !== b.length) return false;
+  return a.every((value, index) => value === b[index]);
+}
+
 function tracksEqual(a, b) {
   if (a === b) return true;
   if (!a || !b) return false;
   return (
     a.title === b.title &&
-    a.artist === b.artist &&
+    arraysEqual(a.artists, b.artists) &&
     a.albumArt === b.albumArt &&
     a.songUrl === b.songUrl
   );

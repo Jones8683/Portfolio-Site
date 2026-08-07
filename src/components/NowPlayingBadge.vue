@@ -13,6 +13,17 @@ const { track, startPolling, stopPolling } = useNowPlaying();
 
 const badgeKey = computed(() => (track.value ? "track" : "fallback"));
 const badgeRef = ref(null);
+const measureTrackRef = ref(null);
+const measureArt = ref(false);
+const measureCandidateText = ref("");
+const displayArtistLine = ref("");
+
+const fullArtistLabel = computed(() => {
+  const artists = track.value?.artists;
+  return Array.isArray(artists) && artists.length
+    ? artists.join(", ")
+    : "Unknown artist";
+});
 
 function handleVisibilityChange() {
   if (document.hidden) {
@@ -22,35 +33,68 @@ function handleVisibilityChange() {
   startPolling();
 }
 
+async function resolveDisplayArtists(currentTrack) {
+  const artists = Array.isArray(currentTrack.artists)
+    ? currentTrack.artists
+    : [];
+  if (!artists.length) return "";
+
+  measureArt.value = Boolean(currentTrack.albumArt);
+
+  for (let count = artists.length; count >= 1; count -= 1) {
+    const candidateArtists = artists.slice(0, count).join(", ");
+    measureCandidateText.value = `${currentTrack.title} - ${candidateArtists}`;
+    await nextTick();
+
+    const measureEl = measureTrackRef.value;
+    if (measureEl && measureEl.scrollWidth <= measureEl.clientWidth + 0.5) {
+      return candidateArtists;
+    }
+  }
+
+  return artists[0];
+}
+
+function animateWidthChange(el, startWidth) {
+  const endWidth = el.getBoundingClientRect().width;
+  if (Math.abs(endWidth - startWidth) < 1) return;
+
+  el.style.transition = "none";
+  el.style.width = `${startWidth}px`;
+  void el.offsetWidth;
+
+  requestAnimationFrame(() => {
+    el.style.transition = "width 0.35s ease, background 0.2s ease";
+    el.style.width = `${endWidth}px`;
+  });
+
+  const clearInlineWidth = (event) => {
+    if (event.propertyName !== "width") return;
+    el.style.transition = "";
+    el.style.width = "";
+    el.removeEventListener("transitionend", clearInlineWidth);
+  };
+  el.addEventListener("transitionend", clearInlineWidth);
+}
+
 watch(
   () => track.value,
-  (newTrack, oldTrack) => {
+  async (newTrack, oldTrack) => {
+    if (!newTrack) {
+      displayArtistLine.value = "";
+      return;
+    }
+
+    const isSongSwap = Boolean(oldTrack);
     const el = badgeRef.value;
-    if (!el || !oldTrack || !newTrack) return;
+    const startWidth = isSongSwap && el ? el.getBoundingClientRect().width : 0;
 
-    const startWidth = el.getBoundingClientRect().width;
+    displayArtistLine.value = await resolveDisplayArtists(newTrack);
 
-    nextTick(() => {
-      const endWidth = el.getBoundingClientRect().width;
-      if (Math.abs(endWidth - startWidth) < 1) return;
-
-      el.style.transition = "none";
-      el.style.width = `${startWidth}px`;
-      void el.offsetWidth;
-
-      requestAnimationFrame(() => {
-        el.style.transition = "width 0.35s ease, background 0.2s ease";
-        el.style.width = `${endWidth}px`;
-      });
-
-      const clearInlineWidth = (event) => {
-        if (event.propertyName !== "width") return;
-        el.style.transition = "";
-        el.style.width = "";
-        el.removeEventListener("transitionend", clearInlineWidth);
-      };
-      el.addEventListener("transitionend", clearInlineWidth);
-    });
+    if (isSongSwap && el) {
+      await nextTick();
+      animateWidthChange(el, startWidth);
+    }
   },
 );
 
@@ -76,7 +120,7 @@ onUnmounted(() => {
         target="_blank"
         rel="noopener noreferrer"
         class="now-playing-badge"
-        :aria-label="`Now playing: ${track.title} by ${track.artist}`"
+        :aria-label="`Now playing: ${track.title} by ${fullArtistLabel}`"
       >
         <img
           v-if="track.albumArt"
@@ -91,7 +135,12 @@ onUnmounted(() => {
             </span>
             Listening to Spotify
           </div>
-          <div class="np-track">{{ track.title }} - {{ track.artist }}</div>
+          <div class="np-track">
+            {{ track.title
+            }}<template v-if="displayArtistLine">
+              - {{ displayArtistLine }}</template
+            >
+          </div>
         </div>
       </a>
 
@@ -103,6 +152,21 @@ onUnmounted(() => {
         {{ props.fallbackText }}
       </div>
     </Transition>
+
+    <div class="now-playing-badge measure-clone" aria-hidden="true">
+      <img v-if="measureArt" class="np-art" />
+      <div class="np-text">
+        <div class="np-label">
+          <span class="np-bars" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </span>
+          Listening to Spotify
+        </div>
+        <div class="np-track" ref="measureTrackRef">
+          {{ measureCandidateText }}
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -129,6 +193,14 @@ onUnmounted(() => {
 
 .now-playing-badge:not(.fallback-pill):hover {
   background: rgba(58, 123, 213, 0.18);
+}
+
+.measure-clone {
+  position: fixed;
+  top: 0;
+  left: -99999px;
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .fallback-pill {

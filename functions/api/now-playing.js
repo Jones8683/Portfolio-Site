@@ -33,7 +33,7 @@ function trackPayload(item) {
   return {
     isPlaying: true,
     title: item.name,
-    artist: item.artists.map((a) => a.name).join(", "),
+    artists: item.artists.map((a) => a.name),
     album: item.album?.name ?? null,
     albumArt: item.album?.images?.[0]?.url ?? null,
     songUrl: item.external_urls?.spotify ?? null,
