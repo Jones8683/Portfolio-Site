@@ -71,55 +71,26 @@ async function resolveDisplay(currentTrack) {
   };
 }
 
-let swapToken = 0;
-let activeAnimations = [];
-
-function cancelActiveAnimations() {
-  activeAnimations.forEach((anim) => anim.cancel());
-  activeAnimations = [];
-}
-
-async function handleSongSwap(newTrack, el, startWidth) {
-  const myToken = ++swapToken;
-  cancelActiveAnimations();
-
-  const textEl = el.querySelector(".np-track");
-
-  if (textEl) {
-    const fadeOut = textEl.animate([{ opacity: 1 }, { opacity: 0 }], {
-      duration: 150,
-      easing: "ease",
-      fill: "forwards",
-    });
-    activeAnimations.push(fadeOut);
-    await fadeOut.finished;
-    if (myToken !== swapToken) return;
-  }
-
-  display.value = await resolveDisplay(newTrack);
-  await nextTick();
-  if (myToken !== swapToken) return;
-
+function animateWidthChange(el, startWidth) {
   const endWidth = el.getBoundingClientRect().width;
+  if (Math.abs(endWidth - startWidth) < 1) return;
 
-  if (Math.abs(endWidth - startWidth) >= 1) {
-    const resize = el.animate(
-      [{ width: `${startWidth}px` }, { width: `${endWidth}px` }],
-      { duration: 350, easing: "ease" },
-    );
-    activeAnimations.push(resize);
-    await resize.finished;
-    if (myToken !== swapToken) return;
-  }
+  el.style.transition = "none";
+  el.style.width = `${startWidth}px`;
+  void el.offsetWidth;
 
-  if (textEl) {
-    const fadeIn = textEl.animate([{ opacity: 0 }, { opacity: 1 }], {
-      duration: 200,
-      easing: "ease",
-      fill: "forwards",
-    });
-    activeAnimations.push(fadeIn);
-  }
+  requestAnimationFrame(() => {
+    el.style.transition = "width 0.35s ease, background 0.2s ease";
+    el.style.width = `${endWidth}px`;
+  });
+
+  const clearInlineWidth = (event) => {
+    if (event.propertyName !== "width") return;
+    el.style.transition = "";
+    el.style.width = "";
+    el.removeEventListener("transitionend", clearInlineWidth);
+  };
+  el.addEventListener("transitionend", clearInlineWidth);
 }
 
 watch(
@@ -137,11 +108,13 @@ watch(
 
     const isSongSwap = Boolean(oldTrack);
     const el = badgeRef.value;
+    const startWidth = isSongSwap && el ? el.getBoundingClientRect().width : 0;
+
+    display.value = await resolveDisplay(newTrack);
 
     if (isSongSwap && el) {
-      await handleSongSwap(newTrack, el, el.getBoundingClientRect().width);
-    } else {
-      display.value = await resolveDisplay(newTrack);
+      await nextTick();
+      animateWidthChange(el, startWidth);
     }
   },
 );
