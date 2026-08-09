@@ -16,7 +16,13 @@ const badgeRef = ref(null);
 const measureTrackRef = ref(null);
 const measureArt = ref(false);
 const measureCandidateText = ref("");
-const displayArtistLine = ref("");
+
+const display = ref({
+  title: "",
+  artistLine: "",
+  albumArt: null,
+  album: null,
+});
 
 const fullArtistLabel = computed(() => {
   const artists = track.value?.artists;
@@ -55,6 +61,16 @@ async function resolveDisplayArtists(currentTrack) {
   return artists[0];
 }
 
+async function resolveDisplay(currentTrack) {
+  const artistLine = await resolveDisplayArtists(currentTrack);
+  return {
+    title: currentTrack.title,
+    artistLine,
+    albumArt: currentTrack.albumArt ?? null,
+    album: currentTrack.album ?? null,
+  };
+}
+
 function animateWidthChange(el, startWidth) {
   const endWidth = el.getBoundingClientRect().width;
   if (Math.abs(endWidth - startWidth) < 1) return;
@@ -81,7 +97,12 @@ watch(
   () => track.value,
   async (newTrack, oldTrack) => {
     if (!newTrack) {
-      displayArtistLine.value = "";
+      display.value = {
+        title: "",
+        artistLine: "",
+        albumArt: null,
+        album: null,
+      };
       return;
     }
 
@@ -89,7 +110,7 @@ watch(
     const el = badgeRef.value;
     const startWidth = isSongSwap && el ? el.getBoundingClientRect().width : 0;
 
-    displayArtistLine.value = await resolveDisplayArtists(newTrack);
+    display.value = await resolveDisplay(newTrack);
 
     if (isSongSwap && el) {
       await nextTick();
@@ -113,20 +134,20 @@ onUnmounted(() => {
   <div class="badge-slot">
     <Transition name="np-fade" mode="out-in">
       <a
-        v-if="track"
+        v-if="track && display.title"
         ref="badgeRef"
         :key="badgeKey"
         href="https://spotiqueue.com/mwrrowv"
         target="_blank"
         rel="noopener noreferrer"
         class="now-playing-badge"
-        :aria-label="`Now playing: ${track.title} by ${fullArtistLabel}`"
+        :aria-label="`Now playing: ${display.title} by ${fullArtistLabel}`"
       >
         <img
-          v-if="track.albumArt"
-          :src="track.albumArt"
+          v-if="display.albumArt"
+          :src="display.albumArt"
           class="np-art"
-          :alt="track.album ?? 'Album art'"
+          :alt="display.album ?? 'Album art'"
         />
         <div class="np-text">
           <div class="np-label">
@@ -136,9 +157,9 @@ onUnmounted(() => {
             Listening to Spotify
           </div>
           <div class="np-track">
-            {{ track.title
-            }}<template v-if="displayArtistLine">
-              - {{ displayArtistLine }}</template
+            {{ display.title
+            }}<template v-if="display.artistLine">
+              - {{ display.artistLine }}</template
             >
           </div>
         </div>
