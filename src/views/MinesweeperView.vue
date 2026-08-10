@@ -134,21 +134,30 @@ function handleRightClick(cell) {
   flagsPlaced.value += cell.isFlagged ? 1 : -1;
 }
 
-function revealCell(x, y, depth = 0) {
-  if (depth > 500) return; // Prevent stack overflow
-  if (
-    x < 0 ||
-    x >= currentDiff.value.cols ||
-    y < 0 ||
-    y >= currentDiff.value.rows
-  )
-    return;
-  const cell = grid.value[y][x];
-  if (cell.isRevealed || cell.isFlagged) return;
-  cell.isRevealed = true;
-  if (cell.neighborCount === 0 && !cell.isMine) {
-    for (let dy = -1; dy <= 1; dy++) {
-      for (let dx = -1; dx <= 1; dx++) revealCell(x + dx, y + dy, depth + 1);
+function revealCell(startX, startY) {
+  const stack = [[startX, startY]];
+
+  while (stack.length > 0) {
+    const [x, y] = stack.pop();
+    if (
+      x < 0 ||
+      x >= currentDiff.value.cols ||
+      y < 0 ||
+      y >= currentDiff.value.rows
+    )
+      continue;
+
+    const cell = grid.value[y][x];
+    if (cell.isRevealed || cell.isFlagged) continue;
+    cell.isRevealed = true;
+
+    if (cell.neighborCount === 0 && !cell.isMine) {
+      for (let dy = -1; dy <= 1; dy++) {
+        for (let dx = -1; dx <= 1; dx++) {
+          if (dx === 0 && dy === 0) continue;
+          stack.push([x + dx, y + dy]);
+        }
+      }
     }
   }
 }
@@ -224,8 +233,8 @@ const gridStyle = computed(() => ({
       <div class="game-wrapper">
         <div class="left-section">
           <div v-if="gameStatus === 'start'" class="overlay-msg">
-            <h2 style="color: white; margin-bottom: 20px">MINESWEEPER</h2>
-            <div style="display: flex; gap: 10px">
+            <h2 class="start-title">MINESWEEPER</h2>
+            <div class="difficulty-row">
               <button class="retry-btn" @click="initGame('easy')">EASY</button>
               <button class="retry-btn" @click="initGame('medium')">MED</button>
               <button class="retry-btn" @click="initGame('hard')">HARD</button>
@@ -236,26 +245,16 @@ const gridStyle = computed(() => ({
             v-if="gameStatus === 'won' || gameStatus === 'lost'"
             class="overlay-msg"
           >
-            <h2
-              :style="{ color: gameStatus === 'won' ? '#00ff00' : '#ff4757' }"
-            >
+            <h2 class="result-title" :class="{ won: gameStatus === 'won' }">
               {{ gameStatus === "won" ? "YOU WIN!" : "GAME OVER" }}
             </h2>
-            <button
-              class="retry-btn"
-              style="margin-top: 15px"
-              @click="resetToStart"
-            >
+            <button class="retry-btn restart-btn" @click="resetToStart">
               RESTART
             </button>
           </div>
 
-          <div
-            v-if="isPaused"
-            class="overlay-msg"
-            style="background: rgba(0, 0, 0, 0.7)"
-          >
-            <h2 style="color: white">PAUSED</h2>
+          <div v-if="isPaused" class="overlay-msg paused-overlay">
+            <h2 class="pause-title">PAUSED</h2>
           </div>
 
           <div class="grid-frame">
@@ -286,32 +285,16 @@ const gridStyle = computed(() => ({
         <div class="right-section">
           <h1 class="game-title">Minesweeper</h1>
 
-          <div
-            class="info-box score-box"
-            style="border: 1px solid rgba(255, 215, 0, 0.3)"
-          >
-            <div class="label" style="color: #ffd700; margin-bottom: 4px">
-              Mines Left
-            </div>
-            <div class="value" style="color: #ffd700; font-size: 38px">
+          <div class="info-box score-box">
+            <div class="label mines-label">Mines Left</div>
+            <div class="value mines-value">
               {{ currentDiff.mines - flagsPlaced }}
             </div>
 
-            <div
-              style="
-                width: 100%;
-                height: 1px;
-                background: rgba(255, 255, 255, 0.1);
-                margin: 12px 0;
-              "
-            ></div>
+            <div class="mines-divider"></div>
 
-            <div class="label" style="color: #94a3b8; margin-bottom: 4px">
-              Time
-            </div>
-            <div class="value" style="color: #94a3b8; font-size: 24px">
-              {{ formattedTime }}
-            </div>
+            <div class="label time-label">Time</div>
+            <div class="value time-value">{{ formattedTime }}</div>
           </div>
 
           <GameControls
@@ -380,5 +363,62 @@ const gridStyle = computed(() => ({
 .cell.mine {
   background: #cc0000;
   border: 1px solid #990000;
+}
+
+.start-title {
+  color: white;
+  margin-bottom: 20px;
+}
+
+.difficulty-row {
+  display: flex;
+  gap: 10px;
+}
+
+.result-title {
+  color: #ff4757;
+}
+
+.result-title.won {
+  color: #00ff00;
+}
+
+.restart-btn {
+  margin-top: 15px;
+}
+
+.paused-overlay {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.pause-title {
+  color: white;
+}
+
+.mines-label {
+  color: #ffd700;
+  margin-bottom: 4px;
+}
+
+.mines-value {
+  color: #ffd700;
+  font-size: 38px;
+}
+
+.mines-divider {
+  width: 100%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 12px 0;
+}
+
+.time-label {
+  color: #94a3b8;
+  margin-bottom: 4px;
+}
+
+.time-value {
+  color: #94a3b8;
+  font-size: 24px;
 }
 </style>

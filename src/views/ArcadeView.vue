@@ -1,5 +1,31 @@
 <script setup>
 import { RouterLink } from "vue-router";
+
+const games = [
+  { name: "Tetris", icon: "🧱", path: "/play/tetris", color: "red" },
+  { name: "2048", icon: "🔢", path: "/play/2048", color: "blue" },
+  { name: "Pong", icon: "🏓", path: "/play/pong", color: "yellow" },
+  {
+    name: "Minesweeper",
+    icon: "💣",
+    path: "/play/minesweeper",
+    color: "green",
+  },
+  {
+    name: "Stickman Hook",
+    icon: "🪝",
+    path: "/play/stickman-hook",
+    color: "yellow",
+  },
+  {
+    name: "Flappy Bird",
+    icon: "🐦",
+    path: "/play/flappy-bird",
+    color: "green",
+  },
+  { name: "Hangman", icon: "🧍", path: "/play/hangman", color: "red" },
+  { name: "Connect 4", icon: "🔵", path: "/play/connect-4", color: "blue" },
+];
 </script>
 
 <template>
@@ -11,85 +37,16 @@ import { RouterLink } from "vue-router";
     </p>
 
     <div class="arcade-grid">
-      <div class="arcade-card">
+      <div v-for="game in games" :key="game.path" class="arcade-card">
         <div class="arcade-card-top">
-          <span class="arcade-icon">🧱</span>
-          <h3 class="arcade-name">Tetris</h3>
-        </div>
-        <RouterLink to="/play/tetris" class="arcade-card-bottom red-btn">
-          Play Now
-        </RouterLink>
-      </div>
-
-      <div class="arcade-card">
-        <div class="arcade-card-top">
-          <span class="arcade-icon">🔢</span>
-          <h3 class="arcade-name">2048</h3>
-        </div>
-        <RouterLink to="/play/2048" class="arcade-card-bottom blue-btn">
-          Play Now
-        </RouterLink>
-      </div>
-
-      <div class="arcade-card">
-        <div class="arcade-card-top">
-          <span class="arcade-icon">🏓</span>
-          <h3 class="arcade-name">Pong</h3>
-        </div>
-        <RouterLink to="/play/pong" class="arcade-card-bottom yellow-btn">
-          Play Now
-        </RouterLink>
-      </div>
-
-      <div class="arcade-card">
-        <div class="arcade-card-top">
-          <span class="arcade-icon">💣</span>
-          <h3 class="arcade-name">Minesweeper</h3>
-        </div>
-        <RouterLink to="/play/minesweeper" class="arcade-card-bottom green-btn">
-          Play Now
-        </RouterLink>
-      </div>
-
-      <div class="arcade-card">
-        <div class="arcade-card-top">
-          <span class="arcade-icon">🪝</span>
-          <h3 class="arcade-name">Stickman Hook</h3>
+          <span class="arcade-icon">{{ game.icon }}</span>
+          <h3 class="arcade-name">{{ game.name }}</h3>
         </div>
         <RouterLink
-          to="/play/stickman-hook"
-          class="arcade-card-bottom yellow-btn"
+          :to="game.path"
+          class="arcade-card-bottom"
+          :class="`${game.color}-btn`"
         >
-          Play Now
-        </RouterLink>
-      </div>
-
-      <div class="arcade-card">
-        <div class="arcade-card-top">
-          <span class="arcade-icon">🐦</span>
-          <h3 class="arcade-name">Flappy Bird</h3>
-        </div>
-        <RouterLink to="/play/flappy-bird" class="arcade-card-bottom green-btn">
-          Play Now
-        </RouterLink>
-      </div>
-
-      <div class="arcade-card">
-        <div class="arcade-card-top">
-          <span class="arcade-icon">🧍</span>
-          <h3 class="arcade-name">Hangman</h3>
-        </div>
-        <RouterLink to="/play/hangman" class="arcade-card-bottom red-btn">
-          Play Now
-        </RouterLink>
-      </div>
-
-      <div class="arcade-card">
-        <div class="arcade-card-top">
-          <span class="arcade-icon">🔵</span>
-          <h3 class="arcade-name">Connect 4</h3>
-        </div>
-        <RouterLink to="/play/connect-4" class="arcade-card-bottom blue-btn">
           Play Now
         </RouterLink>
       </div>
@@ -135,7 +92,7 @@ import { RouterLink } from "vue-router";
   flex-direction: column;
   height: 210px;
   transition: all 0.3s ease;
-  backdrop-filter: blur(0px);
+  backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
 

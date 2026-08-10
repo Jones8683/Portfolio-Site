@@ -9,8 +9,10 @@ const highScore = useStorage("flappy-best-score", 0, localStorage, {
   serializer: createScoreSerializer("flappy-best-score"),
 });
 
+const canvasRef = ref(null);
 const scoreRef = ref(0);
 const gameState = ref("idle");
+const isPaused = ref(false);
 
 const W = 360,
   H = 568;
@@ -37,7 +39,6 @@ let canvas,
 let bird, pipes, score, lastPipeTs, deathTimer, isNewBest;
 let wingFrame = 0;
 
-let isPaused = false;
 let pauseTs = 0;
 
 function initState() {
@@ -397,7 +398,7 @@ function render() {
 }
 
 function gameLoop(ts) {
-  if (isPaused) return;
+  if (isPaused.value) return;
   const dt = Math.min(ts - lastTs, 50) / STEP;
   lastTs = ts;
   wingFrame++;
@@ -439,10 +440,8 @@ function gameLoop(ts) {
 
 function togglePause() {
   if (gameState.value !== "playing") return;
-  isPaused = !isPaused;
-  const msg = document.getElementById("pauseMsg");
-  if (msg) msg.style.display = isPaused ? "flex" : "none";
-  if (isPaused) {
+  isPaused.value = !isPaused.value;
+  if (isPaused.value) {
     pauseTs = performance.now();
   } else {
     const pausedFor = performance.now() - pauseTs;
@@ -454,7 +453,7 @@ function togglePause() {
 }
 
 const onBlur = () => {
-  if (gameState.value === "playing" && !isPaused) togglePause();
+  if (gameState.value === "playing" && !isPaused.value) togglePause();
 };
 
 function idleLoop() {
@@ -469,7 +468,7 @@ function idleLoop() {
 }
 
 function jump() {
-  if (isPaused) return;
+  if (isPaused.value) return;
   if (gameState.value === "idle") {
     if (rafIdle) cancelAnimationFrame(rafIdle);
     gameState.value = "playing";
@@ -498,7 +497,7 @@ const onKey = (e) => {
     togglePause();
     return;
   }
-  if (isPaused) return;
+  if (isPaused.value) return;
   if (["Space", "ArrowUp", "KeyW"].includes(e.code)) {
     e.preventDefault();
     jump();
@@ -506,11 +505,8 @@ const onKey = (e) => {
 };
 
 onMounted(() => {
-  canvas = document.getElementById("flappyCanvas");
-  if (!canvas) {
-    console.error("FlappyBird: Canvas element not found");
-    return;
-  }
+  canvas = canvasRef.value;
+  if (!canvas) return;
   ctx = canvas.getContext("2d");
   dpr = window.devicePixelRatio || 1;
   canvas.width = W * dpr;
@@ -544,22 +540,9 @@ onUnmounted(() => {
     <div class="desktop-game">
       <div class="game-wrapper">
         <div class="left-section">
-          <canvas id="flappyCanvas"></canvas>
-          <div
-            id="pauseMsg"
-            class="overlay-msg"
-            style="display: none; background: rgba(0, 0, 0, 0.85)"
-          >
-            <h2
-              style="
-                font-size: 24px;
-                color: white;
-                margin: 0;
-                letter-spacing: 2px;
-              "
-            >
-              PAUSED
-            </h2>
+          <canvas ref="canvasRef"></canvas>
+          <div v-show="isPaused" class="overlay-msg">
+            <h2 class="pause-title">PAUSED</h2>
           </div>
         </div>
         <div class="right-section">
@@ -585,7 +568,14 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-#flappyCanvas {
+canvas {
   cursor: pointer;
+}
+
+.pause-title {
+  font-size: 24px;
+  color: white;
+  margin: 0;
+  letter-spacing: 2px;
 }
 </style>

@@ -215,11 +215,11 @@ onUnmounted(() => {
           </div>
 
           <div v-if="winner || isDraw" class="overlay-msg">
-            <h2 style="font-size: 24px; margin: 0 0 10px">
+            <h2 class="result-title">
               <span v-if="winner" :style="{ color: playerColors[winner] }">
                 PLAYER {{ winner }} WINS!
               </span>
-              <span v-else style="color: white">DRAW!</span>
+              <span v-else class="draw-text">DRAW!</span>
             </h2>
             <button @click="resetGame" class="retry-btn">PLAY AGAIN</button>
           </div>
@@ -230,13 +230,19 @@ onUnmounted(() => {
 
           <div class="row">
             <div class="info-box score-box">
-              <div class="label score-label" style="color: #0dc2ff">
+              <div
+                class="label score-label"
+                :style="{ color: playerColors[1] }"
+              >
                 Player 1
               </div>
               <div class="value score-value">{{ scores[1] }}</div>
             </div>
             <div class="info-box score-box">
-              <div class="label score-label" style="color: #ff0d72">
+              <div
+                class="label score-label"
+                :style="{ color: playerColors[2] }"
+              >
                 Player 2
               </div>
               <div class="value score-value">{{ scores[2] }}</div>
@@ -252,7 +258,7 @@ onUnmounted(() => {
                   class="turn-piece"
                   :class="{ p1: currentPlayer === 1, p2: currentPlayer === 2 }"
                 ></div>
-                <span v-else style="color: white">-</span>
+                <span v-else class="no-turn-text">-</span>
               </div>
             </div>
           </div>
@@ -444,5 +450,15 @@ onUnmounted(() => {
 .turn-piece.p2 {
   background: #ff0d72;
   box-shadow: 0 0 10px rgba(255, 13, 114, 0.35);
+}
+
+.result-title {
+  font-size: 24px;
+  margin: 0 0 10px;
+}
+
+.draw-text,
+.no-turn-text {
+  color: white;
 }
 </style>

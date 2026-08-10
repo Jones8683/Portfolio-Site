@@ -1,9 +1,16 @@
 <script setup>
-import { onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import { useStorage } from "@vueuse/core";
 import GameMobileMessage from "@/components/GameMobileMessage.vue";
 import GameControls from "@/components/GameControls.vue";
 import { createScoreSerializer } from "@/scoreStorage.js";
+
+const gameCanvasRef = ref(null);
+const nextCanvasRef = ref(null);
+const holdCanvasRef = ref(null);
+const score = ref(0);
+const isGameOver = ref(false);
+const isPaused = ref(false);
 
 let canvas, ctx, nextCtx, holdCtx;
 let animationId = null;
@@ -40,8 +47,6 @@ const player = {
 let dropCounter = 0;
 let dropInterval = 1000;
 let lastTime = 0;
-let isGameOver = false;
-let isPaused = false;
 let lockDelayCounter = 0;
 let lockMovesCounter = 0;
 const LOCK_DELAY_TIME = 500;
@@ -362,12 +367,10 @@ function playerReset() {
     ((arena[0].length / 2) | 0) - ((player.matrix[0].length / 2) | 0);
   player.rotState = 0;
   if (collide(arena, player)) {
-    isGameOver = true;
+    isGameOver.value = true;
     if (player.score > highScore.value) {
       highScore.value = player.score;
     }
-    const gameOverEl = document.getElementById("gameOverMsg");
-    if (gameOverEl) gameOverEl.style.display = "flex";
   }
 }
 
@@ -579,13 +582,9 @@ function playerHold() {
 }
 
 function togglePause() {
-  if (isGameOver) return;
-  isPaused = !isPaused;
-  const msg = document.getElementById("pauseMsg");
-  if (isPaused) {
-    if (msg) msg.style.display = "flex";
-  } else {
-    if (msg) msg.style.display = "none";
+  if (isGameOver.value) return;
+  isPaused.value = !isPaused.value;
+  if (!isPaused.value) {
     lastTime = performance.now();
     update(performance.now());
   }
@@ -639,7 +638,7 @@ function checkCollisionAndLand(deltaTime) {
 }
 
 function update(time = 0) {
-  if (isGameOver || isPaused) return;
+  if (isGameOver.value || isPaused.value) return;
   const deltaTime = time - lastTime;
   lastTime = time;
   animationFrame++;
@@ -658,8 +657,7 @@ function update(time = 0) {
 let lastLoggedLevel = 0;
 
 function updateScore() {
-  const el = document.getElementById("scoreDiv");
-  if (el) el.innerText = player.score;
+  score.value = player.score;
   const level = Math.floor(player.lines / 10) + 1;
 
   const gValues = {
@@ -719,12 +717,8 @@ function resetGame() {
 
   drawPreview(holdCtx, null);
   updateScore();
-  isGameOver = false;
-  isPaused = false;
-  const goMsg = document.getElementById("gameOverMsg");
-  if (goMsg) goMsg.style.display = "none";
-  const pMsg = document.getElementById("pauseMsg");
-  if (pMsg) pMsg.style.display = "none";
+  isGameOver.value = false;
+  isPaused.value = false;
   playerReset();
   draw();
   lastTime = performance.now();
@@ -768,13 +762,13 @@ const handleActionKey = (event, isUp) => {
 
 const handleKeydown = (event) => {
   preventDefaultKeys(event);
-  if (isGameOver) return;
+  if (isGameOver.value) return;
   if (event.keyCode === 27 || event.key === "p" || event.key === "P") {
     event.preventDefault();
     togglePause();
     return;
   }
-  if (isPaused) return;
+  if (isPaused.value) return;
 
   const isLeft = event.keyCode === 37 || event.keyCode === 65;
   const isRight = event.keyCode === 39 || event.keyCode === 68;
@@ -808,16 +802,16 @@ const handleKeyup = (event) => {
 };
 
 const handleBlur = () => {
-  if (!isPaused && !isGameOver) {
+  if (!isPaused.value && !isGameOver.value) {
     togglePause();
   }
 };
 
 onMounted(() => {
-  canvas = document.getElementById("gameCanvas");
+  canvas = gameCanvasRef.value;
   ctx = canvas.getContext("2d");
-  nextCtx = document.getElementById("nextCanvas").getContext("2d");
-  holdCtx = document.getElementById("holdCanvas").getContext("2d");
+  nextCtx = nextCanvasRef.value.getContext("2d");
+  holdCtx = holdCanvasRef.value.getContext("2d");
   ctx.scale(25, 25);
   nextCtx.scale(25, 25);
   holdCtx.scale(25, 25);
@@ -832,8 +826,8 @@ onMounted(() => {
   player.hold = null;
   player.next = null;
   dropInterval = 1000;
-  isGameOver = false;
-  isPaused = false;
+  isGameOver.value = false;
+  isPaused.value = false;
   playerReset();
   updateScore();
   update(performance.now());
@@ -854,28 +848,18 @@ onUnmounted(() => {
     <div class="desktop-game">
       <div class="game-wrapper">
         <div class="left-section">
-          <canvas id="gameCanvas" width="300" height="500"></canvas>
-          <div id="gameOverMsg" class="overlay-msg" style="display: none">
-            <h2 style="font-size: 24px; color: white; margin: 0 0 10px">
-              GAME OVER
-            </h2>
+          <canvas
+            ref="gameCanvasRef"
+            class="game-canvas"
+            width="300"
+            height="500"
+          ></canvas>
+          <div v-show="isGameOver" class="overlay-msg">
+            <h2 class="overlay-title">GAME OVER</h2>
             <button @click="resetGame" class="retry-btn">RETRY</button>
           </div>
-          <div
-            id="pauseMsg"
-            class="overlay-msg"
-            style="display: none; background: rgba(0, 0, 0, 0.85)"
-          >
-            <h2
-              style="
-                font-size: 24px;
-                color: white;
-                margin: 0;
-                letter-spacing: 2px;
-              "
-            >
-              PAUSED
-            </h2>
+          <div v-show="isPaused" class="overlay-msg">
+            <h2 class="overlay-title pause-title">PAUSED</h2>
           </div>
         </div>
 
@@ -885,7 +869,7 @@ onUnmounted(() => {
             <div class="info-box">
               <div class="label">Next</div>
               <canvas
-                id="nextCanvas"
+                ref="nextCanvasRef"
                 width="100"
                 height="100"
                 class="side-canvas"
@@ -894,7 +878,7 @@ onUnmounted(() => {
             <div class="info-box">
               <div class="label">Hold</div>
               <canvas
-                id="holdCanvas"
+                ref="holdCanvasRef"
                 width="100"
                 height="100"
                 class="side-canvas"
@@ -903,33 +887,10 @@ onUnmounted(() => {
           </div>
           <div class="info-box score-box">
             <div class="label score-label">Score</div>
-            <div class="value score-value" id="scoreDiv">0</div>
-
-            <div
-              style="
-                width: 100%;
-                height: 1px;
-                background: rgba(255, 255, 255, 0.1);
-                margin: 8px 0;
-              "
-            ></div>
-
-            <div
-              class="label"
-              style="font-size: 11px; color: #94a3b8; margin-bottom: 2px"
-            >
-              HIGH SCORE
-            </div>
-            <div
-              class="value"
-              style="
-                font-size: 24px;
-                color: #ffd700;
-                text-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
-              "
-            >
-              {{ highScore }}
-            </div>
+            <div class="value score-value">{{ score }}</div>
+            <div class="score-divider"></div>
+            <div class="label high-score-label">HIGH SCORE</div>
+            <div class="value high-score-value">{{ highScore }}</div>
           </div>
           <GameControls
             :controls="[
@@ -956,11 +917,22 @@ onUnmounted(() => {
   aspect-ratio: auto;
 }
 
-#gameCanvas {
+.game-canvas {
   background-color: #0d0d0d;
 }
 
 .side-canvas {
   background-color: transparent;
+}
+
+.overlay-title {
+  font-size: 24px;
+  color: white;
+  margin: 0 0 10px;
+}
+
+.pause-title {
+  margin: 0;
+  letter-spacing: 2px;
 }
 </style>
