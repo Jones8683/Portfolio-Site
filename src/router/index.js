@@ -90,9 +90,9 @@ const router = createRouter({
 router.beforeEach((to) => {
   const pageTitle = to.meta.title;
   if (pageTitle === "404") {
-    document.title = "404 | Page not found";
+    document.title = "404 • Page not found";
   } else if (pageTitle) {
-    document.title = `${pageTitle} | Jones Jankovic`;
+    document.title = `${pageTitle} • Jones Jankovic`;
   } else {
     document.title = "Jones Jankovic";
   }
