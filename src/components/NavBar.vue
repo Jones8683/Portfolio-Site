@@ -79,8 +79,17 @@ onUnmounted(() => window.removeEventListener("scroll", handleScroll));
   background-color: rgba(10, 11, 14, 0);
   backdrop-filter: blur(0px);
   border-radius: 24px;
-  border: 1px solid rgba(255, 255, 255, 0);
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid rgba(255, 255, 255, 0);
+  transition:
+    top 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    max-width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    border-radius 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    backdrop-filter 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .main-header.minimized {
@@ -107,7 +116,7 @@ onUnmounted(() => window.removeEventListener("scroll", handleScroll));
   justify-content: space-between;
   align-items: center;
   padding: 20px 80px;
-  transition: padding 0.5s ease;
+  transition: padding 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .main-header.minimized .nav-container {
