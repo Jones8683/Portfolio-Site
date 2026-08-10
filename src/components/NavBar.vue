@@ -1,11 +1,15 @@
 <script setup>
-import { RouterLink } from "vue-router";
-import { ref, onMounted, onUnmounted } from "vue";
+import { RouterLink, useRoute } from "vue-router";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 
 const isMinimized = ref(false);
 const shouldShow = ref(true);
 let lastScrollY = 0;
 let ticking = false;
+
+const route = useRoute();
+const isProjectsActive = computed(() => route.path.startsWith("/projects"));
+const isArcadeActive = computed(() => route.path.startsWith("/play"));
 
 const updateHeaderState = () => {
   const currentScrollY = window.scrollY;
@@ -41,8 +45,18 @@ onUnmounted(() => window.removeEventListener("scroll", handleScroll));
           <span class="nav-name">Jones Jankovic</span>
         </RouterLink>
         <div class="glass-nav">
-          <RouterLink to="/projects" class="glass-btn">Projects</RouterLink>
-          <RouterLink to="/play" class="glass-btn">Arcade</RouterLink>
+          <RouterLink
+            to="/projects"
+            class="glass-btn"
+            :class="{ active: isProjectsActive }"
+            >Projects</RouterLink
+          >
+          <RouterLink
+            to="/play"
+            class="glass-btn"
+            :class="{ active: isArcadeActive }"
+            >Arcade</RouterLink
+          >
         </div>
       </div>
       <div class="nav-right">
@@ -174,7 +188,7 @@ onUnmounted(() => window.removeEventListener("scroll", handleScroll));
   transform: translateY(-1px);
 }
 
-.glass-btn.router-link-exact-active {
+.glass-btn.active {
   background: rgba(255, 255, 255, 0.14);
   border-color: rgba(255, 255, 255, 0.35);
   color: #ffffff !important;
