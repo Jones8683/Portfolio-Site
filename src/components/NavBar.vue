@@ -5,15 +5,27 @@ import { ref, onMounted, onUnmounted } from "vue";
 const isMinimized = ref(false);
 const shouldShow = ref(true);
 let lastScrollY = 0;
+let ticking = false;
 
-const handleScroll = () => {
+const updateHeaderState = () => {
   const currentScrollY = window.scrollY;
   isMinimized.value = currentScrollY > 20;
   shouldShow.value = currentScrollY < 350 || currentScrollY < lastScrollY;
   lastScrollY = currentScrollY;
+  ticking = false;
 };
 
-onMounted(() => window.addEventListener("scroll", handleScroll));
+const handleScroll = () => {
+  if (!ticking) {
+    requestAnimationFrame(updateHeaderState);
+    ticking = true;
+  }
+};
+
+onMounted(() => {
+  updateHeaderState();
+  window.addEventListener("scroll", handleScroll, { passive: true });
+});
 onUnmounted(() => window.removeEventListener("scroll", handleScroll));
 </script>
 
@@ -145,7 +157,11 @@ onUnmounted(() => window.removeEventListener("scroll", handleScroll));
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 10px;
-  transition: all 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease,
+    transform 0.3s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -156,6 +172,12 @@ onUnmounted(() => window.removeEventListener("scroll", handleScroll));
   border-color: rgba(255, 255, 255, 0.3);
   color: #ffffff !important;
   transform: translateY(-1px);
+}
+
+.glass-btn.router-link-exact-active {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.35);
+  color: #ffffff !important;
 }
 
 .nav-name-link {
@@ -199,6 +221,21 @@ onUnmounted(() => window.removeEventListener("scroll", handleScroll));
 .nav-icon:hover {
   transform: translateY(-1px);
   background-color: rgba(148, 163, 184, 0.12);
+}
+
+.discord-icon:hover {
+  background-color: rgba(88, 101, 242, 0.18);
+}
+
+.github-icon:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.glass-btn:focus-visible,
+.nav-icon:focus-visible,
+.nav-name-link:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 2px;
 }
 
 .nav-icon svg {
