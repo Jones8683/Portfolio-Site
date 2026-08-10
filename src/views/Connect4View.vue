@@ -6,8 +6,7 @@ import GameControls from "@/components/GameControls.vue";
 const ROWS = 6;
 const COLS = 7;
 
-const createBoard = () =>
-  Array.from({ length: ROWS }, () => Array(COLS).fill(null));
+const createBoard = () => Array.from({ length: ROWS }, () => Array(COLS).fill(null));
 
 const board = ref(createBoard());
 const currentPlayer = ref(1);
@@ -35,15 +34,10 @@ const isGhostCell = (r, c) => {
   return hoveredCol.value === c && getGhostRow(c) === r;
 };
 
-const isDropTarget = (r, c) =>
-  droppingCell.value?.row === r && droppingCell.value?.col === c;
+const isDropTarget = (r, c) => droppingCell.value?.row === r && droppingCell.value?.col === c;
 
 const getDropStyle = (r, c) => {
-  if (
-    !droppingCell.value ||
-    droppingCell.value.row !== r ||
-    droppingCell.value.col !== c
-  )
+  if (!droppingCell.value || droppingCell.value.row !== r || droppingCell.value.col !== c)
     return {};
   const cellSize = 62;
   const dist = r * cellSize || 30;
@@ -103,26 +97,14 @@ const checkWinner = (row, col) => {
     for (let i = 1; i < 4; i++) {
       const r = row + dr * i,
         c = col + dc * i;
-      if (
-        r >= 0 &&
-        r < ROWS &&
-        c >= 0 &&
-        c < COLS &&
-        board.value[r][c] === player
-      )
+      if (r >= 0 && r < ROWS && c >= 0 && c < COLS && board.value[r][c] === player)
         cells.push([r, c]);
       else break;
     }
     for (let i = 1; i < 4; i++) {
       const r = row - dr * i,
         c = col - dc * i;
-      if (
-        r >= 0 &&
-        r < ROWS &&
-        c >= 0 &&
-        c < COLS &&
-        board.value[r][c] === player
-      )
+      if (r >= 0 && r < ROWS && c >= 0 && c < COLS && board.value[r][c] === player)
         cells.push([r, c]);
       else break;
     }
@@ -132,11 +114,9 @@ const checkWinner = (row, col) => {
   return null;
 };
 
-const isWinningCell = (r, c) =>
-  winningCells.value.some(([wr, wc]) => wr === r && wc === c);
+const isWinningCell = (r, c) => winningCells.value.some(([wr, wc]) => wr === r && wc === c);
 
-const isDroppingCell = (r, c) =>
-  droppingCell.value?.row === r && droppingCell.value?.col === c;
+const isDroppingCell = (r, c) => droppingCell.value?.row === r && droppingCell.value?.col === c;
 
 const isColFull = (col) => board.value[0][col] !== null;
 
@@ -148,8 +128,7 @@ const resetGame = () => {
   winningCells.value = [];
   droppingCell.value = null;
   isProcessing.value = false;
-  if (document.activeElement instanceof HTMLElement)
-    document.activeElement.blur();
+  if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
 };
 
 const handleKeydown = (e) => {
@@ -176,11 +155,7 @@ onUnmounted(() => {
               :key="col"
               class="column"
               :class="{
-                'col-hovered':
-                  hoveredCol === col - 1 &&
-                  !winner &&
-                  !isDraw &&
-                  !isColFull(col - 1),
+                'col-hovered': hoveredCol === col - 1 && !winner && !isDraw && !isColFull(col - 1),
               }"
               @click="makeMove(col - 1)"
               @mouseenter="hoveredCol = col - 1"
@@ -204,10 +179,8 @@ onUnmounted(() => {
                     'winning-piece': isWinningCell(row - 1, col - 1),
                     dropping: isDroppingCell(row - 1, col - 1),
                     ghost: isGhostCell(row - 1, col - 1),
-                    'ghost-p1':
-                      isGhostCell(row - 1, col - 1) && currentPlayer === 1,
-                    'ghost-p2':
-                      isGhostCell(row - 1, col - 1) && currentPlayer === 2,
+                    'ghost-p1': isGhostCell(row - 1, col - 1) && currentPlayer === 1,
+                    'ghost-p2': isGhostCell(row - 1, col - 1) && currentPlayer === 2,
                   }"
                 ></div>
               </div>
@@ -230,21 +203,11 @@ onUnmounted(() => {
 
           <div class="row">
             <div class="info-box score-box">
-              <div
-                class="label score-label"
-                :style="{ color: playerColors[1] }"
-              >
-                Player 1
-              </div>
+              <div class="label score-label" :style="{ color: playerColors[1] }">Player 1</div>
               <div class="value score-value">{{ scores[1] }}</div>
             </div>
             <div class="info-box score-box">
-              <div
-                class="label score-label"
-                :style="{ color: playerColors[2] }"
-              >
-                Player 2
-              </div>
+              <div class="label score-label" :style="{ color: playerColors[2] }">Player 2</div>
               <div class="value score-value">{{ scores[2] }}</div>
             </div>
           </div>

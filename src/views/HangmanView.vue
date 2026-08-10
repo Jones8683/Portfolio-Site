@@ -52,9 +52,7 @@ function guessLetter(letter) {
 
   if (!normalizedWord.value.includes(letter)) wrongGuesses.value++;
 
-  const allRevealed = normalizedWord.value
-    .split("")
-    .every((ch) => ch === " " || newSet.has(ch));
+  const allRevealed = normalizedWord.value.split("").every((ch) => ch === " " || newSet.has(ch));
 
   if (allRevealed) phase.value = "won";
   else if (wrongGuesses.value >= MAX_WRONG) phase.value = "lost";
@@ -96,9 +94,7 @@ const bodyVisible = computed(() => ({
         <div class="left-section">
           <div class="panel-header">
             <span class="pill">{{
-              phase === "playing" || phase === "won" || phase === "lost"
-                ? "Player 2"
-                : "Player 1"
+              phase === "playing" || phase === "won" || phase === "lost" ? "Player 2" : "Player 1"
             }}</span>
             <h1 class="game-title">Hangman</h1>
 
@@ -118,11 +114,7 @@ const bodyVisible = computed(() => ({
                   autocomplete="off"
                   spellcheck="false"
                 />
-                <button
-                  class="submit-btn"
-                  @click="submitWord"
-                  :disabled="!inputBuffer.trim()"
-                >
+                <button class="submit-btn" @click="submitWord" :disabled="!inputBuffer.trim()">
                   Set Word →
                 </button>
               </div>
@@ -271,10 +263,7 @@ const bodyVisible = computed(() => ({
             </div>
           </transition>
 
-          <div
-            v-if="phase === 'won' || phase === 'lost'"
-            class="outcome-overlay"
-          >
+          <div v-if="phase === 'won' || phase === 'lost'" class="outcome-overlay">
             <div class="outcome-inner">
               <div class="outcome-emoji">
                 {{ phase === "won" ? "🎉" : "💀" }}
@@ -308,9 +297,7 @@ const bodyVisible = computed(() => ({
             <div class="label">Wrong Letters</div>
             <div class="wrong-letters">
               <span v-if="wrongLetters.length === 0" class="no-letters">—</span>
-              <span v-for="l in wrongLetters" :key="l" class="wrong-chip">{{
-                l
-              }}</span>
+              <span v-for="l in wrongLetters" :key="l" class="wrong-chip">{{ l }}</span>
             </div>
           </div>
 
@@ -330,9 +317,7 @@ const bodyVisible = computed(() => ({
             </button>
           </div>
 
-          <GameControls
-            :controls="[{ action: 'Guess letter', key: 'A - Z' }]"
-          />
+          <GameControls :controls="[{ action: 'Guess letter', key: 'A - Z' }]" />
         </div>
       </div>
     </div>

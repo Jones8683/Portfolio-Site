@@ -170,10 +170,7 @@ function updatePaddles(dt) {
   }
 
   leftPaddle.y = Math.max(0, Math.min(canvas.height - PADDLE_H, leftPaddle.y));
-  rightPaddle.y = Math.max(
-    0,
-    Math.min(canvas.height - PADDLE_H, rightPaddle.y),
-  );
+  rightPaddle.y = Math.max(0, Math.min(canvas.height - PADDLE_H, rightPaddle.y));
 }
 
 function updateBallWallCollision() {
@@ -196,10 +193,7 @@ function updateBallPaddleCollision() {
   const paddle = ball.x < canvas.width / 2 ? leftPaddle : rightPaddle;
   if (!collision(ball, paddle)) return;
 
-  const cp = Math.max(
-    -1,
-    Math.min(1, (ball.y - (paddle.y + PADDLE_H / 2)) / (PADDLE_H / 2)),
-  );
+  const cp = Math.max(-1, Math.min(1, (ball.y - (paddle.y + PADDLE_H / 2)) / (PADDLE_H / 2)));
   const angle = (Math.PI / 4) * cp;
   const dir = ball.x < canvas.width / 2 ? 1 : -1;
   ball.speed = Math.min(ball.speed + 0.45, 16);
@@ -284,10 +278,7 @@ function checkWin() {
   if (gameMode === "cpu") {
     name = rightPaddle.score >= WIN_SCORE ? "YOU WIN!" : "COMPUTER WINS!";
   } else {
-    name =
-      rightPaddle.score >= WIN_SCORE
-        ? "RIGHT PLAYER WINS!"
-        : "LEFT PLAYER WINS!";
+    name = rightPaddle.score >= WIN_SCORE ? "RIGHT PLAYER WINS!" : "LEFT PLAYER WINS!";
   }
   setText(winnerEl, name);
   setDisplay(gameOverEl, "flex");
@@ -447,18 +438,8 @@ onUnmounted(() => {
     <div class="desktop-game">
       <div class="game-wrapper">
         <div class="left-section">
-          <canvas
-            ref="canvasEl"
-            id="gameCanvas"
-            width="700"
-            height="500"
-          ></canvas>
-          <div
-            ref="startScreenEl"
-            id="startScreen"
-            class="overlay"
-            style="display: flex"
-          >
+          <canvas ref="canvasEl" id="gameCanvas" width="700" height="500"></canvas>
+          <div ref="startScreenEl" id="startScreen" class="overlay" style="display: flex">
             <h2 class="menu-title">PONG</h2>
             <button class="menu-btn" @click="initGame('cpu')">1 PLAYER</button>
             <button class="menu-btn" @click="initGame('pvp')">2 PLAYERS</button>
@@ -474,12 +455,7 @@ onUnmounted(() => {
             </div>
             <button class="menu-btn" @click="showStartScreen">MENU</button>
           </div>
-          <div
-            ref="pauseEl"
-            id="pauseMsg"
-            class="overlay"
-            style="background: rgba(0, 0, 0, 0.6)"
-          >
+          <div ref="pauseEl" id="pauseMsg" class="overlay" style="background: rgba(0, 0, 0, 0.6)">
             <h2 class="menu-title">PAUSED</h2>
           </div>
         </div>
@@ -488,9 +464,7 @@ onUnmounted(() => {
           <h1 class="game-title">Pong</h1>
           <div class="info-box score-box">
             <div class="label score-label">Score</div>
-            <div ref="scoreEl" class="value score-value" id="scoreDiv">
-              0 - 0
-            </div>
+            <div ref="scoreEl" class="value score-value" id="scoreDiv">0 - 0</div>
           </div>
           <GameControls
             :controls="[
