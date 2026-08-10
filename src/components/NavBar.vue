@@ -237,14 +237,6 @@ onUnmounted(() => window.removeEventListener("scroll", handleScroll));
   background-color: rgba(148, 163, 184, 0.12);
 }
 
-.discord-icon:hover {
-  background-color: rgba(88, 101, 242, 0.18);
-}
-
-.github-icon:hover {
-  background-color: rgba(255, 255, 255, 0.15);
-}
-
 .glass-btn:focus-visible,
 .nav-icon:focus-visible,
 .nav-name-link:focus-visible {
