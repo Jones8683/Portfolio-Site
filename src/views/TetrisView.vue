@@ -16,16 +16,7 @@ let canvas, ctx, nextCtx, holdCtx;
 let animationId = null;
 let animationFrame = 0;
 
-const colors = [
-  null,
-  "#0DC2FF",
-  "#3877FF",
-  "#FF8E0D",
-  "#FFE138",
-  "#0DFF72",
-  "#FF0D72",
-  "#F538FF",
-];
+const colors = [null, "#0DC2FF", "#3877FF", "#FF8E0D", "#FFE138", "#0DFF72", "#FF0D72", "#F538FF"];
 
 const arena = createMatrix(12, 20);
 
@@ -147,10 +138,7 @@ function draw() {
 
       g.addColorStop(0, `rgba(255, 255, 255, 0)`);
       if (fadeStop > 0 && fadeStop < 1) {
-        g.addColorStop(
-          fadeStop,
-          `rgba(255, 255, 255, ${hardDropEffect.alpha})`,
-        );
+        g.addColorStop(fadeStop, `rgba(255, 255, 255, ${hardDropEffect.alpha})`);
       }
       g.addColorStop(1, `rgba(255, 255, 255, ${hardDropEffect.alpha})`);
 
@@ -291,9 +279,7 @@ function playerLock() {
 function playerHardDrop() {
   const startY = player.pos.y;
   let ghostY = startY;
-  while (
-    !collide(arena, { ...player, pos: { x: player.pos.x, y: ghostY + 1 } })
-  ) {
+  while (!collide(arena, { ...player, pos: { x: player.pos.x, y: ghostY + 1 } })) {
     ghostY++;
   }
 
@@ -363,8 +349,7 @@ function playerReset() {
   player.next = getNextPiece();
   drawPreview(nextCtx, player.next);
   player.pos.y = 0;
-  player.pos.x =
-    ((arena[0].length / 2) | 0) - ((player.matrix[0].length / 2) | 0);
+  player.pos.x = ((arena[0].length / 2) | 0) - ((player.matrix[0].length / 2) | 0);
   player.rotState = 0;
   if (collide(arena, player)) {
     isGameOver.value = true;
@@ -553,10 +538,7 @@ function playerHold() {
       }
     }
     for (const type of types) {
-      const val =
-        createPiece(type)[1][1] ||
-        createPiece(type)[0][1] ||
-        createPiece(type)[1][0];
+      const val = createPiece(type)[1][1] || createPiece(type)[0][1] || createPiece(type)[1][0];
       if (matrix.flat().includes(val)) return type;
     }
     return null;
@@ -575,8 +557,7 @@ function playerHold() {
   }
   drawPreview(holdCtx, createPiece(player.hold));
   player.pos.y = 0;
-  player.pos.x =
-    ((arena[0].length / 2) | 0) - ((player.matrix[0].length / 2) | 0);
+  player.pos.x = ((arena[0].length / 2) | 0) - ((player.matrix[0].length / 2) | 0);
   player.rotState = 0;
   player.canHold = false;
 }
@@ -848,12 +829,7 @@ onUnmounted(() => {
     <div class="desktop-game">
       <div class="game-wrapper">
         <div class="left-section">
-          <canvas
-            ref="gameCanvasRef"
-            class="game-canvas"
-            width="300"
-            height="500"
-          ></canvas>
+          <canvas ref="gameCanvasRef" class="game-canvas" width="300" height="500"></canvas>
           <div v-show="isGameOver" class="overlay-msg">
             <h2 class="overlay-title">GAME OVER</h2>
             <button @click="resetGame" class="retry-btn">RETRY</button>
@@ -868,21 +844,11 @@ onUnmounted(() => {
           <div class="row">
             <div class="info-box">
               <div class="label">Next</div>
-              <canvas
-                ref="nextCanvasRef"
-                width="100"
-                height="100"
-                class="side-canvas"
-              ></canvas>
+              <canvas ref="nextCanvasRef" width="100" height="100" class="side-canvas"></canvas>
             </div>
             <div class="info-box">
               <div class="label">Hold</div>
-              <canvas
-                ref="holdCanvasRef"
-                width="100"
-                height="100"
-                class="side-canvas"
-              ></canvas>
+              <canvas ref="holdCanvasRef" width="100" height="100" class="side-canvas"></canvas>
             </div>
           </div>
           <div class="info-box score-box">

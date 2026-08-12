@@ -32,9 +32,7 @@ const games = [
   <div class="content-wrap">
     <h1 class="name-title arcade-title">Arcade</h1>
 
-    <p class="arcade-subtitle">
-      A collection of modern and classic browser games.
-    </p>
+    <p class="arcade-subtitle">A collection of modern and classic browser games.</p>
 
     <div class="arcade-grid">
       <div v-for="game in games" :key="game.path" class="arcade-card">
@@ -42,11 +40,7 @@ const games = [
           <span class="arcade-icon">{{ game.icon }}</span>
           <h3 class="arcade-name">{{ game.name }}</h3>
         </div>
-        <RouterLink
-          :to="game.path"
-          class="arcade-card-bottom"
-          :class="`${game.color}-btn`"
-        >
+        <RouterLink :to="game.path" class="arcade-card-bottom" :class="`${game.color}-btn`">
           Play Now
         </RouterLink>
       </div>

@@ -26,9 +26,7 @@ const display = ref({
 
 const fullArtistLabel = computed(() => {
   const artists = track.value?.artists;
-  return Array.isArray(artists) && artists.length
-    ? artists.join(", ")
-    : "Unknown artist";
+  return Array.isArray(artists) && artists.length ? artists.join(", ") : "Unknown artist";
 });
 
 function handleVisibilityChange() {
@@ -40,9 +38,7 @@ function handleVisibilityChange() {
 }
 
 async function resolveDisplayArtists(currentTrack) {
-  const artists = Array.isArray(currentTrack.artists)
-    ? currentTrack.artists
-    : [];
+  const artists = Array.isArray(currentTrack.artists) ? currentTrack.artists : [];
   if (!artists.length) return "";
 
   measureArt.value = Boolean(currentTrack.albumArt);
@@ -158,18 +154,12 @@ onUnmounted(() => {
           </div>
           <div class="np-track">
             {{ display.title
-            }}<template v-if="display.artistLine">
-              - {{ display.artistLine }}</template
-            >
+            }}<template v-if="display.artistLine"> - {{ display.artistLine }}</template>
           </div>
         </div>
       </a>
 
-      <div
-        v-else-if="props.fallbackText"
-        key="fallback"
-        class="now-playing-badge fallback-pill"
-      >
+      <div v-else-if="props.fallbackText" key="fallback" class="now-playing-badge fallback-pill">
         {{ props.fallbackText }}
       </div>
     </Transition>
@@ -178,9 +168,7 @@ onUnmounted(() => {
       <img v-if="measureArt" class="np-art" />
       <div class="np-text">
         <div class="np-label">
-          <span class="np-bars" aria-hidden="true">
-            <span></span><span></span><span></span>
-          </span>
+          <span class="np-bars" aria-hidden="true"> <span></span><span></span><span></span> </span>
           Listening to Spotify
         </div>
         <div class="np-track" ref="measureTrackRef">

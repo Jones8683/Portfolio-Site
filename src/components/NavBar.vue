@@ -34,27 +34,17 @@ onUnmounted(() => window.removeEventListener("scroll", handleScroll));
 </script>
 
 <template>
-  <header
-    class="main-header"
-    :class="{ minimized: isMinimized }"
-    :data-show="shouldShow"
-  >
+  <header class="main-header" :class="{ minimized: isMinimized }" :data-show="shouldShow">
     <div class="nav-container">
       <div class="nav-left">
         <RouterLink to="/" class="nav-name-link">
           <span class="nav-name">Jones Jankovic</span>
         </RouterLink>
         <div class="glass-nav">
-          <RouterLink
-            to="/projects"
-            class="glass-btn"
-            :class="{ active: isProjectsActive }"
+          <RouterLink to="/projects" class="glass-btn" :class="{ active: isProjectsActive }"
             >Projects</RouterLink
           >
-          <RouterLink
-            to="/play"
-            class="glass-btn"
-            :class="{ active: isArcadeActive }"
+          <RouterLink to="/play" class="glass-btn" :class="{ active: isArcadeActive }"
             >Arcade</RouterLink
           >
         </div>
