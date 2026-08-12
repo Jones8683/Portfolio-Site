@@ -64,7 +64,11 @@
 .score-box {
   min-height: 120px;
   width: 100%;
-  background: linear-gradient(135deg, rgba(255, 215, 0, 0.05), rgba(255, 215, 0, 0.01));
+  background: linear-gradient(
+    135deg,
+    rgba(255, 215, 0, 0.05),
+    rgba(255, 215, 0, 0.01)
+  );
   border: 1px solid rgba(255, 215, 0, 0.3);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }

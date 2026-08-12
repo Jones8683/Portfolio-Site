@@ -9,21 +9,24 @@ const projects = [
   },
   {
     name: "DesQTA",
-    description: "A native desktop version of BetterSEQTA+ with a smoother workflow.",
+    description:
+      "A native desktop version of BetterSEQTA+ with a smoother workflow.",
     href: "https://github.com/BetterSEQTA/DesQTA",
     logo: "https://github.com/BetterSEQTA.png",
     type: "Desktop App",
   },
   {
     name: "Portfolio Site",
-    description: "My personal portfolio website for projects, experiments, and games.",
+    description:
+      "My personal portfolio website for projects, experiments, and games.",
     href: "https://github.com/Jones8683/Portfolio-Site",
     logo: "https://github.com/Jones8683.png",
     type: "Website",
   },
   {
     name: "Arduino Buzzer Music",
-    description: "A software project featuring iconic melodies for Arduino piezo buzzers.",
+    description:
+      "A software project featuring iconic melodies for Arduino piezo buzzers.",
     href: "https://github.com/Jones8683/Arduino-Buzzer-Music",
     logo: "https://github.com/Jones8683.png",
     type: "Software",
@@ -34,10 +37,16 @@ const projects = [
 <template>
   <section class="content-wrap projects-page">
     <h1 class="name-title projects-title">Contributions &amp; Projects</h1>
-    <p class="projects-subtitle">A collection of projects I have made or contributed to.</p>
+    <p class="projects-subtitle">
+      A collection of projects I have made or contributed to.
+    </p>
 
     <div class="project-list">
-      <article v-for="project in projects" :key="project.name" class="project-row">
+      <article
+        v-for="project in projects"
+        :key="project.name"
+        class="project-row"
+      >
         <div class="project-main">
           <img
             :src="project.logo"
@@ -54,9 +63,19 @@ const projects = [
           </div>
         </div>
 
-        <a :href="project.href" target="_blank" rel="noopener noreferrer" class="project-btn">
+        <a
+          :href="project.href"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="project-btn"
+        >
           <span class="project-btn-label">View Project</span>
-          <svg class="project-btn-arrow" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <svg
+            class="project-btn-arrow"
+            viewBox="0 0 20 20"
+            fill="none"
+            aria-hidden="true"
+          >
             <path
               d="M4 10h11m0 0-4-4m4 4-4 4"
               stroke="currentColor"

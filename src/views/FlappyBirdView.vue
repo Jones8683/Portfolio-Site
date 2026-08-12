@@ -179,7 +179,9 @@ function drawCity() {
             const wx = startX + col * (ww + gx);
             const wy = by + 8 + row * (wh + gy);
             const lit = (row * 3 + col * 7 + b.x) % 5 !== 0;
-            ctx.fillStyle = lit ? "rgba(255, 240, 180, 0.55)" : "rgba(0,0,0,0.2)";
+            ctx.fillStyle = lit
+              ? "rgba(255, 240, 180, 0.55)"
+              : "rgba(0,0,0,0.2)";
             ctx.fillRect(wx, wy, ww, wh);
           }
         }
@@ -273,7 +275,10 @@ function drawPipes() {
 function drawBird() {
   ctx.save();
   ctx.translate(bird.x, bird.y);
-  const targetAngle = bird.vy < 0 ? Math.max(-0.4, bird.vy * 0.06) : Math.min(1.3, bird.vy * 0.09);
+  const targetAngle =
+    bird.vy < 0
+      ? Math.max(-0.4, bird.vy * 0.06)
+      : Math.min(1.3, bird.vy * 0.09);
   bird.angle += (targetAngle - bird.angle) * 0.25;
   ctx.rotate(bird.angle);
 
@@ -289,7 +294,8 @@ function drawBird() {
   ctx.arc(0, 0, R, 0, Math.PI * 2);
   ctx.stroke();
 
-  const wingY = gameState.value === "dead" ? 0 : Math.sin(wingFrame * 0.15) * 3.5;
+  const wingY =
+    gameState.value === "dead" ? 0 : Math.sin(wingFrame * 0.15) * 3.5;
   ctx.fillStyle = "#d98c10";
   ctx.beginPath();
   ctx.ellipse(-2, 2 + wingY, 9, 5, -0.3, 0, Math.PI * 2);

@@ -6,7 +6,9 @@ import { RouterLink } from "vue-router";
   <div class="mobile-msg">
     <div class="content-wrap">
       <h1 class="mobile-heading">Not supported on mobile</h1>
-      <RouterLink to="/play" class="mobile-back-link"> ← Back to arcade </RouterLink>
+      <RouterLink to="/play" class="mobile-back-link">
+        ← Back to arcade
+      </RouterLink>
     </div>
   </div>
 </template>

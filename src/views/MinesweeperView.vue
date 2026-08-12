@@ -92,7 +92,12 @@ function calculateNumbers() {
         for (let dx = -1; dx <= 1; dx++) {
           const ny = y + dy,
             nx = x + dx;
-          if (ny >= 0 && ny < currentDiff.value.rows && nx >= 0 && nx < currentDiff.value.cols) {
+          if (
+            ny >= 0 &&
+            ny < currentDiff.value.rows &&
+            nx >= 0 &&
+            nx < currentDiff.value.cols
+          ) {
             if (grid.value[ny][nx].isMine) count++;
           }
         }
@@ -103,7 +108,13 @@ function calculateNumbers() {
 }
 
 function handleLeftClick(cell) {
-  if (gameStatus.value !== "playing" || isPaused.value || cell.isRevealed || cell.isFlagged) return;
+  if (
+    gameStatus.value !== "playing" ||
+    isPaused.value ||
+    cell.isRevealed ||
+    cell.isFlagged
+  )
+    return;
   if (isFirstClick) {
     placeMines(cell.x, cell.y);
     isFirstClick = false;
@@ -117,7 +128,8 @@ function handleLeftClick(cell) {
 }
 
 function handleRightClick(cell) {
-  if (gameStatus.value !== "playing" || isPaused.value || cell.isRevealed) return;
+  if (gameStatus.value !== "playing" || isPaused.value || cell.isRevealed)
+    return;
   cell.isFlagged = !cell.isFlagged;
   flagsPlaced.value += cell.isFlagged ? 1 : -1;
 }
@@ -127,7 +139,13 @@ function revealCell(startX, startY) {
 
   while (stack.length > 0) {
     const [x, y] = stack.pop();
-    if (x < 0 || x >= currentDiff.value.cols || y < 0 || y >= currentDiff.value.rows) continue;
+    if (
+      x < 0 ||
+      x >= currentDiff.value.cols ||
+      y < 0 ||
+      y >= currentDiff.value.rows
+    )
+      continue;
 
     const cell = grid.value[y][x];
     if (cell.isRevealed || cell.isFlagged) continue;
@@ -146,7 +164,10 @@ function revealCell(startX, startY) {
 
 function checkWin() {
   const revealedCount = grid.value.flat().filter((c) => c.isRevealed).length;
-  if (currentDiff.value.rows * currentDiff.value.cols - revealedCount === currentDiff.value.mines)
+  if (
+    currentDiff.value.rows * currentDiff.value.cols - revealedCount ===
+    currentDiff.value.mines
+  )
     gameOver(true);
 }
 
@@ -220,11 +241,16 @@ const gridStyle = computed(() => ({
             </div>
           </div>
 
-          <div v-if="gameStatus === 'won' || gameStatus === 'lost'" class="overlay-msg">
+          <div
+            v-if="gameStatus === 'won' || gameStatus === 'lost'"
+            class="overlay-msg"
+          >
             <h2 class="result-title" :class="{ won: gameStatus === 'won' }">
               {{ gameStatus === "won" ? "YOU WIN!" : "GAME OVER" }}
             </h2>
-            <button class="retry-btn restart-btn" @click="resetToStart">RESTART</button>
+            <button class="retry-btn restart-btn" @click="resetToStart">
+              RESTART
+            </button>
           </div>
 
           <div v-if="isPaused" class="overlay-msg paused-overlay">

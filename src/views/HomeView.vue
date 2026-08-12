@@ -81,15 +81,17 @@ onUnmounted(() => {
         </div>
         <div class="about-body">
           <p>
-            Hi! I'm Jones, a student based in Adelaide with an interest in computers and technology,
-            along with a mix of other things I get into. I'm a member of the Tjuringa Orienteers,
-            and I love spending time out in nature and getting into a bit of art. I also play piano
+            Hi! I'm Jones, a student based in Adelaide with an interest in
+            computers and technology, along with a mix of other things I get
+            into. I'm a member of the Tjuringa Orienteers, and I love spending
+            time out in nature and getting into a bit of art. I also play piano
             and guitar and I'm big into music in general :)
           </p>
           <p>
-            I love reading all kinds of books, especially The High Republic series, Keeper of the
-            Lost Cities, and Tom Clancy's John Clark novels. Some of my favorite movies and shows
-            are Star Wars, the Dune films, Andor, and The Rookie. My top video games are Minecraft,
+            I love reading all kinds of books, especially The High Republic
+            series, Keeper of the Lost Cities, and Tom Clancy's John Clark
+            novels. Some of my favorite movies and shows are Star Wars, the Dune
+            films, Andor, and The Rookie. My top video games are Minecraft,
             Hollow Knight, Jedi Survivor, Halo, and Rainbow Six Siege.
           </p>
         </div>
@@ -100,7 +102,9 @@ onUnmounted(() => {
           <h2>Contact</h2>
         </div>
         <div class="about-body">
-          <p>Want to get in touch? Reach out via email or check out my socials:</p>
+          <p>
+            Want to get in touch? Reach out via email or check out my socials:
+          </p>
           <div class="contact-list">
             <a href="mailto:contact@jjank.com" class="contact-row">
               <svg class="contact-row-icon" viewBox="0 0 24 24" fill="none">
@@ -177,7 +181,9 @@ onUnmounted(() => {
               <span class="contact-row-arrow">→</span>
             </a>
           </div>
-          <p style="margin-top: 12px">Feel free to reach out if you want to talk!</p>
+          <p style="margin-top: 12px">
+            Feel free to reach out if you want to talk!
+          </p>
         </div>
       </section>
     </div>
@@ -251,8 +257,8 @@ onUnmounted(() => {
 .ring-1 {
   width: 165px;
   height: 165px;
-  border-color: rgba(90, 158, 255, 0.35) rgba(90, 158, 255, 0.05) rgba(90, 158, 255, 0.05)
-    rgba(90, 158, 255, 0.35);
+  border-color: rgba(90, 158, 255, 0.35) rgba(90, 158, 255, 0.05)
+    rgba(90, 158, 255, 0.05) rgba(90, 158, 255, 0.35);
   animation-duration: 8s;
 }
 
@@ -269,7 +275,11 @@ onUnmounted(() => {
   width: 140px;
   height: 140px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(58, 123, 213, 0.25) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(58, 123, 213, 0.25) 0%,
+    transparent 70%
+  );
   z-index: 1;
   animation: glow-pulse 3s ease-in-out infinite;
 }
