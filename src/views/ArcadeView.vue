@@ -55,15 +55,15 @@ const games = [
   font-size: 72px;
 }
 
-.content-wrap {
-  padding-bottom: 60px;
-}
-
 .arcade-subtitle {
   color: #94a3b8;
   font-size: 1.05rem;
   margin-bottom: 24px;
   font-weight: 400;
+}
+
+.content-wrap {
+  padding-bottom: 60px;
 }
 
 .arcade-grid {

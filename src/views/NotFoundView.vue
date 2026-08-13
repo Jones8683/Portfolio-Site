@@ -14,15 +14,16 @@ import { RouterLink } from "vue-router";
 
 <style scoped>
 .not-found-title {
-  font-size: 96px;
+  margin-top: 96px;
   margin-bottom: 24px;
-  letter-spacing: -2px;
-  margin-top: 40px;
+  font-size: 96px;
 }
 
 .not-found-subtitle {
-  font-size: 18px;
+  color: #94a3b8;
+  font-size: 1.05rem;
   margin-bottom: 10px;
+  font-weight: 400;
 }
 
 .not-found-link {
