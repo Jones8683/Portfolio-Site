@@ -3,29 +3,28 @@ const projects = [
   {
     name: "BetterSEQTA+",
     description:
-      "Browser extension redesigning SEQTA, bringing custom themes, live wallpapers, and quality-of-life upgrades",
+      "Redesigning SEQTA with custom themes, live wallpapers, and quality-of-life upgrades.",
     href: "https://github.com/BetterSEQTA/BetterSEQTA-Plus",
     logo: "https://github.com/BetterSEQTA.png",
     type: "Web Extension",
   },
   {
     name: "DesQTA",
-    description:
-      "A powerful desktop application for SEQTA Learn, bringing the full SEQTA experience to your computer with enhanced features.",
+    description: "A powerful desktop app for SEQTA Learn, right on your computer.",
     href: "https://github.com/BetterSEQTA/DesQTA",
     logo: "https://github.com/BetterSEQTA.png",
     type: "Desktop App",
   },
   {
     name: "Portfolio Site",
-    description: "This very site, my portfolio for my projects and games, built with Vue 3.",
+    description: "This very site - my portfolio for projects, experiments, and games",
     href: "https://github.com/Jones8683/Portfolio-Site",
     logo: "https://github.com/Jones8683.png",
     type: "Website",
   },
   {
     name: "Arduino Buzzer Music",
-    description: "A collection of songs for an Arduino to play on a Piezo Passive Buzzer.",
+    description: "A collection of songs created to be played on an Arduino piezo buzzer.",
     href: "https://github.com/Jones8683/Arduino-Buzzer-Music",
     logo: "https://github.com/Jones8683.png",
     type: "Software",
@@ -38,9 +37,19 @@ const projects = [
     <h1 class="name-title projects-title">Contributions &amp; Projects</h1>
     <p class="projects-subtitle">A collection of projects I have made or contributed to.</p>
 
-    <div class="project-list">
-      <article v-for="project in projects" :key="project.name" class="project-row">
-        <div class="project-main">
+    <div class="project-panel">
+      <a
+        v-for="(project, index) in projects"
+        :key="project.name"
+        :href="project.href"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="project-row"
+        :style="{ animationDelay: `${0.3 + index * 0.07}s` }"
+      >
+        <span class="project-row-bar" aria-hidden="true"></span>
+
+        <span class="project-row-inner">
           <img
             :src="project.logo"
             :alt="project.name"
@@ -49,16 +58,14 @@ const projects = [
             decoding="async"
           />
 
-          <div class="project-meta">
-            <p class="project-kicker">{{ project.type }}</p>
-            <h2 class="project-name">{{ project.name }}</h2>
-            <p class="project-desc">{{ project.description }}</p>
-          </div>
-        </div>
+          <span class="project-info">
+            <span class="project-name">{{ project.name }}</span>
+            <span class="project-desc">{{ project.description }}</span>
+          </span>
 
-        <a :href="project.href" target="_blank" rel="noopener noreferrer" class="project-btn">
-          <span class="project-btn-label">View Project</span>
-          <svg class="project-btn-arrow" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <span class="project-type">{{ project.type }}</span>
+
+          <svg class="project-arrow" viewBox="0 0 20 20" fill="none" aria-hidden="true">
             <path
               d="M4 10h11m0 0-4-4m4 4-4 4"
               stroke="currentColor"
@@ -67,22 +74,22 @@ const projects = [
               stroke-linejoin="round"
             />
           </svg>
-        </a>
-      </article>
+        </span>
+      </a>
     </div>
   </section>
 </template>
 
 <style scoped>
 .projects-page {
-  width: min(92%, 980px);
+  width: min(92%, 840px);
   padding: 0 0 56px;
 }
 
 .projects-title {
   margin-top: 20px;
   margin-bottom: 4px;
-  font-size: clamp(2.2rem, 7vw, 3.8rem);
+  font-size: clamp(2.2rem, 7vw, 3.6rem);
   animation: pull-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
@@ -90,159 +97,146 @@ const projects = [
   color: #94a3b8;
   font-size: 1.02rem;
   margin-top: 0;
-  margin-bottom: 24px;
+  margin-bottom: 8px;
   text-align: center;
   animation: pull-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
-  animation-delay: 0.06s;
+  animation-delay: 0.08s;
 }
 
-.project-list {
+.project-panel {
   width: 100%;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
+  display: flex;
+  flex-direction: column;
+  margin-top: 16px;
+  padding: 4px 32px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  box-shadow: 0 24px 50px rgba(4, 6, 16, 0.45);
+  backdrop-filter: blur(4px);
+  animation: pull-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: 0.16s;
 }
 
 .project-row {
-  width: 100%;
-  border: 1px solid rgba(148, 163, 184, 0.2);
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.03);
+  position: relative;
   display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 16px;
-  min-height: 220px;
+  padding: 22px 4px;
+  text-decoration: none !important;
+  color: inherit;
+  text-align: left;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+  opacity: 0;
+  transform: translateY(14px);
+  animation: pull-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.project-row:last-child {
+  border-bottom: none;
+}
+
+.project-row:focus-visible {
+  outline: none;
+  border-radius: 12px;
+  box-shadow: 0 0 0 3px rgba(135, 206, 250, 0.22);
+}
+
+.project-row-inner {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex: 1;
+  min-width: 0;
+  will-change: transform;
+  transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.project-row:hover .project-row-inner {
+  transform: translateX(16px);
+}
+
+.project-row-bar {
+  position: absolute;
+  left: -14px;
+  top: 14px;
+  bottom: 14px;
+  width: 3px;
+  border-radius: 2px;
+  background: #ffffff;
+  opacity: 0;
+  transform: translateX(-6px);
   transition:
-    border-color 0.25s ease,
-    box-shadow 0.25s ease,
-    transform 0.25s ease;
-  animation: pull-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+    opacity 0.3s ease,
+    transform 0.3s ease;
 }
 
-.project-row:nth-child(1) {
-  animation-delay: 0.18s;
-}
-
-.project-row:nth-child(2) {
-  animation-delay: 0.24s;
-}
-
-.project-row:nth-child(3) {
-  animation-delay: 0.3s;
-}
-
-.project-row:nth-child(4) {
-  animation-delay: 0.36s;
-}
-
-.project-row:hover {
-  border-color: rgba(148, 163, 184, 0.35);
-  box-shadow: 0 10px 24px rgba(3, 6, 16, 0.25);
-  transform: translateY(-2px);
-}
-
-.project-main {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
+.project-row:hover .project-row-bar {
+  opacity: 1;
+  transform: translateX(0);
 }
 
 .project-logo {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
   object-fit: cover;
   flex-shrink: 0;
 }
 
-.project-meta {
+.project-info {
   min-width: 0;
-}
-
-.project-kicker {
-  margin: 0;
-  font-size: 0.74rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: #94a3b8;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .project-name {
-  margin: 3px 0 6px;
   color: #ffffff;
-  font-size: 1.15rem;
-  line-height: 1.25;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
 .project-desc {
-  margin: 0;
+  color: #94a3b8;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  transition: color 0.3s ease;
+}
+
+.project-row:hover .project-desc {
   color: #cbd5f5;
-  line-height: 1.55;
-  font-size: 0.95rem;
 }
 
-.project-btn {
-  margin-top: auto;
-  width: 100%;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
-  padding: 12px 16px;
-  background: rgba(255, 255, 255, 0.025);
-  color: #94a3b8;
+.project-type {
+  flex-shrink: 0;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(90, 158, 255, 0.1);
+  border: 1px solid rgba(90, 158, 255, 0.22);
+  color: lightskyblue;
+  font-size: 0.7rem;
   font-weight: 600;
-  font-size: 0.95rem;
-  letter-spacing: 0;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  overflow: hidden;
-  transition:
-    background 0.25s ease,
-    border-color 0.25s ease,
-    transform 0.25s cubic-bezier(0.23, 1, 0.32, 1);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
 }
 
-.project-btn:visited {
-  color: #94a3b8;
-}
-
-.project-btn:hover {
-  background: rgba(255, 255, 255, 0.045);
-  border-color: rgba(135, 206, 250, 0.2);
-  transform: translateX(4px);
-}
-
-.project-btn:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(135, 206, 250, 0.22);
-}
-
-.project-btn-label {
-  min-width: 0;
-  transition: color 0.25s ease;
-}
-
-.project-btn-arrow {
-  width: 14px;
-  height: 14px;
+.project-arrow {
+  width: 16px;
+  height: 16px;
   flex-shrink: 0;
   color: #3a4f6a;
   opacity: 0;
   transform: translateX(-6px);
   transition:
-    opacity 0.25s ease,
-    transform 0.25s ease,
-    color 0.25s ease;
+    opacity 0.3s ease,
+    transform 0.3s ease,
+    color 0.3s ease;
 }
 
-.project-btn:hover .project-btn-label {
-  color: #cbd5f5;
-}
-
-.project-btn:hover .project-btn-arrow {
+.project-row:hover .project-arrow {
   opacity: 1;
   transform: translateX(0);
   color: lightskyblue;
@@ -263,26 +257,60 @@ const projects = [
 @media (prefers-reduced-motion: reduce) {
   .projects-title,
   .projects-subtitle,
-  .project-row,
-  .project-list {
+  .project-panel,
+  .project-row {
     animation: none !important;
+    opacity: 1;
+    transform: none;
   }
 }
 
 @media (max-width: 860px) {
-  .project-list {
-    grid-template-columns: 1fr;
-  }
-
-  .project-row {
-    min-height: 0;
+  .projects-title {
+    line-height: 1.15;
   }
 }
 
 @media (max-width: 640px) {
   .projects-page {
-    width: min(95%, 980px);
+    width: min(95%, 840px);
     padding-bottom: 44px;
+  }
+
+  .project-panel {
+    padding: 4px 18px;
+  }
+
+  .project-row {
+    padding: 18px 2px;
+  }
+
+  .project-row-inner {
+    gap: 14px;
+  }
+
+  .project-row:hover .project-row-inner {
+    transform: translateX(12px);
+  }
+
+  .project-row-bar {
+    left: -10px;
+  }
+
+  .project-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+  }
+
+  .project-type {
+    display: none;
+  }
+}
+
+@media (max-width: 420px) {
+  .project-arrow {
+    display: none;
   }
 }
 </style>
