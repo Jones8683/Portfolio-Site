@@ -2,28 +2,30 @@
 const projects = [
   {
     name: "BetterSEQTA+",
-    description: "A redesigned SEQTA experience for students worldwide.",
+    description:
+      "Browser extension redesigning SEQTA, bringing custom themes, live wallpapers, and quality-of-life upgrades",
     href: "https://github.com/BetterSEQTA/BetterSEQTA-Plus",
     logo: "https://github.com/BetterSEQTA.png",
     type: "Web Extension",
   },
   {
     name: "DesQTA",
-    description: "A native desktop version of BetterSEQTA+ with a smoother workflow.",
+    description:
+      "A powerful desktop application for SEQTA Learn, bringing the full SEQTA experience to your computer with enhanced features.",
     href: "https://github.com/BetterSEQTA/DesQTA",
     logo: "https://github.com/BetterSEQTA.png",
     type: "Desktop App",
   },
   {
     name: "Portfolio Site",
-    description: "My personal portfolio website for projects, experiments, and games.",
+    description: "This very site, my portfolio for my projects and games, built with Vue 3.",
     href: "https://github.com/Jones8683/Portfolio-Site",
     logo: "https://github.com/Jones8683.png",
     type: "Website",
   },
   {
     name: "Arduino Buzzer Music",
-    description: "A software project featuring iconic melodies for Arduino piezo buzzers.",
+    description: "A collection of songs for an Arduino to play on a Piezo Passive Buzzer.",
     href: "https://github.com/Jones8683/Arduino-Buzzer-Music",
     logo: "https://github.com/Jones8683.png",
     type: "Software",
