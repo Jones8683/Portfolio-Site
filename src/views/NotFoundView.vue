@@ -15,8 +15,8 @@ import { RouterLink } from "vue-router";
 <style scoped>
 .not-found-title {
   margin-top: 96px;
-  margin-bottom: 24px;
-  font-size: 96px;
+  margin-bottom: 38px;
+  font-size: 120px;
 }
 
 .not-found-subtitle {
