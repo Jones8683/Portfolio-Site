@@ -528,7 +528,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="flappy-wrapper">
+  <div class="game-page-wrapper">
     <GameMobileMessage />
 
     <div class="desktop-game">

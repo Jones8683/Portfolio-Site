@@ -823,7 +823,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="tetris-wrapper">
+  <div class="game-page-wrapper">
     <GameMobileMessage />
 
     <div class="desktop-game">

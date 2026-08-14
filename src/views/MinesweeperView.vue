@@ -205,7 +205,7 @@ const gridStyle = computed(() => ({
 </script>
 
 <template>
-  <div class="mines-wrapper">
+  <div class="game-page-wrapper">
     <GameMobileMessage />
 
     <div class="desktop-game">

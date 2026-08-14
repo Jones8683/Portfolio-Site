@@ -432,7 +432,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="pong-container">
+  <div class="game-page-wrapper">
     <GameMobileMessage />
 
     <div class="desktop-game">

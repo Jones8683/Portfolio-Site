@@ -86,7 +86,7 @@ const bodyVisible = computed(() => ({
 </script>
 
 <template>
-  <div class="hangman-wrapper">
+  <div class="game-page-wrapper">
     <GameMobileMessage />
 
     <div class="desktop-game">

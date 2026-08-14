@@ -1,11 +1,4 @@
-.game-page-wrapper,
-.tetris-wrapper,
-.game2048-wrapper,
-.pong-container,
-.mines-wrapper,
-.flappy-wrapper,
-.hangman-wrapper,
-.stickman-wrapper {
+.game-page-wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;

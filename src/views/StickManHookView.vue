@@ -42,7 +42,7 @@ const toggleFullscreen = () => {
 </script>
 
 <template>
-  <div class="stickman-wrapper">
+  <div class="game-page-wrapper">
     <GameMobileMessage />
 
     <div class="desktop-game">
