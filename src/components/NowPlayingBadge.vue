@@ -113,6 +113,7 @@ watch(
       animateWidthChange(el, startWidth);
     }
   },
+  { immediate: true },
 );
 
 onMounted(() => {
