@@ -103,12 +103,28 @@ watch(
     }
 
     const isSongSwap = Boolean(oldTrack);
+
+    if (!isSongSwap) {
+      display.value = {
+        title: newTrack.title,
+        artistLine: fullArtistLabel.value,
+        albumArt: newTrack.albumArt ?? null,
+        album: newTrack.album ?? null,
+      };
+
+      const fittedArtistLine = await resolveDisplayArtists(newTrack);
+      if (track.value === newTrack) {
+        display.value = { ...display.value, artistLine: fittedArtistLine };
+      }
+      return;
+    }
+
     const el = badgeRef.value;
-    const startWidth = isSongSwap && el ? el.getBoundingClientRect().width : 0;
+    const startWidth = el ? el.getBoundingClientRect().width : 0;
 
     display.value = await resolveDisplay(newTrack);
 
-    if (isSongSwap && el) {
+    if (el) {
       await nextTick();
       animateWidthChange(el, startWidth);
     }
