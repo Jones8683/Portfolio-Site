@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
-import profilePic from "@/assets/github.png";
+import profilePic from "@/assets/kenobi.png";
 import NowPlayingBadge from "@/components/NowPlayingBadge.vue";
 
 const visible = ref(false);
