@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://jjank.com/</loc>
+  </url>
+  <url>
+    <loc>https://jjank.com/projects</loc>
+  </url>
+  <url>
+    <loc>https://jjank.com/play</loc>
+  </url>
+  <url>
+    <loc>https://jjank.com/play/2048</loc>
+  </url>
+  <url>
+    <loc>https://jjank.com/play/connect-4</loc>
+  </url>
+  <url>
+    <loc>https://jjank.com/play/flappy-bird</loc>
+  </url>
+  <url>
+    <loc>https://jjank.com/play/hangman</loc>
+  </url>
+  <url>
+    <loc>https://jjank.com/play/minesweeper</loc>
+  </url>
+  <url>
+    <loc>https://jjank.com/play/pong</loc>
+  </url>
+  <url>
+    <loc>https://jjank.com/play/stickman-hook</loc>
+  </url>
+  <url>
+    <loc>https://jjank.com/play/tetris</loc>
+  </url>
+</urlset>
