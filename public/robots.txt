@@ -1,3 +1,9 @@
+User-agent: Amazonbot
+User-agent: Bytespider
+User-agent: GPTBot
+User-agent: meta-externalagent
+Disallow: /
+
 User-agent: *
 Allow: /
 
