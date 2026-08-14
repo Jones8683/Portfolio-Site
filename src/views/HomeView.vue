@@ -161,7 +161,7 @@ onUnmounted(() => {
             </a>
 
             <a
-              href="https://discord.com/users/1378992101970280471"
+              href="https://discord.com/users/1537745548000497716"
               target="_blank"
               rel="noopener noreferrer"
               class="contact-row"

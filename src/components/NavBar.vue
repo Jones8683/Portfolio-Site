@@ -51,7 +51,7 @@ onUnmounted(() => window.removeEventListener("scroll", handleScroll));
       </div>
       <div class="nav-right">
         <a
-          href="https://discord.com/users/1378992101970280471"
+          href="https://discord.com/users/1537745548000497716"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Discord Profile"
