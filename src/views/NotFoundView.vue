@@ -1,7 +1,3 @@
-<script setup>
-import { RouterLink } from "vue-router";
-</script>
-
 <template>
   <div class="content-wrap">
     <h1 class="name-title not-found-title">404</h1>

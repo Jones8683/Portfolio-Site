@@ -1,6 +1,4 @@
 <script setup>
-import { RouterLink } from "vue-router";
-
 const games = [
   { name: "Tetris", icon: "🧱", path: "/play/tetris", color: "red" },
   { name: "2048", icon: "🔢", path: "/play/2048", color: "blue" },

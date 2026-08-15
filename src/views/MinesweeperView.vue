@@ -1,6 +1,5 @@
 <script setup>
 import { ref, computed, onUnmounted, onMounted } from "vue";
-import { useStorage } from "@vueuse/core";
 import GameMobileMessage from "@/components/GameMobileMessage.vue";
 import GameControls from "@/components/GameControls.vue";
 

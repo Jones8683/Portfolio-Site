@@ -1,5 +1,5 @@
 <script setup>
-import { RouterLink, useRoute } from "vue-router";
+import { useRoute } from "vue-router";
 import { ref, computed, onMounted, onUnmounted } from "vue";
 
 const isMinimized = ref(false);
