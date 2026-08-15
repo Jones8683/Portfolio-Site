@@ -152,8 +152,8 @@ onUnmounted(() => window.removeEventListener("scroll", handleScroll));
 }
 
 .glass-btn {
-  text-decoration: none !important;
-  color: rgba(255, 255, 255, 0.8) !important;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.8);
   font-size: 0.85rem;
   font-weight: 400;
   padding: 6px 14px;
@@ -174,18 +174,18 @@ onUnmounted(() => window.removeEventListener("scroll", handleScroll));
 .glass-btn:hover {
   background: rgba(255, 255, 255, 0.12);
   border-color: rgba(255, 255, 255, 0.3);
-  color: #ffffff !important;
+  color: #ffffff;
   transform: translateY(-1px);
 }
 
 .glass-btn.active {
   background: rgba(255, 255, 255, 0.14);
   border-color: rgba(255, 255, 255, 0.35);
-  color: #ffffff !important;
+  color: #ffffff;
 }
 
 .nav-name-link {
-  text-decoration: none !important;
+  text-decoration: none;
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -240,41 +240,37 @@ onUnmounted(() => window.removeEventListener("scroll", handleScroll));
   display: block;
 }
 
-.nav-left a {
-  text-decoration: none !important;
-}
-
 @media (max-width: 650px) {
   .nav-name {
-    display: none !important;
+    display: none;
   }
 
   .nav-container {
-    padding: 10px 16px !important;
-    justify-content: space-between !important;
+    padding: 10px 16px;
+    justify-content: space-between;
   }
 
   .nav-left {
-    gap: 0 !important;
+    gap: 0;
   }
 
   .glass-nav {
-    gap: 8px !important;
+    gap: 8px;
   }
 
   .glass-btn {
-    padding: 8px 14px !important;
-    font-size: 0.8rem !important;
-    background: rgba(255, 255, 255, 0.08) !important;
+    padding: 8px 14px;
+    font-size: 0.8rem;
+    background: rgba(255, 255, 255, 0.08);
   }
 
   .nav-right {
-    gap: 12px !important;
+    gap: 12px;
   }
 
   .nav-icon svg {
-    width: 22px !important;
-    height: 22px !important;
+    width: 22px;
+    height: 22px;
   }
 }
 </style>
