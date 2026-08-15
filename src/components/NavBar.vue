@@ -240,9 +240,7 @@ onUnmounted(() => window.removeEventListener("scroll", handleScroll));
   display: block;
 }
 
-.nav-left a,
-.nav-item,
-.nav-link-item {
+.nav-left a {
   text-decoration: none !important;
 }
 
