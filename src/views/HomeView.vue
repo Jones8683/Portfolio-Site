@@ -395,9 +395,5 @@ onUnmounted(() => {
     width: 160px;
     height: 160px;
   }
-
-  .about-section .repo-button-grid {
-    grid-template-columns: 1fr;
-  }
 }
 </style>
