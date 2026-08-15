@@ -16,9 +16,7 @@ defineProps({
     type: Array,
     required: true,
     validator: (value) => {
-      return value.every(
-        (control) => control.action && (control.key || Array.isArray(control.key)),
-      );
+      return value.every((control) => control.action && control.key);
     },
   },
 });
