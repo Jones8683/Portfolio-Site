@@ -288,89 +288,56 @@ onUnmounted(() => {
   border-radius: 999px;
   transform-origin: center;
   will-change: transform;
-  animation-timing-function: ease-in-out;
-  animation-iteration-count: infinite;
+  animation: np-bounce 1.1s linear infinite;
 }
 
 .np-bars span:nth-child(1) {
   --peak: 6px;
-  animation-name: np-bounce-a;
-  animation-duration: 1.15s;
-  animation-delay: -0.4s;
+  animation-delay: -0.6s;
 }
 .np-bars span:nth-child(2) {
   --peak: 10px;
-  animation-name: np-bounce-b;
-  animation-duration: 0.95s;
-  animation-delay: -0.1s;
+  animation-delay: -0.3s;
 }
 .np-bars span:nth-child(3) {
   --peak: 6px;
-  animation-name: np-bounce-c;
-  animation-duration: 1.3s;
-  animation-delay: -0.7s;
+  animation-delay: 0s;
 }
 
-@keyframes np-bounce-a {
+@keyframes np-bounce {
   0%,
   100% {
     transform: scaleY(0.45);
   }
-  15% {
-    transform: scaleY(0.6);
+  10% {
+    transform: scaleY(0.52);
   }
-  35% {
-    transform: scaleY(0.85);
+  20% {
+    transform: scaleY(0.64);
+  }
+  30% {
+    transform: scaleY(0.79);
+  }
+  40% {
+    transform: scaleY(0.92);
   }
   50% {
     transform: scaleY(1);
   }
-  65% {
-    transform: scaleY(0.8);
+  60% {
+    transform: scaleY(0.9);
+  }
+  70% {
+    transform: scaleY(0.72);
+  }
+  75% {
+    transform: scaleY(0.65);
   }
   85% {
     transform: scaleY(0.55);
   }
-}
-
-@keyframes np-bounce-b {
-  0%,
-  100% {
-    transform: scaleY(0.5);
-  }
-  20% {
-    transform: scaleY(0.75);
-  }
-  40% {
-    transform: scaleY(1);
-  }
-  55% {
-    transform: scaleY(0.9);
-  }
-  70% {
-    transform: scaleY(0.6);
-  }
   90% {
-    transform: scaleY(0.48);
-  }
-}
-
-@keyframes np-bounce-c {
-  0%,
-  100% {
-    transform: scaleY(0.45);
-  }
-  25% {
-    transform: scaleY(0.7);
-  }
-  45% {
-    transform: scaleY(0.95);
-  }
-  60% {
-    transform: scaleY(1);
-  }
-  80% {
-    transform: scaleY(0.6);
+    transform: scaleY(0.5);
   }
 }
 
