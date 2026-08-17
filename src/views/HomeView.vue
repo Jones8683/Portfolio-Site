@@ -81,15 +81,14 @@ onUnmounted(() => {
         </div>
         <div class="about-body">
           <p>
-            Hi! I'm Jones, a student based in Adelaide with an interest in computers and technology,
-            along with a mix of other things I get into. I'm a member of the Tjuringa Orienteers,
-            and I love spending time out in nature and getting into a bit of art. I also play piano
-            and electric guitar and I'm big into music in general :)
+            Hi! I'm Jones, a student based in Adelaide with a passion for technology, nature, and
+            art. I play piano and electric guitar, run with the Tjuringa Orienteers, and love
+            listening to music from artists like Future, Metro Boomin, and Kendrick Lamar.
           </p>
           <p>
             I love reading all kinds of books, especially The High Republic series, Keeper of the
-            Lost Cities, and Tom Clancy's John Clark novels. Some of my favorite movies and shows
-            are Star Wars, the Dune films, Andor, and The Rookie. My top video games are Minecraft,
+            Lost Cities, and Tom Clancy's John Clark novels. My favorite movies and shows include
+            Star Wars, the Dune films, Andor, and The Rookie. My top video games are Minecraft,
             Hollow Knight, Jedi Survivor, Halo, and Rainbow Six Siege.
           </p>
         </div>
