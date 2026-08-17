@@ -84,8 +84,6 @@ const games = [
   flex-direction: column;
   height: 210px;
   transition: all 0.3s ease;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
 }
 
 .arcade-card:hover {

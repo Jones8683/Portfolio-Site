@@ -93,7 +93,6 @@ onUnmounted(() => window.removeEventListener("scroll", handleScroll));
   max-width: 1400px;
   z-index: 1000;
   background-color: rgba(10, 11, 14, 0);
-  backdrop-filter: blur(0px);
   border-radius: 24px;
   border: 2px solid rgba(255, 255, 255, 0);
   transition:
@@ -158,7 +157,6 @@ onUnmounted(() => window.removeEventListener("scroll", handleScroll));
   font-weight: 400;
   padding: 6px 14px;
   background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 10px;
   transition:

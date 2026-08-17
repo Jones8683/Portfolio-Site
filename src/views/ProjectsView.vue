@@ -113,7 +113,6 @@ const projects = [
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(148, 163, 184, 0.2);
   box-shadow: 0 24px 50px rgba(4, 6, 16, 0.45);
-  backdrop-filter: blur(4px);
   animation: pull-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
   animation-delay: 0.16s;
 }
