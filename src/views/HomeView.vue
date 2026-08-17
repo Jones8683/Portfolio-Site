@@ -84,7 +84,7 @@ onUnmounted(() => {
             Hi! I'm Jones, a student based in Adelaide with an interest in computers and technology,
             along with a mix of other things I get into. I'm a member of the Tjuringa Orienteers,
             and I love spending time out in nature and getting into a bit of art. I also play piano
-            and guitar and I'm big into music in general :)
+            and electric guitar and I'm big into music in general :)
           </p>
           <p>
             I love reading all kinds of books, especially The High Republic series, Keeper of the
