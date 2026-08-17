@@ -109,7 +109,7 @@ const projects = [
   flex-direction: column;
   margin-top: 16px;
   padding: 4px 32px;
-  border-radius: 24px;
+  border-radius: 16px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(148, 163, 184, 0.2);
   box-shadow: 0 24px 50px rgba(4, 6, 16, 0.45);
