@@ -143,7 +143,7 @@ onUnmounted(() => {
             </a>
 
             <a
-              href="https://www.xbox.com/play/user/TheAxissix"
+              href="https://www.xbox.com/play/user/TheAxisix"
               target="_blank"
               rel="noopener noreferrer"
               class="contact-row"
@@ -155,7 +155,7 @@ onUnmounted(() => {
                 />
               </svg>
               <span class="contact-row-label">Xbox</span>
-              <span class="contact-row-value">TheAxissix</span>
+              <span class="contact-row-value">TheAxisix</span>
               <span class="contact-row-arrow">→</span>
             </a>
 
