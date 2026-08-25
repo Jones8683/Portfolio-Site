@@ -1,28 +1,28 @@
 <script setup>
 const games = [
-  { name: "Tetris", icon: "🧱", path: "/play/tetris", color: "red" },
-  { name: "2048", icon: "🔢", path: "/play/2048", color: "blue" },
-  { name: "Pong", icon: "🏓", path: "/play/pong", color: "yellow" },
+  { name: 'Tetris', icon: '🧱', path: '/play/tetris', color: 'red' },
+  { name: '2048', icon: '🔢', path: '/play/2048', color: 'blue' },
+  { name: 'Pong', icon: '🏓', path: '/play/pong', color: 'yellow' },
   {
-    name: "Minesweeper",
-    icon: "💣",
-    path: "/play/minesweeper",
-    color: "green",
+    name: 'Minesweeper',
+    icon: '💣',
+    path: '/play/minesweeper',
+    color: 'green',
   },
   {
-    name: "Stickman Hook",
-    icon: "🪝",
-    path: "/play/stickman-hook",
-    color: "yellow",
+    name: 'Stickman Hook',
+    icon: '🪝',
+    path: '/play/stickman-hook',
+    color: 'yellow',
   },
   {
-    name: "Flappy Bird",
-    icon: "🐦",
-    path: "/play/flappy-bird",
-    color: "green",
+    name: 'Flappy Bird',
+    icon: '🐦',
+    path: '/play/flappy-bird',
+    color: 'green',
   },
-  { name: "Hangman", icon: "🧍", path: "/play/hangman", color: "red" },
-  { name: "Connect 4", icon: "🔵", path: "/play/connect-4", color: "blue" },
+  { name: 'Hangman', icon: '🧍', path: '/play/hangman', color: 'red' },
+  { name: 'Connect 4', icon: '🔵', path: '/play/connect-4', color: 'blue' },
 ];
 </script>
 

@@ -1,32 +1,32 @@
 <script setup>
-import { onMounted, onUnmounted, computed, ref, watch, nextTick } from "vue";
-import { useNowPlaying } from "@/composables/useNowPlaying";
+import { onMounted, onUnmounted, computed, ref, watch, nextTick } from 'vue';
+import { useNowPlaying } from '@/composables/useNowPlaying';
 
 const props = defineProps({
   fallbackText: {
     type: String,
-    default: "",
+    default: '',
   },
 });
 
 const { track, startPolling, stopPolling } = useNowPlaying();
 
-const badgeKey = computed(() => (track.value ? "track" : "fallback"));
+const badgeKey = computed(() => (track.value ? 'track' : 'fallback'));
 const badgeRef = ref(null);
 const measureTrackRef = ref(null);
 const measureArt = ref(false);
-const measureCandidateText = ref("");
+const measureCandidateText = ref('');
 
 const display = ref({
-  title: "",
-  artistLine: "",
+  title: '',
+  artistLine: '',
   albumArt: null,
   album: null,
 });
 
 const fullArtistLabel = computed(() => {
   const artists = track.value?.artists;
-  return Array.isArray(artists) && artists.length ? artists.join(", ") : "Unknown artist";
+  return Array.isArray(artists) && artists.length ? artists.join(', ') : 'Unknown artist';
 });
 
 function handleVisibilityChange() {
@@ -39,12 +39,12 @@ function handleVisibilityChange() {
 
 async function resolveDisplayArtists(currentTrack) {
   const artists = Array.isArray(currentTrack.artists) ? currentTrack.artists : [];
-  if (!artists.length) return "";
+  if (!artists.length) return '';
 
   measureArt.value = Boolean(currentTrack.albumArt);
 
   for (let count = artists.length; count >= 1; count -= 1) {
-    const candidateArtists = artists.slice(0, count).join(", ");
+    const candidateArtists = artists.slice(0, count).join(', ');
     measureCandidateText.value = `${currentTrack.title} - ${candidateArtists}`;
     await nextTick();
 
@@ -71,22 +71,22 @@ function animateWidthChange(el, startWidth) {
   const endWidth = el.getBoundingClientRect().width;
   if (Math.abs(endWidth - startWidth) < 1) return;
 
-  el.style.transition = "none";
+  el.style.transition = 'none';
   el.style.width = `${startWidth}px`;
   void el.offsetWidth;
 
   requestAnimationFrame(() => {
-    el.style.transition = "width 0.35s ease, background 0.2s ease";
+    el.style.transition = 'width 0.35s ease, background 0.2s ease';
     el.style.width = `${endWidth}px`;
   });
 
   const clearInlineWidth = (event) => {
-    if (event.propertyName !== "width") return;
-    el.style.transition = "";
-    el.style.width = "";
-    el.removeEventListener("transitionend", clearInlineWidth);
+    if (event.propertyName !== 'width') return;
+    el.style.transition = '';
+    el.style.width = '';
+    el.removeEventListener('transitionend', clearInlineWidth);
   };
-  el.addEventListener("transitionend", clearInlineWidth);
+  el.addEventListener('transitionend', clearInlineWidth);
 }
 
 watch(
@@ -94,8 +94,8 @@ watch(
   async (newTrack, oldTrack) => {
     if (!newTrack) {
       display.value = {
-        title: "",
-        artistLine: "",
+        title: '',
+        artistLine: '',
         albumArt: null,
         album: null,
       };
@@ -134,11 +134,11 @@ watch(
 
 onMounted(() => {
   startPolling();
-  document.addEventListener("visibilitychange", handleVisibilityChange);
+  document.addEventListener('visibilitychange', handleVisibilityChange);
 });
 
 onUnmounted(() => {
-  document.removeEventListener("visibilitychange", handleVisibilityChange);
+  document.removeEventListener('visibilitychange', handleVisibilityChange);
   stopPolling();
 });
 </script>

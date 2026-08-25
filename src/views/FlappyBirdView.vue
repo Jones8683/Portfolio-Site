@@ -1,17 +1,17 @@
 <script setup>
-import { onMounted, onUnmounted, ref } from "vue";
-import { useStorage } from "@vueuse/core";
-import GameMobileMessage from "@/components/GameMobileMessage.vue";
-import GameControls from "@/components/GameControls.vue";
-import { createScoreSerializer } from "@/scoreStorage.js";
+import { onMounted, onUnmounted, ref } from 'vue';
+import { useStorage } from '@vueuse/core';
+import GameMobileMessage from '@/components/GameMobileMessage.vue';
+import GameControls from '@/components/GameControls.vue';
+import { createScoreSerializer } from '@/scoreStorage.js';
 
-const highScore = useStorage("flappy-best-score", 0, localStorage, {
-  serializer: createScoreSerializer("flappy-best-score"),
+const highScore = useStorage('flappy-best-score', 0, localStorage, {
+  serializer: createScoreSerializer('flappy-best-score'),
 });
 
 const canvasRef = ref(null);
 const scoreRef = ref(0);
-const gameState = ref("idle");
+const gameState = ref('idle');
 const isPaused = ref(false);
 
 const W = 360,
@@ -78,12 +78,12 @@ function hitTest() {
 function txt(str, x, y, size, fill, strokeCol) {
   ctx.save();
   ctx.font = `900 ${size}px 'Arial Black', Arial, sans-serif`;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
   if (strokeCol) {
     ctx.strokeStyle = strokeCol;
     ctx.lineWidth = size * 0.22;
-    ctx.lineJoin = "round";
+    ctx.lineJoin = 'round';
     ctx.strokeText(str, x, y);
   }
   ctx.fillStyle = fill;
@@ -92,7 +92,7 @@ function txt(str, x, y, size, fill, strokeCol) {
 }
 
 function drawSky() {
-  ctx.fillStyle = "#70c5ce";
+  ctx.fillStyle = '#70c5ce';
   ctx.fillRect(0, 0, W, GROUND_Y + 2);
 }
 
@@ -102,7 +102,7 @@ function drawClouds() {
     { ox: 200, y: 90, w: 64, h: 32 },
     { ox: 310, y: 52, w: 72, h: 36 },
   ];
-  ctx.fillStyle = "#fff";
+  ctx.fillStyle = '#fff';
   for (const c of clouds) {
     const wrap = W + c.w + 20;
     const x = ((c.ox - (cloudOff % wrap) + wrap * 2) % wrap) - c.w - 20;
@@ -117,28 +117,28 @@ function drawCity() {
   const off = cityOff % TILE_W;
 
   const buildings = [
-    { x: 0, w: 38, h: 90, windows: true, style: "wide" },
-    { x: 40, w: 22, h: 55, windows: false, style: "thin" },
-    { x: 64, w: 44, h: 130, windows: true, style: "tall" },
-    { x: 110, w: 28, h: 70, windows: true, style: "wide" },
-    { x: 140, w: 18, h: 48, windows: false, style: "thin" },
-    { x: 160, w: 50, h: 110, windows: true, style: "tall" },
-    { x: 212, w: 30, h: 65, windows: true, style: "wide" },
-    { x: 244, w: 20, h: 42, windows: false, style: "thin" },
-    { x: 266, w: 40, h: 95, windows: true, style: "wide" },
-    { x: 308, w: 24, h: 58, windows: false, style: "thin" },
-    { x: 334, w: 46, h: 120, windows: true, style: "tall" },
-    { x: 382, w: 28, h: 72, windows: true, style: "wide" },
-    { x: 412, w: 16, h: 44, windows: false, style: "thin" },
-    { x: 430, w: 42, h: 100, windows: true, style: "tall" },
-    { x: 474, w: 32, h: 60, windows: true, style: "wide" },
-    { x: 508, w: 20, h: 50, windows: false, style: "thin" },
-    { x: 530, w: 48, h: 115, windows: true, style: "tall" },
-    { x: 580, w: 26, h: 68, windows: true, style: "wide" },
-    { x: 608, w: 18, h: 40, windows: false, style: "thin" },
-    { x: 628, w: 44, h: 88, windows: true, style: "wide" },
-    { x: 674, w: 22, h: 54, windows: false, style: "thin" },
-    { x: 698, w: 22, h: 78, windows: true, style: "wide" },
+    { x: 0, w: 38, h: 90, windows: true, style: 'wide' },
+    { x: 40, w: 22, h: 55, windows: false, style: 'thin' },
+    { x: 64, w: 44, h: 130, windows: true, style: 'tall' },
+    { x: 110, w: 28, h: 70, windows: true, style: 'wide' },
+    { x: 140, w: 18, h: 48, windows: false, style: 'thin' },
+    { x: 160, w: 50, h: 110, windows: true, style: 'tall' },
+    { x: 212, w: 30, h: 65, windows: true, style: 'wide' },
+    { x: 244, w: 20, h: 42, windows: false, style: 'thin' },
+    { x: 266, w: 40, h: 95, windows: true, style: 'wide' },
+    { x: 308, w: 24, h: 58, windows: false, style: 'thin' },
+    { x: 334, w: 46, h: 120, windows: true, style: 'tall' },
+    { x: 382, w: 28, h: 72, windows: true, style: 'wide' },
+    { x: 412, w: 16, h: 44, windows: false, style: 'thin' },
+    { x: 430, w: 42, h: 100, windows: true, style: 'tall' },
+    { x: 474, w: 32, h: 60, windows: true, style: 'wide' },
+    { x: 508, w: 20, h: 50, windows: false, style: 'thin' },
+    { x: 530, w: 48, h: 115, windows: true, style: 'tall' },
+    { x: 580, w: 26, h: 68, windows: true, style: 'wide' },
+    { x: 608, w: 18, h: 40, windows: false, style: 'thin' },
+    { x: 628, w: 44, h: 88, windows: true, style: 'wide' },
+    { x: 674, w: 22, h: 54, windows: false, style: 'thin' },
+    { x: 698, w: 22, h: 78, windows: true, style: 'wide' },
   ];
 
   for (let rep = -1; rep <= 2; rep++) {
@@ -147,20 +147,20 @@ function drawCity() {
       if (rx + b.w < 0 || rx > W) continue;
       const by = GROUND_Y - b.h;
 
-      ctx.fillStyle = "#3ea8b4";
+      ctx.fillStyle = '#3ea8b4';
       ctx.fillRect(rx, by, b.w, b.h);
 
-      ctx.fillStyle = "#48bcc8";
+      ctx.fillStyle = '#48bcc8';
       ctx.fillRect(rx, by, 3, b.h);
 
-      ctx.fillStyle = "#329aa6";
+      ctx.fillStyle = '#329aa6';
       ctx.fillRect(rx + b.w - 3, by, 3, b.h);
 
-      ctx.fillStyle = "#52cad6";
+      ctx.fillStyle = '#52cad6';
       ctx.fillRect(rx, by, b.w, 2);
 
-      if (b.style === "tall") {
-        ctx.fillStyle = "#3ea8b4";
+      if (b.style === 'tall') {
+        ctx.fillStyle = '#3ea8b4';
         ctx.fillRect(rx + Math.floor(b.w / 2) - 1, by - 12, 2, 12);
         ctx.fillRect(rx + Math.floor(b.w / 2) - 3, by - 14, 6, 3);
       }
@@ -179,7 +179,7 @@ function drawCity() {
             const wx = startX + col * (ww + gx);
             const wy = by + 8 + row * (wh + gy);
             const lit = (row * 3 + col * 7 + b.x) % 5 !== 0;
-            ctx.fillStyle = lit ? "rgba(255, 240, 180, 0.55)" : "rgba(0,0,0,0.2)";
+            ctx.fillStyle = lit ? 'rgba(255, 240, 180, 0.55)' : 'rgba(0,0,0,0.2)';
             ctx.fillRect(wx, wy, ww, wh);
           }
         }
@@ -191,22 +191,22 @@ function drawCity() {
 function drawGround() {
   const SAND_Y = GROUND_Y + 18;
 
-  ctx.fillStyle = "#ded895";
+  ctx.fillStyle = '#ded895';
   ctx.fillRect(0, SAND_Y, W, H - SAND_Y);
 
-  ctx.fillStyle = "#ccc07a";
+  ctx.fillStyle = '#ccc07a';
   ctx.fillRect(0, SAND_Y, W, 4);
-  ctx.fillStyle = "#d4c882";
+  ctx.fillStyle = '#d4c882';
   ctx.fillRect(0, SAND_Y + 4, W, 3);
 
-  ctx.fillStyle = "#74bf2e";
+  ctx.fillStyle = '#74bf2e';
   ctx.fillRect(0, GROUND_Y, W, 18);
 
   ctx.save();
   ctx.beginPath();
   ctx.rect(0, GROUND_Y, W, 18);
   ctx.clip();
-  ctx.strokeStyle = "#5aa820";
+  ctx.strokeStyle = '#5aa820';
   ctx.lineWidth = 3;
   const stripeOff = Math.round(-groundOff % 20);
   for (let x = stripeOff - 40; x < W + 40; x += 20) {
@@ -217,9 +217,9 @@ function drawGround() {
   }
   ctx.restore();
 
-  ctx.fillStyle = "#a0e050";
+  ctx.fillStyle = '#a0e050';
   ctx.fillRect(0, GROUND_Y, W, 2);
-  ctx.fillStyle = "#4a9c18";
+  ctx.fillStyle = '#4a9c18';
   ctx.fillRect(0, GROUND_Y + 15, W, 3);
 }
 
@@ -232,40 +232,40 @@ function drawPipes() {
     const capW = PIPE_W;
     const capH = 26;
 
-    ctx.fillStyle = "#5dbe2b";
+    ctx.fillStyle = '#5dbe2b';
     ctx.fillRect(bodyX, 0, bodyW, p.topH - capH);
-    ctx.fillStyle = "#72d93e";
+    ctx.fillStyle = '#72d93e';
     ctx.fillRect(bodyX + 4, 0, 8, p.topH - capH);
-    ctx.fillStyle = "#4aa620";
+    ctx.fillStyle = '#4aa620';
     ctx.fillRect(bodyX + bodyW - 8, 0, 8, p.topH - capH);
 
-    ctx.fillStyle = "#5dbe2b";
+    ctx.fillStyle = '#5dbe2b';
     ctx.fillRect(capX, p.topH - capH, capW, capH);
-    ctx.fillStyle = "#72d93e";
+    ctx.fillStyle = '#72d93e';
     ctx.fillRect(capX + 4, p.topH - capH, 10, capH);
-    ctx.fillStyle = "#4aa620";
+    ctx.fillStyle = '#4aa620';
     ctx.fillRect(capX + capW - 10, p.topH - capH, 10, capH);
-    ctx.fillStyle = "#8aee50";
+    ctx.fillStyle = '#8aee50';
     ctx.fillRect(capX, p.topH - capH, capW, 3);
-    ctx.fillStyle = "#3a8a10";
+    ctx.fillStyle = '#3a8a10';
     ctx.fillRect(capX, p.topH - 3, capW, 3);
 
-    ctx.fillStyle = "#5dbe2b";
+    ctx.fillStyle = '#5dbe2b';
     ctx.fillRect(capX, botY, capW, capH);
-    ctx.fillStyle = "#72d93e";
+    ctx.fillStyle = '#72d93e';
     ctx.fillRect(capX + 4, botY, 10, capH);
-    ctx.fillStyle = "#4aa620";
+    ctx.fillStyle = '#4aa620';
     ctx.fillRect(capX + capW - 10, botY, 10, capH);
-    ctx.fillStyle = "#3a8a10";
+    ctx.fillStyle = '#3a8a10';
     ctx.fillRect(capX, botY, capW, 3);
-    ctx.fillStyle = "#8aee50";
+    ctx.fillStyle = '#8aee50';
     ctx.fillRect(capX, botY + capH - 3, capW, 3);
 
-    ctx.fillStyle = "#5dbe2b";
+    ctx.fillStyle = '#5dbe2b';
     ctx.fillRect(bodyX, botY + capH, bodyW, GROUND_Y - (botY + capH));
-    ctx.fillStyle = "#72d93e";
+    ctx.fillStyle = '#72d93e';
     ctx.fillRect(bodyX + 4, botY + capH, 8, GROUND_Y - (botY + capH));
-    ctx.fillStyle = "#4aa620";
+    ctx.fillStyle = '#4aa620';
     ctx.fillRect(bodyX + bodyW - 8, botY + capH, 8, GROUND_Y - (botY + capH));
   }
 }
@@ -279,51 +279,51 @@ function drawBird() {
 
   const R = 13;
 
-  ctx.fillStyle = "#f8d030";
+  ctx.fillStyle = '#f8d030';
   ctx.beginPath();
   ctx.arc(0, 0, R, 0, Math.PI * 2);
   ctx.fill();
-  ctx.strokeStyle = "#b87800";
+  ctx.strokeStyle = '#b87800';
   ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.arc(0, 0, R, 0, Math.PI * 2);
   ctx.stroke();
 
-  const wingY = gameState.value === "dead" ? 0 : Math.sin(wingFrame * 0.15) * 3.5;
-  ctx.fillStyle = "#d98c10";
+  const wingY = gameState.value === 'dead' ? 0 : Math.sin(wingFrame * 0.15) * 3.5;
+  ctx.fillStyle = '#d98c10';
   ctx.beginPath();
   ctx.ellipse(-2, 2 + wingY, 9, 5, -0.3, 0, Math.PI * 2);
   ctx.fill();
-  ctx.strokeStyle = "#a06000";
+  ctx.strokeStyle = '#a06000';
   ctx.lineWidth = 1.5;
   ctx.beginPath();
   ctx.ellipse(-2, 2 + wingY, 9, 5, -0.3, 0, Math.PI * 2);
   ctx.stroke();
 
-  ctx.fillStyle = "#fff8c0";
+  ctx.fillStyle = '#fff8c0';
   ctx.beginPath();
   ctx.ellipse(2, 3, 7.5, 5.5, 0, 0, Math.PI * 2);
   ctx.fill();
 
-  ctx.fillStyle = "#fff";
+  ctx.fillStyle = '#fff';
   ctx.beginPath();
   ctx.arc(6, -4, 5, 0, Math.PI * 2);
   ctx.fill();
-  ctx.strokeStyle = "#bbb";
+  ctx.strokeStyle = '#bbb';
   ctx.lineWidth = 1;
   ctx.beginPath();
   ctx.arc(6, -4, 5, 0, Math.PI * 2);
   ctx.stroke();
-  ctx.fillStyle = "#111";
+  ctx.fillStyle = '#111';
   ctx.beginPath();
   ctx.arc(7.5, -3.5, 2.8, 0, Math.PI * 2);
   ctx.fill();
-  ctx.fillStyle = "#fff";
+  ctx.fillStyle = '#fff';
   ctx.beginPath();
   ctx.arc(8.5, -4.8, 1.1, 0, Math.PI * 2);
   ctx.fill();
 
-  ctx.fillStyle = "#f07010";
+  ctx.fillStyle = '#f07010';
   ctx.beginPath();
   ctx.moveTo(9, -2);
   ctx.lineTo(19, -0.5);
@@ -331,7 +331,7 @@ function drawBird() {
   ctx.lineTo(8, 3.5);
   ctx.closePath();
   ctx.fill();
-  ctx.strokeStyle = "#b85000";
+  ctx.strokeStyle = '#b85000';
   ctx.lineWidth = 1.5;
   ctx.beginPath();
   ctx.moveTo(9, -2);
@@ -340,7 +340,7 @@ function drawBird() {
   ctx.lineTo(8, 3.5);
   ctx.closePath();
   ctx.stroke();
-  ctx.strokeStyle = "#b85000";
+  ctx.strokeStyle = '#b85000';
   ctx.lineWidth = 1;
   ctx.beginPath();
   ctx.moveTo(9, 0.8);
@@ -351,13 +351,13 @@ function drawBird() {
 }
 
 function drawScore() {
-  txt(String(score), W / 2, 48, 46, "#fff", "#3a2a10");
+  txt(String(score), W / 2, 48, 46, '#fff', '#3a2a10');
 }
 
 function drawIdle() {
   const a = 0.8 + Math.sin(wingFrame * 0.05) * 0.2;
   ctx.globalAlpha = a;
-  txt("Tap or press SPACE", W / 2, GROUND_Y / 2 + 60, 16, "#fff", "#2a1a00");
+  txt('Tap or press SPACE', W / 2, GROUND_Y / 2 + 60, 16, '#fff', '#2a1a00');
   ctx.globalAlpha = 1;
 }
 
@@ -369,12 +369,12 @@ function drawDead() {
   }
   if (deathTimer < 20) return;
 
-  txt("GAME OVER", W / 2, GROUND_Y / 2 - 10, 32, "#fff", "#3a2a10");
+  txt('GAME OVER', W / 2, GROUND_Y / 2 - 10, 32, '#fff', '#3a2a10');
 
   if (deathTimer > 50) {
     const a = 0.7 + Math.sin(wingFrame * 0.07) * 0.3;
     ctx.globalAlpha = a;
-    txt("Tap to retry", W / 2, GROUND_Y / 2 + 36, 16, "#fff", "#3a2a10");
+    txt('Tap to retry', W / 2, GROUND_Y / 2 + 36, 16, '#fff', '#3a2a10');
     ctx.globalAlpha = 1;
   }
 }
@@ -387,8 +387,8 @@ function render() {
   drawPipes();
   drawGround();
   drawBird();
-  if (gameState.value === "idle") drawIdle();
-  if (gameState.value === "dead") drawDead();
+  if (gameState.value === 'idle') drawIdle();
+  if (gameState.value === 'dead') drawDead();
 }
 
 function gameLoop(ts) {
@@ -397,7 +397,7 @@ function gameLoop(ts) {
   lastTs = ts;
   wingFrame++;
 
-  if (gameState.value === "playing") {
+  if (gameState.value === 'playing') {
     groundOff += PIPE_SPEED * 1.1 * dt;
     cityOff += PIPE_SPEED * 0.18 * dt;
     cloudOff += PIPE_SPEED * 0.04 * dt;
@@ -417,10 +417,10 @@ function gameLoop(ts) {
       }
     }
     pipes = pipes.filter((p) => p.x + PIPE_W > -10);
-    if (hitTest()) gameState.value = "dead";
+    if (hitTest()) gameState.value = 'dead';
   }
 
-  if (gameState.value === "dead") {
+  if (gameState.value === 'dead') {
     deathTimer++;
     bird.vy = Math.min(bird.vy + GRAVITY * 1.6 * dt, MAX_FALL);
     bird.y = Math.min(bird.y + bird.vy * dt, GROUND_Y - 13);
@@ -433,7 +433,7 @@ function gameLoop(ts) {
 }
 
 function togglePause() {
-  if (gameState.value !== "playing") return;
+  if (gameState.value !== 'playing') return;
   isPaused.value = !isPaused.value;
   if (isPaused.value) {
     pauseTs = performance.now();
@@ -447,7 +447,7 @@ function togglePause() {
 }
 
 const onBlur = () => {
-  if (gameState.value === "playing" && !isPaused.value) togglePause();
+  if (gameState.value === 'playing' && !isPaused.value) togglePause();
 };
 
 function idleLoop() {
@@ -463,21 +463,21 @@ function idleLoop() {
 
 function jump() {
   if (isPaused.value) return;
-  if (gameState.value === "idle") {
+  if (gameState.value === 'idle') {
     if (rafIdle) cancelAnimationFrame(rafIdle);
-    gameState.value = "playing";
+    gameState.value = 'playing';
     bird.vy = JUMP_VY;
     lastPipeTs = performance.now();
     lastTs = performance.now();
     wingFrame = 0;
     if (raf) cancelAnimationFrame(raf);
     raf = requestAnimationFrame(gameLoop);
-  } else if (gameState.value === "playing") {
+  } else if (gameState.value === 'playing') {
     bird.vy = JUMP_VY;
-  } else if (gameState.value === "dead" && deathTimer > 50) {
+  } else if (gameState.value === 'dead' && deathTimer > 50) {
     if (raf) cancelAnimationFrame(raf);
     initState();
-    gameState.value = "idle";
+    gameState.value = 'idle';
     wingFrame = 0;
     render();
     if (rafIdle) cancelAnimationFrame(rafIdle);
@@ -486,13 +486,13 @@ function jump() {
 }
 
 const onKey = (e) => {
-  if (e.code === "Escape" || e.code === "KeyP") {
+  if (e.code === 'Escape' || e.code === 'KeyP') {
     e.preventDefault();
     togglePause();
     return;
   }
   if (isPaused.value) return;
-  if (["Space", "ArrowUp", "KeyW"].includes(e.code)) {
+  if (['Space', 'ArrowUp', 'KeyW'].includes(e.code)) {
     e.preventDefault();
     jump();
   }
@@ -501,17 +501,17 @@ const onKey = (e) => {
 onMounted(() => {
   canvas = canvasRef.value;
   if (!canvas) return;
-  ctx = canvas.getContext("2d");
+  ctx = canvas.getContext('2d');
   dpr = window.devicePixelRatio || 1;
   canvas.width = W * dpr;
   canvas.height = H * dpr;
-  canvas.style.width = W + "px";
-  canvas.style.height = H + "px";
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
   ctx.scale(dpr, dpr);
   ctx.imageSmoothingEnabled = false;
-  document.addEventListener("keydown", onKey);
-  canvas.addEventListener("mousedown", jump);
-  window.addEventListener("blur", onBlur);
+  document.addEventListener('keydown', onKey);
+  canvas.addEventListener('mousedown', jump);
+  window.addEventListener('blur', onBlur);
   initState();
   render();
   if (rafIdle) cancelAnimationFrame(rafIdle);
@@ -519,9 +519,9 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  document.removeEventListener("keydown", onKey);
-  canvas?.removeEventListener("mousedown", jump);
-  window.removeEventListener("blur", onBlur);
+  document.removeEventListener('keydown', onKey);
+  canvas?.removeEventListener('mousedown', jump);
+  window.removeEventListener('blur', onBlur);
   if (raf) cancelAnimationFrame(raf);
   if (rafIdle) cancelAnimationFrame(rafIdle);
 });

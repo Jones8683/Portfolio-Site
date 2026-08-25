@@ -1,7 +1,7 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
-import GameMobileMessage from "@/components/GameMobileMessage.vue";
-import GameControls from "@/components/GameControls.vue";
+import { ref, onMounted, onUnmounted } from 'vue';
+import GameMobileMessage from '@/components/GameMobileMessage.vue';
+import GameControls from '@/components/GameControls.vue';
 
 const gameIframe = ref(null);
 const showIframe = ref(false);
@@ -12,7 +12,7 @@ let focusTimer = null;
 
 const handleMessage = (event) => {
   if (event.source !== gameIframe.value?.contentWindow) return;
-  if (event.data && event.data.type === "2048-update") {
+  if (event.data && event.data.type === '2048-update') {
     score.value = event.data.score;
     bestScore.value = event.data.bestScore;
   }
@@ -26,7 +26,7 @@ const focusIframe = () => {
 
 onMounted(() => {
   showIframe.value = true;
-  window.addEventListener("message", handleMessage);
+  window.addEventListener('message', handleMessage);
   focusTimer = setTimeout(() => {
     focusIframe();
   }, 100);
@@ -37,7 +37,7 @@ onUnmounted(() => {
     clearTimeout(focusTimer);
     focusTimer = null;
   }
-  window.removeEventListener("message", handleMessage);
+  window.removeEventListener('message', handleMessage);
 });
 </script>
 

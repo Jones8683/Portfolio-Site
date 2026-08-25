@@ -1,9 +1,9 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
-import { useStorage } from "@vueuse/core";
-import GameMobileMessage from "@/components/GameMobileMessage.vue";
-import GameControls from "@/components/GameControls.vue";
-import { createScoreSerializer } from "@/scoreStorage.js";
+import { ref, onMounted, onUnmounted } from 'vue';
+import { useStorage } from '@vueuse/core';
+import GameMobileMessage from '@/components/GameMobileMessage.vue';
+import GameControls from '@/components/GameControls.vue';
+import { createScoreSerializer } from '@/scoreStorage.js';
 
 const gameCanvasRef = ref(null);
 const nextCanvasRef = ref(null);
@@ -16,12 +16,12 @@ let canvas, ctx, nextCtx, holdCtx;
 let animationId = null;
 let animationFrame = 0;
 
-const colors = [null, "#0DC2FF", "#3877FF", "#FF8E0D", "#FFE138", "#0DFF72", "#FF0D72", "#F538FF"];
+const colors = [null, '#0DC2FF', '#3877FF', '#FF8E0D', '#FFE138', '#0DFF72', '#FF0D72', '#F538FF'];
 
 const arena = createMatrix(12, 20);
 
-const highScore = useStorage("tetris-best-score", 0, localStorage, {
-  serializer: createScoreSerializer("tetris-best-score"),
+const highScore = useStorage('tetris-best-score', 0, localStorage, {
+  serializer: createScoreSerializer('tetris-best-score'),
 });
 
 const player = {
@@ -68,43 +68,43 @@ function createMatrix(w, h) {
 }
 
 function createPiece(type) {
-  if (type === "I")
+  if (type === 'I')
     return [
       [0, 0, 0, 0],
       [1, 1, 1, 1],
       [0, 0, 0, 0],
       [0, 0, 0, 0],
     ];
-  if (type === "J")
+  if (type === 'J')
     return [
       [2, 0, 0],
       [2, 2, 2],
       [0, 0, 0],
     ];
-  if (type === "L")
+  if (type === 'L')
     return [
       [0, 0, 3],
       [3, 3, 3],
       [0, 0, 0],
     ];
-  if (type === "O")
+  if (type === 'O')
     return [
       [4, 4],
       [4, 4],
     ];
-  if (type === "S")
+  if (type === 'S')
     return [
       [0, 5, 5],
       [5, 5, 0],
       [0, 0, 0],
     ];
-  if (type === "Z")
+  if (type === 'Z')
     return [
       [6, 6, 0],
       [0, 6, 6],
       [0, 0, 0],
     ];
-  if (type === "T")
+  if (type === 'T')
     return [
       [0, 7, 0],
       [7, 7, 7],
@@ -114,7 +114,7 @@ function createPiece(type) {
 
 function getNextPiece() {
   if (piecesBag.length === 0) {
-    piecesBag = ["I", "L", "J", "O", "Z", "S", "T"];
+    piecesBag = ['I', 'L', 'J', 'O', 'Z', 'S', 'T'];
     for (let i = piecesBag.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [piecesBag[i], piecesBag[j]] = [piecesBag[j], piecesBag[i]];
@@ -124,7 +124,7 @@ function getNextPiece() {
 }
 
 function draw() {
-  ctx.fillStyle = "#0d0d0d";
+  ctx.fillStyle = '#0d0d0d';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   if (hardDropEffect.active && hardDropEffect.alpha > 0) {
@@ -170,7 +170,7 @@ function drawMatrix(matrix, offset, context, isGhost = false) {
         const by = y + offset.y;
 
         if (isGhost) {
-          context.fillStyle = "rgba(255, 255, 255, 0.1)";
+          context.fillStyle = 'rgba(255, 255, 255, 0.1)';
           context.fillRect(bx, by, 1, 1);
           return;
         }
@@ -184,13 +184,13 @@ function drawMatrix(matrix, offset, context, isGhost = false) {
           context.fillRect(bx, by, 1, 1);
         }
 
-        context.fillStyle = "rgba(255, 255, 255, 0.4)";
+        context.fillStyle = 'rgba(255, 255, 255, 0.4)';
         context.fillRect(bx, by, 1, 0.15);
         context.fillRect(bx, by, 0.15, 1);
-        context.fillStyle = "rgba(0, 0, 0, 0.4)";
+        context.fillStyle = 'rgba(0, 0, 0, 0.4)';
         context.fillRect(bx, by + 0.85, 1, 0.15);
         context.fillRect(bx + 0.85, by, 0.15, 1);
-        context.fillStyle = "rgba(0, 0, 0, 0.1)";
+        context.fillStyle = 'rgba(0, 0, 0, 0.1)';
         context.fillRect(bx + 0.2, by + 0.2, 0.6, 0.6);
       }
     });
@@ -360,7 +360,7 @@ function playerReset() {
 }
 
 const KICKS_JLSTZ = {
-  "01": [
+  '01': [
     [0, 0],
     [-1, 0],
     [-1, -1],
@@ -409,7 +409,7 @@ const KICKS_JLSTZ = {
     [0, -2],
     [-1, -2],
   ],
-  "03": [
+  '03': [
     [0, 0],
     [1, 0],
     [1, -1],
@@ -419,7 +419,7 @@ const KICKS_JLSTZ = {
 };
 
 const KICKS_I = {
-  "01": [
+  '01': [
     [0, 0],
     [-2, 0],
     [1, 0],
@@ -468,7 +468,7 @@ const KICKS_I = {
     [-2, 1],
     [1, -2],
   ],
-  "03": [
+  '03': [
     [0, 0],
     [-1, 0],
     [2, 0],
@@ -526,7 +526,7 @@ function rotate(matrix, dir) {
 function playerHold() {
   if (!player.canHold) return;
   function getPieceType(matrix) {
-    const types = ["I", "J", "L", "O", "S", "Z", "T"];
+    const types = ['I', 'J', 'L', 'O', 'S', 'Z', 'T'];
     for (const type of types) {
       const defaultMatrix = createPiece(type);
       if (
@@ -709,15 +709,15 @@ function resetGame() {
 
 const preventDefaultKeys = (event) => {
   const defaultKeys = [
-    "Space",
-    "ArrowUp",
-    "ArrowDown",
-    "ArrowLeft",
-    "ArrowRight",
-    "KeyW",
-    "KeyA",
-    "KeyS",
-    "KeyD",
+    'Space',
+    'ArrowUp',
+    'ArrowDown',
+    'ArrowLeft',
+    'ArrowRight',
+    'KeyW',
+    'KeyA',
+    'KeyS',
+    'KeyD',
   ];
   if (defaultKeys.includes(event.code)) event.preventDefault();
 };
@@ -744,7 +744,7 @@ const handleActionKey = (event, isUp) => {
 const handleKeydown = (event) => {
   preventDefaultKeys(event);
   if (isGameOver.value) return;
-  if (event.keyCode === 27 || event.key === "p" || event.key === "P") {
+  if (event.keyCode === 27 || event.key === 'p' || event.key === 'P') {
     event.preventDefault();
     togglePause();
     return;
@@ -790,15 +790,15 @@ const handleBlur = () => {
 
 onMounted(() => {
   canvas = gameCanvasRef.value;
-  ctx = canvas.getContext("2d");
-  nextCtx = nextCanvasRef.value.getContext("2d");
-  holdCtx = holdCanvasRef.value.getContext("2d");
+  ctx = canvas.getContext('2d');
+  nextCtx = nextCanvasRef.value.getContext('2d');
+  holdCtx = holdCanvasRef.value.getContext('2d');
   ctx.scale(25, 25);
   nextCtx.scale(25, 25);
   holdCtx.scale(25, 25);
-  document.addEventListener("keydown", handleKeydown);
-  document.addEventListener("keyup", handleKeyup);
-  window.addEventListener("blur", handleBlur);
+  document.addEventListener('keydown', handleKeydown);
+  document.addEventListener('keyup', handleKeyup);
+  window.addEventListener('blur', handleBlur);
   arena.forEach((row) => row.fill(0));
   dropCounter = 0;
   lastTime = performance.now();
@@ -815,9 +815,9 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  document.removeEventListener("keydown", handleKeydown);
-  document.removeEventListener("keyup", handleKeyup);
-  window.removeEventListener("blur", handleBlur);
+  document.removeEventListener('keydown', handleKeydown);
+  document.removeEventListener('keyup', handleKeyup);
+  window.removeEventListener('blur', handleBlur);
   cancelAnimationFrame(animationId);
 });
 </script>

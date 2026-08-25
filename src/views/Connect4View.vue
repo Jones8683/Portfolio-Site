@@ -1,7 +1,7 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
-import GameMobileMessage from "@/components/GameMobileMessage.vue";
-import GameControls from "@/components/GameControls.vue";
+import { ref, onMounted, onUnmounted } from 'vue';
+import GameMobileMessage from '@/components/GameMobileMessage.vue';
+import GameControls from '@/components/GameControls.vue';
 
 const ROWS = 6;
 const COLS = 7;
@@ -19,7 +19,7 @@ const scores = ref({ 1: 0, 2: 0 });
 const droppingCell = ref(null);
 const isProcessing = ref(false);
 
-const playerColors = { 1: "#0dc2ff", 2: "#ff0d72" };
+const playerColors = { 1: '#0dc2ff', 2: '#ff0d72' };
 
 const getGhostRow = (col) => {
   if (col === null || col === undefined) return null;
@@ -43,8 +43,8 @@ const getDropStyle = (r, c) => {
   const dist = r * cellSize || 30;
   const dur = r === 0 ? 0.1 : 0.08 + Math.sqrt(r) * 0.09;
   return {
-    "--drop-dist": `-${dist}px`,
-    "--drop-dur": `${dur}s`,
+    '--drop-dist': `-${dist}px`,
+    '--drop-dur': `${dur}s`,
   };
 };
 
@@ -132,12 +132,12 @@ const resetGame = () => {
 };
 
 const handleKeydown = (e) => {
-  if (e.key.toLowerCase() === "r") resetGame();
+  if (e.key.toLowerCase() === 'r') resetGame();
 };
 
-onMounted(() => window.addEventListener("keydown", handleKeydown));
+onMounted(() => window.addEventListener('keydown', handleKeydown));
 onUnmounted(() => {
-  window.removeEventListener("keydown", handleKeydown);
+  window.removeEventListener('keydown', handleKeydown);
   if (moveTimeout) clearTimeout(moveTimeout);
 });
 </script>

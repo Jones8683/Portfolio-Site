@@ -1,6 +1,6 @@
 <script setup>
-import { useRoute } from "vue-router";
-import { ref, computed, onMounted, onUnmounted } from "vue";
+import { useRoute } from 'vue-router';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 
 const isMinimized = ref(false);
 const shouldShow = ref(true);
@@ -8,8 +8,8 @@ let lastScrollY = 0;
 let ticking = false;
 
 const route = useRoute();
-const isProjectsActive = computed(() => route.path.startsWith("/projects"));
-const isArcadeActive = computed(() => route.path.startsWith("/play"));
+const isProjectsActive = computed(() => route.path.startsWith('/projects'));
+const isArcadeActive = computed(() => route.path.startsWith('/play'));
 
 const updateHeaderState = () => {
   const currentScrollY = window.scrollY;
@@ -28,9 +28,9 @@ const handleScroll = () => {
 
 onMounted(() => {
   updateHeaderState();
-  window.addEventListener("scroll", handleScroll, { passive: true });
+  window.addEventListener('scroll', handleScroll, { passive: true });
 });
-onUnmounted(() => window.removeEventListener("scroll", handleScroll));
+onUnmounted(() => window.removeEventListener('scroll', handleScroll));
 </script>
 
 <template>
@@ -118,11 +118,11 @@ onUnmounted(() => window.removeEventListener("scroll", handleScroll));
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
 }
 
-.main-header[data-show="false"] {
+.main-header[data-show='false'] {
   transform: translate(-50%, -120px);
 }
 
-.main-header[data-show="true"] {
+.main-header[data-show='true'] {
   transform: translate(-50%, 0);
 }
 

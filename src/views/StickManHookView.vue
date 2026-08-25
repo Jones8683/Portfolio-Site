@@ -1,7 +1,7 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
-import GameMobileMessage from "@/components/GameMobileMessage.vue";
-import GameControls from "@/components/GameControls.vue";
+import { ref, onMounted, onUnmounted } from 'vue';
+import GameMobileMessage from '@/components/GameMobileMessage.vue';
+import GameControls from '@/components/GameControls.vue';
 
 const gameIframe = ref(null);
 const showIframe = ref(false);

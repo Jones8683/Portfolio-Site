@@ -1,7 +1,7 @@
 <script setup>
-import { ref, computed, onUnmounted, onMounted } from "vue";
-import GameMobileMessage from "@/components/GameMobileMessage.vue";
-import GameControls from "@/components/GameControls.vue";
+import { ref, computed, onUnmounted, onMounted } from 'vue';
+import GameMobileMessage from '@/components/GameMobileMessage.vue';
+import GameControls from '@/components/GameControls.vue';
 
 const DIFFICULTIES = {
   easy: { rows: 9, cols: 9, mines: 10 },
@@ -10,7 +10,7 @@ const DIFFICULTIES = {
 };
 
 const grid = ref([]);
-const gameStatus = ref("start");
+const gameStatus = ref('start');
 const currentDiff = ref(DIFFICULTIES.medium);
 const timer = ref(0);
 const flagsPlaced = ref(0);
@@ -20,20 +20,20 @@ let isFirstClick = true;
 
 const numberColors = [
   null,
-  "#5c5cff",
-  "#00e600",
-  "#ff3333",
-  "#8888ff",
-  "#ffaa00",
-  "#00aaaa",
-  "#ffffff",
-  "#888888",
+  '#5c5cff',
+  '#00e600',
+  '#ff3333',
+  '#8888ff',
+  '#ffaa00',
+  '#00aaaa',
+  '#ffffff',
+  '#888888',
 ];
 
 const formattedTime = computed(() => {
   const mins = Math.floor(timer.value / 60);
   const secs = timer.value % 60;
-  return `${mins}:${secs.toString().padStart(2, "0")}`;
+  return `${mins}:${secs.toString().padStart(2, '0')}`;
 });
 
 function initGrid(diff) {
@@ -50,7 +50,7 @@ function initGrid(diff) {
 }
 
 function resetToStart() {
-  gameStatus.value = "start";
+  gameStatus.value = 'start';
   stopTimer();
   timer.value = 0;
   flagsPlaced.value = 0;
@@ -60,7 +60,7 @@ function resetToStart() {
 
 function initGame(difficultyKey) {
   currentDiff.value = DIFFICULTIES[difficultyKey];
-  gameStatus.value = "playing";
+  gameStatus.value = 'playing';
   timer.value = 0;
   flagsPlaced.value = 0;
   isFirstClick = true;
@@ -102,7 +102,7 @@ function calculateNumbers() {
 }
 
 function handleLeftClick(cell) {
-  if (gameStatus.value !== "playing" || isPaused.value || cell.isRevealed || cell.isFlagged) return;
+  if (gameStatus.value !== 'playing' || isPaused.value || cell.isRevealed || cell.isFlagged) return;
   if (isFirstClick) {
     placeMines(cell.x, cell.y);
     isFirstClick = false;
@@ -116,7 +116,7 @@ function handleLeftClick(cell) {
 }
 
 function handleRightClick(cell) {
-  if (gameStatus.value !== "playing" || isPaused.value || cell.isRevealed) return;
+  if (gameStatus.value !== 'playing' || isPaused.value || cell.isRevealed) return;
   cell.isFlagged = !cell.isFlagged;
   flagsPlaced.value += cell.isFlagged ? 1 : -1;
 }
@@ -151,7 +151,7 @@ function checkWin() {
 
 function gameOver(won) {
   stopTimer();
-  gameStatus.value = won ? "won" : "lost";
+  gameStatus.value = won ? 'won' : 'lost';
   if (!won)
     grid.value.flat().forEach((c) => {
       if (c.isMine) c.isRevealed = true;
@@ -159,7 +159,7 @@ function gameOver(won) {
 }
 
 function togglePause() {
-  if (gameStatus.value !== "playing") return;
+  if (gameStatus.value !== 'playing') return;
   isPaused.value = !isPaused.value;
   isPaused.value ? stopTimer() : startTimer();
 }
@@ -173,29 +173,29 @@ function stopTimer() {
 }
 
 const handleKeydown = (e) => {
-  if (e.key.toLowerCase() === "r") resetToStart();
-  if (e.key === "Escape" || e.key.toLowerCase() === "p") {
+  if (e.key.toLowerCase() === 'r') resetToStart();
+  if (e.key === 'Escape' || e.key.toLowerCase() === 'p') {
     e.preventDefault();
     togglePause();
   }
 };
 
 const handleBlur = () => {
-  if (gameStatus.value === "playing" && !isPaused.value) {
+  if (gameStatus.value === 'playing' && !isPaused.value) {
     togglePause();
   }
 };
 
 onMounted(() => {
   initGrid(DIFFICULTIES.medium);
-  window.addEventListener("keydown", handleKeydown);
-  window.addEventListener("blur", handleBlur);
+  window.addEventListener('keydown', handleKeydown);
+  window.addEventListener('blur', handleBlur);
 });
 
 onUnmounted(() => {
   stopTimer();
-  window.removeEventListener("keydown", handleKeydown);
-  window.removeEventListener("blur", handleBlur);
+  window.removeEventListener('keydown', handleKeydown);
+  window.removeEventListener('blur', handleBlur);
 });
 
 const gridStyle = computed(() => ({
@@ -221,7 +221,7 @@ const gridStyle = computed(() => ({
 
           <div v-if="gameStatus === 'won' || gameStatus === 'lost'" class="overlay-msg">
             <h2 class="result-title" :class="{ won: gameStatus === 'won' }">
-              {{ gameStatus === "won" ? "YOU WIN!" : "GAME OVER" }}
+              {{ gameStatus === 'won' ? 'YOU WIN!' : 'GAME OVER' }}
             </h2>
             <button class="retry-btn restart-btn" @click="resetToStart">RESTART</button>
           </div>

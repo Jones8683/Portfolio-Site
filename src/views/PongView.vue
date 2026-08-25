@@ -1,7 +1,7 @@
 <script setup>
-import { onMounted, onUnmounted, ref } from "vue";
-import GameMobileMessage from "@/components/GameMobileMessage.vue";
-import GameControls from "@/components/GameControls.vue";
+import { onMounted, onUnmounted, ref } from 'vue';
+import GameMobileMessage from '@/components/GameMobileMessage.vue';
+import GameControls from '@/components/GameControls.vue';
 
 let canvas, ctx, animationId;
 const canvasEl = ref(null);
@@ -18,7 +18,7 @@ const BALL_R = 7;
 const TARGET_FPS = 60;
 const STEP = 1000 / TARGET_FPS;
 
-let gameMode = "cpu";
+let gameMode = 'cpu';
 let isPaused = false;
 let isRunning = false;
 let isResetting = false;
@@ -43,14 +43,14 @@ let shakeIntensity = 0;
 let audioCtx = null;
 
 function getAudioCtx() {
-  if (!audioCtx && typeof AudioContext !== "undefined") {
+  if (!audioCtx && typeof AudioContext !== 'undefined') {
     audioCtx = new AudioContext();
   }
-  if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
   return audioCtx;
 }
 
-function beep(freq, duration, type = "square", vol = 0.15) {
+function beep(freq, duration, type = 'square', vol = 0.15) {
   const ac = getAudioCtx();
   if (!ac) return;
   const osc = ac.createOscillator();
@@ -95,14 +95,14 @@ function setText(elRef, value) {
 function showStartScreen() {
   isRunning = false;
   if (animationId) cancelAnimationFrame(animationId);
-  setDisplay(gameOverEl, "none");
-  setDisplay(pauseEl, "none");
-  setDisplay(startScreenEl, "flex");
+  setDisplay(gameOverEl, 'none');
+  setDisplay(pauseEl, 'none');
+  setDisplay(startScreenEl, 'flex');
   leftPaddle.score = 0;
   rightPaddle.score = 0;
   trail = [];
   particles = [];
-  setText(scoreEl, "0 - 0");
+  setText(scoreEl, '0 - 0');
   drawStatic();
 }
 
@@ -112,10 +112,10 @@ function initGame(mode) {
   rightPaddle.score = 0;
   trail = [];
   particles = [];
-  setDisplay(startScreenEl, "none");
-  setDisplay(gameOverEl, "none");
-  setDisplay(pauseEl, "none");
-  setText(scoreEl, "0 - 0");
+  setDisplay(startScreenEl, 'none');
+  setDisplay(gameOverEl, 'none');
+  setDisplay(pauseEl, 'none');
+  setText(scoreEl, '0 - 0');
   isRunning = true;
   isPaused = false;
   keys.w = keys.s = keys.ArrowUp = keys.ArrowDown = false;
@@ -148,7 +148,7 @@ function resetPositions() {
 function togglePause() {
   if (!isRunning) return;
   isPaused = !isPaused;
-  setDisplay(pauseEl, isPaused ? "flex" : "none");
+  setDisplay(pauseEl, isPaused ? 'flex' : 'none');
   if (!isPaused) {
     lastTs = performance.now();
     gameLoop();
@@ -159,7 +159,7 @@ function updatePaddles(dt) {
   if (keys.ArrowUp) rightPaddle.y -= rightPaddle.speed * dt;
   if (keys.ArrowDown) rightPaddle.y += rightPaddle.speed * dt;
 
-  if (gameMode === "cpu") {
+  if (gameMode === 'cpu') {
     const target = ball.y - PADDLE_H / 2;
     let move = (target - leftPaddle.y) * 0.18;
     move = Math.max(-leftPaddle.aiSpeed, Math.min(leftPaddle.aiSpeed, move));
@@ -206,23 +206,23 @@ function updateBallPaddleCollision() {
     ball.x = rightPaddle.x - BALL_R;
     rightPaddle.flash = 8;
   }
-  beep(300 + Math.abs(cp) * 100, 0.07, "square");
+  beep(300 + Math.abs(cp) * 100, 0.07, 'square');
   shakeFrames = 6;
   shakeIntensity = 3.5;
 }
 
 function updateBallScoring() {
   if (ball.x < 0) {
-    spawnParticles(0, ball.y, "rgba(255,100,100,0.9)");
+    spawnParticles(0, ball.y, 'rgba(255,100,100,0.9)');
     rightPaddle.score++;
-    beep(140, 0.35, "sawtooth", 0.2);
+    beep(140, 0.35, 'sawtooth', 0.2);
     shakeFrames = 14;
     shakeIntensity = 7;
     scoreUpdate();
   } else if (ball.x > canvas.width) {
-    spawnParticles(canvas.width, ball.y, "rgba(100,200,255,0.9)");
+    spawnParticles(canvas.width, ball.y, 'rgba(100,200,255,0.9)');
     leftPaddle.score++;
-    beep(140, 0.35, "sawtooth", 0.2);
+    beep(140, 0.35, 'sawtooth', 0.2);
     shakeFrames = 14;
     shakeIntensity = 7;
     scoreUpdate();
@@ -274,14 +274,14 @@ function scoreUpdate() {
 function checkWin() {
   if (leftPaddle.score < WIN_SCORE && rightPaddle.score < WIN_SCORE) return;
   isRunning = false;
-  let name = "";
-  if (gameMode === "cpu") {
-    name = rightPaddle.score >= WIN_SCORE ? "YOU WIN!" : "COMPUTER WINS!";
+  let name = '';
+  if (gameMode === 'cpu') {
+    name = rightPaddle.score >= WIN_SCORE ? 'YOU WIN!' : 'COMPUTER WINS!';
   } else {
-    name = rightPaddle.score >= WIN_SCORE ? "RIGHT PLAYER WINS!" : "LEFT PLAYER WINS!";
+    name = rightPaddle.score >= WIN_SCORE ? 'RIGHT PLAYER WINS!' : 'LEFT PLAYER WINS!';
   }
   setText(winnerEl, name);
-  setDisplay(gameOverEl, "flex");
+  setDisplay(gameOverEl, 'flex');
 }
 
 function collision(b, p) {
@@ -294,7 +294,7 @@ function collision(b, p) {
 }
 
 function drawStatic() {
-  ctx.fillStyle = "#0d0d0d";
+  ctx.fillStyle = '#0d0d0d';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   drawCenterLine();
 }
@@ -304,7 +304,7 @@ function drawCenterLine() {
   const segGap = 12;
   const totalSegs = Math.floor(canvas.height / (segH + segGap));
   const startY = (canvas.height - totalSegs * (segH + segGap) + segGap) / 2;
-  ctx.fillStyle = "rgba(255,255,255,0.07)";
+  ctx.fillStyle = 'rgba(255,255,255,0.07)';
   for (let i = 0; i < totalSegs; i++) {
     const y = startY + i * (segH + segGap);
     ctx.beginPath();
@@ -320,7 +320,7 @@ function draw() {
   ctx.save();
   ctx.translate(sx, sy);
 
-  ctx.fillStyle = "#0d0d0d";
+  ctx.fillStyle = '#0d0d0d';
   ctx.fillRect(-10, -10, canvas.width + 20, canvas.height + 20);
 
   drawCenterLine();
@@ -333,7 +333,7 @@ function draw() {
       ctx.lineTo(trail[i].x, trail[i].y);
       ctx.strokeStyle = `rgba(255,255,255,${frac * 0.22})`;
       ctx.lineWidth = frac * BALL_R * 1.4;
-      ctx.lineCap = "round";
+      ctx.lineCap = 'round';
       ctx.stroke();
     }
   }
@@ -341,7 +341,7 @@ function draw() {
   for (const p of particles) {
     ctx.beginPath();
     ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
-    ctx.fillStyle = p.color.replace("0.9", String(p.life * 0.9));
+    ctx.fillStyle = p.color.replace('0.9', String(p.life * 0.9));
     ctx.fill();
   }
 
@@ -349,12 +349,12 @@ function draw() {
     const isFlashing = paddle.flash > 0;
     ctx.save();
     if (isFlashing) {
-      ctx.shadowColor = "white";
+      ctx.shadowColor = 'white';
       ctx.shadowBlur = 24;
     }
     ctx.fillStyle = isFlashing
       ? `rgba(255,255,255,${0.7 + 0.3 * (paddle.flash / 8)})`
-      : "rgba(255,255,255,0.9)";
+      : 'rgba(255,255,255,0.9)';
     ctx.beginPath();
     ctx.roundRect(paddle.x, paddle.y, PADDLE_W, PADDLE_H, 5);
     ctx.fill();
@@ -364,7 +364,7 @@ function draw() {
   drawPaddle(leftPaddle);
   drawPaddle(rightPaddle);
 
-  ctx.fillStyle = "white";
+  ctx.fillStyle = 'white';
   ctx.beginPath();
   ctx.arc(ball.x, ball.y, BALL_R, 0, Math.PI * 2);
   ctx.fill();
@@ -384,23 +384,23 @@ function gameLoop(ts = performance.now()) {
 }
 
 const handleKeyDown = (e) => {
-  if (["ArrowUp", "ArrowDown", "Space"].includes(e.code)) e.preventDefault();
-  if (e.key === "Escape" || e.key.toLowerCase() === "p") {
+  if (['ArrowUp', 'ArrowDown', 'Space'].includes(e.code)) e.preventDefault();
+  if (e.key === 'Escape' || e.key.toLowerCase() === 'p') {
     e.preventDefault();
     togglePause();
     return;
   }
-  if (e.key.toLowerCase() === "w") keys.w = true;
-  if (e.key.toLowerCase() === "s") keys.s = true;
-  if (e.key === "ArrowUp") keys.ArrowUp = true;
-  if (e.key === "ArrowDown") keys.ArrowDown = true;
+  if (e.key.toLowerCase() === 'w') keys.w = true;
+  if (e.key.toLowerCase() === 's') keys.s = true;
+  if (e.key === 'ArrowUp') keys.ArrowUp = true;
+  if (e.key === 'ArrowDown') keys.ArrowDown = true;
 };
 
 const handleKeyUp = (e) => {
-  if (e.key.toLowerCase() === "w") keys.w = false;
-  if (e.key.toLowerCase() === "s") keys.s = false;
-  if (e.key === "ArrowUp") keys.ArrowUp = false;
-  if (e.key === "ArrowDown") keys.ArrowDown = false;
+  if (e.key.toLowerCase() === 'w') keys.w = false;
+  if (e.key.toLowerCase() === 's') keys.s = false;
+  if (e.key === 'ArrowUp') keys.ArrowUp = false;
+  if (e.key === 'ArrowDown') keys.ArrowDown = false;
 };
 
 const handleBlur = () => {
@@ -410,22 +410,22 @@ const handleBlur = () => {
 onMounted(() => {
   canvas = canvasEl.value;
   if (!canvas) {
-    console.error("Pong: Canvas element not found");
+    console.error('Pong: Canvas element not found');
     return;
   }
-  ctx = canvas.getContext("2d");
-  window.addEventListener("keydown", handleKeyDown);
-  window.addEventListener("keyup", handleKeyUp);
-  window.addEventListener("blur", handleBlur);
+  ctx = canvas.getContext('2d');
+  window.addEventListener('keydown', handleKeyDown);
+  window.addEventListener('keyup', handleKeyUp);
+  window.addEventListener('blur', handleBlur);
   drawStatic();
 });
 
 onUnmounted(() => {
-  window.removeEventListener("keydown", handleKeyDown);
-  window.removeEventListener("keyup", handleKeyUp);
-  window.removeEventListener("blur", handleBlur);
+  window.removeEventListener('keydown', handleKeyDown);
+  window.removeEventListener('keyup', handleKeyUp);
+  window.removeEventListener('blur', handleBlur);
   if (animationId) cancelAnimationFrame(animationId);
-  if (audioCtx && audioCtx.state !== "closed") {
+  if (audioCtx && audioCtx.state !== 'closed') {
     audioCtx.close();
   }
 });

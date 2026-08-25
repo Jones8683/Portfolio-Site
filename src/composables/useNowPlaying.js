@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { ref } from 'vue';
 
 const track = ref(null);
 
@@ -33,7 +33,7 @@ async function fetchNowPlaying() {
   isFetching = true;
 
   try {
-    const res = await fetch("/api/now-playing");
+    const res = await fetch('/api/now-playing');
     if (!res.ok) throw new Error(`bad_status_${res.status}`);
 
     const data = await res.json();

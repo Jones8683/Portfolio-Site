@@ -1,10 +1,10 @@
-import { createApp } from "vue";
-import App from "./App.vue";
-import router from "./router";
-import "./assets/main.css";
-import "./assets/game-common.css";
+import { createApp } from 'vue';
+import App from './App.vue';
+import router from './router';
+import './assets/main.css';
+import './assets/game-common.css';
 
 const app = createApp(App);
 
 app.use(router);
-app.mount("#app");
+app.mount('#app');

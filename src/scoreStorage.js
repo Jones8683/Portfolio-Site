@@ -8,7 +8,7 @@ function hash(str) {
     b = (b << 15) | (b >>> 17);
   }
   const h = ((a ^ b) >>> 0).toString(36);
-  return h.padStart(8, "0").slice(-8);
+  return h.padStart(8, '0').slice(-8);
 }
 
 export function createScoreSerializer(key) {

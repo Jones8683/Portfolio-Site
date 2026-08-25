@@ -13,7 +13,7 @@
         padding: 0;
         background: #faf8ef;
         color: #776e65;
-        font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
+        font-family: 'Clear Sans', 'Helvetica Neue', Arial, sans-serif;
         font-size: 18px;
       }
 
@@ -107,7 +107,7 @@
         margin-left: 9px;
         cursor: pointer;
         font-size: 16px;
-        font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
+        font-family: 'Clear Sans', 'Helvetica Neue', Arial, sans-serif;
         font-weight: 500;
         transition: background-color 0.15s ease;
       }
@@ -144,7 +144,7 @@
         margin-bottom: 0;
       }
       .grid-row:after {
-        content: "";
+        content: '';
         display: block;
         clear: both;
       }
@@ -440,7 +440,7 @@
           margin-left: 9px;
           cursor: pointer;
           font-size: 14px;
-          font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
+          font-family: 'Clear Sans', 'Helvetica Neue', Arial, sans-serif;
           font-weight: 500;
           transition: background-color 0.15s ease;
         }
@@ -477,7 +477,7 @@
           margin-bottom: 0;
         }
         .grid-row:after {
-          content: "";
+          content: '';
           display: block;
           clear: both;
         }
@@ -663,13 +663,13 @@
         this.events = {};
 
         if (window.navigator.msPointerEnabled) {
-          this.eventTouchstart = "MSPointerDown";
-          this.eventTouchmove = "MSPointerMove";
-          this.eventTouchend = "MSPointerUp";
+          this.eventTouchstart = 'MSPointerDown';
+          this.eventTouchmove = 'MSPointerMove';
+          this.eventTouchend = 'MSPointerUp';
         } else {
-          this.eventTouchstart = "touchstart";
-          this.eventTouchmove = "touchmove";
-          this.eventTouchend = "touchend";
+          this.eventTouchstart = 'touchstart';
+          this.eventTouchmove = 'touchmove';
+          this.eventTouchend = 'touchend';
         }
 
         this.listen();
@@ -717,7 +717,7 @@
           H: 3,
         };
 
-        document.addEventListener("keydown", function (event) {
+        document.addEventListener('keydown', function (event) {
           var modifiers = event.altKey || event.ctrlKey || event.metaKey || event.shiftKey;
           var mapped = map[event.key];
           if (mapped === undefined) mapped = map[event.code];
@@ -725,19 +725,19 @@
 
           if (!modifiers && mapped !== undefined) {
             event.preventDefault();
-            self.emit("move", mapped);
+            self.emit('move', mapped);
           }
 
-          if (!modifiers && (event.key === "r" || event.key === "R" || event.keyCode === 82)) {
+          if (!modifiers && (event.key === 'r' || event.key === 'R' || event.keyCode === 82)) {
             self.restart.call(self, event);
           }
         });
 
-        this.bindButtonPress(".retry-button", this.restart);
-        this.bindButtonPress(".keep-playing-button", this.keepPlaying);
+        this.bindButtonPress('.retry-button', this.restart);
+        this.bindButtonPress('.keep-playing-button', this.keepPlaying);
 
         var touchStartClientX, touchStartClientY;
-        var gameContainer = document.getElementsByClassName("game-container")[0];
+        var gameContainer = document.getElementsByClassName('game-container')[0];
 
         gameContainer.addEventListener(
           this.eventTouchstart,
@@ -795,33 +795,33 @@
           var absDy = Math.abs(dy);
 
           if (Math.max(absDx, absDy) > 10) {
-            self.emit("move", absDx > absDy ? (dx > 0 ? 1 : 3) : dy > 0 ? 2 : 0);
+            self.emit('move', absDx > absDy ? (dx > 0 ? 1 : 3) : dy > 0 ? 2 : 0);
           }
         });
       };
 
       KeyboardInputManager.prototype.restart = function (event) {
         event.preventDefault();
-        this.emit("restart");
+        this.emit('restart');
       };
 
       KeyboardInputManager.prototype.keepPlaying = function (event) {
         event.preventDefault();
-        this.emit("keepPlaying");
+        this.emit('keepPlaying');
       };
 
       KeyboardInputManager.prototype.bindButtonPress = function (selector, fn) {
         var button = document.querySelector(selector);
         if (button) {
-          button.addEventListener("click", fn.bind(this));
+          button.addEventListener('click', fn.bind(this));
           button.addEventListener(this.eventTouchend, fn.bind(this));
         }
       };
     </script>
     <script>
       function HTMLActuator() {
-        this.tileContainer = document.querySelector(".tile-container");
-        this.messageContainer = document.querySelector(".game-message");
+        this.tileContainer = document.querySelector('.tile-container');
+        this.messageContainer = document.querySelector('.game-message');
 
         this.score = 0;
       }
@@ -845,11 +845,11 @@
           if (window.parent !== window) {
             window.parent.postMessage(
               {
-                type: "2048-update",
+                type: '2048-update',
                 score: metadata.score,
                 bestScore: Number(metadata.bestScore),
               },
-              "*",
+              '*',
             );
           }
 
@@ -876,18 +876,18 @@
       HTMLActuator.prototype.addTile = function (tile) {
         var self = this;
 
-        var wrapper = document.createElement("div");
-        var inner = document.createElement("div");
+        var wrapper = document.createElement('div');
+        var inner = document.createElement('div');
         var position = tile.previousPosition || { x: tile.x, y: tile.y };
         var positionClass = this.positionClass(position);
 
-        var classes = ["tile", "tile-" + tile.value, positionClass];
+        var classes = ['tile', 'tile-' + tile.value, positionClass];
 
-        if (tile.value > 2048) classes.push("tile-super");
+        if (tile.value > 2048) classes.push('tile-super');
 
         this.applyClasses(wrapper, classes);
 
-        inner.classList.add("tile-inner");
+        inner.classList.add('tile-inner');
         inner.textContent = tile.value;
 
         if (tile.previousPosition) {
@@ -896,14 +896,14 @@
             self.applyClasses(wrapper, classes);
           });
         } else if (tile.mergedFrom) {
-          classes.push("tile-merged");
+          classes.push('tile-merged');
           this.applyClasses(wrapper, classes);
 
           tile.mergedFrom.forEach(function (merged) {
             self.addTile(merged);
           });
         } else {
-          classes.push("tile-new");
+          classes.push('tile-new');
           this.applyClasses(wrapper, classes);
         }
 
@@ -913,7 +913,7 @@
       };
 
       HTMLActuator.prototype.applyClasses = function (element, classes) {
-        element.setAttribute("class", classes.join(" "));
+        element.setAttribute('class', classes.join(' '));
       };
 
       HTMLActuator.prototype.normalizePosition = function (position) {
@@ -922,20 +922,20 @@
 
       HTMLActuator.prototype.positionClass = function (position) {
         position = this.normalizePosition(position);
-        return "tile-position-" + position.x + "-" + position.y;
+        return 'tile-position-' + position.x + '-' + position.y;
       };
 
       HTMLActuator.prototype.message = function (won) {
-        var type = won ? "game-won" : "game-over";
-        var message = won ? "You win!" : "Game over!";
+        var type = won ? 'game-won' : 'game-over';
+        var message = won ? 'You win!' : 'Game over!';
 
         this.messageContainer.classList.add(type);
-        this.messageContainer.getElementsByTagName("p")[0].textContent = message;
+        this.messageContainer.getElementsByTagName('p')[0].textContent = message;
       };
 
       HTMLActuator.prototype.clearMessage = function () {
-        this.messageContainer.classList.remove("game-won");
-        this.messageContainer.classList.remove("game-over");
+        this.messageContainer.classList.remove('game-won');
+        this.messageContainer.classList.remove('game-over');
       };
     </script>
     <script>
@@ -1040,54 +1040,54 @@
       };
     </script>
     <script>
-      var STORAGE_TOKEN = "arcade-unity-v1";
+      var STORAGE_TOKEN = 'arcade-unity-v1';
 
       function scoreSig(payload, ts) {
-        var raw = STORAGE_TOKEN + ":" + payload + ":" + ts;
+        var raw = STORAGE_TOKEN + ':' + payload + ':' + ts;
         var h = 5381;
         for (var i = 0; i < raw.length; i++) {
           h = (h * 33) ^ raw.charCodeAt(i);
         }
-        return (h >>> 0).toString(36).padStart(15, "0").slice(0, 15);
+        return (h >>> 0).toString(36).padStart(15, '0').slice(0, 15);
       }
 
       function toBase64Url(text) {
-        return btoa(text).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+        return btoa(text).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
       }
 
       function fromBase64Url(text) {
-        var b64 = text.replace(/-/g, "+").replace(/_/g, "/");
-        var pad = "=".repeat((4 - (b64.length % 4)) % 4);
+        var b64 = text.replace(/-/g, '+').replace(/_/g, '/');
+        var pad = '='.repeat((4 - (b64.length % 4)) % 4);
         return atob(b64 + pad);
       }
 
       function packValue(value) {
         var ts = Date.now();
         var safe = Number.isInteger(value) && value >= 0 ? value : 0;
-        var payload = "j" + toBase64Url(JSON.stringify(safe));
+        var payload = 'j' + toBase64Url(JSON.stringify(safe));
         var sig = scoreSig(payload, ts);
-        var body = ts.toString(36) + ":" + sig + ":" + payload;
-        return "au1" + toBase64Url(body);
+        var body = ts.toString(36) + ':' + sig + ':' + payload;
+        return 'au1' + toBase64Url(body);
       }
 
       function unpackValue(raw) {
-        if (typeof raw !== "string" || !raw.startsWith("au1")) return null;
+        if (typeof raw !== 'string' || !raw.startsWith('au1')) return null;
         var body = fromBase64Url(raw.slice(3));
-        var firstSep = body.indexOf(":");
-        var secondSep = body.indexOf(":", firstSep + 1);
+        var firstSep = body.indexOf(':');
+        var secondSep = body.indexOf(':', firstSep + 1);
         if (firstSep <= 0 || secondSep <= firstSep + 1) return null;
         var ts = Number.parseInt(body.slice(0, firstSep), 36);
         var sig = body.slice(firstSep + 1, secondSep);
         var payload = body.slice(secondSep + 1);
         if (!Number.isInteger(ts) || ts <= 0) return null;
         if (sig !== scoreSig(payload, ts)) return null;
-        if (!payload.startsWith("j")) return null;
+        if (!payload.startsWith('j')) return null;
         var parsed = JSON.parse(fromBase64Url(payload.slice(1)));
         return Number.isInteger(parsed) && parsed >= 0 && parsed <= 9999999 ? parsed : null;
       }
 
       function StorageManager() {
-        this.storageKey = "game-2048-best-score";
+        this.storageKey = 'game-2048-best-score';
         this.bestScore = this.loadBestScore();
       }
 
@@ -1130,9 +1130,9 @@
 
         this.startTiles = 2;
 
-        this.inputManager.on("move", this.move.bind(this));
-        this.inputManager.on("restart", this.restart.bind(this));
-        this.inputManager.on("keepPlaying", this.keepPlaying.bind(this));
+        this.inputManager.on('move', this.move.bind(this));
+        this.inputManager.on('restart', this.restart.bind(this));
+        this.inputManager.on('keepPlaying', this.keepPlaying.bind(this));
 
         this.setup();
       }
@@ -1340,7 +1340,7 @@
     <script>
       window.requestAnimationFrame(function () {
         window.gameManager = new GameManager(4, KeyboardInputManager, HTMLActuator, StorageManager);
-        var gameContainer = document.querySelector(".game-container");
+        var gameContainer = document.querySelector('.game-container');
         if (gameContainer) {
           gameContainer.focus();
         }

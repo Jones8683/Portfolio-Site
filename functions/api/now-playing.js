@@ -6,14 +6,14 @@ async function getAccessToken(env) {
     return cachedAccessToken;
   }
 
-  const res = await fetch("https://accounts.spotify.com/api/token", {
-    method: "POST",
+  const res = await fetch('https://accounts.spotify.com/api/token', {
+    method: 'POST',
     headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
+      'Content-Type': 'application/x-www-form-urlencoded',
       Authorization: `Basic ${btoa(`${env.SPOTIFY_CLIENT_ID}:${env.SPOTIFY_CLIENT_SECRET}`)}`,
     },
     body: new URLSearchParams({
-      grant_type: "refresh_token",
+      grant_type: 'refresh_token',
       refresh_token: env.SPOTIFY_REFRESH_TOKEN,
     }),
   });
@@ -43,14 +43,14 @@ function trackPayload(item) {
 export async function onRequestGet(context) {
   const { env } = context;
   const jsonHeaders = {
-    "Content-Type": "application/json",
-    "Cache-Control": "no-store",
+    'Content-Type': 'application/json',
+    'Cache-Control': 'no-store',
   };
 
   try {
     const accessToken = await getAccessToken(env);
 
-    const nowRes = await fetch("https://api.spotify.com/v1/me/player/currently-playing", {
+    const nowRes = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
 

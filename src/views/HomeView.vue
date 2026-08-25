@@ -1,7 +1,7 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
-import profilePic from "@/assets/kenobi.png";
-import NowPlayingBadge from "@/components/NowPlayingBadge.vue";
+import { ref, onMounted, onUnmounted } from 'vue';
+import profilePic from '@/assets/kenobi.png';
+import NowPlayingBadge from '@/components/NowPlayingBadge.vue';
 
 const visible = ref(false);
 const scrolled = ref(false);
@@ -11,16 +11,16 @@ const handleScroll = () => {
 };
 
 onMounted(() => {
-  if (history.scrollRestoration) history.scrollRestoration = "manual";
+  if (history.scrollRestoration) history.scrollRestoration = 'manual';
   window.scrollTo(0, 0);
-  window.addEventListener("scroll", handleScroll, { passive: true });
+  window.addEventListener('scroll', handleScroll, { passive: true });
   requestAnimationFrame(() => {
     visible.value = true;
   });
 });
 
 onUnmounted(() => {
-  window.removeEventListener("scroll", handleScroll);
+  window.removeEventListener('scroll', handleScroll);
 });
 </script>
 

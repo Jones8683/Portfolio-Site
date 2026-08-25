@@ -1,11 +1,11 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from "vue";
-import GameMobileMessage from "@/components/GameMobileMessage.vue";
-import GameControls from "@/components/GameControls.vue";
+import { ref, computed, onMounted, onUnmounted } from 'vue';
+import GameMobileMessage from '@/components/GameMobileMessage.vue';
+import GameControls from '@/components/GameControls.vue';
 
-const phase = ref("input");
-const secretWord = ref("");
-const inputBuffer = ref("");
+const phase = ref('input');
+const secretWord = ref('');
+const inputBuffer = ref('');
 const guessedLetters = ref(new Set());
 const wrongGuesses = ref(0);
 const MAX_WRONG = 6;
@@ -14,8 +14,8 @@ const normalizedWord = computed(() => secretWord.value.toUpperCase().trim());
 
 const maskedWord = computed(() =>
   normalizedWord.value
-    .split("")
-    .map((ch) => (ch === " " ? " " : guessedLetters.value.has(ch) ? ch : "_")),
+    .split('')
+    .map((ch) => (ch === ' ' ? ' ' : guessedLetters.value.has(ch) ? ch : '_')),
 );
 
 const wrongLetters = computed(() =>
@@ -26,24 +26,24 @@ const correctLetters = computed(() =>
   [...guessedLetters.value].filter((l) => normalizedWord.value.includes(l)),
 );
 
-const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
 function onInput(e) {
-  inputBuffer.value = e.target.value.toUpperCase().replace(/[^A-Z\s]/g, "");
+  inputBuffer.value = e.target.value.toUpperCase().replace(/[^A-Z\s]/g, '');
 }
 
 function submitWord() {
   const w = inputBuffer.value.trim();
   if (!w) return;
   secretWord.value = w;
-  inputBuffer.value = "";
+  inputBuffer.value = '';
   guessedLetters.value = new Set();
   wrongGuesses.value = 0;
-  phase.value = "playing";
+  phase.value = 'playing';
 }
 
 function guessLetter(letter) {
-  if (phase.value !== "playing") return;
+  if (phase.value !== 'playing') return;
   if (guessedLetters.value.has(letter)) return;
 
   const newSet = new Set(guessedLetters.value);
@@ -52,28 +52,28 @@ function guessLetter(letter) {
 
   if (!normalizedWord.value.includes(letter)) wrongGuesses.value++;
 
-  const allRevealed = normalizedWord.value.split("").every((ch) => ch === " " || newSet.has(ch));
+  const allRevealed = normalizedWord.value.split('').every((ch) => ch === ' ' || newSet.has(ch));
 
-  if (allRevealed) phase.value = "won";
-  else if (wrongGuesses.value >= MAX_WRONG) phase.value = "lost";
+  if (allRevealed) phase.value = 'won';
+  else if (wrongGuesses.value >= MAX_WRONG) phase.value = 'lost';
 }
 
 function resetGame() {
-  secretWord.value = "";
-  inputBuffer.value = "";
+  secretWord.value = '';
+  inputBuffer.value = '';
   guessedLetters.value = new Set();
   wrongGuesses.value = 0;
-  phase.value = "input";
+  phase.value = 'input';
 }
 
 const handleKeydown = (e) => {
-  if (phase.value !== "playing") return;
+  if (phase.value !== 'playing') return;
   const key = e.key.toUpperCase();
   if (key.length === 1 && /[A-Z]/.test(key)) guessLetter(key);
 };
 
-onMounted(() => document.addEventListener("keydown", handleKeydown));
-onUnmounted(() => document.removeEventListener("keydown", handleKeydown));
+onMounted(() => document.addEventListener('keydown', handleKeydown));
+onUnmounted(() => document.removeEventListener('keydown', handleKeydown));
 
 const bodyVisible = computed(() => ({
   head: wrongGuesses.value >= 1,
@@ -94,7 +94,7 @@ const bodyVisible = computed(() => ({
         <div class="left-section">
           <div class="panel-header">
             <span class="pill">{{
-              phase === "playing" || phase === "won" || phase === "lost" ? "Player 2" : "Player 1"
+              phase === 'playing' || phase === 'won' || phase === 'lost' ? 'Player 2' : 'Player 1'
             }}</span>
             <h1 class="game-title">Hangman</h1>
 
@@ -266,10 +266,10 @@ const bodyVisible = computed(() => ({
           <div v-if="phase === 'won' || phase === 'lost'" class="outcome-overlay">
             <div class="outcome-inner">
               <div class="outcome-emoji">
-                {{ phase === "won" ? "🎉" : "💀" }}
+                {{ phase === 'won' ? '🎉' : '💀' }}
               </div>
               <h2 class="outcome-title">
-                {{ phase === "won" ? "You got it!" : "Game Over" }}
+                {{ phase === 'won' ? 'You got it!' : 'Game Over' }}
               </h2>
               <p class="outcome-word">{{ normalizedWord }}</p>
               <button class="retry-btn" @click="resetGame">Play Again</button>
