@@ -523,26 +523,15 @@ function rotate(matrix, dir) {
   else matrix.reverse();
 }
 
+const PIECE_TYPES = [null, 'I', 'J', 'L', 'O', 'S', 'Z', 'T'];
+
+function getPieceType(matrix) {
+  const value = matrix.flat().find((v) => v !== 0);
+  return PIECE_TYPES[value];
+}
+
 function playerHold() {
   if (!player.canHold) return;
-  function getPieceType(matrix) {
-    const types = ['I', 'J', 'L', 'O', 'S', 'Z', 'T'];
-    for (const type of types) {
-      const defaultMatrix = createPiece(type);
-      if (
-        matrix.length === defaultMatrix.length &&
-        matrix[0].length === defaultMatrix[0].length &&
-        matrix.every((row, y) => row.every((v, x) => v === defaultMatrix[y][x]))
-      ) {
-        return type;
-      }
-    }
-    for (const type of types) {
-      const val = createPiece(type)[1][1] || createPiece(type)[0][1] || createPiece(type)[1][0];
-      if (matrix.flat().includes(val)) return type;
-    }
-    return null;
-  }
 
   if (player.hold === null) {
     player.hold = getPieceType(player.matrix);
@@ -635,8 +624,6 @@ function update(time = 0) {
   animationId = requestAnimationFrame(update);
 }
 
-let lastLoggedLevel = 0;
-
 function updateScore() {
   score.value = player.score;
   const level = Math.floor(player.lines / 10) + 1;
@@ -665,10 +652,6 @@ function updateScore() {
 
   const currentG = gValues[level] || (level > 19 ? 20.0 : 0.01667);
   dropInterval = 1000 / (60 * currentG);
-
-  if (level > lastLoggedLevel) {
-    lastLoggedLevel = level;
-  }
 }
 
 function resetGame() {
@@ -676,7 +659,6 @@ function resetGame() {
   animationId = null;
   animationFrame = 0;
 
-  lastLoggedLevel = 0;
   arena.forEach((row) => row.fill(0));
   player.score = 0;
   player.lines = 0;
@@ -703,7 +685,6 @@ function resetGame() {
   playerReset();
   draw();
   lastTime = performance.now();
-  if (animationId) cancelAnimationFrame(animationId);
   animationId = requestAnimationFrame(update);
 }
 
@@ -799,19 +780,7 @@ onMounted(() => {
   document.addEventListener('keydown', handleKeydown);
   document.addEventListener('keyup', handleKeyup);
   window.addEventListener('blur', handleBlur);
-  arena.forEach((row) => row.fill(0));
-  dropCounter = 0;
-  lastTime = performance.now();
-  player.lines = 0;
-  player.score = 0;
-  player.hold = null;
-  player.next = null;
-  dropInterval = 1000;
-  isGameOver.value = false;
-  isPaused.value = false;
-  playerReset();
-  updateScore();
-  update(performance.now());
+  resetGame();
 });
 
 onUnmounted(() => {

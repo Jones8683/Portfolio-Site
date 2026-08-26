@@ -116,8 +116,6 @@ const checkWinner = (row, col) => {
 
 const isWinningCell = (r, c) => winningCells.value.some(([wr, wc]) => wr === r && wc === c);
 
-const isDroppingCell = (r, c) => droppingCell.value?.row === r && droppingCell.value?.col === c;
-
 const isColFull = (col) => board.value[0][col] !== null;
 
 const resetGame = () => {
@@ -177,7 +175,7 @@ onUnmounted(() => {
                     p1: board[row - 1][col - 1] === 1,
                     p2: board[row - 1][col - 1] === 2,
                     'winning-piece': isWinningCell(row - 1, col - 1),
-                    dropping: isDroppingCell(row - 1, col - 1),
+                    dropping: isDropTarget(row - 1, col - 1),
                     ghost: isGhostCell(row - 1, col - 1),
                     'ghost-p1': isGhostCell(row - 1, col - 1) && currentPlayer === 1,
                     'ghost-p2': isGhostCell(row - 1, col - 1) && currentPlayer === 2,

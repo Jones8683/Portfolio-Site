@@ -379,7 +379,6 @@ function gameLoop(ts = performance.now()) {
   const dt = Math.min(raw, 50) / STEP;
   update(dt);
   draw();
-  if (animationId) cancelAnimationFrame(animationId);
   animationId = requestAnimationFrame(gameLoop);
 }
 

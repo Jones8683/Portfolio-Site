@@ -36,19 +36,18 @@ let canvas,
   raf,
   rafIdle,
   lastTs = 0;
-let bird, pipes, score, lastPipeTs, deathTimer, isNewBest;
+let bird, pipes, score, lastPipeTs, deathTimer;
 let wingFrame = 0;
 
 let pauseTs = 0;
 
 function initState() {
-  bird = { x: 80, y: GROUND_Y / 2, vy: 0, angle: 0, flapT: 0 };
+  bird = { x: 80, y: GROUND_Y / 2, vy: 0, angle: 0 };
   pipes = [];
   score = 0;
   scoreRef.value = 0;
   lastPipeTs = -9999;
   deathTimer = 0;
-  isNewBest = false;
   groundOff = 0;
 }
 
@@ -412,7 +411,6 @@ function gameLoop(ts) {
         scoreRef.value = score;
         if (score > highScore.value) {
           highScore.value = score;
-          isNewBest = true;
         }
       }
     }
@@ -428,7 +426,6 @@ function gameLoop(ts) {
   }
 
   render();
-  if (raf) cancelAnimationFrame(raf);
   raf = requestAnimationFrame(gameLoop);
 }
 
@@ -453,11 +450,9 @@ const onBlur = () => {
 function idleLoop() {
   bird.y = GROUND_Y / 2 + Math.sin(wingFrame * 0.03) * 8;
   bird.angle = 0;
-  bird.flapT += 0.08;
   cloudOff += 0.15;
   wingFrame++;
   render();
-  if (rafIdle) cancelAnimationFrame(rafIdle);
   rafIdle = requestAnimationFrame(idleLoop);
 }
 
