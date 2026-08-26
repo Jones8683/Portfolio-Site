@@ -8,8 +8,7 @@
   background: transparent;
 }
 
-.game-wrapper,
-.game-layout {
+.game-wrapper {
   display: flex;
   gap: 30px;
   align-items: flex-start;
@@ -99,8 +98,7 @@
   margin: 8px 0;
 }
 
-.overlay-msg,
-.overlay {
+.overlay-msg {
   position: absolute;
   top: 0;
   left: 0;

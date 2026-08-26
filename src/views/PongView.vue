@@ -439,12 +439,12 @@ onUnmounted(() => {
       <div class="game-wrapper">
         <div class="left-section">
           <canvas ref="canvasEl" id="gameCanvas" width="700" height="500"></canvas>
-          <div ref="startScreenEl" id="startScreen" class="overlay" style="display: flex">
+          <div ref="startScreenEl" id="startScreen" class="overlay-msg" style="display: flex">
             <h2 class="menu-title">PONG</h2>
             <button class="menu-btn" @click="initGame('cpu')">1 PLAYER</button>
             <button class="menu-btn" @click="initGame('pvp')">2 PLAYERS</button>
           </div>
-          <div ref="gameOverEl" id="gameOverMsg" class="overlay">
+          <div ref="gameOverEl" id="gameOverMsg" class="overlay-msg">
             <h2 class="menu-title">GAME OVER</h2>
             <div
               style="color: #94a3b8; margin-bottom: 20px; font-size: 14px"
@@ -455,7 +455,12 @@ onUnmounted(() => {
             </div>
             <button class="menu-btn" @click="showStartScreen">MENU</button>
           </div>
-          <div ref="pauseEl" id="pauseMsg" class="overlay" style="background: rgba(0, 0, 0, 0.6)">
+          <div
+            ref="pauseEl"
+            id="pauseMsg"
+            class="overlay-msg"
+            style="background: rgba(0, 0, 0, 0.6)"
+          >
             <h2 class="menu-title">PAUSED</h2>
           </div>
         </div>
@@ -503,7 +508,7 @@ onUnmounted(() => {
   min-height: 100px;
 }
 
-.overlay {
+.overlay-msg {
   display: none;
 }
 </style>

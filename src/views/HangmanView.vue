@@ -90,7 +90,7 @@ const bodyVisible = computed(() => ({
     <GameMobileMessage />
 
     <div class="desktop-game">
-      <div class="game-layout">
+      <div class="game-wrapper">
         <div class="left-section">
           <div class="panel-header">
             <span class="pill">{{

@@ -66,7 +66,7 @@ export async function onRequestGet(context) {
     return new Response(JSON.stringify({ isPlaying: false, title: null }), {
       headers: jsonHeaders,
     });
-  } catch (err) {
+  } catch {
     return new Response(JSON.stringify({ isPlaying: false, title: null, error: true }), {
       status: 200,
       headers: jsonHeaders,

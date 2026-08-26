@@ -220,15 +220,6 @@ a.repo-link:hover {
   letter-spacing: -0.02em;
 }
 
-.about-title span {
-  display: block;
-  margin-top: 8px;
-  font-size: 14px;
-  color: #94a3b8;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
 .about-body {
   display: flex;
   flex-direction: column;
@@ -328,10 +319,6 @@ a.repo-link:hover {
     grid-template-columns: 1fr;
     text-align: center;
     padding: 24px 18px;
-  }
-
-  .about-title span {
-    letter-spacing: 0.04em;
   }
 
   .contact-row {
