@@ -21,7 +21,7 @@
     "prettier": "^3.9.6",
     "vite": "^8.2.2",
     "vite-plugin-vue-devtools": "^8.2.1",
-    "wrangler": "^4.126.0"
+    "wrangler": "^4.127.0"
   },
   "engines": {
     "node": ">=26.7.0"
