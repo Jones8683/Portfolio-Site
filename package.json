@@ -12,8 +12,8 @@
   },
   "dependencies": {
     "@vueuse/core": "^14.4.0",
-    "vue": "^3.5.41",
-    "vue-router": "^5.2.0"
+    "vue": "^3.5.42",
+    "vue-router": "^5.3.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.8",
@@ -21,13 +21,13 @@
     "prettier": "^3.9.6",
     "vite": "^8.2.2",
     "vite-plugin-vue-devtools": "^8.2.1",
-    "wrangler": "^4.126.0"
+    "wrangler": "^4.127.1"
   },
   "engines": {
-    "node": ">=26.7.0"
+    "node": ">=26.8.1"
   },
   "allowScripts": {
     "esbuild@0.28.1": true,
-    "workerd@1.20260820.1": true
+    "workerd@1.20260828.1": true
   }
 }
