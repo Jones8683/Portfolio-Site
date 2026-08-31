@@ -107,7 +107,7 @@ const games = [
 
 .arcade-name {
   color: white;
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: 700;
   margin: 0;
 }

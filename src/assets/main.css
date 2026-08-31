@@ -63,6 +63,13 @@ h1 {
   letter-spacing: 0.015em !important;
 }
 
+h2,
+h3 {
+  font-family: 'Cherry Bomb One', sans-serif;
+  font-weight: 400 !important;
+  letter-spacing: 0.015em !important;
+}
+
 #app {
   min-height: 100vh;
   display: flex;
