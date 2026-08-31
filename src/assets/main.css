@@ -70,6 +70,23 @@ h3 {
   letter-spacing: 0.015em !important;
 }
 
+.game-page-wrapper *:not(h1):not(h2):not(h3) {
+  font-family: 'Satoshi', sans-serif;
+}
+
+.nav-arrow-icon {
+  display: block;
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  position: relative;
+  top: 1.5px;
+}
+
+.arrow-flip {
+  transform: scaleX(-1);
+}
+
 #app {
   min-height: 100vh;
   display: flex;

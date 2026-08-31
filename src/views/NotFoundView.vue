@@ -4,7 +4,18 @@
 
     <p class="location-text not-found-subtitle">This is not the page you're looking for</p>
 
-    <RouterLink to="/" class="repo-link not-found-link"> ← Take me home </RouterLink>
+    <RouterLink to="/" class="repo-link not-found-link">
+      <svg class="nav-arrow-icon arrow-flip" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <path
+          d="M4 10h11m0 0-4-4m4 4-4 4"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+      Take me home
+    </RouterLink>
   </div>
 </template>
 
@@ -25,6 +36,9 @@
 .not-found-link {
   margin-top: 20px;
   font-size: 16px;
-  display: inline-block;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 </style>

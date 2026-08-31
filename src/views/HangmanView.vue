@@ -115,7 +115,16 @@ const bodyVisible = computed(() => ({
                   spellcheck="false"
                 />
                 <button class="submit-btn" @click="submitWord" :disabled="!inputBuffer.trim()">
-                  Set Word →
+                  Set Word
+                  <svg class="nav-arrow-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                    <path
+                      d="M4 10h11m0 0-4-4m4 4-4 4"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
                 </button>
               </div>
               <p class="hint-text">Letters and spaces only · max 30 chars</p>
@@ -408,11 +417,15 @@ const bodyVisible = computed(() => ({
   border-radius: 10px;
   font-size: 13px;
   font-weight: 800;
+  line-height: 1;
   padding: 11px 18px;
   cursor: pointer;
   white-space: nowrap;
   transition: opacity 0.15s;
   flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .submit-btn:disabled {
