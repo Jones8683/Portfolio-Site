@@ -34,7 +34,7 @@ const projects = [
 
 <template>
   <section class="content-wrap projects-page">
-    <h1 class="name-title projects-title">Contributions &amp; Projects</h1>
+    <h1 class="name-title projects-title">Projects</h1>
     <p class="projects-subtitle">A collection of projects I have made or contributed to.</p>
 
     <div class="project-panel">
@@ -88,8 +88,8 @@ const projects = [
 
 .projects-title {
   margin-top: 20px;
-  margin-bottom: 4px;
-  font-size: clamp(2.2rem, 7vw, 3.6rem);
+  margin-bottom: 16px;
+  font-size: 72px;
   animation: pull-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 

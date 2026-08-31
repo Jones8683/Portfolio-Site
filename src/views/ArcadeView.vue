@@ -49,7 +49,7 @@ const games = [
 <style scoped>
 .arcade-title {
   margin-top: 20px;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
   font-size: 72px;
 }
 
