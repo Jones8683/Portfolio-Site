@@ -195,11 +195,14 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll));
 }
 
 .nav-name {
-  font-weight: 700;
-  font-size: 1.4rem;
+  font-family: 'Cherry Bomb One', sans-serif;
+  font-weight: 400;
+  font-size: 1.6rem;
   color: #ffffff;
-  letter-spacing: -0.03em;
+  letter-spacing: 0.015em;
   line-height: 1;
+  position: relative;
+  top: -2px;
 }
 
 .nav-right {
