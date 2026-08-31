@@ -17,7 +17,7 @@ const projects = [
   },
   {
     name: 'Portfolio Site',
-    description: 'This very site - my home for projects and games',
+    description: 'This very site - my home for projects, experiments, and games.',
     href: 'https://github.com/Jones8683/Portfolio-Site',
     logo: 'https://github.com/Jones8683.png',
     type: 'Website',
