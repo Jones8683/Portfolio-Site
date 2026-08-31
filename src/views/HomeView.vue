@@ -1,7 +1,6 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
 import profilePic from '@/assets/kenobi.png';
-import NowPlayingBadge from '@/components/NowPlayingBadge.vue';
 
 const visible = ref(false);
 const scrolled = ref(false);
@@ -37,7 +36,7 @@ onUnmounted(() => {
 
         <h1 class="name-title">Jones Jankovic</h1>
 
-        <NowPlayingBadge fallback-text="Student | Australia" />
+        <div class="status-pill">Student | Australia</div>
       </div>
 
       <div class="snake-wrap">
@@ -284,6 +283,17 @@ onUnmounted(() => {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+.status-pill {
+  padding: 6px 14px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: #64a8ff;
+  background: rgba(58, 123, 213, 0.14);
+  border: 1px solid rgba(58, 123, 213, 0.438);
 }
 
 .snake-wrap {
