@@ -48,7 +48,6 @@ const projects = [
         :style="{ animationDelay: `${0.3 + index * 0.07}s` }"
       >
         <span class="project-row-bar" aria-hidden="true"></span>
-
         <span class="project-row-inner">
           <img
             :src="project.logo"
@@ -57,14 +56,10 @@ const projects = [
             loading="lazy"
             decoding="async"
           />
-
           <span class="project-info">
             <span class="project-name">{{ project.name }}</span>
             <span class="project-desc">{{ project.description }}</span>
           </span>
-
-          <span class="project-type">{{ project.type }}</span>
-
           <svg class="project-arrow" viewBox="0 0 20 20" fill="none" aria-hidden="true">
             <path
               d="M4 10h11m0 0-4-4m4 4-4 4"
@@ -163,15 +158,15 @@ const projects = [
   border-radius: 2px;
   background: #ffffff;
   opacity: 0;
-  transform: translateX(-6px);
+  transform: scaleY(0);
   transition:
-    opacity 0.3s ease,
-    transform 0.3s ease;
+    opacity 0.2s ease,
+    transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .project-row:hover .project-row-bar {
   opacity: 1;
-  transform: translateX(0);
+  transform: scaleY(1);
 }
 
 .project-logo {
@@ -180,6 +175,12 @@ const projects = [
   border-radius: 12px;
   object-fit: cover;
   flex-shrink: 0;
+  will-change: transform;
+  transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.project-row:hover .project-logo {
+  transform: rotate(-8deg) scale(1.05);
 }
 
 .project-info {
@@ -208,20 +209,6 @@ const projects = [
   color: #cbd5f5;
 }
 
-.project-type {
-  flex-shrink: 0;
-  padding: 5px 12px;
-  border-radius: 999px;
-  background: rgba(90, 158, 255, 0.1);
-  border: 1px solid rgba(90, 158, 255, 0.22);
-  color: lightskyblue;
-  font-size: 0.7rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  white-space: nowrap;
-}
-
 .project-arrow {
   width: 16px;
   height: 16px;
@@ -233,6 +220,7 @@ const projects = [
     opacity 0.3s ease,
     transform 0.3s ease,
     color 0.3s ease;
+  margin-right: 24px;
 }
 
 .project-row:hover .project-arrow {
@@ -246,7 +234,6 @@ const projects = [
     opacity: 0;
     transform: translateY(18px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
@@ -257,10 +244,11 @@ const projects = [
   .projects-title,
   .projects-subtitle,
   .project-panel,
-  .project-row {
+  .project-row,
+  .project-logo {
     animation: none !important;
+    transform: none !important;
     opacity: 1;
-    transform: none;
   }
 }
 
@@ -275,35 +263,25 @@ const projects = [
     width: min(95%, 840px);
     padding-bottom: 44px;
   }
-
   .project-panel {
     padding: 4px 18px;
   }
-
   .project-row {
     padding: 18px 2px;
   }
-
   .project-row-inner {
     gap: 14px;
   }
-
   .project-row:hover .project-row-inner {
     transform: translateX(12px);
   }
-
   .project-row-bar {
     left: -10px;
   }
-
   .project-logo {
     width: 40px;
     height: 40px;
     border-radius: 10px;
-  }
-
-  .project-type {
-    display: none;
   }
 }
 
