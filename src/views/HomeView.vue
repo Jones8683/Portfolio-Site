@@ -121,7 +121,15 @@ onUnmounted(() => {
               </svg>
               <span class="contact-row-label">Email</span>
               <span class="contact-row-value">contact@jjank.com</span>
-              <span class="contact-row-arrow">→</span>
+              <svg class="contact-row-arrow" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <path
+                  d="M4 10h11m0 0-4-4m4 4-4 4"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
             </a>
 
             <a
@@ -138,7 +146,15 @@ onUnmounted(() => {
               </svg>
               <span class="contact-row-label">GitHub</span>
               <span class="contact-row-value">Jones8683</span>
-              <span class="contact-row-arrow">→</span>
+              <svg class="contact-row-arrow" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <path
+                  d="M4 10h11m0 0-4-4m4 4-4 4"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
             </a>
 
             <a
@@ -155,7 +171,15 @@ onUnmounted(() => {
               </svg>
               <span class="contact-row-label">Xbox</span>
               <span class="contact-row-value">TheAxisix</span>
-              <span class="contact-row-arrow">→</span>
+              <svg class="contact-row-arrow" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <path
+                  d="M4 10h11m0 0-4-4m4 4-4 4"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
             </a>
 
             <a
@@ -172,7 +196,15 @@ onUnmounted(() => {
               </svg>
               <span class="contact-row-label">Discord</span>
               <span class="contact-row-value">Jones</span>
-              <span class="contact-row-arrow">→</span>
+              <svg class="contact-row-arrow" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <path
+                  d="M4 10h11m0 0-4-4m4 4-4 4"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
             </a>
           </div>
           <p style="margin-top: 12px">Feel free to reach out if you want to talk!</p>
