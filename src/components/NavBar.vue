@@ -236,7 +236,7 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll));
 .name-segment {
   display: inline-grid;
   grid-template-columns: 0fr;
-  transition: grid-template-columns 0.3s cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  transition: grid-template-columns 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .name-segment-text {
@@ -244,20 +244,18 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll));
   overflow: hidden;
   white-space: nowrap;
   opacity: 0;
-  transition: opacity 0.2s cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  transition: opacity 0.2s ease;
 }
 
 .nav-name-link:hover .name-segment,
 .nav-name-link:focus-visible .name-segment {
   grid-template-columns: 1fr;
-  transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .nav-name-link:hover .name-segment-text,
 .nav-name-link:focus-visible .name-segment-text {
   opacity: 1;
   transition-delay: 0.08s;
-  transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .nav-right {
