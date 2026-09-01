@@ -10,8 +10,6 @@ const handleScroll = () => {
 };
 
 onMounted(() => {
-  if (history.scrollRestoration) history.scrollRestoration = 'manual';
-  window.scrollTo(0, 0);
   window.addEventListener('scroll', handleScroll, { passive: true });
   requestAnimationFrame(() => {
     visible.value = true;

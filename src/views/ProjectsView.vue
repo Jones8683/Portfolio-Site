@@ -85,7 +85,6 @@ const projects = [
   margin-top: 20px;
   margin-bottom: 16px;
   font-size: 72px;
-  animation: pull-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .projects-subtitle {
@@ -94,8 +93,6 @@ const projects = [
   margin-top: 0;
   margin-bottom: 8px;
   text-align: center;
-  animation: pull-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
-  animation-delay: 0.08s;
 }
 
 .project-panel {
@@ -108,8 +105,6 @@ const projects = [
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(148, 163, 184, 0.2);
   box-shadow: 0 24px 50px rgba(4, 6, 16, 0.45);
-  animation: pull-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
-  animation-delay: 0.16s;
 }
 
 .project-row {
@@ -120,9 +115,7 @@ const projects = [
   color: inherit;
   text-align: left;
   border-bottom: 1px solid rgba(148, 163, 184, 0.14);
-  opacity: 0;
-  transform: translateY(14px);
-  animation: pull-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: pull-up 0.4s ease both;
 }
 
 .project-row:last-child {
@@ -232,7 +225,7 @@ const projects = [
 @keyframes pull-up {
   from {
     opacity: 0;
-    transform: translateY(18px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
@@ -241,9 +234,6 @@ const projects = [
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .projects-title,
-  .projects-subtitle,
-  .project-panel,
   .project-row,
   .project-logo {
     animation: none;
