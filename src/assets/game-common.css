@@ -37,7 +37,6 @@
   font-size: 72px;
   margin: 0 0 10px;
   letter-spacing: var(--font-display-letter-spacing, 0.02em);
-  font-weight: 300;
   color: white;
   line-height: 1;
   text-align: left;
@@ -117,7 +116,6 @@
 .menu-title {
   font-family: var(--font-display, 'Cherry Bomb One', cursive);
   font-size: 32px;
-  font-weight: 300;
   color: white;
   margin-bottom: 20px;
 }

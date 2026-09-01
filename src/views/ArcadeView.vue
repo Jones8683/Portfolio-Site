@@ -51,7 +51,6 @@ const games = [
   margin-top: 20px;
   margin-bottom: 8px;
   font-size: 72px;
-  font-weight: var(--font-display-weight);
   letter-spacing: var(--font-display-letter-spacing);
 }
 
@@ -111,7 +110,6 @@ const games = [
   color: white;
   font-family: var(--font-display);
   font-size: 1.5rem;
-  font-weight: var(--font-display-weight);
   letter-spacing: var(--font-display-letter-spacing);
   margin: 0;
 }

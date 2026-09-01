@@ -35,7 +35,7 @@ const projects = [
 <template>
   <section class="content-wrap projects-page">
     <h1 class="name-title projects-title">Projects</h1>
-    <p class="projects-subtitle">A collection of projects I have made or contributed to.</p>
+    <p class="projects-subtitle">A collection of projects I have made and contributed to.</p>
 
     <div class="project-panel">
       <a
