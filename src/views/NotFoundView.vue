@@ -21,7 +21,6 @@
 
 <style scoped>
 .not-found-title {
-  margin-top: 96px;
   margin-bottom: 4px;
   font-size: 120px;
 }

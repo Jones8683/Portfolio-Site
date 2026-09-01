@@ -82,16 +82,13 @@ const projects = [
 }
 
 .projects-title {
-  margin-top: 20px;
-  margin-bottom: 16px;
   font-size: 72px;
 }
 
 .projects-subtitle {
   color: #94a3b8;
   font-size: 1.02rem;
-  margin-top: 0;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
   text-align: center;
 }
 

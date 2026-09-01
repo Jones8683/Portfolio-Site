@@ -22,7 +22,6 @@
 .mobile-heading {
   font-size: 32px;
   margin-bottom: 16px;
-  margin-top: 60px;
   width: 100%;
   color: white;
 }
