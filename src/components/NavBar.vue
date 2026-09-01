@@ -198,6 +198,8 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll));
 .nav-brand {
   display: inline-flex;
   align-items: center;
+  padding-block: 10px;
+  margin-block: -10px;
 }
 
 .nav-name {
