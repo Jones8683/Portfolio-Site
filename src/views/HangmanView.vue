@@ -552,7 +552,9 @@ const bodyVisible = computed(() => ({
 }
 
 .slide-up-enter-active {
-  transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  transition:
+    opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .slide-up-enter-from {

@@ -27,7 +27,7 @@ const games = [
 </script>
 
 <template>
-  <div class="content-wrap">
+  <div class="content-wrap arcade-page">
     <h1 class="name-title arcade-title">Arcade</h1>
 
     <p class="arcade-subtitle">A collection of modern and classic browser games.</p>
@@ -59,7 +59,7 @@ const games = [
   font-weight: 400;
 }
 
-.content-wrap {
+.arcade-page {
   padding-bottom: 60px;
 }
 
@@ -82,7 +82,9 @@ const games = [
   display: flex;
   flex-direction: column;
   height: 210px;
-  transition: all 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    border-color 0.3s ease;
 }
 
 .arcade-card:hover {
@@ -123,7 +125,9 @@ const games = [
   text-transform: uppercase;
   letter-spacing: 1px;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
-  transition: all 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 .red-btn {

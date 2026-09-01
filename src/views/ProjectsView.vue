@@ -6,28 +6,24 @@ const projects = [
       'Redesigning SEQTA with custom themes, live wallpapers, and quality-of-life upgrades.',
     href: 'https://github.com/BetterSEQTA/BetterSEQTA-Plus',
     logo: 'https://github.com/BetterSEQTA.png',
-    type: 'Web Extension',
   },
   {
     name: 'DesQTA',
     description: 'A powerful desktop app for SEQTA Learn, right on your computer.',
     href: 'https://github.com/BetterSEQTA/DesQTA',
     logo: 'https://github.com/BetterSEQTA.png',
-    type: 'Desktop App',
   },
   {
     name: 'Portfolio Site',
     description: 'This very site - my home for projects, experiments, and games.',
     href: 'https://github.com/Jones8683/Portfolio-Site',
     logo: 'https://github.com/Jones8683.png',
-    type: 'Website',
   },
   {
     name: 'Arduino Buzzer Music',
     description: 'A collection of songs created to be played on an Arduino piezo buzzer.',
     href: 'https://github.com/Jones8683/Arduino-Buzzer-Music',
     logo: 'https://github.com/Jones8683.png',
-    type: 'Software',
   },
 ];
 </script>

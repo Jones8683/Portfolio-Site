@@ -180,27 +180,6 @@ main:has(.home) {
   color: rgb(250, 250, 250);
 }
 
-.location-text {
-  font-size: 16px;
-  color: var(--color-muted);
-  margin-top: -8px;
-  font-weight: 400;
-}
-
-.snake-wrap {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  margin: 4px 0 8px;
-}
-
-.snake-image {
-  width: min(100%, 900px);
-  height: auto;
-  filter: drop-shadow(0 16px 30px rgba(3, 6, 16, 0.5));
-  opacity: 0.95;
-}
-
 .repo-link {
   color: var(--color-accent);
 }

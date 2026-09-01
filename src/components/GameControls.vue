@@ -1,3 +1,13 @@
+<script setup>
+defineProps({
+  controls: {
+    type: Array,
+    required: true,
+    validator: (value) => value.every((control) => control.action && control.key),
+  },
+});
+</script>
+
 <template>
   <div class="controls-container">
     <div v-for="(control, index) in controls" :key="index" class="control-item">
@@ -9,18 +19,6 @@
     </div>
   </div>
 </template>
-
-<script setup>
-defineProps({
-  controls: {
-    type: Array,
-    required: true,
-    validator: (value) => {
-      return value.every((control) => control.action && control.key);
-    },
-  },
-});
-</script>
 
 <style scoped>
 .controls-container {

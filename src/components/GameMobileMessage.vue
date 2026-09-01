@@ -36,7 +36,7 @@
   color: lightskyblue;
   text-decoration: none;
   white-space: nowrap;
-  font-family: var(--font-ui, 'Satoshi', 'Segoe UI', sans-serif);
+  font-family: var(--font-ui);
   font-weight: 600;
 }
 

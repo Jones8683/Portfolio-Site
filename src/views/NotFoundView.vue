@@ -2,7 +2,7 @@
   <div class="content-wrap">
     <h1 class="name-title not-found-title">404</h1>
 
-    <p class="location-text not-found-subtitle">This is not the page you're looking for</p>
+    <p class="not-found-subtitle">This is not the page you're looking for</p>
 
     <RouterLink to="/" class="repo-link not-found-link">
       <svg class="nav-arrow-icon arrow-flip" viewBox="0 0 20 20" fill="none" aria-hidden="true">
@@ -28,6 +28,7 @@
 .not-found-subtitle {
   color: #94a3b8;
   font-size: 1.05rem;
+  margin-top: -8px;
   margin-bottom: 10px;
   font-weight: 400;
 }
@@ -41,8 +42,7 @@
   justify-content: center;
   gap: 8px;
   white-space: nowrap;
-  color: lightskyblue;
-  font-family: var(--font-ui, 'Satoshi', 'Segoe UI', sans-serif);
+  font-family: var(--font-ui);
   font-weight: 600;
 }
 

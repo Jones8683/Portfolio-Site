@@ -295,7 +295,7 @@ const gridStyle = computed(() => ({
 
 .game-title {
   font-size: 48px;
-  letter-spacing: var(--font-display-letter-spacing, 0.02em);
+  letter-spacing: var(--font-display-letter-spacing);
 }
 
 .grid-frame {

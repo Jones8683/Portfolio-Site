@@ -71,7 +71,7 @@ onUnmounted(() => {
       </div>
     </div>
 
-    <div class="content-wrap">
+    <div class="content-wrap home-content">
       <section class="about-section">
         <div class="about-title">
           <h2>About</h2>
@@ -205,7 +205,7 @@ onUnmounted(() => {
               </svg>
             </a>
           </div>
-          <p style="margin-top: 12px">Feel free to reach out if you want to talk!</p>
+          <p class="contact-outro">Feel free to reach out if you want to talk!</p>
         </div>
       </section>
     </div>
@@ -305,7 +305,7 @@ onUnmounted(() => {
 .name-title {
   margin-bottom: 6px;
   font-size: clamp(36px, 6vw, 56px);
-  letter-spacing: var(--font-display-letter-spacing, 0.02em);
+  letter-spacing: var(--font-display-letter-spacing);
   line-height: 1;
   text-align: center;
   background: linear-gradient(130deg, #5a9eff 0%, #15e0e0 100%);
@@ -327,7 +327,9 @@ onUnmounted(() => {
 
 .snake-wrap {
   width: min(100%, 900px);
-  margin-top: -18px;
+  display: flex;
+  justify-content: center;
+  margin: -18px 0 8px;
   opacity: 0;
   transform: translateY(16px);
   transition:
@@ -342,6 +344,9 @@ onUnmounted(() => {
 
 .snake-image {
   width: 100%;
+  height: auto;
+  filter: drop-shadow(0 16px 30px rgba(3, 6, 16, 0.5));
+  opacity: 0.95;
 }
 
 .scroll-cue {
@@ -358,7 +363,7 @@ onUnmounted(() => {
   animation: bounce-cue 2s ease-in-out infinite;
 }
 
-.content-wrap {
+.home-content {
   gap: 20px;
   margin-top: 24px;
   padding-bottom: 60px;
@@ -369,9 +374,13 @@ onUnmounted(() => {
     transform 0.6s ease 0.5s;
 }
 
-.loaded .content-wrap {
+.loaded .home-content {
   opacity: 1;
   transform: translateY(0);
+}
+
+.contact-outro {
+  margin-top: 12px;
 }
 
 @keyframes spin-ring {

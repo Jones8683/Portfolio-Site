@@ -25,7 +25,7 @@
 
 .main-footer p {
   color: #64748b;
-  font-family: var(--font-ui, 'Satoshi', 'Segoe UI', sans-serif);
+  font-family: var(--font-ui);
   font-size: 0.85rem;
   letter-spacing: 0.5px;
 }
