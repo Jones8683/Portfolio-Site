@@ -22,7 +22,6 @@
 .mobile-heading {
   font-size: 32px;
   margin-bottom: 16px;
-  letter-spacing: -1px;
   margin-top: 60px;
   width: 100%;
   color: white;
@@ -33,8 +32,23 @@
   line-height: 1;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  gap: 8px;
   color: lightskyblue;
   text-decoration: none;
+  white-space: nowrap;
+  font-family: var(--font-ui, 'Satoshi', 'Segoe UI', sans-serif);
+  font-weight: 600;
+}
+
+.nav-arrow-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  display: block;
+}
+
+.arrow-flip {
+  transform: scaleX(-1);
 }
 </style>

@@ -22,7 +22,7 @@
 <style scoped>
 .not-found-title {
   margin-top: 96px;
-  margin-bottom: 38px;
+  margin-bottom: 4px;
   font-size: 120px;
 }
 
@@ -39,6 +39,22 @@
   line-height: 1;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  gap: 8px;
+  white-space: nowrap;
+  color: lightskyblue;
+  font-family: var(--font-ui, 'Satoshi', 'Segoe UI', sans-serif);
+  font-weight: 600;
+}
+
+.nav-arrow-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  display: block;
+}
+
+.arrow-flip {
+  transform: scaleX(-1);
 }
 </style>
