@@ -249,15 +249,24 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll));
   transition: opacity 0.14s ease;
 }
 
-.nav-brand:hover .name-segment,
 .nav-brand:focus-visible .name-segment {
   grid-template-columns: 1fr;
 }
 
-.nav-brand:hover .name-letter,
 .nav-brand:focus-visible .name-letter {
   opacity: 1;
   transition-delay: calc(var(--offset) * 120ms + 40ms);
+}
+
+@media (hover: hover) {
+  .nav-brand:hover .name-segment {
+    grid-template-columns: 1fr;
+  }
+
+  .nav-brand:hover .name-letter {
+    opacity: 1;
+    transition-delay: calc(var(--offset) * 120ms + 40ms);
+  }
 }
 
 .glass-btn {
@@ -343,21 +352,13 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll));
     padding-inline: 12px;
   }
 
-  .nav-name {
-    display: none;
-  }
-
   .nav-left {
-    gap: 0;
+    flex: 1;
+    justify-content: space-between;
   }
 
   .nav-actions {
-    gap: 12px;
-  }
-
-  .nav-icon {
-    width: 30px;
-    height: 30px;
+    display: none;
   }
 }
 </style>
