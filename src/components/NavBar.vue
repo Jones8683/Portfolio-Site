@@ -203,10 +203,6 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll));
   transition: opacity 0.3s ease;
 }
 
-.nav-name-link:hover {
-  opacity: 0.75;
-}
-
 .nav-name {
   display: inline-flex;
   align-items: baseline;
