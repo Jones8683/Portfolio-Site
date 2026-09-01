@@ -51,11 +51,13 @@ const games = [
   margin-top: 20px;
   margin-bottom: 8px;
   font-size: 72px;
+  font-weight: var(--font-display-weight);
+  letter-spacing: var(--font-display-letter-spacing);
 }
 
 .arcade-subtitle {
   color: #94a3b8;
-  font-size: 1.05rem;
+  font-size: 0.95rem;
   margin-bottom: 24px;
   font-weight: 400;
 }
@@ -107,8 +109,10 @@ const games = [
 
 .arcade-name {
   color: white;
+  font-family: var(--font-display);
   font-size: 1.5rem;
-  font-weight: 700;
+  font-weight: var(--font-display-weight);
+  letter-spacing: var(--font-display-letter-spacing);
   margin: 0;
 }
 

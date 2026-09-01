@@ -97,16 +97,32 @@ h3,
   margin: 0;
 }
 
+body,
 p,
 span,
-div,
 li,
-button,
-a,
 input,
 textarea,
 select {
   font-family: var(--font-body);
+}
+
+button,
+a,
+.contact-row-label,
+.contact-row-value,
+.status-pill,
+.arcade-card-bottom,
+.menu-btn,
+.retry-btn,
+.label,
+.value {
+  font-family: var(--font-ui);
+}
+
+.game-page-wrapper,
+.game-page-wrapper *:not(h1):not(h2):not(h3) {
+  font-family: var(--font-ui);
 }
 
 #app {
@@ -207,7 +223,7 @@ main:has(.home) {
 }
 
 .about-title h2 {
-  font-size: 2rem;
+  font-size: clamp(1.5rem, 2vw, 1.9rem);
   font-weight: var(--font-display-weight);
   letter-spacing: var(--font-display-letter-spacing);
 }
@@ -219,7 +235,7 @@ main:has(.home) {
 }
 
 .about-body p {
-  font-size: 16px;
+  font-size: 15px;
   line-height: 1.7;
   color: var(--color-text-soft);
 }
