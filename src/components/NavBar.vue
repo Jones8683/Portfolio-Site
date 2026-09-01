@@ -39,13 +39,13 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll));
       <div class="nav-left">
         <RouterLink to="/" class="nav-name-link" aria-label="Jones Jankovic — Home">
           <span class="nav-name">
-            <span class="name-static" aria-hidden="true">J</span>
+            <span class="name-anchor-first" aria-hidden="true">J</span>
             <span class="name-segment" aria-hidden="true">
               <span class="name-segment-text">ones&nbsp;</span>
             </span>
-            <span class="name-static" aria-hidden="true">J</span>
+            <span class="name-anchor-second" aria-hidden="true">Jank</span>
             <span class="name-segment" aria-hidden="true">
-              <span class="name-segment-text">ankovic</span>
+              <span class="name-segment-text">ovic</span>
             </span>
           </span>
         </RouterLink>
@@ -220,21 +220,27 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll));
   font-weight: 400;
 }
 
-.name-static,
+.name-anchor-first,
+.name-anchor-second,
 .name-segment,
 .name-segment-text {
   font-family: inherit;
 }
 
-.name-static {
+.name-anchor-first {
   letter-spacing: normal;
   margin-right: -0.09em;
+}
+
+.name-anchor-second {
+  letter-spacing: normal;
+  margin-right: -0.03em;
 }
 
 .name-segment {
   display: inline-grid;
   grid-template-columns: 0fr;
-  transition: grid-template-columns 0.36s cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  transition: grid-template-columns 0.3s cubic-bezier(0.55, 0.085, 0.68, 0.53);
 }
 
 .name-segment-text {
@@ -242,7 +248,7 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll));
   overflow: hidden;
   white-space: nowrap;
   opacity: 0;
-  transition: opacity 0.25s cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  transition: opacity 0.2s cubic-bezier(0.55, 0.085, 0.68, 0.53);
 }
 
 .nav-name-link:hover .name-segment,
@@ -254,7 +260,7 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll));
 .nav-name-link:hover .name-segment-text,
 .nav-name-link:focus-visible .name-segment-text {
   opacity: 1;
-  transition-delay: 0.1s;
+  transition-delay: 0.08s;
   transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
