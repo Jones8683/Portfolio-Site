@@ -151,15 +151,11 @@ const projects = [
   border-radius: 2px;
   background: #ffffff;
   opacity: 0;
-  transform: scaleY(0);
-  transition:
-    opacity 0.2s ease,
-    transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: opacity 0.2s ease;
 }
 
 .project-row:hover .project-row-bar {
   opacity: 1;
-  transform: scaleY(1);
 }
 
 .project-logo {
