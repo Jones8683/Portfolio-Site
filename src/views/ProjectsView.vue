@@ -116,7 +116,7 @@ const projects = [
   position: relative;
   display: flex;
   padding: 22px 4px;
-  text-decoration: none !important;
+  text-decoration: none;
   color: inherit;
   text-align: left;
   border-bottom: 1px solid rgba(148, 163, 184, 0.14);
@@ -246,8 +246,8 @@ const projects = [
   .project-panel,
   .project-row,
   .project-logo {
-    animation: none !important;
-    transform: none !important;
+    animation: none;
+    transform: none;
     opacity: 1;
   }
 }

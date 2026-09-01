@@ -127,10 +127,10 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll));
 }
 
 .glass-btn {
-  text-decoration: none;
   color: rgba(255, 255, 255, 0.8);
+  font-family: var(--font-ui, 'Satoshi', 'Segoe UI', sans-serif);
   font-size: 0.85rem;
-  font-weight: 400;
+  font-weight: 600;
   padding: 6px 14px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -171,7 +171,7 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll));
 }
 
 .nav-name {
-  font-family: 'Cherry Bomb One', sans-serif;
+  font-family: var(--font-display, 'Cherry Bomb One', cursive);
   font-weight: 400;
   font-size: 1.7rem;
   color: #ffffff;
@@ -185,6 +185,8 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll));
   display: flex;
   gap: 10px;
   align-items: center;
+  margin-left: 8px;
+  transform: translateX(-1px);
 }
 
 .glass-btn:focus-visible,

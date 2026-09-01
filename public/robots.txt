@@ -1,22 +1,3 @@
-# robots.txt file for jjank.com
-
-# A long time ago, in a codebase far, far away...
-#
-# It is a period of version control. Rebel BRANCHES,
-# pushed from a hidden repo, have won their first
-# victory against the evil GIT PUSH --FORCE.
-#
-# During the battle, Rebel devs managed to commit secret
-# plans to the ultimate weapon, a fully configured
-# ROBOTS.TXT, with enough Disallow rules to destroy an
-# entire army of AI crawlers.
-#
-# Pursued by sinister bots, Jones races across the
-# internet aboard his trusty git client, custodian of
-# the stolen commits, to reach the main branch and
-# restore order to the codebase, before it's overwritten
-# forever...
-
 User-agent: Amazonbot
 User-agent: Bytespider
 User-agent: GPTBot

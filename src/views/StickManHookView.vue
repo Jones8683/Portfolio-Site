@@ -111,8 +111,8 @@ const toggleFullscreen = () => {
 
 .glass-btn {
   cursor: pointer;
-  text-decoration: none !important;
-  color: rgba(255, 255, 255, 0.8) !important;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.8);
   font-size: 0.75rem;
   font-weight: 600;
   padding: 14px 16px;
