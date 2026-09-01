@@ -41,7 +41,7 @@ const projects = [
         target="_blank"
         rel="noopener noreferrer"
         class="project-row"
-        :style="{ animationDelay: `${0.3 + index * 0.07}s` }"
+        :style="{ animationDelay: `${0.1 + index * 0.07}s` }"
       >
         <span class="project-row-bar" aria-hidden="true"></span>
         <span class="project-row-inner">
@@ -219,15 +219,6 @@ const projects = [
   to {
     opacity: 1;
     transform: translateY(0);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .project-row,
-  .project-logo {
-    animation: none;
-    transform: none;
-    opacity: 1;
   }
 }
 

@@ -328,20 +328,6 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll));
   outline-offset: 2px;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .main-header,
-  .nav-left,
-  .nav-actions,
-  .name-segment,
-  .name-letter {
-    transition: none;
-  }
-
-  .main-header[data-show='false'] {
-    transform: translateY(0);
-  }
-}
-
 @media (max-width: 650px) {
   .nav-shell {
     width: min(100% - 1.5rem, 1080px);
