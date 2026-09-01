@@ -7,7 +7,9 @@ import AppFooter from '@/components/AppFooter.vue';
   <NavBar />
   <main>
     <RouterView v-slot="{ Component, route }">
-      <component :is="Component" :key="route.path" />
+      <Transition name="page" mode="out-in">
+        <component :is="Component" :key="route.path" />
+      </Transition>
     </RouterView>
   </main>
   <AppFooter />
