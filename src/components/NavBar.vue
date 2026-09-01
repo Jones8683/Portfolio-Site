@@ -37,8 +37,17 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll));
   <header class="main-header" :class="{ minimized: isMinimized }" :data-show="shouldShow">
     <div class="nav-container">
       <div class="nav-left">
-        <RouterLink to="/" class="nav-name-link">
-          <span class="nav-name">Jones Jankovic</span>
+        <RouterLink to="/" class="nav-name-link" aria-label="Jones Jankovic — Home">
+          <span class="nav-name">
+            <span class="name-static" aria-hidden="true">J</span>
+            <span class="name-segment" aria-hidden="true"
+              ><span class="name-segment-text">ones&nbsp;</span></span
+            >
+            <span class="name-static" aria-hidden="true">J</span>
+            <span class="name-segment" aria-hidden="true"
+              ><span class="name-segment-text">ankovic</span></span
+            >
+          </span>
         </RouterLink>
         <div class="glass-nav">
           <RouterLink to="/projects" class="glass-btn" :class="{ active: isProjectsActive }"
@@ -199,6 +208,8 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll));
 }
 
 .nav-name {
+  display: inline-flex;
+  align-items: baseline;
   font-family: var(--font-display, 'Cherry Bomb One', cursive);
   font-size: 1.7rem;
   color: #ffffff;
@@ -207,6 +218,37 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll));
   position: relative;
   top: -2px;
   font-weight: 400;
+}
+
+.name-static,
+.name-segment,
+.name-segment-text {
+  font-family: inherit;
+}
+
+.name-segment {
+  display: inline-grid;
+  grid-template-columns: 0fr;
+  transition: grid-template-columns 0.6s cubic-bezier(0.455, 0.03, 0.515, 0.955);
+}
+
+.name-segment-text {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.35s cubic-bezier(0.455, 0.03, 0.515, 0.955);
+}
+
+.nav-name-link:hover .name-segment,
+.nav-name-link:focus-visible .name-segment {
+  grid-template-columns: 1fr;
+}
+
+.nav-name-link:hover .name-segment-text,
+.nav-name-link:focus-visible .name-segment-text {
+  opacity: 1;
+  transition-delay: 0.15s;
 }
 
 .nav-right {
