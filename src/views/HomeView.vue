@@ -307,7 +307,7 @@ onUnmounted(() => {
 .name-title {
   margin-bottom: 6px;
   font-size: clamp(36px, 6vw, 56px);
-  font-weight: 900;
+  font-weight: 300;
   letter-spacing: -0.03em;
   line-height: 1;
   text-align: center;

@@ -172,7 +172,7 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll));
 
 .nav-name {
   font-family: var(--font-display, 'Cherry Bomb One', cursive);
-  font-weight: 400;
+  font-weight: 300;
   font-size: 1.7rem;
   color: #ffffff;
   letter-spacing: 0.015em;
