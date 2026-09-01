@@ -246,7 +246,7 @@ onUnmounted(() => {
 
 .game-title {
   font-size: 48px;
-  letter-spacing: -2px;
+  letter-spacing: var(--font-display-letter-spacing, 0.02em);
 }
 
 .board {

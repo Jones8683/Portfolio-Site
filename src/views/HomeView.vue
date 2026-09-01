@@ -308,7 +308,7 @@ onUnmounted(() => {
   margin-bottom: 6px;
   font-size: clamp(36px, 6vw, 56px);
   font-weight: 300;
-  letter-spacing: -0.03em;
+  letter-spacing: var(--font-display-letter-spacing, 0.02em);
   line-height: 1;
   text-align: center;
   background: linear-gradient(130deg, #5a9eff 0%, #15e0e0 100%);

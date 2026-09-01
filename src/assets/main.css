@@ -12,6 +12,7 @@
   --nav-height: 90px;
   --font-display: 'Cherry Bomb One', 'Segoe Print', 'Trebuchet MS', cursive;
   --font-display-weight: 300;
+  --font-display-letter-spacing: 0.01em;
   --font-body: 'Andika', 'Segoe UI', sans-serif;
   --font-ui: 'Satoshi', 'Segoe UI', sans-serif;
 }
@@ -92,7 +93,7 @@ h3,
 .about-title h2 {
   font-family: var(--font-display);
   font-weight: var(--font-display-weight);
-  letter-spacing: 0.015em;
+  letter-spacing: var(--font-display-letter-spacing);
   margin: 0;
 }
 
@@ -158,7 +159,7 @@ main:has(.home) {
   font-size: clamp(2.5rem, 4vw, 4rem);
   font-weight: var(--font-display-weight);
   line-height: 1;
-  letter-spacing: 0.015em;
+  letter-spacing: var(--font-display-letter-spacing);
   color: rgb(250, 250, 250);
 }
 
@@ -208,7 +209,7 @@ main:has(.home) {
 .about-title h2 {
   font-size: 2rem;
   font-weight: var(--font-display-weight);
-  letter-spacing: 0.015em;
+  letter-spacing: var(--font-display-letter-spacing);
 }
 
 .about-body {
