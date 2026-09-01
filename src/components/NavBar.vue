@@ -2,6 +2,10 @@
 import { useRoute } from 'vue-router';
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 
+const toLetters = (word) => [...word].map((char, i) => ({ char, offset: i / (word.length - 1) }));
+const jonesLetters = toLetters('ones');
+const jankovicLetters = toLetters('ovic');
+
 const isMinimized = ref(false);
 const shouldShow = ref(true);
 let lastScrollY = 0;
@@ -40,11 +44,27 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll));
           <span class="nav-name">
             <span class="name-anchor-first" aria-hidden="true">J</span>
             <span class="name-segment" aria-hidden="true">
-              <span class="name-segment-text">ones&nbsp;</span>
+              <span class="name-segment-text"
+                ><span
+                  v-for="{ char, offset } in jonesLetters"
+                  :key="offset"
+                  class="name-letter"
+                  :style="{ '--offset': offset }"
+                  >{{ char }}</span
+                >&nbsp;</span
+              >
             </span>
             <span class="name-anchor-second" aria-hidden="true">Jank</span>
             <span class="name-segment" aria-hidden="true">
-              <span class="name-segment-text">ovic</span>
+              <span class="name-segment-text"
+                ><span
+                  v-for="{ char, offset } in jankovicLetters"
+                  :key="offset"
+                  class="name-letter"
+                  :style="{ '--offset': offset }"
+                  >{{ char }}</span
+                ></span
+              >
             </span>
           </span>
         </RouterLink>
@@ -196,7 +216,8 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll));
 .name-anchor-first,
 .name-anchor-second,
 .name-segment,
-.name-segment-text {
+.name-segment-text,
+.name-letter {
   font-family: inherit;
   letter-spacing: normal;
 }
@@ -219,8 +240,11 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll));
   min-width: 0;
   overflow: hidden;
   white-space: nowrap;
+}
+
+.name-letter {
   opacity: 0;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.14s ease;
 }
 
 .nav-brand:hover .name-segment,
@@ -228,10 +252,10 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll));
   grid-template-columns: 1fr;
 }
 
-.nav-brand:hover .name-segment-text,
-.nav-brand:focus-visible .name-segment-text {
+.nav-brand:hover .name-letter,
+.nav-brand:focus-visible .name-letter {
   opacity: 1;
-  transition-delay: 0.08s;
+  transition-delay: calc(var(--offset) * 120ms + 40ms);
 }
 
 .glass-btn {
@@ -298,7 +322,7 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll));
   .nav-left,
   .nav-actions,
   .name-segment,
-  .name-segment-text {
+  .name-letter {
     transition: none;
   }
 
