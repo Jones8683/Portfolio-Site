@@ -100,19 +100,11 @@ onUnmounted(() => {
           <div class="contact-list">
             <a href="mailto:contact@jjank.com" class="contact-row">
               <svg class="contact-row-icon" viewBox="0 0 24 24" fill="none">
-                <rect
-                  x="2"
-                  y="4"
-                  width="20"
-                  height="16"
-                  rx="3"
-                  stroke="currentColor"
-                  stroke-width="1.5"
-                />
+                <rect x="2" y="4.5" width="20" height="15" rx="2.5" stroke="currentColor" stroke-width="1.8" />
                 <path
-                  d="M2 7l10 6 10-6"
+                  d="M3 6.2l9 7.1 9-7.1"
                   stroke="currentColor"
-                  stroke-width="1.5"
+                  stroke-width="1.8"
                   stroke-linecap="round"
                   stroke-linejoin="round"
                 />
