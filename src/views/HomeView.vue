@@ -80,13 +80,14 @@ onUnmounted(() => {
           <p>
             Hi! I'm Jones, a student based in Adelaide with a passion for technology, nature, and
             art. I play piano and electric guitar, run with the Tjuringa Orienteers, and love
-            listening to music from artists like Future, Metro Boomin, and Kendrick Lamar.
+            listening to all kinds of music. I'm also into photography and cooking and I looove
+            cats.
           </p>
           <p>
-            I love reading all kinds of books, especially The High Republic series, Keeper of the
-            Lost Cities, and Tom Clancy's John Clark novels. My favorite movies and shows include
-            Star Wars, the Dune films, Andor, and The Rookie. My top video games are Minecraft,
-            Hollow Knight, Jedi Survivor, Halo, and Rainbow Six Siege.
+            I read all kinds of books, especially The High Republic series, Keeper of the Lost
+            Cities, and Tom Clancy's John Clark novels. My favorite movies and shows are Star Wars,
+            the Dune films, Andor, Across the Spider-Verse, and The Rookie. My top video games are
+            Minecraft, Hollow Knight, Jedi Survivor, Halo, and Rainbow Six Siege.
           </p>
         </div>
       </section>
@@ -100,7 +101,15 @@ onUnmounted(() => {
           <div class="contact-list">
             <a href="mailto:contact@jjank.com" class="contact-row">
               <svg class="contact-row-icon" viewBox="0 0 24 24" fill="none">
-                <rect x="2" y="4.5" width="20" height="15" rx="2.5" stroke="currentColor" stroke-width="1.8" />
+                <rect
+                  x="2"
+                  y="4.5"
+                  width="20"
+                  height="15"
+                  rx="2.5"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
                 <path
                   d="M3 6.2l9 7.1 9-7.1"
                   stroke="currentColor"
