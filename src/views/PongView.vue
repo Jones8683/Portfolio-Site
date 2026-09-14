@@ -1,16 +1,15 @@
 <script setup>
-import { onMounted, onUnmounted, ref } from 'vue';
+import { onMounted, onUnmounted, reactive, ref } from 'vue';
 import { useEventListener, useTimeoutFn } from '@vueuse/core';
 import GameMobileMessage from '@/components/GameMobileMessage.vue';
 import GameControls from '@/components/GameControls.vue';
 
 let canvas, ctx, animationId;
 const canvasEl = ref(null);
-const startScreenEl = ref(null);
-const gameOverEl = ref(null);
-const pauseEl = ref(null);
-const scoreEl = ref(null);
-const winnerEl = ref(null);
+const screen = ref('start');
+const isPaused = ref(false);
+const winner = ref('');
+const score = reactive({ left: 0, right: 0 });
 
 const WIN_SCORE = 7;
 const PADDLE_W = 12;
@@ -20,8 +19,6 @@ const TARGET_FPS = 60;
 const STEP = 1000 / TARGET_FPS;
 
 let gameMode = 'cpu';
-let isPaused = false;
-let isRunning = false;
 let isResetting = false;
 let lastTs = 0;
 const { start: serveBall, stop: cancelServe } = useTimeoutFn(
@@ -35,15 +32,8 @@ const { start: serveBall, stop: cancelServe } = useTimeoutFn(
   { immediate: false },
 );
 
-const leftPaddle = {
-  x: 20,
-  y: 210,
-  score: 0,
-  speed: 10.5,
-  aiSpeed: 5.7,
-  flash: 0,
-};
-const rightPaddle = { x: 668, y: 210, score: 0, speed: 10.5, flash: 0 };
+const leftPaddle = { x: 20, y: 210, speed: 10.5, aiSpeed: 5.7, flash: 0 };
+const rightPaddle = { x: 668, y: 210, speed: 10.5, flash: 0 };
 const ball = { x: 350, y: 250, dx: 0, dy: 0, speed: 4, baseSpeed: 4 };
 
 let trail = [];
@@ -95,41 +85,26 @@ function spawnParticles(x, y, color) {
 
 const keys = { w: false, s: false, ArrowUp: false, ArrowDown: false };
 
-function setDisplay(elRef, value) {
-  if (elRef.value) elRef.value.style.display = value;
-}
-
-function setText(elRef, value) {
-  if (elRef.value) elRef.value.innerText = value;
+function resetMatch() {
+  score.left = 0;
+  score.right = 0;
+  trail = [];
+  particles = [];
 }
 
 function showStartScreen() {
-  isRunning = false;
+  screen.value = 'start';
   cancelServe();
   if (animationId) cancelAnimationFrame(animationId);
-  setDisplay(gameOverEl, 'none');
-  setDisplay(pauseEl, 'none');
-  setDisplay(startScreenEl, 'flex');
-  leftPaddle.score = 0;
-  rightPaddle.score = 0;
-  trail = [];
-  particles = [];
-  setText(scoreEl, '0 - 0');
+  resetMatch();
   drawStatic();
 }
 
 function initGame(mode) {
   gameMode = mode;
-  leftPaddle.score = 0;
-  rightPaddle.score = 0;
-  trail = [];
-  particles = [];
-  setDisplay(startScreenEl, 'none');
-  setDisplay(gameOverEl, 'none');
-  setDisplay(pauseEl, 'none');
-  setText(scoreEl, '0 - 0');
-  isRunning = true;
-  isPaused = false;
+  screen.value = 'game';
+  isPaused.value = false;
+  resetMatch();
   keys.w = keys.s = keys.ArrowUp = keys.ArrowDown = false;
   getAudioCtx();
   resetPositions();
@@ -152,10 +127,9 @@ function resetPositions() {
 }
 
 function togglePause() {
-  if (!isRunning) return;
-  isPaused = !isPaused;
-  setDisplay(pauseEl, isPaused ? 'flex' : 'none');
-  if (!isPaused) {
+  if (screen.value !== 'game') return;
+  isPaused.value = !isPaused.value;
+  if (!isPaused.value) {
     lastTs = performance.now();
     gameLoop();
   }
@@ -220,14 +194,14 @@ function updateBallPaddleCollision() {
 function updateBallScoring() {
   if (ball.x < 0) {
     spawnParticles(0, ball.y, 'rgba(255,100,100,0.9)');
-    rightPaddle.score++;
+    score.right++;
     beep(140, 0.35, 'sawtooth', 0.2);
     shakeFrames = 14;
     shakeIntensity = 7;
     scoreUpdate();
   } else if (ball.x > canvas.width) {
     spawnParticles(canvas.width, ball.y, 'rgba(100,200,255,0.9)');
-    leftPaddle.score++;
+    score.left++;
     beep(140, 0.35, 'sawtooth', 0.2);
     shakeFrames = 14;
     shakeIntensity = 7;
@@ -248,7 +222,7 @@ function updateParticles(dt) {
 }
 
 function update(dt) {
-  if (isPaused) return;
+  if (isPaused.value) return;
 
   updatePaddles(dt);
 
@@ -272,22 +246,14 @@ function update(dt) {
 }
 
 function scoreUpdate() {
-  setText(scoreEl, `${leftPaddle.score} - ${rightPaddle.score}`);
-  checkWin();
-  if (isRunning) resetPositions();
-}
-
-function checkWin() {
-  if (leftPaddle.score < WIN_SCORE && rightPaddle.score < WIN_SCORE) return;
-  isRunning = false;
-  let name = '';
-  if (gameMode === 'cpu') {
-    name = rightPaddle.score >= WIN_SCORE ? 'YOU WIN!' : 'COMPUTER WINS!';
-  } else {
-    name = rightPaddle.score >= WIN_SCORE ? 'RIGHT PLAYER WINS!' : 'LEFT PLAYER WINS!';
+  if (score.left < WIN_SCORE && score.right < WIN_SCORE) {
+    resetPositions();
+    return;
   }
-  setText(winnerEl, name);
-  setDisplay(gameOverEl, 'flex');
+  screen.value = 'over';
+  const rightWon = score.right >= WIN_SCORE;
+  if (gameMode === 'cpu') winner.value = rightWon ? 'YOU WIN!' : 'COMPUTER WINS!';
+  else winner.value = rightWon ? 'RIGHT PLAYER WINS!' : 'LEFT PLAYER WINS!';
 }
 
 function collision(b, p) {
@@ -379,7 +345,7 @@ function draw() {
 }
 
 function gameLoop(ts = performance.now()) {
-  if (!isRunning || isPaused) return;
+  if (screen.value !== 'game' || isPaused.value) return;
   const raw = ts - lastTs;
   lastTs = ts;
   const dt = Math.min(raw, 50) / STEP;
@@ -409,7 +375,7 @@ const handleKeyUp = (e) => {
 };
 
 const handleBlur = () => {
-  if (isRunning && !isPaused) togglePause();
+  if (screen.value === 'game' && !isPaused.value) togglePause();
 };
 
 useEventListener(window, 'keydown', handleKeyDown);
@@ -418,10 +384,6 @@ useEventListener(window, 'blur', handleBlur);
 
 onMounted(() => {
   canvas = canvasEl.value;
-  if (!canvas) {
-    console.error('Pong: Canvas element not found');
-    return;
-  }
   ctx = canvas.getContext('2d');
   drawStatic();
 });
@@ -441,29 +403,18 @@ onUnmounted(() => {
     <div class="desktop-game">
       <div class="game-wrapper">
         <div class="left-section">
-          <canvas ref="canvasEl" id="gameCanvas" width="700" height="500"></canvas>
-          <div ref="startScreenEl" id="startScreen" class="overlay-msg" style="display: flex">
+          <canvas ref="canvasEl" width="700" height="500"></canvas>
+          <div v-if="screen === 'start'" class="overlay-msg">
             <h2 class="menu-title">PONG</h2>
             <button class="menu-btn" @click="initGame('cpu')">1 PLAYER</button>
             <button class="menu-btn" @click="initGame('pvp')">2 PLAYERS</button>
           </div>
-          <div ref="gameOverEl" id="gameOverMsg" class="overlay-msg">
+          <div v-else-if="screen === 'over'" class="overlay-msg">
             <h2 class="menu-title">GAME OVER</h2>
-            <div
-              style="color: #94a3b8; margin-bottom: 20px; font-size: 14px"
-              id="winnerName"
-              ref="winnerEl"
-            >
-              PLAYER 1 WINS
-            </div>
+            <div class="winner">{{ winner }}</div>
             <button class="menu-btn" @click="showStartScreen">MENU</button>
           </div>
-          <div
-            ref="pauseEl"
-            id="pauseMsg"
-            class="overlay-msg"
-            style="background: rgba(0, 0, 0, 0.6)"
-          >
+          <div v-else-if="isPaused" class="overlay-msg pause-overlay">
             <h2 class="menu-title">PAUSED</h2>
           </div>
         </div>
@@ -472,7 +423,7 @@ onUnmounted(() => {
           <h1 class="game-title">Pong</h1>
           <div class="info-box score-box">
             <div class="label score-label">Score</div>
-            <div ref="scoreEl" class="value score-value" id="scoreDiv">0 - 0</div>
+            <div class="value score-value">{{ score.left }} - {{ score.right }}</div>
           </div>
           <GameControls
             :controls="[
@@ -500,18 +451,24 @@ onUnmounted(() => {
   width: 220px;
 }
 
-#gameCanvas {
+canvas {
   background-color: #0d0d0d;
   border-radius: 8px;
   box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.5);
   border: 1px solid #333;
 }
 
-.score-box {
-  min-height: 100px;
+.winner {
+  color: #94a3b8;
+  margin-bottom: 20px;
+  font-size: 14px;
 }
 
-.overlay-msg {
-  display: none;
+.pause-overlay {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.score-box {
+  min-height: 100px;
 }
 </style>
