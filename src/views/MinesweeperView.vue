@@ -1,6 +1,6 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { useEventListener } from '@vueuse/core';
+import { ref, computed, onMounted } from 'vue';
+import { useEventListener, useIntervalFn } from '@vueuse/core';
 import GameMobileMessage from '@/components/GameMobileMessage.vue';
 import GameControls from '@/components/GameControls.vue';
 
@@ -14,9 +14,11 @@ const grid = ref([]);
 const gameStatus = ref('start');
 const currentDiff = ref(DIFFICULTIES.medium);
 const timer = ref(0);
+const { resume: startTimer, pause: stopTimer } = useIntervalFn(() => timer.value++, 1000, {
+  immediate: false,
+});
 const flagsPlaced = ref(0);
 const isPaused = ref(false);
-let timerInterval = null;
 let isFirstClick = true;
 
 const numberColors = [
@@ -165,14 +167,6 @@ function togglePause() {
   isPaused.value ? stopTimer() : startTimer();
 }
 
-function startTimer() {
-  timerInterval = setInterval(() => timer.value++, 1000);
-}
-
-function stopTimer() {
-  if (timerInterval) clearInterval(timerInterval);
-}
-
 const handleKeydown = (e) => {
   if (e.key.toLowerCase() === 'r') resetToStart();
   if (e.key === 'Escape' || e.key.toLowerCase() === 'p') {
@@ -191,7 +185,6 @@ useEventListener(window, 'keydown', handleKeydown);
 useEventListener(window, 'blur', handleBlur);
 
 onMounted(() => initGrid(DIFFICULTIES.medium));
-onUnmounted(stopTimer);
 
 const gridStyle = computed(() => ({
   gridTemplateColumns: `repeat(${currentDiff.value.cols}, 1fr)`,

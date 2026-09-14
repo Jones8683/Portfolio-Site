@@ -1,6 +1,6 @@
 <script setup>
-import { ref, onUnmounted } from 'vue';
-import { useEventListener } from '@vueuse/core';
+import { ref } from 'vue';
+import { useEventListener, useTimeoutFn } from '@vueuse/core';
 import GameMobileMessage from '@/components/GameMobileMessage.vue';
 import GameControls from '@/components/GameControls.vue';
 
@@ -13,12 +13,19 @@ const board = ref(createBoard());
 const currentPlayer = ref(1);
 const winner = ref(null);
 const isDraw = ref(false);
-let moveTimeout = null;
 const winningCells = ref([]);
 const hoveredCol = ref(null);
 const scores = ref({ 1: 0, 2: 0 });
 const droppingCell = ref(null);
 const isProcessing = ref(false);
+const { start: finishMove } = useTimeoutFn(
+  () => {
+    droppingCell.value = null;
+    isProcessing.value = false;
+  },
+  500,
+  { immediate: false },
+);
 
 const playerColors = { 1: '#0dc2ff', 2: '#ff0d72' };
 
@@ -76,11 +83,7 @@ const makeMove = (col) => {
     currentPlayer.value = currentPlayer.value === 1 ? 2 : 1;
   }
 
-  if (moveTimeout) clearTimeout(moveTimeout);
-  moveTimeout = setTimeout(() => {
-    droppingCell.value = null;
-    isProcessing.value = false;
-  }, 500);
+  finishMove();
 };
 
 const checkWinner = (row, col) => {
@@ -135,7 +138,6 @@ const handleKeydown = (e) => {
 };
 
 useEventListener(window, 'keydown', handleKeydown);
-onUnmounted(() => clearTimeout(moveTimeout));
 </script>
 
 <template>

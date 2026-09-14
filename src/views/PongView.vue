@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, onUnmounted, ref } from 'vue';
-import { useEventListener } from '@vueuse/core';
+import { useEventListener, useTimeoutFn } from '@vueuse/core';
 import GameMobileMessage from '@/components/GameMobileMessage.vue';
 import GameControls from '@/components/GameControls.vue';
 
@@ -24,6 +24,16 @@ let isPaused = false;
 let isRunning = false;
 let isResetting = false;
 let lastTs = 0;
+const { start: serveBall, stop: cancelServe } = useTimeoutFn(
+  () => {
+    isResetting = false;
+    const dir = Math.random() > 0.5 ? 1 : -1;
+    ball.dx = dir * ball.speed;
+    ball.dy = (Math.random() * 2 - 1) * ball.speed * 0.5;
+  },
+  1000,
+  { immediate: false },
+);
 
 const leftPaddle = {
   x: 20,
@@ -95,6 +105,7 @@ function setText(elRef, value) {
 
 function showStartScreen() {
   isRunning = false;
+  cancelServe();
   if (animationId) cancelAnimationFrame(animationId);
   setDisplay(gameOverEl, 'none');
   setDisplay(pauseEl, 'none');
@@ -137,13 +148,7 @@ function resetPositions() {
   rightPaddle.y = canvas.height / 2 - PADDLE_H / 2;
   trail = [];
   isResetting = true;
-  setTimeout(() => {
-    if (!isRunning) return;
-    isResetting = false;
-    const dir = Math.random() > 0.5 ? 1 : -1;
-    ball.dx = dir * ball.speed;
-    ball.dy = (Math.random() * 2 - 1) * ball.speed * 0.5;
-  }, 1000);
+  serveBall();
 }
 
 function togglePause() {
