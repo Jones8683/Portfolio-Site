@@ -1,6 +1,6 @@
 <script setup>
-import { onMounted, onUnmounted, ref } from 'vue';
-import { useStorage, useEventListener } from '@vueuse/core';
+import { onMounted, ref } from 'vue';
+import { useStorage, useEventListener, useRafFn } from '@vueuse/core';
 import GameMobileMessage from '@/components/GameMobileMessage.vue';
 import GameControls from '@/components/GameControls.vue';
 import { createScoreSerializer } from '@/scoreStorage.js';
@@ -30,12 +30,7 @@ const STEP = 1000 / TARGET_FPS;
 let groundOff = 0,
   cityOff = 0,
   cloudOff = 0;
-let canvas,
-  ctx,
-  dpr,
-  raf,
-  rafIdle,
-  lastTs = 0;
+let canvas, ctx, dpr;
 let bird, pipes, score, lastPipeTs, deathTimer;
 let wingFrame = 0;
 
@@ -390,11 +385,14 @@ function render() {
   if (gameState.value === 'dead') drawDead();
 }
 
-function gameLoop(ts) {
-  if (isPaused.value) return;
-  const dt = Math.min(ts - lastTs, 50) / STEP;
-  lastTs = ts;
+function frame({ delta, timestamp: ts }) {
+  const dt = Math.min(delta, 50) / STEP;
   wingFrame++;
+
+  if (gameState.value === 'idle') {
+    bird.y = GROUND_Y / 2 + Math.sin(wingFrame * 0.03) * 8;
+    cloudOff += 0.15;
+  }
 
   if (gameState.value === 'playing') {
     groundOff += PIPE_SPEED * 1.1 * dt;
@@ -426,20 +424,19 @@ function gameLoop(ts) {
   }
 
   render();
-  raf = requestAnimationFrame(gameLoop);
 }
+
+const { pause, resume } = useRafFn(frame, { immediate: false });
 
 function togglePause() {
   if (gameState.value !== 'playing') return;
   isPaused.value = !isPaused.value;
   if (isPaused.value) {
     pauseTs = performance.now();
+    pause();
   } else {
-    const pausedFor = performance.now() - pauseTs;
-    lastTs = performance.now();
-    lastPipeTs += pausedFor;
-    if (raf) cancelAnimationFrame(raf);
-    raf = requestAnimationFrame(gameLoop);
+    lastPipeTs += performance.now() - pauseTs;
+    resume();
   }
 }
 
@@ -447,36 +444,19 @@ const onBlur = () => {
   if (gameState.value === 'playing' && !isPaused.value) togglePause();
 };
 
-function idleLoop() {
-  bird.y = GROUND_Y / 2 + Math.sin(wingFrame * 0.03) * 8;
-  bird.angle = 0;
-  cloudOff += 0.15;
-  wingFrame++;
-  render();
-  rafIdle = requestAnimationFrame(idleLoop);
-}
-
 function jump() {
   if (isPaused.value) return;
   if (gameState.value === 'idle') {
-    if (rafIdle) cancelAnimationFrame(rafIdle);
     gameState.value = 'playing';
     bird.vy = JUMP_VY;
     lastPipeTs = performance.now();
-    lastTs = performance.now();
     wingFrame = 0;
-    if (raf) cancelAnimationFrame(raf);
-    raf = requestAnimationFrame(gameLoop);
   } else if (gameState.value === 'playing') {
     bird.vy = JUMP_VY;
-  } else if (gameState.value === 'dead' && deathTimer > 50) {
-    if (raf) cancelAnimationFrame(raf);
+  } else if (deathTimer > 50) {
     initState();
     gameState.value = 'idle';
     wingFrame = 0;
-    render();
-    if (rafIdle) cancelAnimationFrame(rafIdle);
-    rafIdle = requestAnimationFrame(idleLoop);
   }
 }
 
@@ -509,14 +489,7 @@ onMounted(() => {
   ctx.scale(dpr, dpr);
   ctx.imageSmoothingEnabled = false;
   initState();
-  render();
-  if (rafIdle) cancelAnimationFrame(rafIdle);
-  rafIdle = requestAnimationFrame(idleLoop);
-});
-
-onUnmounted(() => {
-  if (raf) cancelAnimationFrame(raf);
-  if (rafIdle) cancelAnimationFrame(rafIdle);
+  resume();
 });
 </script>
 
