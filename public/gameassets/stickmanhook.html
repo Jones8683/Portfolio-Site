@@ -3,23 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <title>Stickman Hook</title>
-    <link
-      rel="icon"
-      href="data:image/png;base64,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"
-    />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"
-    />
     <style>
       html,
       body {
-        position: absolute;
-        top: 0px;
-        left: 0px;
         margin: 0;
-        padding: 0;
-        border: 0;
         overflow: hidden;
         width: 100vw;
         height: 100vh;
@@ -29,120 +16,6 @@
         width: 100%;
       }
     </style>
-    <script>
-      !(function (e) {
-        var n = {};
-
-        function t(o) {
-          if (n[o]) return n[o].exports;
-          var r = (n[o] = {
-            i: o,
-            l: !1,
-            exports: {},
-          });
-          return (e[o].call(r.exports, r, r.exports, t), (r.l = !0), r.exports);
-        }
-        ((t.m = e),
-          (t.c = n),
-          (t.d = function (e, n, o) {
-            t.o(e, n) ||
-              Object.defineProperty(e, n, {
-                enumerable: !0,
-                get: o,
-              });
-          }),
-          (t.r = function (e) {
-            ('undefined' != typeof Symbol &&
-              Symbol.toStringTag &&
-              Object.defineProperty(e, Symbol.toStringTag, {
-                value: 'Module',
-              }),
-              Object.defineProperty(e, '__esModule', {
-                value: !0,
-              }));
-          }),
-          (t.t = function (e, n) {
-            if ((1 & n && (e = t(e)), 8 & n)) return e;
-            if (4 & n && 'object' == typeof e && e && e.__esModule) return e;
-            var o = Object.create(null);
-            if (
-              (t.r(o),
-              Object.defineProperty(o, 'default', {
-                enumerable: !0,
-                value: e,
-              }),
-              2 & n && 'string' != typeof e)
-            )
-              for (var r in e)
-                t.d(
-                  o,
-                  r,
-                  function (n) {
-                    return e[n];
-                  }.bind(null, r),
-                );
-            return o;
-          }),
-          (t.n = function (e) {
-            var n =
-              e && e.__esModule
-                ? function () {
-                    return e.default;
-                  }
-                : function () {
-                    return e;
-                  };
-            return (t.d(n, 'a', n), n);
-          }),
-          (t.o = function (e, n) {
-            return Object.prototype.hasOwnProperty.call(e, n);
-          }),
-          (t.p = ''),
-          t((t.s = 68)));
-      })({
-        68: function (e, n, t) {
-          window.PokiSDK = {
-            init: function () {
-              return Promise.resolve();
-            },
-            initWithVideoHB: function () {
-              return Promise.resolve();
-            },
-            customEvent: function () {},
-            commercialBreak: function () {
-              return Promise.resolve();
-            },
-            rewardedBreak: function () {
-              return Promise.resolve(!0);
-            },
-            displayAd: function () {},
-            destroyAd: function () {},
-            getLeaderboard: function () {
-              return Promise.resolve({});
-            },
-            disableProgrammatic: function () {},
-            gameLoadingStart: function () {},
-            gameLoadingFinished: function () {},
-            gameInteractive: function () {},
-            roundStart: function () {},
-            roundEnd: function () {},
-            muteAd: function () {},
-            setDebug: function () {},
-            gameplayStart: function () {},
-            gameplayStop: function () {},
-            gameLoadingProgress: function () {},
-            happyTime: function () {},
-            setPlayerAge: function () {},
-            togglePlayerAdvertisingConsent: function () {},
-            toggleNonPersonalized: function () {},
-            setConsentString: function () {},
-            logError: function () {},
-            sendHighscore: function () {},
-            setDebugTouchOverlayController: function () {},
-          };
-        },
-      });
-    </script>
   </head>
   <body>
     <script>
@@ -42075,8 +41948,6 @@
                 (a.playerInfos = {}),
                 (a.features = {}),
                 (a.isRewardedReady = !1),
-                (a.interstitialReady = !1),
-                (a.lastInterstitialTime = 0),
                 (a.playedAtLeastOnce = !1),
                 (a.onResize = function () {
                   var t = a._optionsResize ? a._optionsResize() : null,
@@ -42165,9 +42036,6 @@
                 a.eventEmitter.addListener('rewardedReady', function (t) {
                   a.isRewardedReady = t;
                 }),
-                a.eventEmitter.addListener('interstitialReady', function (t) {
-                  a.interstitialReady = t;
-                }),
                 a
               );
             }
@@ -42177,15 +42045,6 @@
                 {
                   key: 'gotoNextLevel',
                   value: function () {
-                    var t = this;
-                    if (this.interstitialReady && Date.now() - this.lastInterstitialTime > 0)
-                      return (
-                        (this.interstitialReady = !1),
-                        this.eventEmitter.emit('requestInterstitial'),
-                        void this.eventEmitter.once('intersitialWatched', function (e) {
-                          ((t.lastInterstitialTime = Date.now()), t.gotoNextLevel());
-                        })
-                      );
                     this.gotoLevel(this.level);
                   },
                 },
@@ -42210,64 +42069,7 @@
             );
           })(Ti);
 
-          function Ec(t, e, n) {
-            window.FB && window.FB.AppEvents.logEvent(t, e, n);
-          }
-
-          function Cc(t) {
-            var e = t.mode,
-              n = t.score,
-              r = t.status,
-              i = t.level,
-              o = t.completion,
-              a = t.time,
-              s = t.attempt;
-            (Ec('end game', 1, {
-              mode: e,
-              score: n,
-              status: r,
-              level: i,
-              completion: o,
-              time: a / 1e3,
-            }),
-              Ec('game attempt', s, {
-                mode: e,
-                level: i,
-              }),
-              Ec('game reached', 1, {
-                mode: e,
-                level: i,
-              }),
-              Ec('game time', a / 1e3, {
-                mode: e,
-                level: i,
-              }));
-          }
           ((Sc.instance = null), (Sc.SCALE = 5e-4), (Sc.AIR_FRICTION = 0));
-          var Tc = null;
-
-          function kc(t) {
-            var e = t.ad_type,
-              n = t.success,
-              r = t.location;
-            Ec('shown '.concat(e), 1, {
-              success: n,
-              location: r,
-            });
-          }
-
-          function Ic(t) {
-            var e = t.ad_type,
-              n = t.error;
-            Ec('failed displaying '.concat(e), 1, {
-              error: n,
-            });
-          }
-
-          function errorCode(t) {
-            return t && void 0 !== t.code ? t.code : 'unknown';
-          }
-
           function scoreStorageHash(t) {
             for (var e = 2654435769, n = 2246822507, r = 0; r < t.length; r++)
               ((e ^= t.charCodeAt(r) * 3432918353),
@@ -42353,21 +42155,17 @@
           }
 
           function Rc() {
-            var t = {};
-            if (
-              ((t.level = readScoreNumber('stickman-hook-current-level')),
-              null === t.level && (t.level = readLegacyNumber('stickman-hook-current-level')),
-              (t.skin = readScoreNumber('stickman-hook-current-skin')),
-              null === t.skin && (t.skin = readLegacyNumber('stickman-hook-current-skin')),
-              (t.unlockedSkins = Dc('stickman-hook-unlocked-skins')),
-              !t.level)
-            ) {
-              t.level = null;
-            }
-            if (!t.unlockedSkins) {
-              t.unlockedSkins = [];
-            }
-            return t;
+            return {
+              level:
+                readScoreNumber('stickman-hook-current-level') ||
+                readLegacyNumber('stickman-hook-current-level') ||
+                0,
+              skin:
+                readScoreNumber('stickman-hook-current-skin') ||
+                readLegacyNumber('stickman-hook-current-skin') ||
+                null,
+              unlockedSkins: Dc('stickman-hook-unlocked-skins') || [],
+            };
           }
 
           function Bc(t) {
@@ -42377,245 +42175,20 @@
           function Mc(t) {
             writeScoreNumber('stickman-hook-current-skin', t);
           }
-          var Oc = {
-            mobile: {
-              w: 0,
-              h: 0,
-            },
-            desktop: {
-              w: 0,
-              h: 0,
-            },
-          };
-          s()(
-            o.a.mark(function t() {
-              var e, n, r, i, a, A, h, c, u;
-              return o.a.wrap(
-                function (t) {
-                  for (;;)
-                    switch ((t.prev = t.next)) {
-                      case 0:
-                        return (
-                          (e = !1),
-                          PokiSDK.setDebug('localhost' === window.location.hostname),
-                          (t.prev = 2),
-                          (t.next = 5),
-                          PokiSDK.init()
-                        );
-                      case 5:
-                        t.next = 11;
-                        break;
-                      case 7:
-                        t.next = 11;
-                        break;
-                      case 11:
-                        (PokiSDK.gameLoadingStart(),
-                          (n = !1),
-                          (r = function (t) {
-                            n && (t.preventDefault(), t.stopImmediatePropagation());
-                          }),
-                          document.addEventListener('keydown', r),
-                          document.addEventListener('keyup', r),
-                          (i = {
-                            rewarded: !e,
-                            interstitial: !e,
-                            share: !1,
-                            leaderboard: !1,
-                          }),
-                          (a = Rc()),
-                          (A = {
-                            level: a.level || 0,
-                            skin: a.skin || null,
-                            unlockedSkins: Array.isArray(a.unlockedSkins) ? a.unlockedSkins : [],
-                          }),
-                          PokiSDK.gameLoadingFinished(),
-                          (h = _c(A, i, !1)),
-                          (c = null),
-                          ((u = document.createElement('div')).style.position = 'absolute'),
-                          (u.style.bottom = 0),
-                          (u.style.left = 0),
-                          (u.style.right = 0),
-                          document.body.appendChild(u),
-                          h.eventEmitter.addListener('sceneChange', function (t) {
-                            var e;
-                            ((e = t.name),
-                              Tc &&
-                                Ec('close menu', 1, {
-                                  name: Tc.name,
-                                  time: (Date.now() - Tc.openTime) / 1e3,
-                                }),
-                              (Tc = {
-                                name: e,
-                                openTime: Date.now(),
-                              }),
-                              Ec('open menu', 1, {
-                                name: e,
-                              }),
-                              'victory' !== t.name &&
-                                c &&
-                                (PokiSDK.destroyAd(c),
-                                c.remove(),
-                                (c = null),
-                                (document.getElementsByClassName('ui')[0].style.bottom = '0px')));
-                          }),
-                          h.eventEmitter.addListener('levelStarted', function (t) {
-                            var e, n, r, i, o, a;
-                            ((n = (e = t).mode),
-                              (r = e.level),
-                              (i = e.skin),
-                              (o = e.attempt),
-                              (a = e.retry),
-                              Ec('start game', 1, {
-                                mode: n,
-                                level: r,
-                                attempt: o,
-                                'skin name': i.name,
-                                retry: a,
-                              }),
-                              PokiSDK.gameplayStart());
-                          }),
-                          h.eventEmitter.addListener('levelFailed', function (t) {
-                            (Cc(t), PokiSDK.gameplayStop());
-                          }),
-                          h.eventEmitter.addListener(
-                            'levelComplete',
-                            (function () {
-                              var t = s()(
-                                o.a.mark(function t(e) {
-                                  var n;
-                                  return o.a.wrap(function (t) {
-                                    for (;;)
-                                      switch ((t.prev = t.next)) {
-                                        case 0:
-                                          (Cc(e),
-                                            PokiSDK.gameplayStop(),
-                                            PokiSDK.happyTime(0.5),
-                                            Bc(e.level),
-                                            (n = window.innerWidth < 768 ? Oc.mobile : Oc.desktop),
-                                            ((c = document.createElement('div')).style.width =
-                                              ''.concat(n.w, 'px')),
-                                            (c.style.height = ''.concat(n.h, 'px')),
-                                            (c.style.margin = 'auto'),
-                                            u.appendChild(c),
-                                            PokiSDK.displayAd(c, ''.concat(n.w, 'x').concat(n.h)),
-                                            (document.getElementsByClassName('ui')[0].style.bottom =
-                                              ''.concat(n.h, 'px')));
-                                        case 13:
-                                        case 'end':
-                                          return t.stop();
-                                      }
-                                  }, t);
-                                }),
-                              );
-                              return function (e) {
-                                return t.apply(this, arguments);
-                              };
-                            })(),
-                          ),
-                          h.eventEmitter.addListener('levelAbandon', function (t) {
-                            PokiSDK.gameplayStop();
-                          }),
-                          i.rewarded && Sc.instance.eventEmitter.emit('rewardedReady', !0),
-                          i.interstitial && Sc.instance.eventEmitter.emit('interstitialReady', !0),
-                          h.eventEmitter.addListener('requestRewarded', function (t) {
-                            var e,
-                              r,
-                              o,
-                              a = t.skin,
-                              s = t.onComplete;
-                            i.rewarded &&
-                              ((r = (e = {
-                                ad_type: 'REWARDED',
-                                location: 'shop',
-                              }).ad_type),
-                              (o = e.location),
-                              Ec('print '.concat(r), 1, {
-                                location: o,
-                              }),
-                              (n = !0),
-                              PokiSDK.rewardedBreak()
-                                .then(function (t) {
-                                  (t &&
-                                    ((Sc.instance.playerSkin = a),
-                                    A.unlockedSkins.push(a.id),
-                                    Pc('stickman-hook-unlocked-skins', A.unlockedSkins)),
-                                    s && s(),
-                                    kc({
-                                      ad_type: 'REWARDED',
-                                      location: 'shop',
-                                      success: !1,
-                                    }),
-                                    (n = !1));
-                                })
-                                .catch(function (t) {
-                                  (Ic({
-                                    ad_type: 'REWARDED',
-                                    error: errorCode(t),
-                                  }),
-                                    (n = !1));
-                                }));
-                          }),
-                          h.eventEmitter.addListener('requestInterstitial', function () {
-                            i.interstitial &&
-                              ((n = !0),
-                              PokiSDK.commercialBreak()
-                                .then(function () {
-                                  (kc({
-                                    ad_type: 'INTERSTITIAL',
-                                    location: 'menu',
-                                    success: !1,
-                                  }),
-                                    (n = !1),
-                                    h.eventEmitter.emit('intersitialWatched', !0),
-                                    h.eventEmitter.emit('interstitialReady', !0));
-                                })
-                                .catch(function (t) {
-                                  (Ic({
-                                    ad_type: 'INTERSTITIAL',
-                                    error: errorCode(t),
-                                  }),
-                                    (n = !1),
-                                    h.eventEmitter.emit('intersitialWatched', !1),
-                                    h.eventEmitter.emit('interstitialReady', !0));
-                                }));
-                          }),
-                          h.eventEmitter.addListener('changeSkin', function (t) {
-                            Mc(t.id);
-                          }),
-                          h.eventEmitter.addListener(
-                            'skinUnlocked',
-                            (function () {
-                              var t = s()(
-                                o.a.mark(function t(e) {
-                                  return o.a.wrap(function (t) {
-                                    for (;;)
-                                      switch ((t.prev = t.next)) {
-                                        case 0:
-                                          PokiSDK.happyTime(1);
-                                        case 1:
-                                        case 'end':
-                                          return t.stop();
-                                      }
-                                  }, t);
-                                }),
-                              );
-                              return function (e) {
-                                return t.apply(this, arguments);
-                              };
-                            })(),
-                          ));
-                      case 39:
-                      case 'end':
-                        return t.stop();
-                    }
-                },
-                t,
-                null,
-                [[2, 7]],
-              );
-            }),
-          )().catch(function () {
-            return null;
+          var playerInfos = Rc(),
+            game = _c(playerInfos, { rewarded: !0, share: !1, leaderboard: !1 }, !1);
+          game.eventEmitter.emit('rewardedReady', !0);
+          game.eventEmitter.addListener('levelComplete', function (t) {
+            Bc(t.level);
+          });
+          game.eventEmitter.addListener('changeSkin', function (t) {
+            Mc(t.id);
+          });
+          game.eventEmitter.addListener('requestRewarded', function (t) {
+            ((game.playerSkin = t.skin),
+              playerInfos.unlockedSkins.push(t.skin.id),
+              Pc('stickman-hook-unlocked-skins', playerInfos.unlockedSkins),
+              t.onComplete && t.onComplete());
           });
         },
       ]);
