@@ -1,44 +1,13 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref } from 'vue';
 import GameMobileMessage from '@/components/GameMobileMessage.vue';
 import GameControls from '@/components/GameControls.vue';
 
 const gameIframe = ref(null);
-const showIframe = ref(false);
 const gameSrc = `${import.meta.env.BASE_URL}gameassets/stickmanhook.html`;
-let focusTimer = null;
 
-const focusIframe = () => {
-  if (gameIframe.value) {
-    gameIframe.value.focus();
-  }
-};
-
-onMounted(() => {
-  showIframe.value = true;
-  focusTimer = setTimeout(() => {
-    focusIframe();
-  }, 100);
-});
-
-onUnmounted(() => {
-  if (focusTimer) {
-    clearTimeout(focusTimer);
-    focusTimer = null;
-  }
-});
-
-const toggleFullscreen = () => {
-  if (gameIframe.value) {
-    if (gameIframe.value.requestFullscreen) {
-      gameIframe.value.requestFullscreen();
-    } else if (gameIframe.value.webkitRequestFullscreen) {
-      gameIframe.value.webkitRequestFullscreen();
-    } else if (gameIframe.value.msRequestFullscreen) {
-      gameIframe.value.msRequestFullscreen();
-    }
-  }
-};
+const focusIframe = () => gameIframe.value?.focus();
+const enterFullscreen = () => gameIframe.value.requestFullscreen();
 </script>
 
 <template>
@@ -49,12 +18,10 @@ const toggleFullscreen = () => {
       <div class="game-wrapper">
         <div class="left-section" @click="focusIframe">
           <iframe
-            v-if="showIframe"
             ref="gameIframe"
             :src="gameSrc"
             class="game-iframe"
             title="Stickman Hook game"
-            frameborder="0"
             scrolling="no"
             allow="fullscreen"
             @load="focusIframe"
@@ -71,7 +38,7 @@ const toggleFullscreen = () => {
             ]"
           />
 
-          <button @click="toggleFullscreen" class="glass-btn">
+          <button @click="enterFullscreen" class="glass-btn">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="14"
@@ -104,8 +71,6 @@ const toggleFullscreen = () => {
 .game-iframe {
   width: 880px;
   height: 550px;
-  border-radius: 4px;
-  display: block;
   background: #000;
 }
 

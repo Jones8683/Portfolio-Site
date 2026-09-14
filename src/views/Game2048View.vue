@@ -1,44 +1,23 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref } from 'vue';
+import { useEventListener } from '@vueuse/core';
 import GameMobileMessage from '@/components/GameMobileMessage.vue';
 import GameControls from '@/components/GameControls.vue';
 
 const gameIframe = ref(null);
-const showIframe = ref(false);
 const score = ref(0);
 const bestScore = ref(0);
 const gameSrc = `${import.meta.env.BASE_URL}gameassets/2048.html`;
-let focusTimer = null;
 
-const handleMessage = (event) => {
-  if (event.source !== gameIframe.value?.contentWindow) return;
-  if (event.data && event.data.type === '2048-update') {
-    score.value = event.data.score;
-    bestScore.value = event.data.bestScore;
-  }
+const focusIframe = () => gameIframe.value?.focus();
+
+const handleMessage = ({ source, data }) => {
+  if (source !== gameIframe.value?.contentWindow || data?.type !== '2048-update') return;
+  score.value = data.score;
+  bestScore.value = data.bestScore;
 };
 
-const focusIframe = () => {
-  if (gameIframe.value) {
-    gameIframe.value.focus();
-  }
-};
-
-onMounted(() => {
-  showIframe.value = true;
-  window.addEventListener('message', handleMessage);
-  focusTimer = setTimeout(() => {
-    focusIframe();
-  }, 100);
-});
-
-onUnmounted(() => {
-  if (focusTimer) {
-    clearTimeout(focusTimer);
-    focusTimer = null;
-  }
-  window.removeEventListener('message', handleMessage);
-});
+useEventListener(window, 'message', handleMessage);
 </script>
 
 <template>
@@ -49,12 +28,10 @@ onUnmounted(() => {
       <div class="game-wrapper">
         <div class="left-section" @click="focusIframe">
           <iframe
-            v-if="showIframe"
             ref="gameIframe"
             :src="gameSrc"
             class="game-iframe"
             title="2048 game"
-            frameborder="0"
             scrolling="no"
             @load="focusIframe"
           ></iframe>
