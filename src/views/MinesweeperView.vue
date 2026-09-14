@@ -1,5 +1,6 @@
 <script setup>
-import { ref, computed, onUnmounted, onMounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { useEventListener } from '@vueuse/core';
 import GameMobileMessage from '@/components/GameMobileMessage.vue';
 import GameControls from '@/components/GameControls.vue';
 
@@ -186,17 +187,11 @@ const handleBlur = () => {
   }
 };
 
-onMounted(() => {
-  initGrid(DIFFICULTIES.medium);
-  window.addEventListener('keydown', handleKeydown);
-  window.addEventListener('blur', handleBlur);
-});
+useEventListener(window, 'keydown', handleKeydown);
+useEventListener(window, 'blur', handleBlur);
 
-onUnmounted(() => {
-  stopTimer();
-  window.removeEventListener('keydown', handleKeydown);
-  window.removeEventListener('blur', handleBlur);
-});
+onMounted(() => initGrid(DIFFICULTIES.medium));
+onUnmounted(stopTimer);
 
 const gridStyle = computed(() => ({
   gridTemplateColumns: `repeat(${currentDiff.value.cols}, 1fr)`,

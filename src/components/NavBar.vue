@@ -1,6 +1,7 @@
 <script setup>
 import { useRoute } from 'vue-router';
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import { useEventListener } from '@vueuse/core';
 
 const toLetters = (word) => [...word].map((char, i) => ({ char, offset: i / (word.length - 1) }));
 const jonesLetters = toLetters('ones');
@@ -29,11 +30,8 @@ const handleScroll = () => {
   ticking = true;
 };
 
-onMounted(() => {
-  updateHeaderState();
-  window.addEventListener('scroll', handleScroll, { passive: true });
-});
-onUnmounted(() => window.removeEventListener('scroll', handleScroll));
+useEventListener(window, 'scroll', handleScroll, { passive: true });
+onMounted(updateHeaderState);
 </script>
 
 <template>

@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, onUnmounted, ref } from 'vue';
-import { useStorage } from '@vueuse/core';
+import { useStorage, useEventListener } from '@vueuse/core';
 import GameMobileMessage from '@/components/GameMobileMessage.vue';
 import GameControls from '@/components/GameControls.vue';
 import { createScoreSerializer } from '@/scoreStorage.js';
@@ -493,6 +493,10 @@ const onKey = (e) => {
   }
 };
 
+useEventListener(window, 'keydown', onKey);
+useEventListener(canvasRef, 'mousedown', jump);
+useEventListener(window, 'blur', onBlur);
+
 onMounted(() => {
   canvas = canvasRef.value;
   if (!canvas) return;
@@ -504,9 +508,6 @@ onMounted(() => {
   canvas.style.height = H + 'px';
   ctx.scale(dpr, dpr);
   ctx.imageSmoothingEnabled = false;
-  document.addEventListener('keydown', onKey);
-  canvas.addEventListener('mousedown', jump);
-  window.addEventListener('blur', onBlur);
   initState();
   render();
   if (rafIdle) cancelAnimationFrame(rafIdle);
@@ -514,9 +515,6 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  document.removeEventListener('keydown', onKey);
-  canvas?.removeEventListener('mousedown', jump);
-  window.removeEventListener('blur', onBlur);
   if (raf) cancelAnimationFrame(raf);
   if (rafIdle) cancelAnimationFrame(rafIdle);
 });

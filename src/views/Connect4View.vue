@@ -1,5 +1,6 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onUnmounted } from 'vue';
+import { useEventListener } from '@vueuse/core';
 import GameMobileMessage from '@/components/GameMobileMessage.vue';
 import GameControls from '@/components/GameControls.vue';
 
@@ -133,11 +134,8 @@ const handleKeydown = (e) => {
   if (e.key.toLowerCase() === 'r') resetGame();
 };
 
-onMounted(() => window.addEventListener('keydown', handleKeydown));
-onUnmounted(() => {
-  window.removeEventListener('keydown', handleKeydown);
-  if (moveTimeout) clearTimeout(moveTimeout);
-});
+useEventListener(window, 'keydown', handleKeydown);
+onUnmounted(() => clearTimeout(moveTimeout));
 </script>
 
 <template>

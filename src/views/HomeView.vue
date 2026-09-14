@@ -1,5 +1,6 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted } from 'vue';
+import { useEventListener } from '@vueuse/core';
 import profilePic from '@/assets/kenobi.png';
 
 const visible = ref(false);
@@ -9,15 +10,12 @@ const handleScroll = () => {
   scrolled.value = window.scrollY > 60;
 };
 
+useEventListener(window, 'scroll', handleScroll, { passive: true });
+
 onMounted(() => {
-  window.addEventListener('scroll', handleScroll, { passive: true });
   requestAnimationFrame(() => {
     visible.value = true;
   });
-});
-
-onUnmounted(() => {
-  window.removeEventListener('scroll', handleScroll);
 });
 </script>
 

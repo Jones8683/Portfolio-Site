@@ -1,5 +1,6 @@
 <script setup>
 import { onMounted, onUnmounted, ref } from 'vue';
+import { useEventListener } from '@vueuse/core';
 import GameMobileMessage from '@/components/GameMobileMessage.vue';
 import GameControls from '@/components/GameControls.vue';
 
@@ -406,6 +407,10 @@ const handleBlur = () => {
   if (isRunning && !isPaused) togglePause();
 };
 
+useEventListener(window, 'keydown', handleKeyDown);
+useEventListener(window, 'keyup', handleKeyUp);
+useEventListener(window, 'blur', handleBlur);
+
 onMounted(() => {
   canvas = canvasEl.value;
   if (!canvas) {
@@ -413,16 +418,10 @@ onMounted(() => {
     return;
   }
   ctx = canvas.getContext('2d');
-  window.addEventListener('keydown', handleKeyDown);
-  window.addEventListener('keyup', handleKeyUp);
-  window.addEventListener('blur', handleBlur);
   drawStatic();
 });
 
 onUnmounted(() => {
-  window.removeEventListener('keydown', handleKeyDown);
-  window.removeEventListener('keyup', handleKeyUp);
-  window.removeEventListener('blur', handleBlur);
   if (animationId) cancelAnimationFrame(animationId);
   if (audioCtx && audioCtx.state !== 'closed') {
     audioCtx.close();

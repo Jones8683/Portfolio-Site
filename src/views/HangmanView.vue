@@ -1,5 +1,6 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed } from 'vue';
+import { useEventListener } from '@vueuse/core';
 import GameMobileMessage from '@/components/GameMobileMessage.vue';
 import GameControls from '@/components/GameControls.vue';
 
@@ -72,8 +73,7 @@ const handleKeydown = (e) => {
   if (key.length === 1 && /[A-Z]/.test(key)) guessLetter(key);
 };
 
-onMounted(() => document.addEventListener('keydown', handleKeydown));
-onUnmounted(() => document.removeEventListener('keydown', handleKeydown));
+useEventListener(window, 'keydown', handleKeydown);
 
 const bodyVisible = computed(() => ({
   head: wrongGuesses.value >= 1,

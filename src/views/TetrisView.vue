@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
-import { useStorage } from '@vueuse/core';
+import { useStorage, useEventListener } from '@vueuse/core';
 import GameMobileMessage from '@/components/GameMobileMessage.vue';
 import GameControls from '@/components/GameControls.vue';
 import { createScoreSerializer } from '@/scoreStorage.js';
@@ -769,6 +769,10 @@ const handleBlur = () => {
   }
 };
 
+useEventListener(window, 'keydown', handleKeydown);
+useEventListener(window, 'keyup', handleKeyup);
+useEventListener(window, 'blur', handleBlur);
+
 onMounted(() => {
   canvas = gameCanvasRef.value;
   ctx = canvas.getContext('2d');
@@ -777,18 +781,10 @@ onMounted(() => {
   ctx.scale(25, 25);
   nextCtx.scale(25, 25);
   holdCtx.scale(25, 25);
-  document.addEventListener('keydown', handleKeydown);
-  document.addEventListener('keyup', handleKeyup);
-  window.addEventListener('blur', handleBlur);
   resetGame();
 });
 
-onUnmounted(() => {
-  document.removeEventListener('keydown', handleKeydown);
-  document.removeEventListener('keyup', handleKeyup);
-  window.removeEventListener('blur', handleBlur);
-  cancelAnimationFrame(animationId);
-});
+onUnmounted(() => cancelAnimationFrame(animationId));
 </script>
 
 <template>
