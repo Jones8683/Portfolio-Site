@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, reactive, computed } from 'vue';
 import { useEventListener } from '@vueuse/core';
 import GameMobileMessage from '@/components/GameMobileMessage.vue';
 import GameControls from '@/components/GameControls.vue';
@@ -7,27 +7,19 @@ import GameControls from '@/components/GameControls.vue';
 const phase = ref('input');
 const secretWord = ref('');
 const inputBuffer = ref('');
-const guessedLetters = ref(new Set());
-const wrongGuesses = ref(0);
+const guessedLetters = reactive(new Set());
 const MAX_WRONG = 6;
-
-const normalizedWord = computed(() => secretWord.value.toUpperCase().trim());
+const alphabet = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'];
 
 const maskedWord = computed(() =>
-  normalizedWord.value
-    .split('')
-    .map((ch) => (ch === ' ' ? ' ' : guessedLetters.value.has(ch) ? ch : '_')),
+  [...secretWord.value].map((ch) => (ch === ' ' || guessedLetters.has(ch) ? ch : '_')),
 );
 
 const wrongLetters = computed(() =>
-  [...guessedLetters.value].filter((l) => !normalizedWord.value.includes(l)),
+  [...guessedLetters].filter((l) => !secretWord.value.includes(l)),
 );
 
-const correctLetters = computed(() =>
-  [...guessedLetters.value].filter((l) => normalizedWord.value.includes(l)),
-);
-
-const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+const wrongGuesses = computed(() => wrongLetters.value.length);
 
 function onInput(e) {
   inputBuffer.value = e.target.value.toUpperCase().replace(/[^A-Z\s]/g, '');
@@ -38,51 +30,27 @@ function submitWord() {
   if (!w) return;
   secretWord.value = w;
   inputBuffer.value = '';
-  guessedLetters.value = new Set();
-  wrongGuesses.value = 0;
   phase.value = 'playing';
 }
 
 function guessLetter(letter) {
-  if (phase.value !== 'playing') return;
-  if (guessedLetters.value.has(letter)) return;
-
-  const newSet = new Set(guessedLetters.value);
-  newSet.add(letter);
-  guessedLetters.value = newSet;
-
-  if (!normalizedWord.value.includes(letter)) wrongGuesses.value++;
-
-  const allRevealed = normalizedWord.value.split('').every((ch) => ch === ' ' || newSet.has(ch));
-
-  if (allRevealed) phase.value = 'won';
+  if (phase.value !== 'playing' || guessedLetters.has(letter)) return;
+  guessedLetters.add(letter);
+  if (!maskedWord.value.includes('_')) phase.value = 'won';
   else if (wrongGuesses.value >= MAX_WRONG) phase.value = 'lost';
 }
 
 function resetGame() {
-  secretWord.value = '';
-  inputBuffer.value = '';
-  guessedLetters.value = new Set();
-  wrongGuesses.value = 0;
+  guessedLetters.clear();
   phase.value = 'input';
 }
 
 const handleKeydown = (e) => {
-  if (phase.value !== 'playing') return;
   const key = e.key.toUpperCase();
   if (key.length === 1 && /[A-Z]/.test(key)) guessLetter(key);
 };
 
 useEventListener(window, 'keydown', handleKeydown);
-
-const bodyVisible = computed(() => ({
-  head: wrongGuesses.value >= 1,
-  body: wrongGuesses.value >= 2,
-  leftArm: wrongGuesses.value >= 3,
-  rightArm: wrongGuesses.value >= 4,
-  leftLeg: wrongGuesses.value >= 5,
-  rightLeg: wrongGuesses.value >= 6,
-}));
 </script>
 
 <template>
@@ -93,9 +61,7 @@ const bodyVisible = computed(() => ({
       <div class="game-wrapper">
         <div class="left-section">
           <div class="panel-header">
-            <span class="pill">{{
-              phase === 'playing' || phase === 'won' || phase === 'lost' ? 'Player 2' : 'Player 1'
-            }}</span>
+            <span class="pill">{{ phase === 'input' ? 'Player 1' : 'Player 2' }}</span>
             <h1 class="game-title">Hangman</h1>
 
             <template v-if="phase === 'input'">
@@ -138,10 +104,7 @@ const bodyVisible = computed(() => ({
           <div v-if="phase !== 'input'" class="panel-divider"></div>
 
           <transition name="slide-up">
-            <div
-              v-if="phase === 'playing' || phase === 'won' || phase === 'lost'"
-              class="gallows-section"
-            >
+            <div v-if="phase !== 'input'" class="gallows-section">
               <svg class="gallows-svg" viewBox="0 0 220 230" fill="none">
                 <line
                   x1="20"
@@ -190,7 +153,7 @@ const bodyVisible = computed(() => ({
                 />
 
                 <circle
-                  v-if="bodyVisible.head"
+                  v-if="wrongGuesses >= 1"
                   cx="148"
                   cy="57"
                   r="19"
@@ -199,7 +162,7 @@ const bodyVisible = computed(() => ({
                   class="part"
                 />
                 <line
-                  v-if="bodyVisible.body"
+                  v-if="wrongGuesses >= 2"
                   x1="148"
                   y1="76"
                   x2="148"
@@ -210,7 +173,7 @@ const bodyVisible = computed(() => ({
                   class="part"
                 />
                 <line
-                  v-if="bodyVisible.leftArm"
+                  v-if="wrongGuesses >= 3"
                   x1="148"
                   y1="94"
                   x2="118"
@@ -221,7 +184,7 @@ const bodyVisible = computed(() => ({
                   class="part"
                 />
                 <line
-                  v-if="bodyVisible.rightArm"
+                  v-if="wrongGuesses >= 4"
                   x1="148"
                   y1="94"
                   x2="178"
@@ -232,7 +195,7 @@ const bodyVisible = computed(() => ({
                   class="part"
                 />
                 <line
-                  v-if="bodyVisible.leftLeg"
+                  v-if="wrongGuesses >= 5"
                   x1="148"
                   y1="138"
                   x2="122"
@@ -243,7 +206,7 @@ const bodyVisible = computed(() => ({
                   class="part"
                 />
                 <line
-                  v-if="bodyVisible.rightLeg"
+                  v-if="wrongGuesses >= 6"
                   x1="148"
                   y1="138"
                   x2="174"
@@ -280,7 +243,7 @@ const bodyVisible = computed(() => ({
               <h2 class="outcome-title">
                 {{ phase === 'won' ? 'You got it!' : 'Game Over' }}
               </h2>
-              <p class="outcome-word">{{ normalizedWord }}</p>
+              <p class="outcome-word">{{ secretWord }}</p>
               <button class="retry-btn" @click="resetGame">Play Again</button>
             </div>
           </div>
@@ -316,7 +279,7 @@ const bodyVisible = computed(() => ({
               :key="letter"
               class="key-btn"
               :class="{
-                correct: correctLetters.includes(letter),
+                correct: guessedLetters.has(letter) && secretWord.includes(letter),
                 wrong: wrongLetters.includes(letter),
               }"
               :disabled="guessedLetters.has(letter) || phase !== 'playing'"
