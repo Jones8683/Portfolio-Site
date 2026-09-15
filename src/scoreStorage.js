@@ -1,34 +1,27 @@
 import { useStorage } from '@vueuse/core';
 
 function hash(str) {
-  let a = 0x9e3779b9,
-    b = 0x85ebca6b;
+  let h1 = 0xdeadbeef,
+    h2 = 0x41c6ce57;
   for (let i = 0; i < str.length; i++) {
-    a ^= str.charCodeAt(i) * 0xcc9e2d51;
-    a = (a << 13) | (a >>> 19);
-    b ^= str.charCodeAt(i) * 0x1b873593;
-    b = (b << 15) | (b >>> 17);
+    const ch = str.charCodeAt(i);
+    h1 = Math.imul(h1 ^ ch, 2654435761);
+    h2 = Math.imul(h2 ^ ch, 1597334677);
   }
-  const h = ((a ^ b) >>> 0).toString(36);
-  return h.padStart(8, '0').slice(-8);
-}
-
-function createScoreSerializer(key) {
-  return {
-    read: (v) => {
-      if (!v || v.length < 9) return 0;
-      const h = v.slice(0, 8);
-      const n = parseInt(v.slice(8), 36);
-      if (isNaN(n) || h !== hash(key + n)) return 0;
-      return n;
-    },
-    write: (v) => {
-      const n = Math.max(0, Math.floor(v)) || 0;
-      return hash(key + n) + n.toString(36);
-    },
-  };
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(36);
 }
 
 export function useHighScore(key) {
-  return useStorage(key, 0, localStorage, { serializer: createScoreSerializer(key) });
+  const sign = (n) => `${n}.${hash(key + n)}`;
+  return useStorage(key, 0, localStorage, {
+    serializer: {
+      read: (v) => {
+        const n = parseInt(v, 10);
+        return n >= 0 && v === sign(n) ? n : 0;
+      },
+      write: (v) => sign(Math.max(0, Math.floor(v)) || 0),
+    },
+  });
 }
