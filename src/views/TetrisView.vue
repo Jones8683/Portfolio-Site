@@ -61,6 +61,9 @@ const keys = {
   softDrop: { down: false, timer: 0 },
 };
 
+const WHEEL_ROTATE_THRESHOLD = 40;
+const mouse = { x: null, active: false, wheelDelta: 0 };
+
 let hardDropEffect = {
   active: false,
   alpha: 0,
@@ -339,7 +342,7 @@ function playerMove(dir) {
   player.pos.x += dir;
   if (collide(arena, player)) {
     player.pos.x -= dir;
-    return;
+    return false;
   }
   player.pos.y++;
   if (collide(arena, player)) {
@@ -349,6 +352,27 @@ function playerMove(dir) {
     }
   }
   player.pos.y--;
+  return true;
+}
+
+function syncPieceToPointer() {
+  if (!mouse.active) return;
+  const rect = canvas.getBoundingClientRect();
+  const cursorCol = ((mouse.x - rect.left) / rect.width) * arena[0].length;
+  let minCol = Infinity;
+  let maxCol = -Infinity;
+  player.matrix.forEach((row) => {
+    row.forEach((value, x) => {
+      if (value !== 0) {
+        minCol = Math.min(minCol, x);
+        maxCol = Math.max(maxCol, x);
+      }
+    });
+  });
+  const width = maxCol - minCol + 1;
+  const targetX = Math.round(cursorCol - width / 2) - minCol;
+  const dir = Math.sign(targetX - player.pos.x);
+  while (player.pos.x !== targetX && playerMove(dir)) {}
 }
 
 function playerReset() {
@@ -365,7 +389,9 @@ function playerReset() {
     if (player.score > highScore.value) {
       highScore.value = player.score;
     }
+    return;
   }
+  syncPieceToPointer();
 }
 
 const KICKS_JLSTZ = {
@@ -558,6 +584,7 @@ function playerHold() {
   player.pos.x = ((arena[0].length / 2) | 0) - ((player.matrix[0].length / 2) | 0);
   player.rotState = 0;
   player.canHold = false;
+  syncPieceToPointer();
 }
 
 function togglePause() {
@@ -631,6 +658,7 @@ function update({ delta: deltaTime }) {
 
   handleHorizontalInput(keys.left, -1, deltaTime);
   handleHorizontalInput(keys.right, 1, deltaTime);
+  syncPieceToPointer();
   handleSoftDrop(deltaTime);
   handleGravityDrop(deltaTime);
   checkCollisionAndLand(deltaTime);
@@ -706,6 +734,7 @@ const handleKeydown = (event) => {
     return;
   }
   if (isPaused.value || !action) return;
+  mouse.active = false;
 
   const key = keys[action];
   if (key) {
@@ -733,9 +762,52 @@ const handleBlur = () => {
   }
 };
 
+const isMouseInputAllowed = () => !isGameOver.value && !isPaused.value;
+
+const handleMouseMove = (event) => {
+  if (event.clientX === mouse.x) return;
+  mouse.x = event.clientX;
+  mouse.active = true;
+  if (isMouseInputAllowed()) syncPieceToPointer();
+};
+
+const handleMouseLeave = () => {
+  mouse.active = false;
+  mouse.wheelDelta = 0;
+};
+
+const handleMouseDown = (event) => {
+  event.preventDefault();
+  if (!isMouseInputAllowed()) return;
+  mouse.active = true;
+  syncPieceToPointer();
+  if (event.button === 0) playerHardDrop();
+  else if (event.button === 1) playerRotate(1);
+  else if (event.button === 2) playerHold();
+};
+
+const handleWheel = (event) => {
+  event.preventDefault();
+  if (!isMouseInputAllowed()) return;
+  const delta = event.deltaMode === 0 ? event.deltaY : event.deltaY * 33;
+  if (Math.sign(delta) !== Math.sign(mouse.wheelDelta)) mouse.wheelDelta = 0;
+  mouse.wheelDelta += delta;
+  if (Math.abs(mouse.wheelDelta) < WHEEL_ROTATE_THRESHOLD) return;
+  playerRotate(Math.sign(mouse.wheelDelta));
+  mouse.wheelDelta = 0;
+  syncPieceToPointer();
+};
+
+const preventDefault = (event) => event.preventDefault();
+
 useEventListener(window, 'keydown', handleKeydown);
 useEventListener(window, 'keyup', handleKeyup);
 useEventListener(window, 'blur', handleBlur);
+useEventListener(gameCanvasRef, 'mousemove', handleMouseMove);
+useEventListener(gameCanvasRef, 'mouseleave', handleMouseLeave);
+useEventListener(gameCanvasRef, 'mousedown', handleMouseDown);
+useEventListener(gameCanvasRef, 'wheel', handleWheel, { passive: false });
+useEventListener(gameCanvasRef, 'contextmenu', preventDefault);
 
 onMounted(() => {
   canvas = gameCanvasRef.value;
@@ -811,6 +883,8 @@ onMounted(() => {
 }
 
 .game-canvas {
+  cursor: pointer;
+  user-select: none;
   background-color: #0d0d0d;
 }
 
