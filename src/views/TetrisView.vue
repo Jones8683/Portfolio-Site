@@ -1,6 +1,6 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
-import { useStorage, useEventListener } from '@vueuse/core';
+import { ref, onMounted } from 'vue';
+import { useStorage, useEventListener, useRafFn } from '@vueuse/core';
 import GameMobileMessage from '@/components/GameMobileMessage.vue';
 import GameControls from '@/components/GameControls.vue';
 import { createScoreSerializer } from '@/scoreStorage.js';
@@ -13,7 +13,6 @@ const isGameOver = ref(false);
 const isPaused = ref(false);
 
 let canvas, ctx, nextCtx, holdCtx;
-let animationId = null;
 let animationFrame = 0;
 
 const colors = [null, '#0DC2FF', '#3877FF', '#FF8E0D', '#FFE138', '#0DFF72', '#FF0D72', '#F538FF'];
@@ -37,7 +36,6 @@ const player = {
 
 let dropCounter = 0;
 let dropInterval = 1000;
-let lastTime = 0;
 let lockDelayCounter = 0;
 let lockMovesCounter = 0;
 const LOCK_DELAY_TIME = 500;
@@ -353,6 +351,7 @@ function playerReset() {
   player.rotState = 0;
   if (collide(arena, player)) {
     isGameOver.value = true;
+    pause();
     if (player.score > highScore.value) {
       highScore.value = player.score;
     }
@@ -554,10 +553,8 @@ function playerHold() {
 function togglePause() {
   if (isGameOver.value) return;
   isPaused.value = !isPaused.value;
-  if (!isPaused.value) {
-    lastTime = performance.now();
-    update(performance.now());
-  }
+  if (isPaused.value) pause();
+  else resume();
 }
 
 function handleHorizontalInput(keyCode, direction, deltaTime) {
@@ -607,10 +604,9 @@ function checkCollisionAndLand(deltaTime) {
   }
 }
 
-function update(time = 0) {
-  if (isGameOver.value || isPaused.value) return;
-  const deltaTime = time - lastTime;
-  lastTime = time;
+const { pause, resume } = useRafFn(update, { immediate: false });
+
+function update({ delta: deltaTime }) {
   animationFrame++;
 
   handleHorizontalInput(37, -1, deltaTime);
@@ -620,8 +616,6 @@ function update(time = 0) {
   checkCollisionAndLand(deltaTime);
 
   draw();
-  if (animationId) cancelAnimationFrame(animationId);
-  animationId = requestAnimationFrame(update);
 }
 
 function updateScore() {
@@ -655,8 +649,7 @@ function updateScore() {
 }
 
 function resetGame() {
-  if (animationId) cancelAnimationFrame(animationId);
-  animationId = null;
+  pause();
   animationFrame = 0;
 
   arena.forEach((row) => row.fill(0));
@@ -684,8 +677,7 @@ function resetGame() {
   isPaused.value = false;
   playerReset();
   draw();
-  lastTime = performance.now();
-  animationId = requestAnimationFrame(update);
+  resume();
 }
 
 const preventDefaultKeys = (event) => {
@@ -783,8 +775,6 @@ onMounted(() => {
   holdCtx.scale(25, 25);
   resetGame();
 });
-
-onUnmounted(() => cancelAnimationFrame(animationId));
 </script>
 
 <template>
