@@ -1,10 +1,10 @@
 <script setup>
 import { onMounted, onUnmounted, reactive, ref } from 'vue';
-import { useEventListener, useTimeoutFn } from '@vueuse/core';
+import { useEventListener, useRafFn, useTimeoutFn } from '@vueuse/core';
 import GameMobileMessage from '@/components/GameMobileMessage.vue';
 import GameControls from '@/components/GameControls.vue';
 
-let canvas, ctx, animationId;
+let canvas, ctx;
 const canvasEl = ref(null);
 const screen = ref('start');
 const isPaused = ref(false);
@@ -20,7 +20,6 @@ const STEP = 1000 / TARGET_FPS;
 
 let gameMode = 'cpu';
 let isResetting = false;
-let lastTs = 0;
 const { start: serveBall, stop: cancelServe } = useTimeoutFn(
   () => {
     isResetting = false;
@@ -95,7 +94,7 @@ function resetMatch() {
 function showStartScreen() {
   screen.value = 'start';
   cancelServe();
-  if (animationId) cancelAnimationFrame(animationId);
+  pause();
   resetMatch();
   drawStatic();
 }
@@ -108,9 +107,7 @@ function initGame(mode) {
   keys.w = keys.s = keys.ArrowUp = keys.ArrowDown = false;
   getAudioCtx();
   resetPositions();
-  lastTs = performance.now();
-  if (animationId) cancelAnimationFrame(animationId);
-  animationId = requestAnimationFrame(gameLoop);
+  resume();
 }
 
 function resetPositions() {
@@ -129,10 +126,8 @@ function resetPositions() {
 function togglePause() {
   if (screen.value !== 'game') return;
   isPaused.value = !isPaused.value;
-  if (!isPaused.value) {
-    lastTs = performance.now();
-    gameLoop();
-  }
+  if (isPaused.value) pause();
+  else resume();
 }
 
 function updatePaddles(dt) {
@@ -251,6 +246,7 @@ function scoreUpdate() {
     return;
   }
   screen.value = 'over';
+  pause();
   const rightWon = score.right >= WIN_SCORE;
   if (gameMode === 'cpu') winner.value = rightWon ? 'YOU WIN!' : 'COMPUTER WINS!';
   else winner.value = rightWon ? 'RIGHT PLAYER WINS!' : 'LEFT PLAYER WINS!';
@@ -344,15 +340,13 @@ function draw() {
   ctx.restore();
 }
 
-function gameLoop(ts = performance.now()) {
-  if (screen.value !== 'game' || isPaused.value) return;
-  const raw = ts - lastTs;
-  lastTs = ts;
-  const dt = Math.min(raw, 50) / STEP;
-  update(dt);
-  draw();
-  animationId = requestAnimationFrame(gameLoop);
-}
+const { pause, resume } = useRafFn(
+  ({ delta }) => {
+    update(Math.min(delta, 50) / STEP);
+    draw();
+  },
+  { immediate: false },
+);
 
 const handleKeyDown = (e) => {
   if (['ArrowUp', 'ArrowDown', 'Space'].includes(e.code)) e.preventDefault();
@@ -389,7 +383,6 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  if (animationId) cancelAnimationFrame(animationId);
   if (audioCtx && audioCtx.state !== 'closed') {
     audioCtx.close();
   }
