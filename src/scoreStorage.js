@@ -1,3 +1,5 @@
+import { useStorage } from '@vueuse/core';
+
 function hash(str) {
   let a = 0x9e3779b9,
     b = 0x85ebca6b;
@@ -11,7 +13,7 @@ function hash(str) {
   return h.padStart(8, '0').slice(-8);
 }
 
-export function createScoreSerializer(key) {
+function createScoreSerializer(key) {
   return {
     read: (v) => {
       if (!v || v.length < 9) return 0;
@@ -25,4 +27,8 @@ export function createScoreSerializer(key) {
       return hash(key + n) + n.toString(36);
     },
   };
+}
+
+export function useHighScore(key) {
+  return useStorage(key, 0, localStorage, { serializer: createScoreSerializer(key) });
 }

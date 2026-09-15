@@ -1,9 +1,9 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import { useStorage, useEventListener, useRafFn } from '@vueuse/core';
+import { useEventListener, useRafFn } from '@vueuse/core';
 import GameMobileMessage from '@/components/GameMobileMessage.vue';
 import GameControls from '@/components/GameControls.vue';
-import { createScoreSerializer } from '@/scoreStorage.js';
+import { useHighScore } from '@/scoreStorage.js';
 
 const gameCanvasRef = ref(null);
 const nextCanvasRef = ref(null);
@@ -19,9 +19,7 @@ const colors = [null, '#0DC2FF', '#3877FF', '#FF8E0D', '#FFE138', '#0DFF72', '#F
 
 const arena = createMatrix(12, 20);
 
-const highScore = useStorage('tetris-best-score', 0, localStorage, {
-  serializer: createScoreSerializer('tetris-best-score'),
-});
+const highScore = useHighScore('tetris-best-score');
 
 const player = {
   pos: { x: 0, y: 0 },

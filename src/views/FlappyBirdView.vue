@@ -1,13 +1,11 @@
 <script setup>
 import { onMounted, ref } from 'vue';
-import { useStorage, useEventListener, useRafFn } from '@vueuse/core';
+import { useEventListener, useRafFn } from '@vueuse/core';
 import GameMobileMessage from '@/components/GameMobileMessage.vue';
 import GameControls from '@/components/GameControls.vue';
-import { createScoreSerializer } from '@/scoreStorage.js';
+import { useHighScore } from '@/scoreStorage.js';
 
-const highScore = useStorage('flappy-best-score', 0, localStorage, {
-  serializer: createScoreSerializer('flappy-best-score'),
-});
+const highScore = useHighScore('flappy-best-score');
 
 const canvasRef = ref(null);
 const scoreRef = ref(0);
