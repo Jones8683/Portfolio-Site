@@ -10,15 +10,15 @@ function hash(str) {
   }
   h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
   h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
-  return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(36);
+  return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(36).padStart(8, '0').slice(-8);
 }
 
 export function useHighScore(key) {
-  const sign = (n) => `${n}.${hash(key + n)}`;
+  const sign = (n) => hash(key + n) + n.toString(36);
   return useStorage(key, 0, localStorage, {
     serializer: {
       read: (v) => {
-        const n = parseInt(v, 10);
+        const n = parseInt(v.slice(8), 36);
         return n >= 0 && v === sign(n) ? n : 0;
       },
       write: (v) => sign(Math.max(0, Math.floor(v)) || 0),
