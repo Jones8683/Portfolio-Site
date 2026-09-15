@@ -43,10 +43,22 @@ let isLanded = false;
 const DAS = 170;
 const ARR = 33;
 const SOFT_DROP_ARR = 30;
+const KEY_ACTIONS = {
+  ArrowLeft: 'left',
+  KeyA: 'left',
+  ArrowRight: 'right',
+  KeyD: 'right',
+  ArrowDown: 'softDrop',
+  KeyS: 'softDrop',
+  ArrowUp: 'rotate',
+  KeyW: 'rotate',
+  Space: 'hardDrop',
+  KeyC: 'hold',
+};
 const keys = {
-  37: { down: false, timer: 0 },
-  39: { down: false, timer: 0 },
-  40: { down: false, timer: 0 },
+  left: { down: false, timer: 0 },
+  right: { down: false, timer: 0 },
+  softDrop: { down: false, timer: 0 },
 };
 
 let hardDropEffect = {
@@ -555,26 +567,36 @@ function togglePause() {
   else resume();
 }
 
-function handleHorizontalInput(keyCode, direction, deltaTime) {
-  if (!keys[keyCode].down) return;
-  keys[keyCode].timer += deltaTime;
-  if (keys[keyCode].timer > DAS) {
-    while (keys[keyCode].timer > DAS + ARR) {
+function releaseKey(key) {
+  key.down = false;
+  key.timer = 0;
+}
+
+function softDrop() {
+  if (playerDrop()) {
+    player.score += 1;
+    updateScore();
+  }
+}
+
+function handleHorizontalInput(key, direction, deltaTime) {
+  if (!key.down) return;
+  key.timer += deltaTime;
+  if (key.timer > DAS) {
+    while (key.timer > DAS + ARR) {
       playerMove(direction);
-      keys[keyCode].timer -= ARR;
+      key.timer -= ARR;
     }
   }
 }
 
 function handleSoftDrop(deltaTime) {
-  if (!keys[40].down) return;
-  keys[40].timer += deltaTime;
-  while (keys[40].timer > SOFT_DROP_ARR) {
-    if (playerDrop()) {
-      player.score += 1;
-      updateScore();
-    }
-    keys[40].timer -= SOFT_DROP_ARR;
+  const key = keys.softDrop;
+  if (!key.down) return;
+  key.timer += deltaTime;
+  while (key.timer > SOFT_DROP_ARR) {
+    softDrop();
+    key.timer -= SOFT_DROP_ARR;
   }
 }
 
@@ -607,8 +629,8 @@ const { pause, resume } = useRafFn(update, { immediate: false });
 function update({ delta: deltaTime }) {
   animationFrame++;
 
-  handleHorizontalInput(37, -1, deltaTime);
-  handleHorizontalInput(39, 1, deltaTime);
+  handleHorizontalInput(keys.left, -1, deltaTime);
+  handleHorizontalInput(keys.right, 1, deltaTime);
   handleSoftDrop(deltaTime);
   handleGravityDrop(deltaTime);
   checkCollisionAndLand(deltaTime);
@@ -662,12 +684,7 @@ function resetGame() {
   lockMovesCounter = 0;
   isLanded = false;
   hardDropEffect = { active: false, alpha: 0, trails: [] };
-  keys[37].down = false;
-  keys[37].timer = 0;
-  keys[39].down = false;
-  keys[39].timer = 0;
-  keys[40].down = false;
-  keys[40].timer = 0;
+  Object.values(keys).forEach(releaseKey);
 
   drawPreview(holdCtx, null);
   updateScore();
@@ -678,79 +695,36 @@ function resetGame() {
   resume();
 }
 
-const preventDefaultKeys = (event) => {
-  const defaultKeys = [
-    'Space',
-    'ArrowUp',
-    'ArrowDown',
-    'ArrowLeft',
-    'ArrowRight',
-    'KeyW',
-    'KeyA',
-    'KeyS',
-    'KeyD',
-  ];
-  if (defaultKeys.includes(event.code)) event.preventDefault();
-};
-
-const handleMovementKey = (event, isLeft, isRight, isDown) => {
-  if (event.repeat) return;
-  const targetKey = isLeft ? 37 : isRight ? 39 : 40;
-  keys[targetKey].down = true;
-  keys[targetKey].timer = 0;
-  if (isLeft) playerMove(-1);
-  if (isRight) playerMove(1);
-  if (isDown && playerDrop()) {
-    player.score += 1;
-    updateScore();
-  }
-};
-
-const handleActionKey = (event, isUp) => {
-  if (isUp) playerRotate(1);
-  else if (event.keyCode === 32) playerHardDrop();
-  else if (event.keyCode === 67) playerHold();
-};
-
 const handleKeydown = (event) => {
-  preventDefaultKeys(event);
+  if (event.ctrlKey || event.metaKey || event.altKey) return;
+  const action = KEY_ACTIONS[event.code];
+  if (action) event.preventDefault();
   if (isGameOver.value) return;
-  if (event.keyCode === 27 || event.key === 'p' || event.key === 'P') {
+  if (event.code === 'Escape' || event.code === 'KeyP') {
     event.preventDefault();
     togglePause();
     return;
   }
-  if (isPaused.value) return;
+  if (isPaused.value || !action) return;
 
-  const isLeft = event.keyCode === 37 || event.keyCode === 65;
-  const isRight = event.keyCode === 39 || event.keyCode === 68;
-  const isDown = event.keyCode === 40 || event.keyCode === 83;
-  const isUp = event.keyCode === 38 || event.keyCode === 87;
-
-  if (isLeft || isRight || isDown) {
-    handleMovementKey(event, isLeft, isRight, isDown);
-    return;
+  const key = keys[action];
+  if (key) {
+    if (event.repeat) return;
+    key.down = true;
+    key.timer = 0;
   }
-  handleActionKey(event, isUp);
+
+  if (action === 'left') playerMove(-1);
+  else if (action === 'right') playerMove(1);
+  else if (action === 'softDrop') softDrop();
+  else if (action === 'rotate') playerRotate(1);
+  else if (action === 'hardDrop') playerHardDrop();
+  else if (action === 'hold') playerHold();
 };
 
 const handleKeyup = (event) => {
-  const isLeft = event.keyCode === 37 || event.keyCode === 65;
-  const isRight = event.keyCode === 39 || event.keyCode === 68;
-  const isDown = event.keyCode === 40 || event.keyCode === 83;
-
-  if (isLeft) {
-    keys[37].down = false;
-    keys[37].timer = 0;
-  }
-  if (isRight) {
-    keys[39].down = false;
-    keys[39].timer = 0;
-  }
-  if (isDown) {
-    keys[40].down = false;
-    keys[40].timer = 0;
-  }
+  const key = keys[KEY_ACTIONS[event.code]];
+  if (key) releaseKey(key);
 };
 
 const handleBlur = () => {
