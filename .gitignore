@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.idea/
+.env*
+.claude
+.DS_Store
+*.log
+Thumbs.db

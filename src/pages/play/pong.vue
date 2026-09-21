@@ -1,0 +1,464 @@
+<script setup>
+import { onUnmounted, ref, useTemplateRef, watch } from 'vue';
+import {
+  onKeyStroke,
+  useDevicePixelRatio,
+  useMagicKeys,
+  useRafFn,
+  useTimeoutFn,
+  useWindowFocus,
+} from '@vueuse/core';
+import GamePage from '@/components/GamePage.vue';
+import GameControls from '@/components/GameControls.vue';
+
+definePage({ meta: { title: 'Pong' } });
+
+let ctx;
+const canvasRef = useTemplateRef('canvas');
+const { pixelRatio } = useDevicePixelRatio();
+const screen = ref('start');
+const isPaused = ref(false);
+const winner = ref('');
+const score = ref({ left: 0, right: 0 });
+
+const W = 700,
+  H = 500;
+const WIN_SCORE = 7;
+const PADDLE_W = 12;
+const PADDLE_H = 85;
+const BALL_R = 7;
+const TARGET_FPS = 60;
+const STEP = 1000 / TARGET_FPS;
+
+let gameMode = 'cpu';
+let isResetting = false;
+const { start: serveBall, stop: cancelServe } = useTimeoutFn(
+  () => {
+    isResetting = false;
+    const dir = Math.random() > 0.5 ? 1 : -1;
+    ball.dx = dir * ball.speed;
+    ball.dy = (Math.random() * 2 - 1) * ball.speed * 0.5;
+  },
+  1000,
+  { immediate: false },
+);
+
+const leftPaddle = { x: 20, y: 210, speed: 10.5, aiSpeed: 5.7, flash: 0 };
+const rightPaddle = { x: 668, y: 210, speed: 10.5, flash: 0 };
+const ball = { x: 350, y: 250, dx: 0, dy: 0, speed: 4, baseSpeed: 4 };
+
+let trail = [];
+let particles = [];
+let shakeFrames = 0;
+let shakeIntensity = 0;
+
+let audioCtx = null;
+
+function getAudioCtx() {
+  if (!audioCtx && typeof AudioContext !== 'undefined') {
+    audioCtx = new AudioContext();
+  }
+  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+
+function beep(freq, duration, type = 'square', vol = 0.15) {
+  const ac = getAudioCtx();
+  if (!ac) return;
+  const osc = ac.createOscillator();
+  const gain = ac.createGain();
+  osc.connect(gain);
+  gain.connect(ac.destination);
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, ac.currentTime);
+  gain.gain.setValueAtTime(vol, ac.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + duration);
+  osc.start(ac.currentTime);
+  osc.stop(ac.currentTime + duration);
+}
+
+function spawnParticles(x, y, color) {
+  for (let i = 0; i < 18; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const speed = 1.5 + Math.random() * 4;
+    particles.push({
+      x,
+      y,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      life: 1,
+      decay: 0.03 + Math.random() * 0.04,
+      size: 2 + Math.random() * 3,
+      color,
+    });
+  }
+}
+
+const { w, s, ArrowUp, ArrowDown } = useMagicKeys({
+  passive: false,
+  onEventFired: (e) => {
+    if (['ArrowUp', 'ArrowDown', 'Space'].includes(e.code)) e.preventDefault();
+  },
+});
+
+function resetMatch() {
+  score.value.left = 0;
+  score.value.right = 0;
+  trail = [];
+  particles = [];
+}
+
+function showStartScreen() {
+  screen.value = 'start';
+  cancelServe();
+  pause();
+  resetMatch();
+  drawStatic();
+}
+
+function initGame(mode) {
+  gameMode = mode;
+  screen.value = 'game';
+  isPaused.value = false;
+  resetMatch();
+  getAudioCtx();
+  resetPositions();
+  resume();
+}
+
+function resetPositions() {
+  ball.x = W / 2;
+  ball.y = H / 2;
+  ball.speed = ball.baseSpeed;
+  ball.dx = 0;
+  ball.dy = 0;
+  leftPaddle.y = H / 2 - PADDLE_H / 2;
+  rightPaddle.y = H / 2 - PADDLE_H / 2;
+  trail = [];
+  isResetting = true;
+  serveBall();
+}
+
+function togglePause() {
+  if (screen.value !== 'game') return;
+  isPaused.value = !isPaused.value;
+  if (isPaused.value) pause();
+  else resume();
+}
+
+function updatePaddles(dt) {
+  if (ArrowUp.value) rightPaddle.y -= rightPaddle.speed * dt;
+  if (ArrowDown.value) rightPaddle.y += rightPaddle.speed * dt;
+
+  if (gameMode === 'cpu') {
+    const target = ball.y - PADDLE_H / 2;
+    let move = (target - leftPaddle.y) * 0.18;
+    move = Math.max(-leftPaddle.aiSpeed, Math.min(leftPaddle.aiSpeed, move));
+    leftPaddle.y += move * dt;
+  } else {
+    if (w.value) leftPaddle.y -= leftPaddle.speed * dt;
+    if (s.value) leftPaddle.y += leftPaddle.speed * dt;
+  }
+
+  leftPaddle.y = Math.max(0, Math.min(H - PADDLE_H, leftPaddle.y));
+  rightPaddle.y = Math.max(0, Math.min(H - PADDLE_H, rightPaddle.y));
+}
+
+function updateBallWallCollision() {
+  if (ball.y - BALL_R < 0) {
+    ball.y = BALL_R;
+    ball.dy *= -1;
+    beep(220, 0.07);
+    shakeFrames = 4;
+    shakeIntensity = 2;
+  } else if (ball.y + BALL_R > H) {
+    ball.y = H - BALL_R;
+    ball.dy *= -1;
+    beep(220, 0.07);
+    shakeFrames = 4;
+    shakeIntensity = 2;
+  }
+}
+
+function updateBallPaddleCollision() {
+  const paddle = ball.x < W / 2 ? leftPaddle : rightPaddle;
+  if (!collision(ball, paddle)) return;
+
+  const cp = Math.max(-1, Math.min(1, (ball.y - (paddle.y + PADDLE_H / 2)) / (PADDLE_H / 2)));
+  const angle = (Math.PI / 4) * cp;
+  const dir = ball.x < W / 2 ? 1 : -1;
+  ball.speed = Math.min(ball.speed + 0.45, 16);
+  ball.dx = dir * ball.speed * Math.cos(angle);
+  ball.dy = ball.speed * Math.sin(angle);
+  if (paddle === leftPaddle) {
+    ball.x = leftPaddle.x + PADDLE_W + BALL_R;
+    leftPaddle.flash = 8;
+  } else {
+    ball.x = rightPaddle.x - BALL_R;
+    rightPaddle.flash = 8;
+  }
+  beep(300 + Math.abs(cp) * 100, 0.07, 'square');
+  shakeFrames = 6;
+  shakeIntensity = 3.5;
+}
+
+function updateBallScoring() {
+  if (ball.x < 0) {
+    spawnParticles(0, ball.y, 'rgba(255,100,100,0.9)');
+    score.value.right++;
+    beep(140, 0.35, 'sawtooth', 0.2);
+    shakeFrames = 14;
+    shakeIntensity = 7;
+    scoreUpdate();
+  } else if (ball.x > W) {
+    spawnParticles(W, ball.y, 'rgba(100,200,255,0.9)');
+    score.value.left++;
+    beep(140, 0.35, 'sawtooth', 0.2);
+    shakeFrames = 14;
+    shakeIntensity = 7;
+    scoreUpdate();
+  }
+}
+
+function updateParticles(dt) {
+  for (let i = particles.length - 1; i >= 0; i--) {
+    const p = particles[i];
+    p.x += p.vx * dt;
+    p.y += p.vy * dt;
+    p.vx *= Math.pow(0.92, dt);
+    p.vy *= Math.pow(0.92, dt);
+    p.life -= p.decay * dt;
+    if (p.life <= 0) particles.splice(i, 1);
+  }
+}
+
+function update(dt) {
+  if (isPaused.value) return;
+
+  updatePaddles(dt);
+
+  if (leftPaddle.flash > 0) leftPaddle.flash -= dt;
+  if (rightPaddle.flash > 0) rightPaddle.flash -= dt;
+  if (shakeFrames > 0) shakeFrames -= dt;
+
+  if (!isResetting) {
+    trail.push({ x: ball.x, y: ball.y });
+    if (trail.length > 10) trail.shift();
+
+    ball.x += ball.dx * dt;
+    ball.y += ball.dy * dt;
+
+    updateBallWallCollision();
+    updateBallPaddleCollision();
+    updateBallScoring();
+  }
+
+  updateParticles(dt);
+}
+
+function scoreUpdate() {
+  if (score.value.left < WIN_SCORE && score.value.right < WIN_SCORE) {
+    resetPositions();
+    return;
+  }
+  screen.value = 'over';
+  pause();
+  const rightWon = score.value.right >= WIN_SCORE;
+  if (gameMode === 'cpu') winner.value = rightWon ? 'YOU WIN!' : 'COMPUTER WINS!';
+  else winner.value = rightWon ? 'RIGHT PLAYER WINS!' : 'LEFT PLAYER WINS!';
+}
+
+function collision(b, p) {
+  return (
+    b.x + BALL_R > p.x &&
+    b.x - BALL_R < p.x + PADDLE_W &&
+    b.y + BALL_R > p.y &&
+    b.y - BALL_R < p.y + PADDLE_H
+  );
+}
+
+function drawStatic() {
+  ctx.fillStyle = '#0d0d0d';
+  ctx.fillRect(0, 0, W, H);
+  drawCenterLine();
+}
+
+function drawCenterLine() {
+  const segH = 18;
+  const segGap = 12;
+  const totalSegs = Math.floor(H / (segH + segGap));
+  const startY = (H - totalSegs * (segH + segGap) + segGap) / 2;
+  ctx.fillStyle = 'rgba(255,255,255,0.07)';
+  for (let i = 0; i < totalSegs; i++) {
+    const y = startY + i * (segH + segGap);
+    ctx.beginPath();
+    ctx.roundRect(W / 2 - 1.5, y, 3, segH, 2);
+    ctx.fill();
+  }
+}
+
+function draw() {
+  const sx = shakeFrames > 0 ? (Math.random() - 0.5) * shakeIntensity : 0;
+  const sy = shakeFrames > 0 ? (Math.random() - 0.5) * shakeIntensity : 0;
+
+  ctx.save();
+  ctx.translate(sx, sy);
+
+  ctx.fillStyle = '#0d0d0d';
+  ctx.fillRect(-10, -10, W + 20, H + 20);
+
+  drawCenterLine();
+
+  if (trail.length > 1) {
+    for (let i = 1; i < trail.length; i++) {
+      const frac = i / trail.length;
+      ctx.beginPath();
+      ctx.moveTo(trail[i - 1].x, trail[i - 1].y);
+      ctx.lineTo(trail[i].x, trail[i].y);
+      ctx.strokeStyle = `rgba(255,255,255,${frac * 0.22})`;
+      ctx.lineWidth = frac * BALL_R * 1.4;
+      ctx.lineCap = 'round';
+      ctx.stroke();
+    }
+  }
+
+  for (const p of particles) {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+    ctx.fillStyle = p.color.replace('0.9', String(p.life * 0.9));
+    ctx.fill();
+  }
+
+  const drawPaddle = (paddle) => {
+    const isFlashing = paddle.flash > 0;
+    ctx.save();
+    if (isFlashing) {
+      ctx.shadowColor = 'white';
+      ctx.shadowBlur = 24;
+    }
+    ctx.fillStyle = isFlashing
+      ? `rgba(255,255,255,${0.7 + 0.3 * (paddle.flash / 8)})`
+      : 'rgba(255,255,255,0.9)';
+    ctx.beginPath();
+    ctx.roundRect(paddle.x, paddle.y, PADDLE_W, PADDLE_H, 5);
+    ctx.fill();
+    ctx.restore();
+  };
+
+  drawPaddle(leftPaddle);
+  drawPaddle(rightPaddle);
+
+  ctx.fillStyle = 'white';
+  ctx.beginPath();
+  ctx.arc(ball.x, ball.y, BALL_R, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.restore();
+}
+
+const { pause, resume } = useRafFn(
+  ({ delta }) => {
+    update(Math.min(delta, 50) / STEP);
+    draw();
+  },
+  { immediate: false },
+);
+
+onKeyStroke(['Escape', 'p', 'P'], (e) => {
+  e.preventDefault();
+  togglePause();
+});
+watch(useWindowFocus(), (focused) => {
+  if (!focused && !isPaused.value) togglePause();
+});
+
+watch(
+  canvasRef,
+  (el) => {
+    if (!el) return;
+    ctx = el.getContext('2d');
+    el.width = W * pixelRatio.value;
+    el.height = H * pixelRatio.value;
+    el.style.width = W + 'px';
+    el.style.height = H + 'px';
+    ctx.scale(pixelRatio.value, pixelRatio.value);
+    drawStatic();
+  },
+  { flush: 'post' },
+);
+
+onUnmounted(() => {
+  if (audioCtx && audioCtx.state !== 'closed') {
+    audioCtx.close();
+  }
+});
+</script>
+
+<template>
+  <GamePage>
+    <div class="game-wrapper">
+      <div class="left-section">
+        <canvas ref="canvas"></canvas>
+        <div v-if="screen === 'start'" class="overlay-msg">
+          <h2 class="menu-title">PONG</h2>
+          <button class="menu-btn" @click="initGame('cpu')">1 PLAYER</button>
+          <button class="menu-btn" @click="initGame('pvp')">2 PLAYERS</button>
+        </div>
+        <div v-else-if="screen === 'over'" class="overlay-msg">
+          <h2 class="menu-title">GAME OVER</h2>
+          <div class="winner">{{ winner }}</div>
+          <button class="menu-btn" @click="showStartScreen">MENU</button>
+        </div>
+        <div v-else-if="isPaused" class="overlay-msg">
+          <h2 class="menu-title">PAUSED</h2>
+        </div>
+      </div>
+
+      <div class="right-section">
+        <h1 class="game-title">Pong</h1>
+        <div class="info-box score-box">
+          <div class="label score-label">Score</div>
+          <div class="value score-value">{{ score.left }} - {{ score.right }}</div>
+        </div>
+        <GameControls
+          :controls="[
+            { action: 'Left Paddle', key: ['W', 'S'] },
+            { action: 'Right Paddle', key: ['↑', '↓'] },
+            { action: 'Pause', key: 'Esc' },
+          ]"
+        />
+      </div>
+    </div>
+  </GamePage>
+</template>
+
+<style scoped>
+.left-section {
+  width: 724px;
+  height: 524px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.right-section {
+  width: 220px;
+}
+
+canvas {
+  background-color: #0d0d0d;
+  border-radius: 8px;
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.5);
+  border: 1px solid #333;
+}
+
+.winner {
+  color: #94a3b8;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.score-box {
+  min-height: 100px;
+}
+</style>

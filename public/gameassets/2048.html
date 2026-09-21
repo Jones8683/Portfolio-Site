@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>2048</title>
+    <style>
+      @font-face {
+        font-family: 'Satoshi';
+        font-weight: 700;
+        font-display: swap;
+        src: url('/fonts/satoshi-700.woff2') format('woff2');
+      }
+
+      :root {
+        --cell: 106.25px;
+        --gap: 15px;
+        --step: calc(var(--cell) + var(--gap));
+      }
+
+      body {
+        margin: 0;
+        display: grid;
+        place-items: center;
+        min-height: 100dvh;
+        overflow: hidden;
+        background: #faf8ef;
+        color: #776e65;
+        font-family: 'Satoshi', 'Helvetica Neue', Arial, sans-serif;
+        font-weight: 700;
+        user-select: none;
+        touch-action: none;
+      }
+
+      .game {
+        position: relative;
+        width: 500px;
+        height: 500px;
+        padding: var(--gap);
+        box-sizing: border-box;
+        border-radius: 6px;
+        background: #bbada0;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(4, var(--cell));
+        gap: var(--gap);
+      }
+
+      .grid div {
+        height: var(--cell);
+        border-radius: 3px;
+        background: rgba(238, 228, 218, 0.35);
+      }
+
+      .tile {
+        position: absolute;
+        top: var(--gap);
+        left: var(--gap);
+        width: var(--cell);
+        height: var(--cell);
+        transform: translate(calc(var(--x) * var(--step)), calc(var(--y) * var(--step)));
+        transition: transform 100ms ease-in-out;
+      }
+
+      .tile div {
+        height: 100%;
+        line-height: var(--cell);
+        text-align: center;
+        border-radius: 3px;
+        font-size: 55px;
+        background: #eee4da;
+      }
+
+      .tile-4 div {
+        background: #ede0c8;
+      }
+
+      .tile-8 div {
+        color: #f9f6f2;
+        background: #f2b179;
+      }
+
+      .tile-16 div {
+        color: #f9f6f2;
+        background: #f59563;
+      }
+
+      .tile-32 div {
+        color: #f9f6f2;
+        background: #f67c5f;
+      }
+
+      .tile-64 div {
+        color: #f9f6f2;
+        background: #f65e3b;
+      }
+
+      .tile-128 div {
+        color: #f9f6f2;
+        background: #edcf72;
+        box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.24);
+        font-size: 45px;
+      }
+
+      .tile-256 div {
+        color: #f9f6f2;
+        background: #edcc61;
+        box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.32);
+        font-size: 45px;
+      }
+
+      .tile-512 div {
+        color: #f9f6f2;
+        background: #edc850;
+        box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.4);
+        font-size: 45px;
+      }
+
+      .tile-1024 div {
+        color: #f9f6f2;
+        background: #edc53f;
+        box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.48);
+        font-size: 35px;
+      }
+
+      .tile-2048 div {
+        color: #f9f6f2;
+        background: #edc22e;
+        box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.56);
+        font-size: 35px;
+      }
+
+      .tile-super div {
+        color: #f9f6f2;
+        background: #3c3a32;
+        font-size: 30px;
+      }
+
+      .new div {
+        animation: appear 200ms ease 100ms backwards;
+      }
+
+      .merged div {
+        animation: pop 200ms ease 100ms backwards;
+      }
+
+      .message {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        display: none;
+        place-content: center;
+        gap: 40px;
+        text-align: center;
+        background: rgba(238, 228, 218, 0.5);
+        animation: fade-in 300ms ease 400ms both;
+      }
+
+      .message.over,
+      .message.won {
+        display: grid;
+      }
+
+      .message.won {
+        color: #f9f6f2;
+        background: rgba(237, 194, 46, 0.5);
+      }
+
+      .message p {
+        margin: 0;
+        font-size: 60px;
+      }
+
+      .message button {
+        height: 40px;
+        padding: 0 20px;
+        margin: 0 4px;
+        border: 0;
+        border-radius: 3px;
+        color: #f9f6f2;
+        background: #8f7a66;
+        font: inherit;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.15s ease;
+      }
+
+      .message button:hover {
+        background: #9f8a76;
+      }
+
+      .message button:active {
+        background: #7f6a56;
+      }
+
+      .keep {
+        display: none;
+      }
+
+      .won .keep {
+        display: inline-block;
+      }
+
+      @keyframes fade-in {
+        from {
+          opacity: 0;
+        }
+      }
+
+      @keyframes appear {
+        from {
+          opacity: 0;
+          transform: scale(0);
+        }
+      }
+
+      @keyframes pop {
+        from {
+          transform: scale(0);
+        }
+        50% {
+          transform: scale(1.2);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="game">
+      <div class="message">
+        <p></p>
+        <div>
+          <button class="keep">Keep going</button>
+          <button class="retry">Try again</button>
+        </div>
+      </div>
+      <div class="grid">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+      <div class="tiles"></div>
+    </div>
+
+    <script>
+      const SIZE = 4;
+      const tilesEl = document.querySelector('.tiles');
+      const messageEl = document.querySelector('.message');
+      const messageText = messageEl.querySelector('p');
+
+      const VECTORS = {
+        ArrowUp: [0, -1],
+        ArrowRight: [1, 0],
+        ArrowDown: [0, 1],
+        ArrowLeft: [-1, 0],
+      };
+      const ALIASES = { w: 'ArrowUp', d: 'ArrowRight', s: 'ArrowDown', a: 'ArrowLeft' };
+
+      let grid;
+      let score;
+      let over;
+      let won;
+      let keepPlaying;
+
+      const within = ({ x, y }) => x >= 0 && x < SIZE && y >= 0 && y < SIZE;
+      const tileAt = (cell) => (within(cell) ? grid[cell.x][cell.y] : null);
+      const tiles = () => grid.flat().filter(Boolean);
+      const terminated = () => over || (won && !keepPlaying);
+
+      const emptyCells = () =>
+        grid.flatMap((column, x) => column.flatMap((tile, y) => (tile ? [] : [{ x, y }])));
+
+      const matchesAvailable = () =>
+        tiles().some((tile) =>
+          Object.values(VECTORS).some(
+            ([dx, dy]) => tileAt({ x: tile.x + dx, y: tile.y + dy })?.value === tile.value,
+          ),
+        );
+
+      function addRandomTile() {
+        const cells = emptyCells();
+        if (!cells.length) return;
+        const { x, y } = cells[Math.floor(Math.random() * cells.length)];
+        grid[x][y] = { x, y, value: Math.random() < 0.9 ? 2 : 4, previous: null, mergedFrom: null };
+      }
+
+      function setup() {
+        grid = Array.from({ length: SIZE }, () => Array(SIZE).fill(null));
+        score = 0;
+        over = false;
+        won = false;
+        keepPlaying = false;
+        messageEl.className = 'message';
+        addRandomTile();
+        addRandomTile();
+        render();
+      }
+
+      function move(key) {
+        if (terminated()) return;
+        const [dx, dy] = VECTORS[key];
+        const range = [...Array(SIZE).keys()];
+        const xs = dx === 1 ? range.toReversed() : range;
+        const ys = dy === 1 ? range.toReversed() : range;
+        let moved = false;
+
+        for (const tile of tiles()) {
+          tile.mergedFrom = null;
+          tile.previous = { x: tile.x, y: tile.y };
+        }
+
+        for (const x of xs) {
+          for (const y of ys) {
+            const tile = grid[x][y];
+            if (!tile) continue;
+
+            let farthest = { x, y };
+            let next = { x: x + dx, y: y + dy };
+            while (within(next) && !grid[next.x][next.y]) {
+              farthest = next;
+              next = { x: next.x + dx, y: next.y + dy };
+            }
+
+            const target = tileAt(next);
+            grid[x][y] = null;
+            if (target && target.value === tile.value && !target.mergedFrom) {
+              grid[next.x][next.y] = {
+                ...next,
+                value: tile.value * 2,
+                previous: null,
+                mergedFrom: [tile, target],
+              };
+              Object.assign(tile, next);
+              score += tile.value * 2;
+              if (tile.value * 2 === 2048) won = true;
+            } else {
+              grid[farthest.x][farthest.y] = tile;
+              Object.assign(tile, farthest);
+            }
+            if (tile.x !== x || tile.y !== y) moved = true;
+          }
+        }
+
+        if (!moved) return;
+        addRandomTile();
+        if (!emptyCells().length && !matchesAvailable()) over = true;
+        render();
+      }
+
+      function place(el, { x, y }) {
+        el.style.setProperty('--x', x);
+        el.style.setProperty('--y', y);
+      }
+
+      function addTile(tile) {
+        const el = document.createElement('div');
+        const inner = document.createElement('div');
+        el.className = `tile tile-${tile.value > 2048 ? 'super' : tile.value}`;
+        inner.textContent = tile.value;
+        el.append(inner);
+        tilesEl.append(el);
+
+        if (tile.previous) {
+          place(el, tile.previous);
+          requestAnimationFrame(() => place(el, tile));
+        } else {
+          place(el, tile);
+          el.classList.add(tile.mergedFrom ? 'merged' : 'new');
+          tile.mergedFrom?.forEach(addTile);
+        }
+      }
+
+      function render() {
+        requestAnimationFrame(() => {
+          tilesEl.replaceChildren();
+          tiles().forEach(addTile);
+          window.parent.postMessage({ type: '2048-update', score }, '*');
+          if (over) {
+            messageEl.classList.add('over');
+            messageText.textContent = 'Game over!';
+          } else if (won && !keepPlaying) {
+            messageEl.classList.add('won');
+            messageText.textContent = 'You win!';
+          }
+        });
+      }
+
+      document.addEventListener('keydown', (event) => {
+        if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+        const key = VECTORS[event.key] ? event.key : ALIASES[event.key.toLowerCase()];
+        if (key) {
+          event.preventDefault();
+          move(key);
+        } else if (event.key.toLowerCase() === 'r') {
+          setup();
+        }
+      });
+
+      let touchStart = null;
+      document.addEventListener(
+        'touchstart',
+        ({ touches }) => {
+          touchStart =
+            touches.length === 1 ? { x: touches[0].clientX, y: touches[0].clientY } : null;
+        },
+        { passive: true },
+      );
+      document.addEventListener('touchend', ({ touches, changedTouches }) => {
+        if (!touchStart || touches.length) return;
+        const dx = changedTouches[0].clientX - touchStart.x;
+        const dy = changedTouches[0].clientY - touchStart.y;
+        touchStart = null;
+        if (Math.max(Math.abs(dx), Math.abs(dy)) < 10) return;
+        const horizontal = Math.abs(dx) > Math.abs(dy);
+        move(horizontal ? (dx > 0 ? 'ArrowRight' : 'ArrowLeft') : dy > 0 ? 'ArrowDown' : 'ArrowUp');
+      });
+
+      document.querySelector('.retry').addEventListener('click', setup);
+      document.querySelector('.keep').addEventListener('click', () => {
+        keepPlaying = true;
+        messageEl.className = 'message';
+      });
+
+      setup();
+    </script>
+  </body>
+</html>
