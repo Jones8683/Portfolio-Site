@@ -75,7 +75,7 @@ const games = [
 }
 
 .arcade-card {
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--color-surface);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
   overflow: hidden;

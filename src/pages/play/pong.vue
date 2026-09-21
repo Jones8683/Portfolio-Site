@@ -453,7 +453,7 @@ canvas {
 }
 
 .winner {
-  color: #94a3b8;
+  color: var(--color-muted);
   margin-bottom: 20px;
   font-size: 14px;
 }

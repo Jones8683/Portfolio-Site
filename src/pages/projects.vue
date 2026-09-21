@@ -179,7 +179,7 @@ const projects = [
 }
 
 .project-desc {
-  color: #94a3b8;
+  color: var(--color-muted);
   font-size: 0.92rem;
   line-height: 1.5;
   transition: color 0.3s ease;
@@ -206,7 +206,7 @@ const projects = [
 .project-row:hover .project-arrow {
   opacity: 1;
   transform: translateX(0);
-  color: lightskyblue;
+  color: var(--color-accent);
 }
 
 @keyframes pull-up {

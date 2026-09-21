@@ -349,12 +349,12 @@ const gridStyle = computed(() => ({
 }
 
 .time-label {
-  color: #94a3b8;
+  color: var(--color-muted);
   margin-bottom: 4px;
 }
 
 .time-value {
-  color: #94a3b8;
+  color: var(--color-muted);
   font-size: 24px;
 }
 </style>

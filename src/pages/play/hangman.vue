@@ -315,7 +315,7 @@ onKeyStroke(
   font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: #94a3b8;
+  color: var(--color-muted);
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.08);
   padding: 4px 10px;
