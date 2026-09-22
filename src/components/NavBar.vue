@@ -255,8 +255,8 @@ onMounted(updateHeaderState);
   padding: 6px 14px;
   font-size: 0.85rem;
   color: rgba(255, 255, 255, 0.8);
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--color-glass);
+  border: 1px solid var(--color-hairline);
   border-radius: 10px;
   transition:
     background-color 0.3s ease,

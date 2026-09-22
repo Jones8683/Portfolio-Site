@@ -47,7 +47,7 @@ const isMobile = useMediaQuery('(max-width: 850px)');
   position: relative;
   padding: 12px;
   background: #1a1a1a;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--color-hairline);
   border-radius: 16px;
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
 }
@@ -78,8 +78,8 @@ const isMobile = useMediaQuery('(max-width: 850px)');
   align-items: center;
   justify-content: center;
   padding: 10px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--color-glass);
+  border: 1px solid var(--color-hairline);
   border-radius: 12px;
 }
 
@@ -104,7 +104,7 @@ const isMobile = useMediaQuery('(max-width: 850px)');
 
 .score-label {
   margin-bottom: 4px;
-  color: #ffd700;
+  color: var(--color-gold);
 }
 
 .high-score-label {
@@ -126,7 +126,7 @@ const isMobile = useMediaQuery('(max-width: 850px)');
 
 .high-score-value {
   font-size: 24px;
-  color: #ffd700;
+  color: var(--color-gold);
   text-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
 }
 
@@ -134,7 +134,7 @@ const isMobile = useMediaQuery('(max-width: 850px)');
   width: 100%;
   height: 1px;
   margin: 8px 0;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--color-hairline);
 }
 
 .overlay-msg {
@@ -158,8 +158,8 @@ const isMobile = useMediaQuery('(max-width: 850px)');
 .menu-btn {
   padding: 10px 20px;
   font-weight: 700;
-  color: black;
-  background: white;
+  color: #000000;
+  background: #ffffff;
   border: 0;
   border-radius: 4px;
   cursor: pointer;

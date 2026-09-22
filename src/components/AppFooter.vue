@@ -19,12 +19,12 @@
   width: 90%;
   max-width: 1200px;
   height: 1px;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--color-hairline);
   margin-bottom: 20px;
 }
 
 .main-footer p {
-  color: #64748b;
+  color: var(--color-subtle);
   font-family: var(--font-ui);
   font-size: 0.85rem;
   letter-spacing: 0.5px;

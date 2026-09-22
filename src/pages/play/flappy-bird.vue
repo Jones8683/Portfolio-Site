@@ -17,7 +17,7 @@ const highScore = useStorage('flappy-bird-best-score', 0);
 const canvasRef = useTemplateRef('canvas');
 const { pixelRatio } = useDevicePixelRatio();
 const score = ref(0);
-const gameState = ref('idle');
+const status = ref('start');
 const isPaused = ref(false);
 
 const W = 360,
@@ -102,7 +102,7 @@ const CLOUDS = [
 ];
 
 function drawClouds() {
-  ctx.fillStyle = '#fff';
+  ctx.fillStyle = '#ffffff';
   for (const c of CLOUDS) {
     const wrap = W + c.w + 20;
     const x = ((c.ox - (cloudOff % wrap) + wrap * 2) % wrap) - c.w - 20;
@@ -179,7 +179,7 @@ function drawCity() {
             const wx = startX + col * (ww + gx);
             const wy = by + 8 + row * (wh + gy);
             const lit = (row * 3 + col * 7 + b.x) % 5 !== 0;
-            ctx.fillStyle = lit ? 'rgba(255, 240, 180, 0.55)' : 'rgba(0,0,0,0.2)';
+            ctx.fillStyle = lit ? 'rgba(255, 240, 180, 0.55)' : 'rgba(0, 0, 0, 0.2)';
             ctx.fillRect(wx, wy, ww, wh);
           }
         }
@@ -270,7 +270,7 @@ function drawBird() {
   ctx.fill();
   ctx.stroke();
 
-  const wingY = gameState.value === 'dead' ? 0 : Math.sin(wingFrame * 0.15) * 3.5;
+  const wingY = status.value === 'over' ? 0 : Math.sin(wingFrame * 0.15) * 3.5;
   ctx.fillStyle = '#d98c10';
   ctx.strokeStyle = '#a06000';
   ctx.lineWidth = 1.5;
@@ -284,18 +284,18 @@ function drawBird() {
   ctx.ellipse(2, 3, 7.5, 5.5, 0, 0, Math.PI * 2);
   ctx.fill();
 
-  ctx.fillStyle = '#fff';
-  ctx.strokeStyle = '#bbb';
+  ctx.fillStyle = '#ffffff';
+  ctx.strokeStyle = '#bbbbbb';
   ctx.lineWidth = 1;
   ctx.beginPath();
   ctx.arc(6, -4, 5, 0, Math.PI * 2);
   ctx.fill();
   ctx.stroke();
-  ctx.fillStyle = '#111';
+  ctx.fillStyle = '#111111';
   ctx.beginPath();
   ctx.arc(7.5, -3.5, 2.8, 0, Math.PI * 2);
   ctx.fill();
-  ctx.fillStyle = '#fff';
+  ctx.fillStyle = '#ffffff';
   ctx.beginPath();
   ctx.arc(8.5, -4.8, 1.1, 0, Math.PI * 2);
   ctx.fill();
@@ -321,30 +321,30 @@ function drawBird() {
 }
 
 function drawScore() {
-  txt(String(score.value), W / 2, 48, 46, '#fff', '#3a2a10');
+  txt(String(score.value), W / 2, 48, 46, '#ffffff', '#3a2a10');
 }
 
 function drawIdle() {
   const a = 0.8 + Math.sin(wingFrame * 0.05) * 0.2;
   ctx.globalAlpha = a;
-  txt('Tap or press SPACE', W / 2, GROUND_Y / 2 + 60, 16, '#fff', '#2a1a00');
+  txt('Tap or press SPACE', W / 2, GROUND_Y / 2 + 60, 16, '#ffffff', '#2a1a00');
   ctx.globalAlpha = 1;
 }
 
 function drawDead() {
   const flash = Math.max(0, 0.55 - deathTimer * 0.027);
   if (flash > 0) {
-    ctx.fillStyle = `rgba(255,255,255,${flash})`;
+    ctx.fillStyle = `rgba(255, 255, 255, ${flash})`;
     ctx.fillRect(0, 0, W, H);
   }
   if (deathTimer < 20) return;
 
-  txt('GAME OVER', W / 2, GROUND_Y / 2 - 10, 32, '#fff', '#3a2a10');
+  txt('GAME OVER', W / 2, GROUND_Y / 2 - 10, 32, '#ffffff', '#3a2a10');
 
   if (deathTimer > 50) {
     const a = 0.7 + Math.sin(wingFrame * 0.07) * 0.3;
     ctx.globalAlpha = a;
-    txt('Tap to retry', W / 2, GROUND_Y / 2 + 36, 16, '#fff', '#3a2a10');
+    txt('Tap to retry', W / 2, GROUND_Y / 2 + 36, 16, '#ffffff', '#3a2a10');
     ctx.globalAlpha = 1;
   }
 }
@@ -357,20 +357,20 @@ function render() {
   drawPipes();
   drawGround();
   drawBird();
-  if (gameState.value === 'idle') drawIdle();
-  if (gameState.value === 'dead') drawDead();
+  if (status.value === 'start') drawIdle();
+  if (status.value === 'over') drawDead();
 }
 
 function frame({ delta, timestamp: ts }) {
   const dt = Math.min(delta, 50) / STEP;
   wingFrame++;
 
-  if (gameState.value === 'idle') {
+  if (status.value === 'start') {
     bird.y = GROUND_Y / 2 + Math.sin(wingFrame * 0.03) * 8;
     cloudOff += 0.15;
   }
 
-  if (gameState.value === 'playing') {
+  if (status.value === 'playing') {
     groundOff += PIPE_SPEED * 1.1 * dt;
     cityOff += PIPE_SPEED * 0.18 * dt;
     cloudOff += PIPE_SPEED * 0.04 * dt;
@@ -386,10 +386,10 @@ function frame({ delta, timestamp: ts }) {
       }
     }
     pipes = pipes.filter((p) => p.x + PIPE_W > -10);
-    if (hitTest()) gameState.value = 'dead';
+    if (hitTest()) status.value = 'over';
   }
 
-  if (gameState.value === 'dead') {
+  if (status.value === 'over') {
     deathTimer++;
     bird.vy = Math.min(bird.vy + GRAVITY * 1.6 * dt, MAX_FALL);
     bird.y = Math.min(bird.y + bird.vy * dt, GROUND_Y - 13);
@@ -402,7 +402,7 @@ function frame({ delta, timestamp: ts }) {
 const { pause, resume } = useRafFn(frame, { immediate: false });
 
 function togglePause() {
-  if (gameState.value !== 'playing') return;
+  if (status.value !== 'playing') return;
   isPaused.value = !isPaused.value;
   if (isPaused.value) {
     pauseTs = performance.now();
@@ -415,16 +415,16 @@ function togglePause() {
 
 function jump() {
   if (isPaused.value) return;
-  if (gameState.value === 'idle') {
-    gameState.value = 'playing';
+  if (status.value === 'start') {
+    status.value = 'playing';
     bird.vy = JUMP_VY;
     lastPipeTs = performance.now();
     wingFrame = 0;
-  } else if (gameState.value === 'playing') {
+  } else if (status.value === 'playing') {
     bird.vy = JUMP_VY;
   } else if (deathTimer > 50) {
     initState();
-    gameState.value = 'idle';
+    status.value = 'start';
     wingFrame = 0;
   }
 }

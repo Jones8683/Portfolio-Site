@@ -18,13 +18,13 @@ const nextCanvasRef = useTemplateRef('nextCanvas');
 const holdCanvasRef = useTemplateRef('holdCanvas');
 const { pixelRatio } = useDevicePixelRatio();
 const score = ref(0);
-const isGameOver = ref(false);
+const status = ref('playing');
 const isPaused = ref(false);
 
 let ctx, nextCtx, holdCtx;
 let animationFrame = 0;
 
-const colors = [null, '#0DC2FF', '#3877FF', '#FF8E0D', '#FFE138', '#0DFF72', '#FF0D72', '#F538FF'];
+const colors = [null, '#0dc2ff', '#3877ff', '#ff8e0d', '#ffe138', '#0dff72', '#ff0d72', '#f538ff'];
 
 const arena = createMatrix(12, 20);
 
@@ -317,7 +317,7 @@ function playerReset() {
   drawPreview(nextCtx, player.next);
   centerPiece();
   if (collide(player)) {
-    isGameOver.value = true;
+    status.value = 'over';
     pause();
   }
 }
@@ -450,7 +450,7 @@ function playerHold() {
 }
 
 function togglePause() {
-  if (isGameOver.value) return;
+  if (status.value === 'over') return;
   isPaused.value = !isPaused.value;
   if (isPaused.value) pause();
   else resume();
@@ -549,14 +549,14 @@ function resetGame() {
 
   drawPreview(holdCtx, null);
   updateScore();
-  isGameOver.value = false;
+  status.value = 'playing';
   isPaused.value = false;
   playerReset();
   draw();
   resume();
 }
 
-const isPlaying = () => !isGameOver.value && !isPaused.value;
+const isPlaying = () => status.value === 'playing' && !isPaused.value;
 
 const { ArrowLeft, KeyA, ArrowRight, KeyD, ArrowDown, KeyS } = useMagicKeys({
   passive: false,
@@ -616,7 +616,7 @@ watch(
     <div class="game-wrapper">
       <div class="left-section">
         <canvas ref="gameCanvas" class="game-canvas"></canvas>
-        <div v-if="isGameOver" class="overlay-msg">
+        <div v-if="status === 'over'" class="overlay-msg">
           <h2 class="menu-title">GAME OVER</h2>
           <button class="retry-btn" @click="resetGame">PLAY AGAIN</button>
         </div>

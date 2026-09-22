@@ -26,7 +26,7 @@ const DIFFICULTIES = {
 };
 
 const grid = ref([]);
-const gameStatus = ref('start');
+const status = ref('start');
 const currentDiff = ref(DIFFICULTIES.medium);
 const timer = ref(0);
 const { resume: startTimer, pause: stopTimer } = useIntervalFn(() => timer.value++, 1000, {
@@ -77,13 +77,13 @@ function resetBoard() {
 }
 
 function resetToStart() {
-  gameStatus.value = 'start';
+  status.value = 'start';
   resetBoard();
 }
 
 function initGame(difficultyKey) {
   currentDiff.value = DIFFICULTIES[difficultyKey];
-  gameStatus.value = 'playing';
+  status.value = 'playing';
   resetBoard();
 }
 
@@ -115,7 +115,7 @@ function calculateNumbers() {
 }
 
 function handleLeftClick(cell) {
-  if (gameStatus.value !== 'playing' || isPaused.value || cell.isRevealed || cell.isFlagged) return;
+  if (status.value !== 'playing' || isPaused.value || cell.isRevealed || cell.isFlagged) return;
   if (isFirstClick) {
     placeMines(cell.x, cell.y);
     isFirstClick = false;
@@ -129,7 +129,7 @@ function handleLeftClick(cell) {
 }
 
 function handleRightClick(cell) {
-  if (gameStatus.value !== 'playing' || isPaused.value || cell.isRevealed) return;
+  if (status.value !== 'playing' || isPaused.value || cell.isRevealed) return;
   cell.isFlagged = !cell.isFlagged;
   flagsPlaced.value += cell.isFlagged ? 1 : -1;
 }
@@ -159,7 +159,7 @@ function checkWin() {
 
 function gameOver(won) {
   stopTimer();
-  gameStatus.value = won ? 'won' : 'lost';
+  status.value = won ? 'won' : 'lost';
   if (!won)
     grid.value.flat().forEach((c) => {
       if (c.isMine) c.isRevealed = true;
@@ -167,7 +167,7 @@ function gameOver(won) {
 }
 
 function togglePause() {
-  if (gameStatus.value !== 'playing') return;
+  if (status.value !== 'playing') return;
   isPaused.value = !isPaused.value;
   if (isPaused.value) stopTimer();
   else startTimer();
@@ -217,7 +217,7 @@ const gridStyle = computed(() => ({
           </div>
         </div>
 
-        <div v-if="gameStatus === 'start'" class="overlay-msg">
+        <div v-if="status === 'start'" class="overlay-msg">
           <h2 class="menu-title">MINESWEEPER</h2>
           <div class="difficulty-row">
             <button class="retry-btn" @click="initGame('easy')">EASY</button>
@@ -226,9 +226,9 @@ const gridStyle = computed(() => ({
           </div>
         </div>
 
-        <div v-if="gameStatus === 'won' || gameStatus === 'lost'" class="overlay-msg">
-          <h2 class="menu-title result-title" :class="{ won: gameStatus === 'won' }">
-            {{ gameStatus === 'won' ? 'YOU WIN!' : 'GAME OVER' }}
+        <div v-if="status === 'won' || status === 'lost'" class="overlay-msg">
+          <h2 class="menu-title result-title" :class="{ won: status === 'won' }">
+            {{ status === 'won' ? 'YOU WIN!' : 'GAME OVER' }}
           </h2>
           <button class="retry-btn" @click="resetToStart">PLAY AGAIN</button>
         </div>
@@ -280,23 +280,23 @@ const gridStyle = computed(() => ({
 }
 
 .grid-frame {
-  background: #444;
+  background: #444444;
   padding: 10px;
   border-radius: 4px;
-  border: 1px solid #333;
+  border: 1px solid #333333;
 }
 
 .grid {
   display: grid;
   gap: 0;
-  background: #666;
-  border: 2px solid #666;
+  background: #666666;
+  border: 2px solid #666666;
 }
 
 .cell {
   width: 26px;
   height: 26px;
-  background: #333;
+  background: #333333;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -310,8 +310,8 @@ const gridStyle = computed(() => ({
 }
 
 .cell.revealed {
-  background: #222;
-  border: 1px solid #333;
+  background: #222222;
+  border: 1px solid #333333;
 }
 
 .cell.mine {
@@ -333,19 +333,19 @@ const gridStyle = computed(() => ({
 }
 
 .mines-label {
-  color: #ffd700;
+  color: var(--color-gold);
   margin-bottom: 4px;
 }
 
 .mines-value {
-  color: #ffd700;
+  color: var(--color-gold);
   font-size: 38px;
 }
 
 .mines-divider {
   width: 100%;
   height: 1px;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--color-hairline);
   margin: 12px 0;
 }
 

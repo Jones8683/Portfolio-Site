@@ -16,7 +16,7 @@ definePage({ meta: { title: 'Pong' } });
 let ctx;
 const canvasRef = useTemplateRef('canvas');
 const { pixelRatio } = useDevicePixelRatio();
-const screen = ref('start');
+const status = ref('start');
 const isPaused = ref(false);
 const winner = ref('');
 const score = ref({ left: 0, right: 0 });
@@ -111,7 +111,7 @@ function resetMatch() {
 }
 
 function showStartScreen() {
-  screen.value = 'start';
+  status.value = 'start';
   cancelServe();
   pause();
   resetMatch();
@@ -120,7 +120,7 @@ function showStartScreen() {
 
 function initGame(mode) {
   gameMode = mode;
-  screen.value = 'game';
+  status.value = 'playing';
   isPaused.value = false;
   resetMatch();
   getAudioCtx();
@@ -142,7 +142,7 @@ function resetPositions() {
 }
 
 function togglePause() {
-  if (screen.value !== 'game') return;
+  if (status.value !== 'playing') return;
   isPaused.value = !isPaused.value;
   if (isPaused.value) pause();
   else resume();
@@ -255,7 +255,7 @@ function scoreUpdate() {
     resetPositions();
     return;
   }
-  screen.value = 'over';
+  status.value = 'over';
   pause();
   const rightWon = score.value.right >= WIN_SCORE;
   if (gameMode === 'cpu') winner.value = rightWon ? 'YOU WIN!' : 'COMPUTER WINS!';
@@ -282,7 +282,7 @@ function drawCenterLine() {
   const segGap = 12;
   const totalSegs = Math.floor(H / (segH + segGap));
   const startY = (H - totalSegs * (segH + segGap) + segGap) / 2;
-  ctx.fillStyle = 'rgba(255,255,255,0.07)';
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.07)';
   for (let i = 0; i < totalSegs; i++) {
     const y = startY + i * (segH + segGap);
     ctx.beginPath();
@@ -306,7 +306,7 @@ function draw() {
       ctx.beginPath();
       ctx.moveTo(trail[i - 1].x, trail[i - 1].y);
       ctx.lineTo(trail[i].x, trail[i].y);
-      ctx.strokeStyle = `rgba(255,255,255,${frac * 0.22})`;
+      ctx.strokeStyle = `rgba(255, 255, 255, ${frac * 0.22})`;
       ctx.lineWidth = frac * BALL_R * 1.4;
       ctx.lineCap = 'round';
       ctx.stroke();
@@ -316,7 +316,7 @@ function draw() {
   for (const p of particles) {
     ctx.beginPath();
     ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(${p.rgb},${p.life * 0.9})`;
+    ctx.fillStyle = `rgba(${p.rgb}, ${p.life * 0.9})`;
     ctx.fill();
   }
 
@@ -324,12 +324,12 @@ function draw() {
     const isFlashing = paddle.flash > 0;
     ctx.save();
     if (isFlashing) {
-      ctx.shadowColor = 'white';
+      ctx.shadowColor = '#ffffff';
       ctx.shadowBlur = 24;
     }
     ctx.fillStyle = isFlashing
-      ? `rgba(255,255,255,${0.7 + 0.3 * (paddle.flash / 8)})`
-      : 'rgba(255,255,255,0.9)';
+      ? `rgba(255, 255, 255, ${0.7 + 0.3 * (paddle.flash / 8)})`
+      : 'rgba(255, 255, 255, 0.9)';
     ctx.beginPath();
     ctx.roundRect(paddle.x, paddle.y, PADDLE_W, PADDLE_H, 5);
     ctx.fill();
@@ -339,7 +339,7 @@ function draw() {
   drawPaddle(leftPaddle);
   drawPaddle(rightPaddle);
 
-  ctx.fillStyle = 'white';
+  ctx.fillStyle = '#ffffff';
   ctx.beginPath();
   ctx.arc(ball.x, ball.y, BALL_R, 0, Math.PI * 2);
   ctx.fill();
@@ -390,12 +390,12 @@ onUnmounted(() => {
     <div class="game-wrapper">
       <div class="left-section">
         <canvas ref="canvas"></canvas>
-        <div v-if="screen === 'start'" class="overlay-msg">
+        <div v-if="status === 'start'" class="overlay-msg">
           <h2 class="menu-title">PONG</h2>
           <button class="menu-btn" @click="initGame('cpu')">1 PLAYER</button>
           <button class="menu-btn" @click="initGame('pvp')">2 PLAYERS</button>
         </div>
-        <div v-else-if="screen === 'over'" class="overlay-msg">
+        <div v-else-if="status === 'over'" class="overlay-msg">
           <h2 class="menu-title">GAME OVER</h2>
           <div class="winner">{{ winner }}</div>
           <button class="menu-btn" @click="showStartScreen">MENU</button>
@@ -440,7 +440,7 @@ canvas {
   background-color: #0d0d0d;
   border-radius: 8px;
   box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.5);
-  border: 1px solid #333;
+  border: 1px solid #333333;
 }
 
 .winner {

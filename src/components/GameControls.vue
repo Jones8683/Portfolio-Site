@@ -31,7 +31,7 @@ defineProps({
   justify-content: space-between;
   align-items: center;
   font-size: 11px;
-  color: #64748b;
+  color: var(--color-subtle);
   margin-bottom: 6px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
   padding-bottom: 4px;
@@ -47,9 +47,9 @@ defineProps({
 }
 
 .key {
-  color: #fff;
+  color: #ffffff;
   font-weight: 700;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--color-hairline);
   padding: 2px 6px;
   border-radius: 4px;
   font-size: 10px;

@@ -73,7 +73,7 @@ const games = [
 
 .arcade-card {
   background: var(--color-surface);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--color-glass-border);
   border-radius: 16px;
   overflow: hidden;
   display: flex;
@@ -104,7 +104,7 @@ const games = [
 }
 
 .arcade-name {
-  color: white;
+  color: #ffffff;
   font-size: 1.6rem;
 }
 
@@ -118,7 +118,7 @@ const games = [
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 1px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid var(--color-glass);
   transition:
     background-color 0.3s ease,
     color 0.3s ease;
@@ -131,7 +131,7 @@ const games = [
 
 .red-btn:hover {
   background: #ff4757;
-  color: white;
+  color: #ffffff;
 }
 
 .blue-btn {
@@ -141,17 +141,17 @@ const games = [
 
 .blue-btn:hover {
   background: #00a2ff;
-  color: white;
+  color: #ffffff;
 }
 
 .yellow-btn {
   background: rgba(255, 215, 0, 0.05);
-  color: #ffd700;
+  color: var(--color-gold);
 }
 
 .yellow-btn:hover {
-  background: #ffd700;
-  color: black;
+  background: var(--color-gold);
+  color: #000000;
 }
 
 .green-btn {
@@ -161,7 +161,7 @@ const games = [
 
 .green-btn:hover {
   background: #2ed573;
-  color: white;
+  color: #ffffff;
 }
 
 @media (max-width: 900px) {

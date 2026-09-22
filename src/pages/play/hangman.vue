@@ -6,7 +6,7 @@ import GameControls from '@/components/GameControls.vue';
 
 definePage({ meta: { title: 'Hangman' } });
 
-const phase = ref('input');
+const status = ref('start');
 const secretWord = ref('');
 const inputBuffer = ref('');
 const guessedLetters = ref(new Set());
@@ -32,19 +32,19 @@ function submitWord() {
   if (!w) return;
   secretWord.value = w;
   inputBuffer.value = '';
-  phase.value = 'playing';
+  status.value = 'playing';
 }
 
 function guessLetter(letter) {
-  if (phase.value !== 'playing' || guessedLetters.value.has(letter)) return;
+  if (status.value !== 'playing' || guessedLetters.value.has(letter)) return;
   guessedLetters.value.add(letter);
-  if (!maskedWord.value.includes('_')) phase.value = 'won';
-  else if (wrongGuesses.value >= MAX_WRONG) phase.value = 'lost';
+  if (!maskedWord.value.includes('_')) status.value = 'won';
+  else if (wrongGuesses.value >= MAX_WRONG) status.value = 'lost';
 }
 
 function resetGame() {
   guessedLetters.value.clear();
-  phase.value = 'input';
+  status.value = 'start';
 }
 
 onKeyStroke(
@@ -58,10 +58,10 @@ onKeyStroke(
     <div class="game-wrapper">
       <div class="left-section">
         <div class="panel-header">
-          <span class="pill">{{ phase === 'input' ? 'Player 1' : 'Player 2' }}</span>
+          <span class="pill">{{ status === 'start' ? 'Player 1' : 'Player 2' }}</span>
           <h1 class="game-title">Hangman</h1>
 
-          <template v-if="phase === 'input'">
+          <template v-if="status === 'start'">
             <p class="subtitle">Enter a secret word for Player 2 to guess</p>
             <div class="word-input-row">
               <input
@@ -97,17 +97,17 @@ onKeyStroke(
           </template>
         </div>
 
-        <div v-if="phase !== 'input'" class="panel-divider"></div>
+        <div v-if="status !== 'start'" class="panel-divider"></div>
 
         <Transition name="slide-up">
-          <div v-if="phase !== 'input'" class="gallows-section">
+          <div v-if="status !== 'start'" class="gallows-section">
             <svg class="gallows-svg" viewBox="0 0 220 230" fill="none">
               <line
                 x1="20"
                 y1="222"
                 x2="200"
                 y2="222"
-                stroke="rgba(255,255,255,0.12)"
+                stroke="rgba(255, 255, 255, 0.12)"
                 stroke-width="3"
                 stroke-linecap="round"
               />
@@ -116,7 +116,7 @@ onKeyStroke(
                 y1="222"
                 x2="58"
                 y2="12"
-                stroke="rgba(255,255,255,0.12)"
+                stroke="rgba(255, 255, 255, 0.12)"
                 stroke-width="3"
                 stroke-linecap="round"
               />
@@ -125,7 +125,7 @@ onKeyStroke(
                 y1="12"
                 x2="148"
                 y2="12"
-                stroke="rgba(255,255,255,0.12)"
+                stroke="rgba(255, 255, 255, 0.12)"
                 stroke-width="3"
                 stroke-linecap="round"
               />
@@ -134,7 +134,7 @@ onKeyStroke(
                 y1="12"
                 x2="148"
                 y2="38"
-                stroke="rgba(255,255,255,0.12)"
+                stroke="rgba(255, 255, 255, 0.12)"
                 stroke-width="3"
                 stroke-linecap="round"
               />
@@ -143,7 +143,7 @@ onKeyStroke(
                 y1="50"
                 x2="90"
                 y2="12"
-                stroke="rgba(255,255,255,0.05)"
+                stroke="rgba(255, 255, 255, 0.05)"
                 stroke-width="2"
                 stroke-linecap="round"
               />
@@ -153,7 +153,7 @@ onKeyStroke(
                 cx="148"
                 cy="57"
                 r="19"
-                stroke="white"
+                stroke="#ffffff"
                 stroke-width="2.5"
                 class="part"
               />
@@ -163,7 +163,7 @@ onKeyStroke(
                 y1="76"
                 x2="148"
                 y2="138"
-                stroke="white"
+                stroke="#ffffff"
                 stroke-width="2.5"
                 stroke-linecap="round"
                 class="part"
@@ -174,7 +174,7 @@ onKeyStroke(
                 y1="94"
                 x2="118"
                 y2="122"
-                stroke="white"
+                stroke="#ffffff"
                 stroke-width="2.5"
                 stroke-linecap="round"
                 class="part"
@@ -185,7 +185,7 @@ onKeyStroke(
                 y1="94"
                 x2="178"
                 y2="122"
-                stroke="white"
+                stroke="#ffffff"
                 stroke-width="2.5"
                 stroke-linecap="round"
                 class="part"
@@ -196,7 +196,7 @@ onKeyStroke(
                 y1="138"
                 x2="122"
                 y2="178"
-                stroke="white"
+                stroke="#ffffff"
                 stroke-width="2.5"
                 stroke-linecap="round"
                 class="part"
@@ -207,7 +207,7 @@ onKeyStroke(
                 y1="138"
                 x2="174"
                 y2="178"
-                stroke="white"
+                stroke="#ffffff"
                 stroke-width="2.5"
                 stroke-linecap="round"
                 class="part"
@@ -231,13 +231,13 @@ onKeyStroke(
           </div>
         </Transition>
 
-        <div v-if="phase === 'won' || phase === 'lost'" class="outcome-overlay">
+        <div v-if="status === 'won' || status === 'lost'" class="outcome-overlay">
           <div class="outcome-inner">
             <div class="outcome-emoji">
-              {{ phase === 'won' ? '🎉' : '💀' }}
+              {{ status === 'won' ? '🎉' : '💀' }}
             </div>
             <h2 class="menu-title outcome-title">
-              {{ phase === 'won' ? 'YOU GOT IT!' : 'GAME OVER' }}
+              {{ status === 'won' ? 'YOU GOT IT!' : 'GAME OVER' }}
             </h2>
             <p class="outcome-word">{{ secretWord }}</p>
             <button class="retry-btn" @click="resetGame">PLAY AGAIN</button>
@@ -245,7 +245,7 @@ onKeyStroke(
         </div>
       </div>
 
-      <div class="right-section" :class="{ faded: phase === 'input' }">
+      <div class="right-section" :class="{ faded: status === 'start' }">
         <div class="info-box danger-box">
           <div class="label red-lbl">Wrong Guesses</div>
           <div class="pips-row">
@@ -278,7 +278,7 @@ onKeyStroke(
               correct: guessedLetters.has(letter) && secretWord.includes(letter),
               wrong: wrongLetters.includes(letter),
             }"
-            :disabled="guessedLetters.has(letter) || phase !== 'playing'"
+            :disabled="guessedLetters.has(letter) || status !== 'playing'"
             @click="guessLetter(letter)"
           >
             {{ letter }}
@@ -316,7 +316,7 @@ onKeyStroke(
   text-transform: uppercase;
   color: var(--color-muted);
   background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--color-glass-border);
   padding: 4px 10px;
   border-radius: 100px;
   display: inline-block;
@@ -329,7 +329,7 @@ onKeyStroke(
 }
 
 .subtitle {
-  color: #64748b;
+  color: var(--color-subtle);
   font-size: 13px;
   margin: 0 0 14px;
 }
@@ -342,10 +342,10 @@ onKeyStroke(
 
 .word-input {
   flex: 1;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--color-glass);
+  border: 1px solid var(--color-hairline);
   border-radius: 10px;
-  color: white;
+  color: #ffffff;
   font-size: 16px;
   font-weight: 700;
   padding: 11px 14px;
@@ -369,8 +369,8 @@ onKeyStroke(
 }
 
 .submit-btn {
-  background: white;
-  color: black;
+  background: #ffffff;
+  color: #000000;
   border: none;
   border-radius: 10px;
   font-size: 13px;
@@ -396,7 +396,7 @@ onKeyStroke(
 }
 
 .hint-text {
-  color: #2d3748;
+  color: var(--color-faint);
   font-size: 11px;
   margin: 0;
 }
@@ -443,7 +443,7 @@ onKeyStroke(
   height: 42px;
   font-size: 24px;
   font-weight: 900;
-  color: #2d3748;
+  color: var(--color-faint);
   border-bottom: 2px solid rgba(255, 255, 255, 0.12);
   transition:
     color 0.2s,
@@ -451,7 +451,7 @@ onKeyStroke(
 }
 
 .letter-slot.revealed {
-  color: white;
+  color: #ffffff;
   border-bottom-color: rgba(255, 255, 255, 0.35);
 }
 
@@ -486,7 +486,7 @@ onKeyStroke(
 }
 
 .outcome-word {
-  color: #64748b;
+  color: var(--color-subtle);
   font-size: 11px;
   letter-spacing: 3px;
   text-transform: uppercase;
@@ -537,8 +537,8 @@ onKeyStroke(
   width: 11px;
   height: 11px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--color-hairline);
+  border: 1px solid var(--color-glass-border);
   transition:
     background 0.25s,
     box-shadow 0.25s;
@@ -553,7 +553,7 @@ onKeyStroke(
 .wrong-count {
   font-size: 42px;
   font-weight: 900;
-  color: white;
+  color: #ffffff;
   line-height: 1;
 }
 
@@ -571,7 +571,7 @@ onKeyStroke(
 }
 
 .no-letters {
-  color: #2d3748;
+  color: var(--color-faint);
   font-size: 13px;
 }
 
@@ -595,9 +595,9 @@ onKeyStroke(
 .key-btn {
   aspect-ratio: 1;
   background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--color-glass-border);
   border-radius: 6px;
-  color: white;
+  color: #ffffff;
   font-size: 12px;
   font-weight: 700;
   cursor: pointer;
@@ -620,7 +620,7 @@ onKeyStroke(
 .key-btn.wrong {
   background: transparent;
   border-color: rgba(255, 255, 255, 0.03);
-  color: #2d3748;
+  color: var(--color-faint);
   cursor: default;
 }
 

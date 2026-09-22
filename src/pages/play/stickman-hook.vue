@@ -70,7 +70,7 @@ const { enter: enterFullscreen } = useFullscreen(gameIframe);
 .game-iframe {
   width: 880px;
   height: 550px;
-  background: #000;
+  background: #000000;
 }
 
 .glass-btn {
@@ -80,8 +80,8 @@ const { enter: enterFullscreen } = useFullscreen(gameIframe);
   font-size: 0.75rem;
   font-weight: 600;
   padding: 14px 16px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--color-glass);
+  border: 1px solid var(--color-hairline);
   border-radius: 10px;
   transition:
     background-color 0.3s ease,
@@ -96,7 +96,7 @@ const { enter: enterFullscreen } = useFullscreen(gameIframe);
 }
 
 .glass-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--color-hairline);
   border-color: rgba(255, 255, 255, 0.2);
   transform: translateY(-2px);
 }

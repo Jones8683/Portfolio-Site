@@ -39,7 +39,7 @@ const { y } = useWindowScroll();
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
           <path
             d="M6 9l6 6 6-6"
-            stroke="rgba(255,255,255,0.18)"
+            stroke="rgba(255, 255, 255, 0.18)"
             stroke-width="2"
             stroke-linecap="round"
             stroke-linejoin="round"
@@ -391,7 +391,7 @@ const { y } = useWindowScroll();
   gap: 14px;
   padding: 12px 16px;
   background: rgba(255, 255, 255, 0.025);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--color-glass-border);
   border-radius: 10px;
   overflow: hidden;
   min-width: 0;
