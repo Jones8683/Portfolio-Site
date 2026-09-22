@@ -76,7 +76,7 @@ function hitTest() {
 
 function txt(str, x, y, size, fill, strokeCol) {
   ctx.save();
-  ctx.font = `900 ${size}px 'Arial Black', Arial, sans-serif`;
+  ctx.font = `900 ${size}px Satoshi, sans-serif`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   if (strokeCol) {

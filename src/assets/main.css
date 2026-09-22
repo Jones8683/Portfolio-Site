@@ -52,9 +52,9 @@
   --nav-offset: 22px;
   --nav-bar-height: 52px;
   --nav-height: calc(var(--nav-offset) + var(--nav-bar-height));
-  --font-display: 'Cherry Bomb One', 'Segoe Print', 'Trebuchet MS', cursive;
-  --font-body: 'Andika', 'Segoe UI', sans-serif;
-  --font-ui: 'Satoshi', 'Segoe UI', sans-serif;
+  --font-display: 'Cherry Bomb One', sans-serif;
+  --font-body: 'Andika', sans-serif;
+  --font-ui: 'Satoshi', sans-serif;
 }
 
 * {
