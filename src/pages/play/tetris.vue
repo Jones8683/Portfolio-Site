@@ -760,7 +760,7 @@ watch(
         </div>
         <GameControls
           :controls="[
-            { action: 'Move', key: ['←', '→'] },
+            { action: 'Move', key: ['←', '↓', '→'] },
             { action: 'Rotate', key: '↑' },
             { action: 'Hard Drop', key: 'Space' },
             { action: 'Hold', key: 'C' },
