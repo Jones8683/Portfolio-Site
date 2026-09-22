@@ -703,19 +703,19 @@ onKeyStroke(['Escape', 'p', 'P'], (e) => {
 watch(useWindowFocus(), (focused) => {
   if (!focused && !isPaused.value) togglePause();
 });
+const setupCanvas = (c, w, h) => {
+  c.width = w * pixelRatio.value;
+  c.height = h * pixelRatio.value;
+  c.style.width = w + 'px';
+  c.style.height = h + 'px';
+  const context = c.getContext('2d');
+  context.scale(25 * pixelRatio.value, 25 * pixelRatio.value);
+  return context;
+};
 watch(
   gameCanvasRef,
   (el) => {
     if (!el) return;
-    const setupCanvas = (c, w, h) => {
-      c.width = w * pixelRatio.value;
-      c.height = h * pixelRatio.value;
-      c.style.width = w + 'px';
-      c.style.height = h + 'px';
-      const context = c.getContext('2d');
-      context.scale(25 * pixelRatio.value, 25 * pixelRatio.value);
-      return context;
-    };
     ctx = setupCanvas(el, 300, 500);
     nextCtx = setupCanvas(nextCanvasRef.value, 100, 100);
     holdCtx = setupCanvas(holdCanvasRef.value, 100, 100);
