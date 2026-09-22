@@ -66,16 +66,16 @@ onMounted(updateHeaderState);
             </span>
           </span>
         </RouterLink>
-        <div class="glass-nav">
+        <nav class="glass-nav">
           <RouterLink to="/projects" class="glass-btn" :class="{ active: isProjectsActive }"
             >Projects</RouterLink
           >
           <RouterLink to="/play" class="glass-btn" :class="{ active: isArcadeActive }"
             >Arcade</RouterLink
           >
-        </div>
+        </nav>
       </div>
-      <nav class="nav-actions">
+      <div class="nav-actions">
         <a
           href="https://discord.com/users/1537745548000497716"
           target="_blank"
@@ -104,7 +104,7 @@ onMounted(updateHeaderState);
             />
           </svg>
         </a>
-      </nav>
+      </div>
     </header>
   </div>
 </template>

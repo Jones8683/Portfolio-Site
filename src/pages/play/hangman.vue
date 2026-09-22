@@ -65,8 +65,7 @@ onKeyStroke(
             <p class="subtitle">Enter a secret word for Player 2 to guess</p>
             <div class="word-input-row">
               <input
-                id="secret-word-input"
-                name="secretWord"
+                aria-label="Secret word"
                 :value="inputBuffer"
                 @input="onInput"
                 class="word-input"

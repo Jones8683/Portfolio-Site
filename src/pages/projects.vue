@@ -47,13 +47,7 @@ const projects = [
       >
         <span class="project-row-bar" aria-hidden="true"></span>
         <span class="project-row-inner">
-          <img
-            :src="project.logo"
-            :alt="project.name"
-            class="project-logo"
-            loading="lazy"
-            decoding="async"
-          />
+          <img :src="project.logo" alt="" class="project-logo" loading="lazy" decoding="async" />
           <span class="project-info">
             <span class="project-name">{{ project.name }}</span>
             <span class="project-desc">{{ project.description }}</span>
@@ -186,7 +180,7 @@ const projects = [
 }
 
 .project-row:hover .project-desc {
-  color: #cbd5f5;
+  color: var(--color-text-soft);
 }
 
 .project-arrow {
