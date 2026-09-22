@@ -1,6 +1,5 @@
 <script setup>
-import { useRoute } from 'vue-router';
-import { ref, computed, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useEventListener } from '@vueuse/core';
 
 const toLetters = (word) => [...word].map((char, i) => ({ char, offset: i / (word.length - 1) }));
@@ -11,10 +10,6 @@ const isMinimized = ref(false);
 const shouldShow = ref(true);
 let lastScrollY = 0;
 let ticking = false;
-
-const route = useRoute();
-const isProjectsActive = computed(() => route.path.startsWith('/projects'));
-const isArcadeActive = computed(() => route.path.startsWith('/play'));
 
 const updateHeaderState = () => {
   const { scrollY } = window;
@@ -67,12 +62,8 @@ onMounted(updateHeaderState);
           </span>
         </RouterLink>
         <nav class="glass-nav">
-          <RouterLink to="/projects" class="glass-btn" :class="{ active: isProjectsActive }"
-            >Projects</RouterLink
-          >
-          <RouterLink to="/play" class="glass-btn" :class="{ active: isArcadeActive }"
-            >Arcade</RouterLink
-          >
+          <RouterLink to="/projects" class="glass-btn" active-class="active">Projects</RouterLink>
+          <RouterLink to="/play" class="glass-btn" active-class="active">Arcade</RouterLink>
         </nav>
       </div>
       <div class="nav-actions">
