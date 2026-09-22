@@ -8,6 +8,17 @@ definePage({ meta: { title: 'Minesweeper' } });
 
 const range = (n) => Array.from({ length: n }, (_, i) => i);
 
+const NEIGHBORS = [
+  [-1, -1],
+  [0, -1],
+  [1, -1],
+  [-1, 0],
+  [1, 0],
+  [-1, 1],
+  [0, 1],
+  [1, 1],
+];
+
 const DIFFICULTIES = {
   easy: { rows: 9, cols: 9, mines: 10 },
   medium: { rows: 16, cols: 16, mines: 40 },
@@ -56,24 +67,24 @@ function initGrid(diff) {
   );
 }
 
-function resetToStart() {
-  gameStatus.value = 'start';
+function resetBoard() {
   stopTimer();
   timer.value = 0;
   flagsPlaced.value = 0;
   isFirstClick = true;
+  isPaused.value = false;
   initGrid(currentDiff.value);
+}
+
+function resetToStart() {
+  gameStatus.value = 'start';
+  resetBoard();
 }
 
 function initGame(difficultyKey) {
   currentDiff.value = DIFFICULTIES[difficultyKey];
   gameStatus.value = 'playing';
-  timer.value = 0;
-  flagsPlaced.value = 0;
-  isFirstClick = true;
-  isPaused.value = false;
-  stopTimer();
-  initGrid(currentDiff.value);
+  resetBoard();
 }
 
 function placeMines(safeX, safeY) {
@@ -89,21 +100,16 @@ function placeMines(safeX, safeY) {
   calculateNumbers();
 }
 
+const inBounds = (x, y) =>
+  x >= 0 && x < currentDiff.value.cols && y >= 0 && y < currentDiff.value.rows;
+
 function calculateNumbers() {
   for (let y = 0; y < currentDiff.value.rows; y++) {
     for (let x = 0; x < currentDiff.value.cols; x++) {
       if (grid.value[y][x].isMine) continue;
-      let count = 0;
-      for (let dy = -1; dy <= 1; dy++) {
-        for (let dx = -1; dx <= 1; dx++) {
-          const ny = y + dy,
-            nx = x + dx;
-          const inBounds =
-            ny >= 0 && ny < currentDiff.value.rows && nx >= 0 && nx < currentDiff.value.cols;
-          if (inBounds && grid.value[ny][nx].isMine) count++;
-        }
-      }
-      grid.value[y][x].neighborCount = count;
+      grid.value[y][x].neighborCount = NEIGHBORS.filter(
+        ([dx, dy]) => inBounds(x + dx, y + dy) && grid.value[y + dy][x + dx].isMine,
+      ).length;
     }
   }
 }
@@ -133,19 +139,14 @@ function revealCell(startX, startY) {
 
   while (stack.length > 0) {
     const [x, y] = stack.pop();
-    if (x < 0 || x >= currentDiff.value.cols || y < 0 || y >= currentDiff.value.rows) continue;
+    if (!inBounds(x, y)) continue;
 
     const cell = grid.value[y][x];
     if (cell.isRevealed || cell.isFlagged) continue;
     cell.isRevealed = true;
 
     if (cell.neighborCount === 0 && !cell.isMine) {
-      for (let dy = -1; dy <= 1; dy++) {
-        for (let dx = -1; dx <= 1; dx++) {
-          if (dx === 0 && dy === 0) continue;
-          stack.push([x + dx, y + dy]);
-        }
-      }
+      for (const [dx, dy] of NEIGHBORS) stack.push([x + dx, y + dy]);
     }
   }
 }

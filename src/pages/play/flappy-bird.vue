@@ -95,14 +95,15 @@ function drawSky() {
   ctx.fillRect(0, 0, W, GROUND_Y + 2);
 }
 
+const CLOUDS = [
+  { ox: 30, y: 60, w: 80, h: 40 },
+  { ox: 200, y: 90, w: 64, h: 32 },
+  { ox: 310, y: 52, w: 72, h: 36 },
+];
+
 function drawClouds() {
-  const clouds = [
-    { ox: 30, y: 60, w: 80, h: 40 },
-    { ox: 200, y: 90, w: 64, h: 32 },
-    { ox: 310, y: 52, w: 72, h: 36 },
-  ];
   ctx.fillStyle = '#fff';
-  for (const c of clouds) {
+  for (const c of CLOUDS) {
     const wrap = W + c.w + 20;
     const x = ((c.ox - (cloudOff % wrap) + wrap * 2) % wrap) - c.w - 20;
     ctx.fillRect(x, c.y + c.h * 0.4, c.w, c.h * 0.6);
@@ -111,38 +112,38 @@ function drawClouds() {
   }
 }
 
+const CITY_TILE_W = 720;
+const BUILDINGS = [
+  { x: 0, w: 38, h: 90, windows: true, style: 'wide' },
+  { x: 40, w: 22, h: 55, windows: false, style: 'thin' },
+  { x: 64, w: 44, h: 130, windows: true, style: 'tall' },
+  { x: 110, w: 28, h: 70, windows: true, style: 'wide' },
+  { x: 140, w: 18, h: 48, windows: false, style: 'thin' },
+  { x: 160, w: 50, h: 110, windows: true, style: 'tall' },
+  { x: 212, w: 30, h: 65, windows: true, style: 'wide' },
+  { x: 244, w: 20, h: 42, windows: false, style: 'thin' },
+  { x: 266, w: 40, h: 95, windows: true, style: 'wide' },
+  { x: 308, w: 24, h: 58, windows: false, style: 'thin' },
+  { x: 334, w: 46, h: 120, windows: true, style: 'tall' },
+  { x: 382, w: 28, h: 72, windows: true, style: 'wide' },
+  { x: 412, w: 16, h: 44, windows: false, style: 'thin' },
+  { x: 430, w: 42, h: 100, windows: true, style: 'tall' },
+  { x: 474, w: 32, h: 60, windows: true, style: 'wide' },
+  { x: 508, w: 20, h: 50, windows: false, style: 'thin' },
+  { x: 530, w: 48, h: 115, windows: true, style: 'tall' },
+  { x: 580, w: 26, h: 68, windows: true, style: 'wide' },
+  { x: 608, w: 18, h: 40, windows: false, style: 'thin' },
+  { x: 628, w: 44, h: 88, windows: true, style: 'wide' },
+  { x: 674, w: 22, h: 54, windows: false, style: 'thin' },
+  { x: 698, w: 22, h: 78, windows: true, style: 'wide' },
+];
+
 function drawCity() {
-  const TILE_W = 720;
-  const off = cityOff % TILE_W;
+  const off = cityOff % CITY_TILE_W;
 
-  const buildings = [
-    { x: 0, w: 38, h: 90, windows: true, style: 'wide' },
-    { x: 40, w: 22, h: 55, windows: false, style: 'thin' },
-    { x: 64, w: 44, h: 130, windows: true, style: 'tall' },
-    { x: 110, w: 28, h: 70, windows: true, style: 'wide' },
-    { x: 140, w: 18, h: 48, windows: false, style: 'thin' },
-    { x: 160, w: 50, h: 110, windows: true, style: 'tall' },
-    { x: 212, w: 30, h: 65, windows: true, style: 'wide' },
-    { x: 244, w: 20, h: 42, windows: false, style: 'thin' },
-    { x: 266, w: 40, h: 95, windows: true, style: 'wide' },
-    { x: 308, w: 24, h: 58, windows: false, style: 'thin' },
-    { x: 334, w: 46, h: 120, windows: true, style: 'tall' },
-    { x: 382, w: 28, h: 72, windows: true, style: 'wide' },
-    { x: 412, w: 16, h: 44, windows: false, style: 'thin' },
-    { x: 430, w: 42, h: 100, windows: true, style: 'tall' },
-    { x: 474, w: 32, h: 60, windows: true, style: 'wide' },
-    { x: 508, w: 20, h: 50, windows: false, style: 'thin' },
-    { x: 530, w: 48, h: 115, windows: true, style: 'tall' },
-    { x: 580, w: 26, h: 68, windows: true, style: 'wide' },
-    { x: 608, w: 18, h: 40, windows: false, style: 'thin' },
-    { x: 628, w: 44, h: 88, windows: true, style: 'wide' },
-    { x: 674, w: 22, h: 54, windows: false, style: 'thin' },
-    { x: 698, w: 22, h: 78, windows: true, style: 'wide' },
-  ];
-
-  for (let rep = -1; rep <= 2; rep++) {
-    for (const b of buildings) {
-      const rx = b.x - off + rep * TILE_W;
+  for (let tile = -1; tile <= 2; tile++) {
+    for (const b of BUILDINGS) {
+      const rx = b.x - off + tile * CITY_TILE_W;
       if (rx + b.w < 0 || rx > W) continue;
       const by = GROUND_Y - b.h;
 
@@ -222,50 +223,33 @@ function drawGround() {
   ctx.fillRect(0, GROUND_Y + 15, W, 3);
 }
 
+const CAP_H = 26;
+const BODY_W = PIPE_W - 6;
+
+function drawPipeSegment(x, y, w, h, shadeW) {
+  ctx.fillStyle = '#5dbe2b';
+  ctx.fillRect(x, y, w, h);
+  ctx.fillStyle = '#72d93e';
+  ctx.fillRect(x + 4, y, shadeW, h);
+  ctx.fillStyle = '#4aa620';
+  ctx.fillRect(x + w - shadeW, y, shadeW, h);
+}
+
+function drawPipeCap(x, y, gapBelow) {
+  drawPipeSegment(x, y, PIPE_W, CAP_H, 10);
+  ctx.fillStyle = '#8aee50';
+  ctx.fillRect(x, gapBelow ? y : y + CAP_H - 3, PIPE_W, 3);
+  ctx.fillStyle = '#3a8a10';
+  ctx.fillRect(x, gapBelow ? y + CAP_H - 3 : y, PIPE_W, 3);
+}
+
 function drawPipes() {
   for (const p of pipes) {
     const botY = p.topH + PIPE_GAP;
-    const bodyX = p.x + 3;
-    const bodyW = PIPE_W - 6;
-    const capX = p.x;
-    const capW = PIPE_W;
-    const capH = 26;
-
-    ctx.fillStyle = '#5dbe2b';
-    ctx.fillRect(bodyX, 0, bodyW, p.topH - capH);
-    ctx.fillStyle = '#72d93e';
-    ctx.fillRect(bodyX + 4, 0, 8, p.topH - capH);
-    ctx.fillStyle = '#4aa620';
-    ctx.fillRect(bodyX + bodyW - 8, 0, 8, p.topH - capH);
-
-    ctx.fillStyle = '#5dbe2b';
-    ctx.fillRect(capX, p.topH - capH, capW, capH);
-    ctx.fillStyle = '#72d93e';
-    ctx.fillRect(capX + 4, p.topH - capH, 10, capH);
-    ctx.fillStyle = '#4aa620';
-    ctx.fillRect(capX + capW - 10, p.topH - capH, 10, capH);
-    ctx.fillStyle = '#8aee50';
-    ctx.fillRect(capX, p.topH - capH, capW, 3);
-    ctx.fillStyle = '#3a8a10';
-    ctx.fillRect(capX, p.topH - 3, capW, 3);
-
-    ctx.fillStyle = '#5dbe2b';
-    ctx.fillRect(capX, botY, capW, capH);
-    ctx.fillStyle = '#72d93e';
-    ctx.fillRect(capX + 4, botY, 10, capH);
-    ctx.fillStyle = '#4aa620';
-    ctx.fillRect(capX + capW - 10, botY, 10, capH);
-    ctx.fillStyle = '#3a8a10';
-    ctx.fillRect(capX, botY, capW, 3);
-    ctx.fillStyle = '#8aee50';
-    ctx.fillRect(capX, botY + capH - 3, capW, 3);
-
-    ctx.fillStyle = '#5dbe2b';
-    ctx.fillRect(bodyX, botY + capH, bodyW, GROUND_Y - (botY + capH));
-    ctx.fillStyle = '#72d93e';
-    ctx.fillRect(bodyX + 4, botY + capH, 8, GROUND_Y - (botY + capH));
-    ctx.fillStyle = '#4aa620';
-    ctx.fillRect(bodyX + bodyW - 8, botY + capH, 8, GROUND_Y - (botY + capH));
+    drawPipeSegment(p.x + 3, 0, BODY_W, p.topH - CAP_H, 8);
+    drawPipeCap(p.x, p.topH - CAP_H, true);
+    drawPipeCap(p.x, botY, false);
+    drawPipeSegment(p.x + 3, botY + CAP_H, BODY_W, GROUND_Y - (botY + CAP_H), 8);
   }
 }
 
@@ -279,24 +263,20 @@ function drawBird() {
   const R = 13;
 
   ctx.fillStyle = '#f8d030';
-  ctx.beginPath();
-  ctx.arc(0, 0, R, 0, Math.PI * 2);
-  ctx.fill();
   ctx.strokeStyle = '#b87800';
   ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.arc(0, 0, R, 0, Math.PI * 2);
+  ctx.fill();
   ctx.stroke();
 
   const wingY = gameState.value === 'dead' ? 0 : Math.sin(wingFrame * 0.15) * 3.5;
   ctx.fillStyle = '#d98c10';
-  ctx.beginPath();
-  ctx.ellipse(-2, 2 + wingY, 9, 5, -0.3, 0, Math.PI * 2);
-  ctx.fill();
   ctx.strokeStyle = '#a06000';
   ctx.lineWidth = 1.5;
   ctx.beginPath();
   ctx.ellipse(-2, 2 + wingY, 9, 5, -0.3, 0, Math.PI * 2);
+  ctx.fill();
   ctx.stroke();
 
   ctx.fillStyle = '#fff8c0';
@@ -305,13 +285,11 @@ function drawBird() {
   ctx.fill();
 
   ctx.fillStyle = '#fff';
-  ctx.beginPath();
-  ctx.arc(6, -4, 5, 0, Math.PI * 2);
-  ctx.fill();
   ctx.strokeStyle = '#bbb';
   ctx.lineWidth = 1;
   ctx.beginPath();
   ctx.arc(6, -4, 5, 0, Math.PI * 2);
+  ctx.fill();
   ctx.stroke();
   ctx.fillStyle = '#111';
   ctx.beginPath();
@@ -323,13 +301,6 @@ function drawBird() {
   ctx.fill();
 
   ctx.fillStyle = '#f07010';
-  ctx.beginPath();
-  ctx.moveTo(9, -2);
-  ctx.lineTo(19, -0.5);
-  ctx.lineTo(18, 3.5);
-  ctx.lineTo(8, 3.5);
-  ctx.closePath();
-  ctx.fill();
   ctx.strokeStyle = '#b85000';
   ctx.lineWidth = 1.5;
   ctx.beginPath();
@@ -338,8 +309,8 @@ function drawBird() {
   ctx.lineTo(18, 3.5);
   ctx.lineTo(8, 3.5);
   ctx.closePath();
+  ctx.fill();
   ctx.stroke();
-  ctx.strokeStyle = '#b85000';
   ctx.lineWidth = 1;
   ctx.beginPath();
   ctx.moveTo(9, 0.8);

@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { onKeyStroke, useTimeoutFn } from '@vueuse/core';
 import GamePage from '@/components/GamePage.vue';
 import GameControls from '@/components/GameControls.vue';
@@ -8,6 +8,13 @@ definePage({ meta: { title: 'Connect 4' } });
 
 const ROWS = 6;
 const COLS = 7;
+const CELL_SIZE = 62;
+const DIRECTIONS = [
+  [0, 1],
+  [1, 0],
+  [1, 1],
+  [1, -1],
+];
 
 const createBoard = () =>
   Array.from({ length: ROWS }, () => Array.from({ length: COLS }, () => null));
@@ -33,12 +40,17 @@ const { start: finishMove } = useTimeoutFn(
 const playerColors = { 1: '#0dc2ff', 2: '#ff0d72' };
 
 const getGhostRow = (col) => {
-  if (col === null || col === undefined) return null;
   for (let r = ROWS - 1; r >= 0; r--) {
     if (!board.value[r][col]) return r;
   }
   return null;
 };
+
+const columns = computed(() =>
+  Array.from({ length: COLS }, (_, col) =>
+    Array.from({ length: ROWS }, (__, row) => ({ row, value: board.value[row][col] })),
+  ),
+);
 
 const isGhostCell = (r, c) => {
   if (winner.value || isDraw.value || isProcessing.value) return false;
@@ -48,28 +60,18 @@ const isGhostCell = (r, c) => {
 const isDropTarget = (r, c) => droppingCell.value?.row === r && droppingCell.value?.col === c;
 
 const getDropStyle = (r, c) => {
-  if (!droppingCell.value || droppingCell.value.row !== r || droppingCell.value.col !== c)
-    return {};
-  const cellSize = 62;
-  const dist = r * cellSize || 30;
-  const dur = r === 0 ? 0.1 : 0.08 + Math.sqrt(r) * 0.09;
+  if (!isDropTarget(r, c)) return {};
   return {
-    '--drop-dist': `-${dist}px`,
-    '--drop-dur': `${dur}s`,
+    '--drop-dist': `-${r * CELL_SIZE || 30}px`,
+    '--drop-dur': `${r === 0 ? 0.1 : 0.08 + Math.sqrt(r) * 0.09}s`,
   };
 };
 
 const makeMove = (col) => {
   if (winner.value || isDraw.value || isProcessing.value) return;
 
-  let row = -1;
-  for (let r = ROWS - 1; r >= 0; r--) {
-    if (!board.value[r][col]) {
-      row = r;
-      break;
-    }
-  }
-  if (row === -1) return;
+  const row = getGhostRow(col);
+  if (row === null) return;
 
   isProcessing.value = true;
   droppingCell.value = { row, col };
@@ -91,31 +93,16 @@ const makeMove = (col) => {
 
 const checkWinner = (row, col) => {
   const player = board.value[row][col];
-  const directions = [
-    [0, 1],
-    [1, 0],
-    [1, 1],
-    [1, -1],
-  ];
-
-  for (const [dr, dc] of directions) {
-    const cells = [[row, col]];
-
-    for (let i = 1; i < 4; i++) {
-      const r = row + dr * i,
-        c = col + dc * i;
-      if (r >= 0 && r < ROWS && c >= 0 && c < COLS && board.value[r][c] === player)
-        cells.push([r, c]);
-      else break;
+  const runFrom = (dr, dc) => {
+    const cells = [];
+    for (let r = row + dr, c = col + dc; board.value[r]?.[c] === player; r += dr, c += dc) {
+      cells.push([r, c]);
     }
-    for (let i = 1; i < 4; i++) {
-      const r = row - dr * i,
-        c = col - dc * i;
-      if (r >= 0 && r < ROWS && c >= 0 && c < COLS && board.value[r][c] === player)
-        cells.push([r, c]);
-      else break;
-    }
+    return cells;
+  };
 
+  for (const [dr, dc] of DIRECTIONS) {
+    const cells = [[row, col], ...runFrom(dr, dc), ...runFrom(-dr, -dc)];
     if (cells.length >= 4) return cells;
   }
   return null;
@@ -123,7 +110,7 @@ const checkWinner = (row, col) => {
 
 const isWinningCell = (r, c) => winningCells.value.some(([wr, wc]) => wr === r && wc === c);
 
-const isColFull = (col) => board.value[0][col] !== null;
+const isColFull = (col) => getGhostRow(col) === null;
 
 const resetGame = () => {
   board.value = createBoard();
@@ -144,37 +131,31 @@ onKeyStroke(['r', 'R'], resetGame);
       <div class="left-section">
         <div class="board">
           <div
-            v-for="col in COLS"
+            v-for="(cells, col) in columns"
             :key="col"
             class="column"
-            :class="{
-              'col-hovered': hoveredCol === col - 1 && !winner && !isDraw && !isColFull(col - 1),
-            }"
-            @click="makeMove(col - 1)"
-            @mouseenter="hoveredCol = col - 1"
+            :class="{ 'col-hovered': hoveredCol === col && !winner && !isDraw && !isColFull(col) }"
+            @click="makeMove(col)"
+            @mouseenter="hoveredCol = col"
             @mouseleave="hoveredCol = null"
           >
-            <div v-for="row in ROWS" :key="row" class="cell">
+            <div v-for="cell in cells" :key="cell.row" class="cell">
               <div
-                v-if="isDropTarget(row - 1, col - 1)"
+                v-if="isDropTarget(cell.row, col)"
                 class="drop-target"
-                :class="{
-                  'ghost-p1': board[row - 1][col - 1] === 1,
-                  'ghost-p2': board[row - 1][col - 1] === 2,
-                }"
+                :class="`ghost-p${cell.value}`"
               ></div>
               <div
                 class="piece"
-                :style="getDropStyle(row - 1, col - 1)"
-                :class="{
-                  p1: board[row - 1][col - 1] === 1,
-                  p2: board[row - 1][col - 1] === 2,
-                  'winning-piece': isWinningCell(row - 1, col - 1),
-                  dropping: isDropTarget(row - 1, col - 1),
-                  ghost: isGhostCell(row - 1, col - 1),
-                  'ghost-p1': isGhostCell(row - 1, col - 1) && currentPlayer === 1,
-                  'ghost-p2': isGhostCell(row - 1, col - 1) && currentPlayer === 2,
-                }"
+                :style="getDropStyle(cell.row, col)"
+                :class="[
+                  cell.value && `p${cell.value}`,
+                  {
+                    'winning-piece': isWinningCell(cell.row, col),
+                    dropping: isDropTarget(cell.row, col),
+                  },
+                  isGhostCell(cell.row, col) && ['ghost', `ghost-p${currentPlayer}`],
+                ]"
               ></div>
             </div>
           </div>

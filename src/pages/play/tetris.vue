@@ -66,49 +66,46 @@ function createMatrix(w, h) {
   return Array.from({ length: h }, () => Array.from({ length: w }, () => 0));
 }
 
+const PIECES = {
+  I: [
+    [0, 0, 0, 0],
+    [1, 1, 1, 1],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+  ],
+  J: [
+    [2, 0, 0],
+    [2, 2, 2],
+    [0, 0, 0],
+  ],
+  L: [
+    [0, 0, 3],
+    [3, 3, 3],
+    [0, 0, 0],
+  ],
+  O: [
+    [4, 4],
+    [4, 4],
+  ],
+  S: [
+    [0, 5, 5],
+    [5, 5, 0],
+    [0, 0, 0],
+  ],
+  Z: [
+    [6, 6, 0],
+    [0, 6, 6],
+    [0, 0, 0],
+  ],
+  T: [
+    [0, 7, 0],
+    [7, 7, 7],
+    [0, 0, 0],
+  ],
+};
+
 function createPiece(type) {
-  if (type === 'I')
-    return [
-      [0, 0, 0, 0],
-      [1, 1, 1, 1],
-      [0, 0, 0, 0],
-      [0, 0, 0, 0],
-    ];
-  if (type === 'J')
-    return [
-      [2, 0, 0],
-      [2, 2, 2],
-      [0, 0, 0],
-    ];
-  if (type === 'L')
-    return [
-      [0, 0, 3],
-      [3, 3, 3],
-      [0, 0, 0],
-    ];
-  if (type === 'O')
-    return [
-      [4, 4],
-      [4, 4],
-    ];
-  if (type === 'S')
-    return [
-      [0, 5, 5],
-      [5, 5, 0],
-      [0, 0, 0],
-    ];
-  if (type === 'Z')
-    return [
-      [6, 6, 0],
-      [0, 6, 6],
-      [0, 0, 0],
-    ];
-  if (type === 'T')
-    return [
-      [0, 7, 0],
-      [7, 7, 7],
-      [0, 0, 0],
-    ];
+  return structuredClone(PIECES[type]);
 }
 
 function getNextPiece() {
@@ -151,12 +148,7 @@ function draw() {
 
   drawMatrix(arena, { x: 0, y: 0 }, ctx);
 
-  const ghostPos = { ...player.pos };
-  while (!collide({ pos: ghostPos, matrix: player.matrix })) {
-    ghostPos.y++;
-  }
-  ghostPos.y--;
-  drawMatrix(player.matrix, ghostPos, ctx, true);
+  drawMatrix(player.matrix, { x: player.pos.x, y: getGhostY() }, ctx, true);
   drawMatrix(player.matrix, player.pos, ctx, false);
 }
 
@@ -164,7 +156,6 @@ function drawMatrix(matrix, offset, context, isGhost = false) {
   matrix.forEach((row, y) => {
     row.forEach((value, x) => {
       if (value !== 0) {
-        let fillStyle = colors[value];
         const bx = x + offset.x;
         const by = y + offset.y;
 
@@ -174,7 +165,7 @@ function drawMatrix(matrix, offset, context, isGhost = false) {
           return;
         }
 
-        context.fillStyle = fillStyle;
+        context.fillStyle = colors[value];
         context.fillRect(bx, by, 1, 1);
 
         if (isLanded && context === ctx && matrix === player.matrix) {
@@ -204,6 +195,12 @@ function drawPreview(context, matrix) {
   drawMatrix(matrix, { x: offsetX, y: offsetY }, context);
 }
 
+function getGhostY() {
+  const pos = { ...player.pos };
+  while (!collide({ pos, matrix: player.matrix })) pos.y++;
+  return pos.y - 1;
+}
+
 function collide(piece) {
   const m = piece.matrix;
   const o = piece.pos;
@@ -216,6 +213,8 @@ function collide(piece) {
   }
   return false;
 }
+
+const LINE_SCORES = [0, 100, 300, 500, 800];
 
 function arenaSweep() {
   let rowCount = 0;
@@ -231,14 +230,7 @@ function arenaSweep() {
 
   if (rowCount > 0) {
     const level = Math.floor(player.lines / 10) + 1;
-    let base = 0;
-    if (rowCount === 1) base = 100;
-    else if (rowCount === 2) base = 300;
-    else if (rowCount === 3) base = 500;
-    else if (rowCount === 4) base = 800;
-
-    const points = base * level;
-    player.score += points;
+    player.score += LINE_SCORES[rowCount] * level;
     player.lines += rowCount;
     updateScore();
   }
@@ -277,53 +269,20 @@ function playerLock() {
 
 function playerHardDrop() {
   const startY = player.pos.y;
-  let ghostY = startY;
-  while (!collide({ ...player, pos: { x: player.pos.x, y: ghostY + 1 } })) {
-    ghostY++;
-  }
-
+  const ghostY = getGhostY();
   const trails = [];
-  const matrix = player.matrix;
-  const pieceX = player.pos.x;
 
-  for (let x = 0; x < matrix[0].length; x++) {
-    let highestBlockY = -1;
-    for (let y = 0; y < matrix.length; y++) {
-      if (matrix[y][x] !== 0) {
-        highestBlockY = y;
-        break;
-      }
-    }
-
-    if (highestBlockY !== -1) {
-      trails.push({
-        x: pieceX + x,
-        y: startY + highestBlockY,
-        h: ghostY - startY,
-      });
+  for (let x = 0; x < player.matrix[0].length; x++) {
+    const topY = player.matrix.findIndex((row) => row[x] !== 0);
+    if (topY !== -1) {
+      trails.push({ x: player.pos.x + x, y: startY + topY, h: ghostY - startY });
     }
   }
 
-  const dropDistance = ghostY - startY;
-  player.score += dropDistance * 2;
-
+  player.score += (ghostY - startY) * 2;
   player.pos.y = ghostY;
-
-  hardDropEffect = {
-    active: true,
-    alpha: 0.4,
-    trails: trails,
-  };
-
-  lockDelayCounter = 0;
-  lockMovesCounter = 0;
-
-  merge();
-  arenaSweep();
-  updateScore();
-  playerReset();
-  player.canHold = true;
-  dropCounter = 0;
+  hardDropEffect = { active: true, alpha: 0.4, trails };
+  playerLock();
 }
 
 function playerMove(dir) {
@@ -345,149 +304,97 @@ function refreshLockDelay() {
   player.pos.y--;
 }
 
+function centerPiece() {
+  player.pos.y = 0;
+  player.pos.x = Math.floor(arena[0].length / 2) - Math.floor(player.matrix[0].length / 2);
+  player.rotState = 0;
+}
+
 function playerReset() {
   if (player.next === null) player.next = getNextPiece();
   player.matrix = player.next;
   player.next = getNextPiece();
   drawPreview(nextCtx, player.next);
-  player.pos.y = 0;
-  player.pos.x = Math.floor(arena[0].length / 2) - Math.floor(player.matrix[0].length / 2);
-  player.rotState = 0;
+  centerPiece();
   if (collide(player)) {
     isGameOver.value = true;
     pause();
   }
 }
 
-const KICKS_JLSTZ = {
-  '01': [
+const KICKS_JLSTZ = [
+  [
     [0, 0],
     [-1, 0],
     [-1, -1],
     [0, 2],
     [-1, 2],
   ],
-  12: [
+  [
     [0, 0],
     [1, 0],
     [1, 1],
     [0, -2],
     [1, -2],
   ],
-  23: [
+  [
     [0, 0],
     [1, 0],
     [1, -1],
     [0, 2],
     [1, 2],
   ],
-  30: [
+  [
     [0, 0],
     [-1, 0],
     [-1, 1],
     [0, -2],
     [-1, -2],
   ],
-  10: [
-    [0, 0],
-    [1, 0],
-    [1, 1],
-    [0, -2],
-    [1, -2],
-  ],
-  21: [
-    [0, 0],
-    [-1, 0],
-    [-1, -1],
-    [0, 2],
-    [-1, 2],
-  ],
-  32: [
-    [0, 0],
-    [-1, 0],
-    [-1, 1],
-    [0, -2],
-    [-1, -2],
-  ],
-  '03': [
-    [0, 0],
-    [1, 0],
-    [1, -1],
-    [0, 2],
-    [1, 2],
-  ],
-};
+];
 
-const KICKS_I = {
-  '01': [
+const KICKS_I = [
+  [
     [0, 0],
     [-2, 0],
     [1, 0],
     [-2, 1],
     [1, -2],
   ],
-  12: [
+  [
     [0, 0],
     [-1, 0],
     [2, 0],
     [-1, -2],
     [2, 1],
   ],
-  23: [
+  [
     [0, 0],
     [2, 0],
     [-1, 0],
     [2, -1],
     [-1, 2],
   ],
-  30: [
+  [
     [0, 0],
     [1, 0],
     [-2, 0],
     [1, 2],
     [-2, -1],
   ],
-  10: [
-    [0, 0],
-    [2, 0],
-    [-1, 0],
-    [2, -1],
-    [-1, 2],
-  ],
-  21: [
-    [0, 0],
-    [1, 0],
-    [-2, 0],
-    [1, 2],
-    [-2, -1],
-  ],
-  32: [
-    [0, 0],
-    [-2, 0],
-    [1, 0],
-    [-2, 1],
-    [1, -2],
-  ],
-  '03': [
-    [0, 0],
-    [-1, 0],
-    [2, 0],
-    [-1, -2],
-    [2, 1],
-  ],
-};
+];
 
 function playerRotate(dir) {
   const prevState = player.rotState;
   const nextState = (prevState + (dir > 0 ? 1 : -1) + 4) % 4;
-  const key = `${prevState}${nextState}`;
 
   const isIPiece = player.matrix.length === 4;
   const isOPiece = player.matrix.length === 2;
 
   if (isOPiece) return;
 
-  const kicks = isIPiece ? KICKS_I[key] : KICKS_JLSTZ[key];
+  const table = isIPiece ? KICKS_I : KICKS_JLSTZ;
+  const kicks = dir > 0 ? table[prevState] : table[nextState].map(([kx, ky]) => [-kx, -ky]);
 
   rotate(player.matrix, dir);
 
@@ -538,9 +445,7 @@ function playerHold() {
     player.hold = currentType;
   }
   drawPreview(holdCtx, createPiece(player.hold));
-  player.pos.y = 0;
-  player.pos.x = Math.floor(arena[0].length / 2) - Math.floor(player.matrix[0].length / 2);
-  player.rotState = 0;
+  centerPiece();
   player.canHold = false;
 }
 
@@ -612,35 +517,16 @@ function update({ delta: deltaTime }) {
   draw();
 }
 
+const GRAVITY_BY_LEVEL = [
+  0, 0.01667, 0.021017, 0.026977, 0.035256, 0.04693, 0.06361, 0.0879, 0.1236, 0.1775, 0.2598, 0.388,
+  0.59, 0.92, 1.46, 2.36, 3.91, 6.61, 11.43, 20.0,
+];
+
 function updateScore() {
   score.value = player.score;
   highScore.value = Math.max(highScore.value, player.score);
-  const level = Math.floor(player.lines / 10) + 1;
-
-  const gValues = {
-    1: 0.01667,
-    2: 0.021017,
-    3: 0.026977,
-    4: 0.035256,
-    5: 0.04693,
-    6: 0.06361,
-    7: 0.0879,
-    8: 0.1236,
-    9: 0.1775,
-    10: 0.2598,
-    11: 0.388,
-    12: 0.59,
-    13: 0.92,
-    14: 1.46,
-    15: 2.36,
-    16: 3.91,
-    17: 6.61,
-    18: 11.43,
-    19: 20.0,
-  };
-
-  const currentG = gValues[level] || (level > 19 ? 20.0 : 0.01667);
-  dropInterval = 1000 / (60 * currentG);
+  const level = Math.min(Math.floor(player.lines / 10) + 1, GRAVITY_BY_LEVEL.length - 1);
+  dropInterval = 1000 / (60 * GRAVITY_BY_LEVEL[level]);
 }
 
 function resetGame() {

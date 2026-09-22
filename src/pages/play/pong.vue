@@ -21,6 +21,8 @@ const isPaused = ref(false);
 const winner = ref('');
 const score = ref({ left: 0, right: 0 });
 
+const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+
 const W = 700,
   H = 500;
 const WIN_SCORE = 7;
@@ -77,7 +79,7 @@ function beep(freq, duration, type = 'square', vol = 0.15) {
   osc.stop(ac.currentTime + duration);
 }
 
-function spawnParticles(x, y, color) {
+function spawnParticles(x, y, rgb) {
   for (let i = 0; i < 18; i++) {
     const angle = Math.random() * Math.PI * 2;
     const speed = 1.5 + Math.random() * 4;
@@ -89,7 +91,7 @@ function spawnParticles(x, y, color) {
       life: 1,
       decay: 0.03 + Math.random() * 0.04,
       size: 2 + Math.random() * 3,
-      color,
+      rgb,
     });
   }
 }
@@ -113,7 +115,7 @@ function showStartScreen() {
   cancelServe();
   pause();
   resetMatch();
-  drawStatic();
+  drawField();
 }
 
 function initGame(mode) {
@@ -152,39 +154,33 @@ function updatePaddles(dt) {
 
   if (gameMode === 'cpu') {
     const target = ball.y - PADDLE_H / 2;
-    let move = (target - leftPaddle.y) * 0.18;
-    move = Math.max(-leftPaddle.aiSpeed, Math.min(leftPaddle.aiSpeed, move));
+    const move = clamp((target - leftPaddle.y) * 0.18, -leftPaddle.aiSpeed, leftPaddle.aiSpeed);
     leftPaddle.y += move * dt;
   } else {
     if (w.value) leftPaddle.y -= leftPaddle.speed * dt;
     if (s.value) leftPaddle.y += leftPaddle.speed * dt;
   }
 
-  leftPaddle.y = Math.max(0, Math.min(H - PADDLE_H, leftPaddle.y));
-  rightPaddle.y = Math.max(0, Math.min(H - PADDLE_H, rightPaddle.y));
+  leftPaddle.y = clamp(leftPaddle.y, 0, H - PADDLE_H);
+  rightPaddle.y = clamp(rightPaddle.y, 0, H - PADDLE_H);
 }
 
 function updateBallWallCollision() {
-  if (ball.y - BALL_R < 0) {
-    ball.y = BALL_R;
-    ball.dy *= -1;
-    beep(220, 0.07);
-    shakeFrames = 4;
-    shakeIntensity = 2;
-  } else if (ball.y + BALL_R > H) {
-    ball.y = H - BALL_R;
-    ball.dy *= -1;
-    beep(220, 0.07);
-    shakeFrames = 4;
-    shakeIntensity = 2;
-  }
+  if (ball.y - BALL_R < 0) ball.y = BALL_R;
+  else if (ball.y + BALL_R > H) ball.y = H - BALL_R;
+  else return;
+
+  ball.dy *= -1;
+  beep(220, 0.07);
+  shakeFrames = 4;
+  shakeIntensity = 2;
 }
 
 function updateBallPaddleCollision() {
   const paddle = ball.x < W / 2 ? leftPaddle : rightPaddle;
   if (!collision(ball, paddle)) return;
 
-  const cp = Math.max(-1, Math.min(1, (ball.y - (paddle.y + PADDLE_H / 2)) / (PADDLE_H / 2)));
+  const cp = clamp((ball.y - (paddle.y + PADDLE_H / 2)) / (PADDLE_H / 2), -1, 1);
   const angle = (Math.PI / 4) * cp;
   const dir = ball.x < W / 2 ? 1 : -1;
   ball.speed = Math.min(ball.speed + 0.45, 16);
@@ -203,21 +199,19 @@ function updateBallPaddleCollision() {
 }
 
 function updateBallScoring() {
-  if (ball.x < 0) {
-    spawnParticles(0, ball.y, 'rgba(255,100,100,0.9)');
-    score.value.right++;
-    beep(140, 0.35, 'sawtooth', 0.2);
-    shakeFrames = 14;
-    shakeIntensity = 7;
-    scoreUpdate();
-  } else if (ball.x > W) {
-    spawnParticles(W, ball.y, 'rgba(100,200,255,0.9)');
-    score.value.left++;
-    beep(140, 0.35, 'sawtooth', 0.2);
-    shakeFrames = 14;
-    shakeIntensity = 7;
-    scoreUpdate();
-  }
+  const scorer = ball.x < 0 ? 'right' : ball.x > W ? 'left' : null;
+  if (!scorer) return;
+
+  spawnParticles(
+    scorer === 'right' ? 0 : W,
+    ball.y,
+    scorer === 'right' ? '255,100,100' : '100,200,255',
+  );
+  score.value[scorer]++;
+  beep(140, 0.35, 'sawtooth', 0.2);
+  shakeFrames = 14;
+  shakeIntensity = 7;
+  scoreUpdate();
 }
 
 function updateParticles(dt) {
@@ -277,9 +271,9 @@ function collision(b, p) {
   );
 }
 
-function drawStatic() {
+function drawField() {
   ctx.fillStyle = '#0d0d0d';
-  ctx.fillRect(0, 0, W, H);
+  ctx.fillRect(-10, -10, W + 20, H + 20);
   drawCenterLine();
 }
 
@@ -304,10 +298,7 @@ function draw() {
   ctx.save();
   ctx.translate(sx, sy);
 
-  ctx.fillStyle = '#0d0d0d';
-  ctx.fillRect(-10, -10, W + 20, H + 20);
-
-  drawCenterLine();
+  drawField();
 
   if (trail.length > 1) {
     for (let i = 1; i < trail.length; i++) {
@@ -325,7 +316,7 @@ function draw() {
   for (const p of particles) {
     ctx.beginPath();
     ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
-    ctx.fillStyle = p.color.replace('0.9', String(p.life * 0.9));
+    ctx.fillStyle = `rgba(${p.rgb},${p.life * 0.9})`;
     ctx.fill();
   }
 
@@ -382,7 +373,7 @@ watch(
     el.style.width = W + 'px';
     el.style.height = H + 'px';
     ctx.scale(pixelRatio.value, pixelRatio.value);
-    drawStatic();
+    drawField();
   },
   { flush: 'post' },
 );
