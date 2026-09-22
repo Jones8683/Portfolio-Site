@@ -278,7 +278,7 @@ const { y } = useWindowScroll();
   font-size: clamp(36px, 6vw, 56px);
   line-height: 1;
   text-align: center;
-  background: linear-gradient(130deg, #5a9eff 0%, #15e0e0 100%);
+  background: linear-gradient(130deg, #80b5ff 0%, #5bf3f3 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
