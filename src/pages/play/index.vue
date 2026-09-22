@@ -60,18 +60,15 @@ const games = [
 }
 
 .arcade-page {
+  width: min(92%, 1080px);
   padding-bottom: 60px;
 }
 
 .arcade-grid {
   display: grid;
-  grid-template-columns: repeat(4, 250px);
-  grid-template-rows: repeat(2, auto);
+  grid-template-columns: repeat(4, 1fr);
   gap: 21px;
   width: 100%;
-  max-width: 900px;
-  justify-content: center;
-  margin: 0 auto;
 }
 
 .arcade-card {
