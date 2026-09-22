@@ -5,10 +5,7 @@ import NavBar from '@/components/NavBar.vue';
 import AppFooter from '@/components/AppFooter.vue';
 
 const route = useRoute();
-useTitle(() => route.meta.title, {
-  titleTemplate: (title) =>
-    title === '404' ? '404 • Page not found' : `${title} • Jones Jankovic`,
-});
+useTitle(() => `${route.meta.title} • Jones Jankovic`);
 </script>
 
 <template>

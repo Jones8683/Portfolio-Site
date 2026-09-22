@@ -1,5 +1,5 @@
 <script setup>
-definePage({ meta: { title: '404' } });
+definePage({ meta: { title: 'Page not found' } });
 </script>
 
 <template>
