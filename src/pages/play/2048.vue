@@ -9,7 +9,7 @@ definePage({ meta: { title: '2048' } });
 const gameIframe = useTemplateRef('iframe');
 const score = ref(0);
 const highScore = useStorage('2048-best-score', 0);
-const gameSrc = `${import.meta.env.BASE_URL}gameassets/2048.html`;
+const gameSrc = '/gameassets/2048.html';
 
 const focusIframe = () => gameIframe.value?.focus();
 
