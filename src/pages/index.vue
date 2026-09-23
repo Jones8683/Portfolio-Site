@@ -27,6 +27,8 @@ const { y } = useWindowScroll();
         <img
           src="https://raw.githubusercontent.com/jones8683/jones8683/output/github-contribution-grid-snake-dark.svg"
           alt="GitHub contribution snake"
+          width="880"
+          height="192"
           class="snake-image"
           fetchpriority="high"
           decoding="async"
@@ -278,7 +280,7 @@ const { y } = useWindowScroll();
   font-size: clamp(36px, 6vw, 56px);
   line-height: 1;
   text-align: center;
-  background: linear-gradient(130deg, #80b5ff 0%, #75ffff 100%);
+  background: linear-gradient(130deg, #80b5ff 0%, #6eeded 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
