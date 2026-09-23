@@ -477,9 +477,7 @@ const contacts = [
   .contact-row-value {
     font-size: 14px;
   }
-}
 
-@media (max-width: 700px) {
   .above-fold {
     padding: 32px 20px 16px;
   }
