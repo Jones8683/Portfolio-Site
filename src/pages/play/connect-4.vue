@@ -37,8 +37,6 @@ const { start: finishMove } = useTimeoutFn(
   { immediate: false },
 );
 
-const playerColors = { 1: '#0dc2ff', 2: '#ff0d72' };
-
 const getGhostRow = (col) => {
   for (let r = ROWS - 1; r >= 0; r--) {
     if (!board.value[r][col]) return r;
@@ -143,7 +141,7 @@ onKeyStroke(['r', 'R'], resetGame);
               <div
                 v-if="isDropTarget(cell.row, col)"
                 class="drop-target"
-                :class="`ghost-p${cell.value}`"
+                :class="`p${cell.value}`"
               ></div>
               <div
                 class="piece"
@@ -154,7 +152,7 @@ onKeyStroke(['r', 'R'], resetGame);
                     'winning-piece': isWinningCell(cell.row, col),
                     dropping: isDropTarget(cell.row, col),
                   },
-                  isGhostCell(cell.row, col) && ['ghost', `ghost-p${currentPlayer}`],
+                  isGhostCell(cell.row, col) && ['ghost', `p${currentPlayer}`],
                 ]"
               ></div>
             </div>
@@ -163,7 +161,7 @@ onKeyStroke(['r', 'R'], resetGame);
 
         <div v-if="winner || isDraw" class="overlay-msg">
           <h2 class="menu-title">
-            <span v-if="winner" :style="{ color: playerColors[winner] }">
+            <span v-if="winner" class="player-text" :class="`p${winner}`">
               PLAYER {{ winner }} WINS!
             </span>
             <span v-else>DRAW!</span>
@@ -177,11 +175,11 @@ onKeyStroke(['r', 'R'], resetGame);
 
         <div class="row">
           <div class="info-box score-box">
-            <div class="label score-label" :style="{ color: playerColors[1] }">Player 1</div>
+            <div class="label score-label player-text p1">Player 1</div>
             <div class="value score-value">{{ scores[1] }}</div>
           </div>
           <div class="info-box score-box">
-            <div class="label score-label" :style="{ color: playerColors[2] }">Player 2</div>
+            <div class="label score-label player-text p2">Player 2</div>
             <div class="value score-value">{{ scores[2] }}</div>
           </div>
         </div>
@@ -190,11 +188,7 @@ onKeyStroke(['r', 'R'], resetGame);
           <div class="info-box turn-box">
             <div class="label">Turn</div>
             <div class="value">
-              <div
-                v-if="!winner && !isDraw"
-                class="turn-piece"
-                :class="{ p1: currentPlayer === 1, p2: currentPlayer === 2 }"
-              ></div>
+              <div v-if="!winner && !isDraw" class="turn-piece" :class="`p${currentPlayer}`"></div>
               <span v-else class="no-turn-text">-</span>
             </div>
           </div>
@@ -266,16 +260,6 @@ onKeyStroke(['r', 'R'], resetGame);
   pointer-events: none;
 }
 
-.drop-target.ghost-p1 {
-  background: rgba(13, 194, 255, 0.25);
-  box-shadow: 0 0 8px rgba(13, 194, 255, 0.15);
-}
-
-.drop-target.ghost-p2 {
-  background: rgba(255, 13, 114, 0.25);
-  box-shadow: 0 0 8px rgba(255, 13, 114, 0.15);
-}
-
 .piece {
   width: 42px;
   height: 42px;
@@ -286,28 +270,30 @@ onKeyStroke(['r', 'R'], resetGame);
     box-shadow 0.1s ease;
 }
 
-.piece.p1 {
-  background: #0dc2ff;
-  box-shadow: 0 0 10px rgba(13, 194, 255, 0.35);
+.p1 {
+  --player: #0dc2ff;
 }
 
-.piece.p2 {
-  background: #ff0d72;
-  box-shadow: 0 0 10px rgba(255, 13, 114, 0.35);
+.p2 {
+  --player: #ff0d72;
 }
 
+.player-text {
+  color: var(--player);
+}
+
+.piece.p1,
+.piece.p2,
+.turn-piece {
+  background: var(--player);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--player) 35%, transparent);
+}
+
+.drop-target,
 .piece.ghost {
   pointer-events: none;
-}
-
-.piece.ghost-p1 {
-  background: rgba(13, 194, 255, 0.25);
-  box-shadow: 0 0 8px rgba(13, 194, 255, 0.15);
-}
-
-.piece.ghost-p2 {
-  background: rgba(255, 13, 114, 0.25);
-  box-shadow: 0 0 8px rgba(255, 13, 114, 0.15);
+  background: color-mix(in srgb, var(--player) 25%, transparent);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--player) 15%, transparent);
 }
 
 .piece.dropping {
@@ -367,16 +353,6 @@ onKeyStroke(['r', 'R'], resetGame);
   width: 30px;
   height: 30px;
   border-radius: 50%;
-}
-
-.turn-piece.p1 {
-  background: #0dc2ff;
-  box-shadow: 0 0 10px rgba(13, 194, 255, 0.35);
-}
-
-.turn-piece.p2 {
-  background: #ff0d72;
-  box-shadow: 0 0 10px rgba(255, 13, 114, 0.35);
 }
 
 .no-turn-text {
