@@ -11,7 +11,7 @@ useTitle(() => `${route.meta.title} • Jones Jankovic`);
 <template>
   <NavBar />
   <main>
-    <RouterView v-slot="{ Component, route }">
+    <RouterView v-slot="{ Component }">
       <Transition name="page" mode="out-in">
         <component :is="Component" :key="route.path" />
       </Transition>
