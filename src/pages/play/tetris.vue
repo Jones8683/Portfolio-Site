@@ -218,7 +218,7 @@ const LINE_SCORES = [0, 100, 300, 500, 800];
 
 function arenaSweep() {
   let rowCount = 0;
-  outer: for (let y = arena.length - 1; y > 0; --y) {
+  outer: for (let y = arena.length - 1; y >= 0; --y) {
     for (let x = 0; x < arena[y].length; ++x) {
       if (arena[y][x] === 0) continue outer;
     }
@@ -228,12 +228,9 @@ function arenaSweep() {
     rowCount++;
   }
 
-  if (rowCount > 0) {
-    const level = Math.floor(player.lines / 10) + 1;
-    player.score += LINE_SCORES[rowCount] * level;
-    player.lines += rowCount;
-    updateScore();
-  }
+  const level = Math.floor(player.lines / 10) + 1;
+  player.score += LINE_SCORES[rowCount] * level;
+  player.lines += rowCount;
 }
 
 function merge() {
