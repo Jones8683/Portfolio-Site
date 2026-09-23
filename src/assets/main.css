@@ -170,9 +170,15 @@ main:has(.home) {
   text-align: center;
 }
 
-.name-title {
-  font-size: clamp(2.5rem, 4vw, 4rem);
+.page-title {
+  font-size: clamp(3rem, 10vw, 4.5rem);
   line-height: 1;
+  text-wrap: balance;
+}
+
+.page-subtitle {
+  color: var(--color-muted);
+  margin-bottom: 12px;
 }
 
 .panel {

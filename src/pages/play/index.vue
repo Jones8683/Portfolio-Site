@@ -30,9 +30,9 @@ const games = [
 
 <template>
   <div class="content-wrap arcade-page">
-    <h1 class="name-title arcade-title">Arcade</h1>
+    <h1 class="page-title">Arcade</h1>
 
-    <p class="arcade-subtitle">A collection of modern and classic browser games.</p>
+    <p class="page-subtitle">A collection of modern and classic browser games.</p>
 
     <div class="arcade-grid">
       <div v-for="game in games" :key="game.path" class="arcade-card">
@@ -49,16 +49,6 @@ const games = [
 </template>
 
 <style scoped>
-.arcade-title {
-  font-size: 72px;
-}
-
-.arcade-subtitle {
-  color: var(--color-muted);
-  font-size: 0.95rem;
-  margin-bottom: 12px;
-}
-
 .arcade-page {
   width: min(92%, 1080px);
   padding-bottom: 60px;

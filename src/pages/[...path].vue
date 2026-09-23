@@ -4,9 +4,9 @@ definePage({ meta: { title: 'Page not found' } });
 
 <template>
   <div class="content-wrap">
-    <h1 class="name-title not-found-title">404</h1>
+    <h1 class="page-title not-found-title">404</h1>
 
-    <p class="not-found-subtitle">This is not the page you're looking for</p>
+    <p class="page-subtitle not-found-subtitle">This is not the page you're looking for</p>
 
     <RouterLink to="/" class="back-link not-found-link">
       <svg class="arrow-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
@@ -30,8 +30,6 @@ definePage({ meta: { title: 'Page not found' } });
 }
 
 .not-found-subtitle {
-  color: var(--color-muted);
-  font-size: 1.05rem;
   margin-top: -8px;
   margin-bottom: 10px;
 }

@@ -28,8 +28,8 @@ const projects = [
 
 <template>
   <section class="content-wrap projects-page">
-    <h1 class="name-title projects-title">Projects</h1>
-    <p class="projects-subtitle">A collection of projects I have made and contributed to.</p>
+    <h1 class="page-title">Projects</h1>
+    <p class="page-subtitle">A collection of projects I have made and contributed to.</p>
 
     <div class="panel project-panel">
       <a
@@ -74,17 +74,6 @@ const projects = [
 .projects-page {
   width: min(92%, 840px);
   padding: 0 0 56px;
-}
-
-.projects-title {
-  font-size: 72px;
-}
-
-.projects-subtitle {
-  color: var(--color-muted);
-  font-size: 1.02rem;
-  margin-bottom: 12px;
-  text-align: center;
 }
 
 .project-panel {
@@ -210,12 +199,6 @@ const projects = [
   to {
     opacity: 1;
     transform: translateY(0);
-  }
-}
-
-@media (max-width: 860px) {
-  .projects-title {
-    line-height: 1.15;
   }
 }
 
