@@ -113,7 +113,6 @@ const games = [
   display: flex;
   align-items: center;
   justify-content: center;
-  text-decoration: none;
   font-weight: 800;
   font-size: 0.75rem;
   text-transform: uppercase;

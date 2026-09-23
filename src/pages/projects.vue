@@ -99,8 +99,6 @@ const projects = [
   position: relative;
   display: flex;
   padding: 22px 4px;
-  text-decoration: none;
-  color: inherit;
   text-align: left;
   border-bottom: 1px solid rgba(148, 163, 184, 0.14);
   animation: pull-up 0.4s ease both;
@@ -122,7 +120,6 @@ const projects = [
   gap: 18px;
   flex: 1;
   min-width: 0;
-  will-change: transform;
   transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
@@ -152,7 +149,6 @@ const projects = [
   border-radius: 12px;
   object-fit: cover;
   flex-shrink: 0;
-  will-change: transform;
   transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
 }
 

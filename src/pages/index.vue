@@ -159,10 +159,8 @@ const contacts = [
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
   gap: 20px;
   padding: 4px 40px 0;
-  box-sizing: border-box;
   min-height: calc(100svh - var(--nav-height));
 }
 

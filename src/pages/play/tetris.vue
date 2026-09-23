@@ -627,11 +627,11 @@ watch(
         <div class="row">
           <div class="info-box">
             <div class="label">Next</div>
-            <canvas ref="nextCanvas" class="side-canvas"></canvas>
+            <canvas ref="nextCanvas"></canvas>
           </div>
           <div class="info-box">
             <div class="label">Hold</div>
-            <canvas ref="holdCanvas" class="side-canvas"></canvas>
+            <canvas ref="holdCanvas"></canvas>
           </div>
         </div>
         <div class="info-box score-box">
@@ -668,9 +668,5 @@ watch(
 .game-canvas {
   user-select: none;
   background-color: #0d0d0d;
-}
-
-.side-canvas {
-  background-color: transparent;
 }
 </style>

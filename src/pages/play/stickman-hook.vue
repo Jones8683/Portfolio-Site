@@ -74,7 +74,6 @@ const { enter: enterFullscreen } = useFullscreen(gameIframe);
 
 .glass-btn {
   cursor: pointer;
-  text-decoration: none;
   color: rgba(255, 255, 255, 0.8);
   font-size: 0.75rem;
   font-weight: 600;

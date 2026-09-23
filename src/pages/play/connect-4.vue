@@ -264,7 +264,6 @@ onKeyStroke(['r', 'R'], resetGame);
   width: 42px;
   height: 42px;
   border-radius: 50%;
-  background: transparent;
   transition:
     background 0.1s ease,
     box-shadow 0.1s ease;

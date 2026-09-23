@@ -123,7 +123,6 @@ onMounted(updateHeaderState);
   border: 2px solid transparent;
   border-radius: 16px;
   pointer-events: auto;
-  will-change: transform;
   transition:
     margin-inline 0.3s var(--ease),
     padding 0.3s var(--ease),
