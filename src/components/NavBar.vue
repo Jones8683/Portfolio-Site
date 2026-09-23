@@ -1,32 +1,18 @@
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useEventListener } from '@vueuse/core';
+import { computed, ref, watch } from 'vue';
+import { useWindowScroll } from '@vueuse/core';
 
 const toLetters = (word) => [...word].map((char, i) => ({ char, offset: i / (word.length - 1) }));
 const jonesLetters = toLetters('ones');
 const jankovicLetters = toLetters('ovic');
 
-const isMinimized = ref(false);
+const { y } = useWindowScroll();
+const isMinimized = computed(() => y.value > 20);
 const shouldShow = ref(true);
-let lastScrollY = 0;
-let ticking = false;
 
-const updateHeaderState = () => {
-  const { scrollY } = window;
-  isMinimized.value = scrollY > 20;
-  shouldShow.value = scrollY < 350 || scrollY < lastScrollY;
-  lastScrollY = scrollY;
-  ticking = false;
-};
-
-const handleScroll = () => {
-  if (ticking) return;
-  requestAnimationFrame(updateHeaderState);
-  ticking = true;
-};
-
-useEventListener(window, 'scroll', handleScroll, { passive: true });
-onMounted(updateHeaderState);
+watch(y, (now, prev) => {
+  shouldShow.value = now < 350 || now < prev;
+});
 </script>
 
 <template>
