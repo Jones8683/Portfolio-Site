@@ -6,26 +6,22 @@ const projects = [
     name: 'BetterSEQTA+',
     description:
       'Redesigning SEQTA with custom themes, live wallpapers, and quality-of-life upgrades.',
-    href: 'https://github.com/BetterSEQTA/BetterSEQTA-Plus',
-    logo: 'https://github.com/BetterSEQTA.png',
+    repo: 'BetterSEQTA/BetterSEQTA-Plus',
   },
   {
     name: 'DesQTA',
     description: 'A powerful desktop app for SEQTA Learn, right on your computer.',
-    href: 'https://github.com/BetterSEQTA/DesQTA',
-    logo: 'https://github.com/BetterSEQTA.png',
+    repo: 'BetterSEQTA/DesQTA',
   },
   {
     name: 'Portfolio Site',
     description: 'This very site - my home for projects, experiments, and games.',
-    href: 'https://github.com/Jones8683/Portfolio-Site',
-    logo: 'https://github.com/Jones8683.png',
+    repo: 'Jones8683/Portfolio-Site',
   },
   {
     name: 'Arduino Buzzer Music',
     description: 'A collection of songs created to be played on an Arduino piezo buzzer.',
-    href: 'https://github.com/Jones8683/Arduino-Buzzer-Music',
-    logo: 'https://github.com/Jones8683.png',
+    repo: 'Jones8683/Arduino-Buzzer-Music',
   },
 ];
 </script>
@@ -39,7 +35,7 @@ const projects = [
       <a
         v-for="(project, index) in projects"
         :key="project.name"
-        :href="project.href"
+        :href="`https://github.com/${project.repo}`"
         target="_blank"
         rel="noopener noreferrer"
         class="project-row"
@@ -47,7 +43,14 @@ const projects = [
       >
         <span class="project-row-bar" aria-hidden="true"></span>
         <span class="project-row-inner">
-          <img :src="project.logo" alt="" class="project-logo" loading="lazy" decoding="async" />
+          <img
+            :src="`https://avatars.githubusercontent.com/${project.repo.split('/')[0]}?s=92`"
+            alt=""
+            class="project-logo"
+            width="46"
+            height="46"
+            decoding="async"
+          />
           <span class="project-info">
             <span class="project-name">{{ project.name }}</span>
             <span class="project-desc">{{ project.description }}</span>
