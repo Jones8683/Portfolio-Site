@@ -23,8 +23,8 @@ const score = ref({ left: 0, right: 0 });
 
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 
-const W = 700,
-  H = 500;
+const W = 700;
+const H = 500;
 const WIN_SCORE = 7;
 const PADDLE_W = 12;
 const PADDLE_H = 85;

@@ -20,8 +20,8 @@ const score = ref(0);
 const status = ref('start');
 const isPaused = ref(false);
 
-const W = 360,
-  H = 568;
+const W = 360;
+const H = 568;
 const GROUND_Y = 480;
 const GRAVITY = 0.42;
 const JUMP_VY = -6.8;
@@ -33,13 +33,12 @@ const PIPE_EVERY = 1200;
 const TARGET_FPS = 60;
 const STEP = 1000 / TARGET_FPS;
 
-let groundOff = 0,
-  cityOff = 0,
-  cloudOff = 0;
+let groundOff = 0;
+let cityOff = 0;
+let cloudOff = 0;
 let ctx;
 let bird, pipes, lastPipeTs, deathTimer;
 let wingFrame = 0;
-
 let pauseTs = 0;
 
 function initState() {
@@ -52,8 +51,8 @@ function initState() {
 }
 
 function addPipe(ts) {
-  const minTop = 60,
-    maxTop = GROUND_Y - PIPE_GAP - 60;
+  const minTop = 60;
+  const maxTop = GROUND_Y - PIPE_GAP - 60;
   pipes.push({
     x: W + 10,
     topH: minTop + Math.random() * (maxTop - minTop),
@@ -63,9 +62,9 @@ function addPipe(ts) {
 }
 
 function hitTest() {
-  const bx = bird.x,
-    by = bird.y,
-    br = 11;
+  const bx = bird.x;
+  const by = bird.y;
+  const br = 11;
   if (by + br >= GROUND_Y) return true;
   for (const p of pipes) {
     const inX = bx + br > p.x && bx - br < p.x + PIPE_W;
@@ -166,10 +165,10 @@ function drawCity() {
       }
 
       if (b.windows) {
-        const ww = 5,
-          wh = 5,
-          gx = 8,
-          gy = 9;
+        const ww = 5;
+        const wh = 5;
+        const gx = 8;
+        const gy = 9;
         const cols = Math.floor((b.w - 6) / (ww + gx)) || 1;
         const rows = Math.floor((b.h - 10) / (wh + gy));
         const startX = rx + Math.floor((b.w - cols * (ww + gx) + gx) / 2);
