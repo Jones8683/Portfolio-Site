@@ -9,7 +9,6 @@ definePage({ meta: { title: '2048' } });
 const gameIframe = useTemplateRef('iframe');
 const score = ref(0);
 const highScore = useStorage('2048-best-score', 0);
-const gameSrc = '/gameassets/2048.html';
 
 const focusIframe = () => gameIframe.value?.focus();
 
@@ -28,7 +27,7 @@ useEventListener(window, 'message', handleMessage);
       <div class="left-section" @click="focusIframe">
         <iframe
           ref="iframe"
-          :src="gameSrc"
+          src="/gameassets/2048.html"
           class="game-iframe"
           title="2048 game"
           scrolling="no"
