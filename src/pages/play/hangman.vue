@@ -24,7 +24,7 @@ const wrongLetters = computed(() =>
 const wrongGuesses = computed(() => wrongLetters.value.length);
 
 function onInput(e) {
-  inputBuffer.value = e.target.value.toUpperCase().replaceAll(/[^A-Z\s]/gu, '');
+  inputBuffer.value = e.target.value.toUpperCase().replaceAll(/[^A-Z ]/gu, '');
 }
 
 function submitWord() {
@@ -223,10 +223,8 @@ onKeyStroke(
                   revealed: ch !== '_' && ch !== ' ',
                   space: ch === ' ',
                 }"
+                >{{ ch }}</span
               >
-                <template v-if="ch === ' '">&nbsp;</template>
-                <template v-else>{{ ch }}</template>
-              </span>
             </div>
           </div>
         </Transition>
