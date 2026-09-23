@@ -1,21 +1,14 @@
 <script setup>
-defineProps({
-  controls: {
-    type: Array,
-    required: true,
-    validator: (value) => value.every((control) => control.action && control.key),
-  },
-});
+defineProps({ controls: { type: Array, required: true } });
 </script>
 
 <template>
   <div class="controls-container">
-    <div v-for="(control, index) in controls" :key="index" class="control-item">
+    <div v-for="control in controls" :key="control.action" class="control-item">
       <span>{{ control.action }}</span>
-      <div v-if="Array.isArray(control.key)" class="key-group">
-        <span v-for="(k, i) in control.key" :key="i" class="key">{{ k }}</span>
+      <div class="key-group">
+        <span v-for="key in [control.key].flat()" :key="key" class="key">{{ key }}</span>
       </div>
-      <span v-else class="key">{{ control.key }}</span>
     </div>
   </div>
 </template>
