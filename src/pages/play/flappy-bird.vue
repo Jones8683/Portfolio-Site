@@ -37,7 +37,10 @@ let groundOff = 0;
 let cityOff = 0;
 let cloudOff = 0;
 let ctx;
-let bird, pipes, lastPipeTs, deathTimer;
+let bird;
+let pipes;
+let lastPipeTs;
+let deathTimer;
 let wingFrame = 0;
 let pauseTs = 0;
 
@@ -319,10 +322,6 @@ function drawBird() {
   ctx.restore();
 }
 
-function drawScore() {
-  txt(String(score.value), W / 2, 48, 46, '#ffffff', '#3a2a10');
-}
-
 function drawIdle() {
   const a = 0.8 + Math.sin(wingFrame * 0.05) * 0.2;
   ctx.globalAlpha = a;
@@ -450,7 +449,6 @@ watch(
     el.style.width = W + 'px';
     el.style.height = H + 'px';
     ctx.scale(pixelRatio.value, pixelRatio.value);
-    ctx.imageSmoothingEnabled = false;
     initState();
     resume();
   },

@@ -21,7 +21,9 @@ const score = ref(0);
 const status = ref('playing');
 const isPaused = ref(false);
 
-let ctx, nextCtx, holdCtx;
+let ctx;
+let nextCtx;
+let holdCtx;
 let animationFrame = 0;
 
 const COLORS = [null, '#0dc2ff', '#3877ff', '#ff8e0d', '#ffe138', '#0dff72', '#ff0d72', '#f538ff'];
