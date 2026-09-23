@@ -166,7 +166,7 @@ onKeyStroke(['r', 'R'], resetGame);
             </span>
             <span v-else>DRAW!</span>
           </h2>
-          <button class="retry-btn" @click="resetGame">PLAY AGAIN</button>
+          <button class="overlay-btn" @click="resetGame">PLAY AGAIN</button>
         </div>
       </div>
 

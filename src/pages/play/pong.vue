@@ -392,13 +392,15 @@ onUnmounted(() => {
         <canvas ref="canvas"></canvas>
         <div v-if="status === 'start'" class="overlay-msg">
           <h2 class="menu-title">PONG</h2>
-          <button class="menu-btn" @click="initGame('cpu')">1 PLAYER</button>
-          <button class="menu-btn" @click="initGame('pvp')">2 PLAYERS</button>
+          <div class="overlay-actions">
+            <button class="overlay-btn" @click="initGame('cpu')">1 PLAYER</button>
+            <button class="overlay-btn" @click="initGame('pvp')">2 PLAYERS</button>
+          </div>
         </div>
         <div v-else-if="status === 'over'" class="overlay-msg">
           <h2 class="menu-title">GAME OVER</h2>
           <div class="winner">{{ winner }}</div>
-          <button class="menu-btn" @click="showStartScreen">MENU</button>
+          <button class="overlay-btn" @click="showStartScreen">MENU</button>
         </div>
         <div v-else-if="isPaused" class="overlay-msg">
           <h2 class="menu-title">PAUSED</h2>

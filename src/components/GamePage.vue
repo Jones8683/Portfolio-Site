@@ -154,8 +154,12 @@ const isMobile = useMediaQuery('(max-width: 850px)');
   margin-bottom: 20px;
 }
 
-.retry-btn,
-.menu-btn {
+.overlay-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.overlay-btn {
   padding: 10px 20px;
   font-weight: 700;
   color: #000000;
@@ -163,13 +167,6 @@ const isMobile = useMediaQuery('(max-width: 850px)');
   border: 0;
   border-radius: 4px;
   cursor: pointer;
-}
-
-.menu-btn {
-  min-width: 140px;
-  margin: 5px;
-  padding: 12px 24px;
-  font-weight: 800;
 }
 
 .game-iframe,

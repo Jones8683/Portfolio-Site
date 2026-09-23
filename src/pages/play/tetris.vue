@@ -615,7 +615,7 @@ watch(
         <canvas ref="gameCanvas" class="game-canvas"></canvas>
         <div v-if="status === 'over'" class="overlay-msg">
           <h2 class="menu-title">GAME OVER</h2>
-          <button class="retry-btn" @click="resetGame">PLAY AGAIN</button>
+          <button class="overlay-btn" @click="resetGame">PLAY AGAIN</button>
         </div>
         <div v-if="isPaused" class="overlay-msg">
           <h2 class="menu-title">PAUSED</h2>

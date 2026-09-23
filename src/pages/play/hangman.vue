@@ -231,17 +231,15 @@ onKeyStroke(
           </div>
         </Transition>
 
-        <div v-if="status === 'won' || status === 'lost'" class="outcome-overlay">
-          <div class="outcome-inner">
-            <div class="outcome-emoji">
-              {{ status === 'won' ? '🎉' : '💀' }}
-            </div>
-            <h2 class="menu-title outcome-title">
-              {{ status === 'won' ? 'YOU GOT IT!' : 'GAME OVER' }}
-            </h2>
-            <p class="outcome-word">{{ secretWord }}</p>
-            <button class="retry-btn" @click="resetGame">PLAY AGAIN</button>
+        <div v-if="status === 'won' || status === 'lost'" class="overlay-msg">
+          <div class="outcome-emoji">
+            {{ status === 'won' ? '🎉' : '💀' }}
           </div>
+          <h2 class="menu-title outcome-title">
+            {{ status === 'won' ? 'YOU GOT IT!' : 'GAME OVER' }}
+          </h2>
+          <p class="outcome-word">{{ secretWord }}</p>
+          <button class="overlay-btn" @click="resetGame">PLAY AGAIN</button>
         </div>
       </div>
 
@@ -458,22 +456,6 @@ onKeyStroke(
 .letter-slot.space {
   border-bottom: none;
   min-width: 12px;
-}
-
-.outcome-overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.88);
-  backdrop-filter: blur(4px);
-  border-radius: 16px;
-  z-index: 10;
-}
-
-.outcome-inner {
-  text-align: center;
 }
 
 .outcome-emoji {

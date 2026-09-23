@@ -219,10 +219,10 @@ const gridStyle = computed(() => ({
 
         <div v-if="status === 'start'" class="overlay-msg">
           <h2 class="menu-title">MINESWEEPER</h2>
-          <div class="difficulty-row">
-            <button class="retry-btn" @click="initGame('easy')">EASY</button>
-            <button class="retry-btn" @click="initGame('medium')">MED</button>
-            <button class="retry-btn" @click="initGame('hard')">HARD</button>
+          <div class="overlay-actions">
+            <button class="overlay-btn" @click="initGame('easy')">EASY</button>
+            <button class="overlay-btn" @click="initGame('medium')">MED</button>
+            <button class="overlay-btn" @click="initGame('hard')">HARD</button>
           </div>
         </div>
 
@@ -230,7 +230,7 @@ const gridStyle = computed(() => ({
           <h2 class="menu-title result-title" :class="{ won: status === 'won' }">
             {{ status === 'won' ? 'YOU WIN!' : 'GAME OVER' }}
           </h2>
-          <button class="retry-btn" @click="resetToStart">PLAY AGAIN</button>
+          <button class="overlay-btn" @click="resetToStart">PLAY AGAIN</button>
         </div>
 
         <div v-if="isPaused" class="overlay-msg">
@@ -317,11 +317,6 @@ const gridStyle = computed(() => ({
 .cell.mine {
   background: #cc0000;
   border: 1px solid #990000;
-}
-
-.difficulty-row {
-  display: flex;
-  gap: 10px;
 }
 
 .result-title {
