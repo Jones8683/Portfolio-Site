@@ -11,7 +11,7 @@ const secretWord = ref('');
 const inputBuffer = ref('');
 const guessedLetters = ref(new Set());
 const MAX_WRONG = 6;
-const alphabet = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'];
+const ALPHABET = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'];
 
 const maskedWord = computed(() =>
   [...secretWord.value].map((ch) => (ch === ' ' || guessedLetters.value.has(ch) ? ch : '_')),
@@ -269,7 +269,7 @@ onKeyStroke(
 
         <div class="keyboard-grid">
           <button
-            v-for="letter in alphabet"
+            v-for="letter in ALPHABET"
             :key="letter"
             class="key-btn"
             :class="{

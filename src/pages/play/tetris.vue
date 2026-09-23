@@ -24,7 +24,7 @@ const isPaused = ref(false);
 let ctx, nextCtx, holdCtx;
 let animationFrame = 0;
 
-const colors = [null, '#0dc2ff', '#3877ff', '#ff8e0d', '#ffe138', '#0dff72', '#ff0d72', '#f538ff'];
+const COLORS = [null, '#0dc2ff', '#3877ff', '#ff8e0d', '#ffe138', '#0dff72', '#ff0d72', '#f538ff'];
 
 const arena = createMatrix(12, 20);
 
@@ -160,7 +160,7 @@ function drawMatrix(matrix, offset, context, isGhost = false) {
           return;
         }
 
-        context.fillStyle = colors[value];
+        context.fillStyle = COLORS[value];
         context.fillRect(bx, by, 1, 1);
 
         if (isLanded && context === ctx && matrix === player.matrix) {

@@ -36,7 +36,7 @@ const flagsPlaced = ref(0);
 const isPaused = ref(false);
 let isFirstClick = true;
 
-const numberColors = [
+const NUMBER_COLORS = [
   null,
   '#5c5cff',
   '#00e600',
@@ -210,7 +210,7 @@ const gridStyle = computed(() => ({
               <span v-else-if="cell.isRevealed && cell.isMine">💣</span>
               <span
                 v-else-if="cell.isRevealed && cell.neighborCount > 0"
-                :style="{ color: numberColors[cell.neighborCount] }"
+                :style="{ color: NUMBER_COLORS[cell.neighborCount] }"
                 >{{ cell.neighborCount }}</span
               >
             </div>
