@@ -154,6 +154,14 @@ const isMobile = useMediaQuery('(max-width: 850px)');
   margin-bottom: 20px;
 }
 
+.result-title {
+  color: var(--color-red);
+}
+
+.result-title.won {
+  color: var(--color-green);
+}
+
 .overlay-actions {
   display: flex;
   gap: 10px;

@@ -319,14 +319,6 @@ const gridStyle = computed(() => ({
   border: 1px solid #990000;
 }
 
-.result-title {
-  color: #ff4757;
-}
-
-.result-title.won {
-  color: #00ff00;
-}
-
 .mines-label {
   color: var(--color-gold);
   margin-bottom: 4px;

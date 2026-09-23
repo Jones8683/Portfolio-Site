@@ -44,12 +44,14 @@
   --color-background: #1a1c24;
   --color-surface: rgba(255, 255, 255, 0.03);
   --color-border: rgba(148, 163, 184, 0.2);
-  --color-text: #f8fafc;
+  --color-text: #ffffff;
   --color-text-soft: #cbd5e1;
   --color-muted: #94a3b8;
   --color-subtle: #64748b;
   --color-faint: #2d3748;
   --color-gold: #ffd700;
+  --color-red: #ff4757;
+  --color-green: #2ed573;
   --color-glass: rgba(255, 255, 255, 0.05);
   --color-glass-border: rgba(255, 255, 255, 0.08);
   --color-hairline: rgba(255, 255, 255, 0.1);

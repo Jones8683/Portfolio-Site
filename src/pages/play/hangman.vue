@@ -233,7 +233,7 @@ onKeyStroke(
           <div class="outcome-emoji">
             {{ status === 'won' ? '🎉' : '💀' }}
           </div>
-          <h2 class="menu-title outcome-title">
+          <h2 class="menu-title result-title outcome-title" :class="{ won: status === 'won' }">
             {{ status === 'won' ? 'YOU GOT IT!' : 'GAME OVER' }}
           </h2>
           <p class="outcome-word">{{ secretWord }}</p>
@@ -500,12 +500,16 @@ onKeyStroke(
 }
 
 .danger-box {
-  background: linear-gradient(135deg, rgba(255, 107, 107, 0.07), transparent);
-  border-color: rgba(255, 107, 107, 0.18);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--color-red) 7%, transparent),
+    transparent
+  );
+  border-color: color-mix(in srgb, var(--color-red) 18%, transparent);
 }
 
 .red-lbl {
-  color: #ff6b6b;
+  color: var(--color-red);
 }
 
 .pips-row {
@@ -525,9 +529,9 @@ onKeyStroke(
 }
 
 .pip.dead {
-  background: #ff6b6b;
+  background: var(--color-red);
   border-color: transparent;
-  box-shadow: 0 0 8px rgba(255, 107, 107, 0.55);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--color-red) 55%, transparent);
 }
 
 .wrong-count {
@@ -556,9 +560,9 @@ onKeyStroke(
 }
 
 .wrong-chip {
-  background: rgba(255, 107, 107, 0.08);
-  border: 1px solid rgba(255, 107, 107, 0.22);
-  color: #ff6b6b;
+  background: color-mix(in srgb, var(--color-red) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-red) 22%, transparent);
+  color: var(--color-red);
   font-weight: 800;
   font-size: 11px;
   padding: 3px 8px;
@@ -591,9 +595,9 @@ onKeyStroke(
 }
 
 .key-btn.correct {
-  background: rgba(13, 255, 114, 0.13);
-  border-color: rgba(13, 255, 114, 0.3);
-  color: #0dff72;
+  background: color-mix(in srgb, var(--color-green) 13%, transparent);
+  border-color: color-mix(in srgb, var(--color-green) 30%, transparent);
+  color: var(--color-green);
   cursor: default;
 }
 

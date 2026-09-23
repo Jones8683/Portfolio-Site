@@ -114,12 +114,12 @@ const games = [
 }
 
 .red-btn {
-  background: rgba(255, 71, 87, 0.05);
-  color: #ff4757;
+  background: color-mix(in srgb, var(--color-red) 5%, transparent);
+  color: var(--color-red);
 }
 
 .red-btn:hover {
-  background: #ff4757;
+  background: var(--color-red);
   color: #ffffff;
 }
 
@@ -144,12 +144,12 @@ const games = [
 }
 
 .green-btn {
-  background: rgba(46, 213, 115, 0.05);
-  color: #2ed573;
+  background: color-mix(in srgb, var(--color-green) 5%, transparent);
+  color: var(--color-green);
 }
 
 .green-btn:hover {
-  background: #2ed573;
+  background: var(--color-green);
   color: #ffffff;
 }
 
