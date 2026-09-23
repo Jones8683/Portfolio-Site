@@ -101,7 +101,7 @@ onKeyStroke(
 
         <Transition name="slide-up">
           <div v-if="status !== 'start'" class="gallows-section">
-            <svg class="gallows-svg" viewBox="0 0 220 230" fill="none">
+            <svg class="gallows-svg" viewBox="0 0 220 230" fill="none" aria-hidden="true">
               <line
                 x1="20"
                 y1="222"
