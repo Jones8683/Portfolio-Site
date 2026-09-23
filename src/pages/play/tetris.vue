@@ -54,11 +54,7 @@ const ARR = 33;
 const SOFT_DROP_ARR = 30;
 const timers = { left: 0, right: 0, softDrop: 0 };
 
-let hardDropEffect = {
-  active: false,
-  alpha: 0,
-  trails: [],
-};
+let hardDropEffect = { alpha: 0, trails: [] };
 
 let piecesBag = [];
 
@@ -123,7 +119,7 @@ function draw() {
   ctx.fillStyle = '#0d0d0d';
   ctx.fillRect(0, 0, arena[0].length, arena.length);
 
-  if (hardDropEffect.active && hardDropEffect.alpha > 0) {
+  if (hardDropEffect.alpha > 0) {
     hardDropEffect.trails.forEach((trail) => {
       const g = ctx.createLinearGradient(0, trail.y, 0, trail.y + trail.h);
 
@@ -143,7 +139,6 @@ function draw() {
     });
 
     hardDropEffect.alpha -= 0.08;
-    if (hardDropEffect.alpha <= 0) hardDropEffect.active = false;
   }
 
   drawMatrix(arena, { x: 0, y: 0 }, ctx);
@@ -206,7 +201,7 @@ function collide(piece) {
   const o = piece.pos;
   for (let y = 0; y < m.length; ++y) {
     for (let x = 0; x < m[y].length; ++x) {
-      if (m[y][x] !== 0 && (arena[y + o.y] && arena[y + o.y][x + o.x]) !== 0) {
+      if (m[y][x] !== 0 && arena[y + o.y]?.[x + o.x] !== 0) {
         return true;
       }
     }
@@ -278,7 +273,7 @@ function playerHardDrop() {
 
   player.score += (ghostY - startY) * 2;
   player.pos.y = ghostY;
-  hardDropEffect = { active: true, alpha: 0.4, trails };
+  hardDropEffect = { alpha: 0.4, trails };
   playerLock();
 }
 
@@ -541,7 +536,7 @@ function resetGame() {
   lockDelayCounter = 0;
   lockMovesCounter = 0;
   isLanded = false;
-  hardDropEffect = { active: false, alpha: 0, trails: [] };
+  hardDropEffect = { alpha: 0, trails: [] };
   for (const action in timers) timers[action] = 0;
 
   drawPreview(holdCtx, null);
