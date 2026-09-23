@@ -45,9 +45,10 @@ const { start: serveBall, stop: cancelServe } = useTimeoutFn(
   { immediate: false },
 );
 
-const leftPaddle = { x: 20, y: 210, speed: 10.5, aiSpeed: 5.7, flash: 0 };
-const rightPaddle = { x: 668, y: 210, speed: 10.5, flash: 0 };
-const ball = { x: 350, y: 250, dx: 0, dy: 0, speed: 4, baseSpeed: 4 };
+const PADDLE_Y = (H - PADDLE_H) / 2;
+const leftPaddle = { x: 20, y: PADDLE_Y, speed: 10.5, aiSpeed: 5.7, flash: 0 };
+const rightPaddle = { x: W - 20 - PADDLE_W, y: PADDLE_Y, speed: 10.5, flash: 0 };
+const ball = { x: W / 2, y: H / 2, dx: 0, dy: 0, speed: 4, baseSpeed: 4 };
 
 let trail = [];
 let particles = [];
@@ -134,8 +135,8 @@ function resetPositions() {
   ball.speed = ball.baseSpeed;
   ball.dx = 0;
   ball.dy = 0;
-  leftPaddle.y = H / 2 - PADDLE_H / 2;
-  rightPaddle.y = H / 2 - PADDLE_H / 2;
+  leftPaddle.y = PADDLE_Y;
+  rightPaddle.y = PADDLE_Y;
   trail = [];
   isResetting = true;
   serveBall();
@@ -300,17 +301,15 @@ function draw() {
 
   drawField();
 
-  if (trail.length > 1) {
-    for (let i = 1; i < trail.length; i++) {
-      const frac = i / trail.length;
-      ctx.beginPath();
-      ctx.moveTo(trail[i - 1].x, trail[i - 1].y);
-      ctx.lineTo(trail[i].x, trail[i].y);
-      ctx.strokeStyle = `rgba(255, 255, 255, ${frac * 0.22})`;
-      ctx.lineWidth = frac * BALL_R * 1.4;
-      ctx.lineCap = 'round';
-      ctx.stroke();
-    }
+  for (let i = 1; i < trail.length; i++) {
+    const frac = i / trail.length;
+    ctx.beginPath();
+    ctx.moveTo(trail[i - 1].x, trail[i - 1].y);
+    ctx.lineTo(trail[i].x, trail[i].y);
+    ctx.strokeStyle = `rgba(255, 255, 255, ${frac * 0.22})`;
+    ctx.lineWidth = frac * BALL_R * 1.4;
+    ctx.lineCap = 'round';
+    ctx.stroke();
   }
 
   for (const p of particles) {
