@@ -7,12 +7,7 @@ import './assets/main.css';
 const router = createRouter({
   history: createWebHistory(),
   routes,
-  scrollBehavior(to, from, savedPosition) {
-    if (savedPosition) {
-      return { ...savedPosition, behavior: 'smooth' };
-    }
-    return { top: 0, behavior: 'smooth' };
-  },
+  scrollBehavior: (to, from, savedPosition) => ({ top: 0, ...savedPosition, behavior: 'smooth' }),
 });
 
 const app = createApp(App).use(router);
