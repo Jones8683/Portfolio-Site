@@ -195,7 +195,7 @@ main:has(.home) {
   align-items: center;
   gap: 8px;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1;
   white-space: nowrap;
   color: var(--color-accent);

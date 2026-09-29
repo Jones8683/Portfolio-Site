@@ -75,7 +75,7 @@ const { enter: enterFullscreen } = useFullscreen(gameIframe);
   cursor: pointer;
   color: rgba(255, 255, 255, 0.8);
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 700;
   padding: 14px 16px;
   background: var(--color-glass);
   border: 1px solid var(--color-hairline);

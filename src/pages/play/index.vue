@@ -103,7 +103,7 @@ const games = [
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 800;
+  font-weight: 900;
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 1px;

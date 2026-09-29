@@ -243,7 +243,7 @@ const contacts = [
   border-radius: 100px;
   font-family: var(--font-ui);
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 400;
   letter-spacing: 0.04em;
   color: #64a8ff;
   background: rgba(58, 123, 213, 0.14);
@@ -385,7 +385,7 @@ const contacts = [
 .contact-row-label {
   min-width: 68px;
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-muted);
   transition: color 0.25s ease;
 }
