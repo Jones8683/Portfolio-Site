@@ -1,14 +1,7 @@
 <script setup>
 import { onUnmounted, ref, useTemplateRef, watch } from 'vue';
-import {
-  onKeyStroke,
-  useDevicePixelRatio,
-  useMagicKeys,
-  useRafFn,
-  useTimeoutFn,
-  useWindowFocus,
-} from '@vueuse/core';
-import GamePage from '@/components/GamePage.vue';
+import { useDevicePixelRatio, useRafFn, useTimeoutFn, useWindowFocus } from '@vueuse/core';
+import GamePage, { onGameKey, useHeldKeys } from '@/components/GamePage.vue';
 import GameControls from '@/components/GameControls.vue';
 
 definePage({ meta: { title: 'Pong' } });
@@ -97,12 +90,11 @@ function spawnParticles(x, y, rgb) {
   }
 }
 
-const { w, s, ArrowUp, ArrowDown } = useMagicKeys({
-  passive: false,
-  onEventFired: (e) => {
-    if (['ArrowUp', 'ArrowDown', 'Space'].includes(e.code)) e.preventDefault();
-  },
-});
+const isHeld = useHeldKeys(['ArrowUp', 'ArrowDown', 'Space']);
+const w = isHeld('w');
+const s = isHeld('s');
+const ArrowUp = isHeld('ArrowUp');
+const ArrowDown = isHeld('ArrowDown');
 
 function resetMatch() {
   score.value.left = 0;
@@ -354,7 +346,7 @@ const { pause, resume } = useRafFn(
   { immediate: false },
 );
 
-onKeyStroke(['Escape', 'p', 'P'], (e) => {
+onGameKey(['Escape', 'p'], (e) => {
   e.preventDefault();
   togglePause();
 });

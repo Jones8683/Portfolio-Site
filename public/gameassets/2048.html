@@ -399,7 +399,7 @@
       }
 
       document.addEventListener('keydown', (event) => {
-        if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+        if (event.altKey || event.ctrlKey || event.metaKey) return;
         const key = VECTORS[event.key] ? event.key : ALIASES[event.key.toLowerCase()];
         if (key) {
           event.preventDefault();

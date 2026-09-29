@@ -1,6 +1,30 @@
-<script setup>
-import { useMediaQuery } from '@vueuse/core';
+<script>
+import { computed } from 'vue';
+import { onKeyStroke, useMagicKeys, useMediaQuery } from '@vueuse/core';
 
+const hasModifier = (event) => event.ctrlKey || event.metaKey || event.altKey;
+
+export function onGameKey(keys, handler) {
+  onKeyStroke((event) => {
+    const key = event.key?.toLowerCase();
+    return !hasModifier(event) && keys.some((gameKey) => gameKey.toLowerCase() === key);
+  }, handler);
+}
+
+export function useHeldKeys(preventedCodes) {
+  const keys = useMagicKeys({
+    passive: false,
+    onEventFired: (event) => {
+      if (preventedCodes.includes(event.code)) event.preventDefault();
+    },
+  });
+  const isModifierHeld = computed(() => keys.ctrl.value || keys.meta.value || keys.alt.value);
+  return (...names) =>
+    computed(() => !isModifierHeld.value && names.some((name) => keys[name].value));
+}
+</script>
+
+<script setup>
 const isMobile = useMediaQuery('(max-width: 850px)');
 </script>
 

@@ -1,13 +1,7 @@
 <script setup>
 import { ref, useTemplateRef, watch } from 'vue';
-import {
-  onKeyStroke,
-  useDevicePixelRatio,
-  useRafFn,
-  useStorage,
-  useWindowFocus,
-} from '@vueuse/core';
-import GamePage from '@/components/GamePage.vue';
+import { useDevicePixelRatio, useRafFn, useStorage, useWindowFocus } from '@vueuse/core';
+import GamePage, { onGameKey } from '@/components/GamePage.vue';
 import GameControls from '@/components/GameControls.vue';
 
 definePage({ meta: { title: 'Flappy Bird' } });
@@ -427,11 +421,11 @@ function jump() {
   }
 }
 
-onKeyStroke(['Escape', 'p', 'P'], (e) => {
+onGameKey(['Escape', 'p'], (e) => {
   e.preventDefault();
   togglePause();
 });
-onKeyStroke([' ', 'ArrowUp', 'w', 'W'], (e) => {
+onGameKey([' ', 'ArrowUp', 'w'], (e) => {
   e.preventDefault();
   jump();
 });

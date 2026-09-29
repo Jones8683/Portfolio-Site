@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref, watch } from 'vue';
-import { onKeyStroke, useIntervalFn, useWindowFocus } from '@vueuse/core';
-import GamePage from '@/components/GamePage.vue';
+import { useIntervalFn, useWindowFocus } from '@vueuse/core';
+import GamePage, { onGameKey } from '@/components/GamePage.vue';
 import GameControls from '@/components/GameControls.vue';
 
 definePage({ meta: { title: 'Minesweeper' } });
@@ -173,8 +173,8 @@ function togglePause() {
   else startTimer();
 }
 
-onKeyStroke(['r', 'R'], resetToStart);
-onKeyStroke(['Escape', 'p', 'P'], (e) => {
+onGameKey(['r'], resetToStart);
+onGameKey(['Escape', 'p'], (e) => {
   e.preventDefault();
   togglePause();
 });

@@ -1,7 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue';
-import { onKeyStroke } from '@vueuse/core';
-import GamePage from '@/components/GamePage.vue';
+import GamePage, { onGameKey } from '@/components/GamePage.vue';
 import GameControls from '@/components/GameControls.vue';
 
 definePage({ meta: { title: 'Hangman' } });
@@ -47,10 +46,7 @@ function resetGame() {
   status.value = 'start';
 }
 
-onKeyStroke(
-  (e) => /^[a-z]$/iu.test(e.key),
-  (e) => guessLetter(e.key.toUpperCase()),
-);
+onGameKey(ALPHABET, (e) => guessLetter(e.key.toUpperCase()));
 </script>
 
 <template>

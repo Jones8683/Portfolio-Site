@@ -1,14 +1,7 @@
 <script setup>
-import { computed, ref, useTemplateRef, watch } from 'vue';
-import {
-  onKeyStroke,
-  useDevicePixelRatio,
-  useMagicKeys,
-  useRafFn,
-  useStorage,
-  useWindowFocus,
-} from '@vueuse/core';
-import GamePage from '@/components/GamePage.vue';
+import { ref, useTemplateRef, watch } from 'vue';
+import { useDevicePixelRatio, useRafFn, useStorage, useWindowFocus } from '@vueuse/core';
+import GamePage, { onGameKey, useHeldKeys } from '@/components/GamePage.vue';
 import GameControls from '@/components/GameControls.vue';
 
 definePage({ meta: { title: 'Tetris' } });
@@ -552,31 +545,25 @@ function resetGame() {
 
 const isPlaying = () => status.value === 'playing' && !isPaused.value;
 
-const { ArrowLeft, KeyA, ArrowRight, KeyD, ArrowDown, KeyS } = useMagicKeys({
-  passive: false,
-  onEventFired: (e) => {
-    if (['ArrowLeft', 'ArrowRight', 'ArrowDown', 'ArrowUp', 'Space'].includes(e.code))
-      e.preventDefault();
-  },
-});
+const isHeld = useHeldKeys(['ArrowLeft', 'ArrowRight', 'ArrowDown', 'ArrowUp', 'Space']);
 const held = {
-  left: computed(() => ArrowLeft.value || KeyA.value),
-  right: computed(() => ArrowRight.value || KeyD.value),
-  softDrop: computed(() => ArrowDown.value || KeyS.value),
+  left: isHeld('ArrowLeft', 'KeyA'),
+  right: isHeld('ArrowRight', 'KeyD'),
+  softDrop: isHeld('ArrowDown', 'KeyS'),
 };
 const HELD_ACTIONS = { left: () => playerMove(-1), right: () => playerMove(1), softDrop };
 
-for (const [action, isHeld] of Object.entries(held)) {
-  watch(isHeld, (down) => {
+for (const [action, key] of Object.entries(held)) {
+  watch(key, (down) => {
     timers[action] = 0;
     if (down && isPlaying()) HELD_ACTIONS[action]();
   });
 }
 
-onKeyStroke(['ArrowUp', 'w', 'W'], () => isPlaying() && playerRotate(1));
-onKeyStroke(' ', () => isPlaying() && playerHardDrop());
-onKeyStroke(['c', 'C'], () => isPlaying() && playerHold());
-onKeyStroke(['Escape', 'p', 'P'], (e) => {
+onGameKey(['ArrowUp', 'w'], () => isPlaying() && playerRotate(1));
+onGameKey([' '], () => isPlaying() && playerHardDrop());
+onGameKey(['c'], () => isPlaying() && playerHold());
+onGameKey(['Escape', 'p'], (e) => {
   e.preventDefault();
   togglePause();
 });

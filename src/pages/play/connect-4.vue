@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref } from 'vue';
-import { onKeyStroke, useTimeoutFn } from '@vueuse/core';
-import GamePage from '@/components/GamePage.vue';
+import { useTimeoutFn } from '@vueuse/core';
+import GamePage, { onGameKey } from '@/components/GamePage.vue';
 import GameControls from '@/components/GameControls.vue';
 
 definePage({ meta: { title: 'Connect 4' } });
@@ -120,7 +120,7 @@ const resetGame = () => {
   isProcessing.value = false;
 };
 
-onKeyStroke(['r', 'R'], resetGame);
+onGameKey(['r'], resetGame);
 </script>
 
 <template>
