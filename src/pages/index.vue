@@ -30,8 +30,8 @@ const interests = [
       { name: 'Kendrick Lamar' },
       { name: 'Citizen The Artist' },
       { name: 'Tame Impala' },
-      { name: 'Future' },
       { name: 'Metro Boomin' },
+      { name: 'Future' },
     ],
   },
   {
@@ -52,12 +52,13 @@ const interests = [
     items: [
       { name: 'The High Republic' },
       { name: 'Keeper of the Lost Cities' },
-      { name: "Tom Clancy's John Clark novels" },
-      { name: 'Star Wars' },
+      { name: 'The Martian' },
+      { name: 'Project Hail Mary' },
+      { name: 'The Rookie' },
       { name: 'Dune' },
+      { name: 'Star Wars' },
       { name: 'Andor' },
       { name: 'Spider-Verse' },
-      { name: 'The Rookie' },
     ],
   },
 ];
