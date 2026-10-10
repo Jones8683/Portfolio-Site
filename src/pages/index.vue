@@ -56,7 +56,7 @@ const interests = [
       { name: 'Project Hail Mary' },
       { name: 'The Rookie' },
       { name: 'Dune' },
-      { name: 'Star Wars' },
+      { name: 'Interstellar' },
       { name: 'Andor' },
       { name: 'Spider-Verse' },
     ],
