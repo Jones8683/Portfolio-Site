@@ -190,7 +190,7 @@ const contacts = [
           <h2>Contact</h2>
         </div>
         <div class="about-body">
-          <p>Want to get in touch? Reach out via email or check out my socials:</p>
+          <p>Check out my socials to see what I'm up to:</p>
           <div class="contact-list">
             <a
               v-for="contact in contacts"
