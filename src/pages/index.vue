@@ -6,6 +6,62 @@ definePage({ meta: { title: 'Home' } });
 
 const { y } = useWindowScroll();
 
+const interests = [
+  {
+    label: 'Hobbies',
+    items: [
+      { name: 'Piano' },
+      { name: 'Electric guitar' },
+      { name: 'Drawing' },
+      { name: 'Lego' },
+      { name: 'Photography' },
+      { name: 'Cooking' },
+      { name: 'Cats' },
+      { name: 'Orienteering' },
+      { name: 'Hiking' },
+      { name: 'Running' },
+      { name: 'Stargazing' },
+    ],
+  },
+  {
+    label: 'Music',
+    items: [
+      { name: 'Raye' },
+      { name: 'Kendrick Lamar' },
+      { name: 'Citizen The Artist' },
+      { name: 'Tame Impala' },
+      { name: 'Future' },
+      { name: 'Metro Boomin' },
+    ],
+  },
+  {
+    label: 'Games',
+    items: [
+      { name: 'Minecraft' },
+      { name: 'Hollow Knight' },
+      { name: 'Silksong' },
+      { name: 'Jedi Fallen Order' },
+      { name: 'Jedi Survivor' },
+      { name: 'Forza Horizon' },
+      { name: 'Halo' },
+      { name: 'Rainbow Six Siege' },
+    ],
+  },
+  {
+    label: 'Books & Shows',
+    items: [
+      { name: 'The High Republic' },
+      { name: 'Keeper of the Lost Cities' },
+      { name: "Tom Clancy's John Clark novels" },
+      { name: 'Star Wars' },
+      { name: 'Dune' },
+      { name: 'Andor' },
+      { name: 'Spider-Verse' },
+      { name: 'The Rookie' },
+    ],
+  },
+];
+
 const contacts = [
   {
     label: 'Email',
@@ -89,17 +145,26 @@ const contacts = [
         </div>
         <div class="about-body">
           <p>
-            Hi! I'm Jones, a student based in Adelaide with a passion for technology, nature, and
-            art. I play piano and electric guitar, run with the Tjuringa Orienteers, and love
-            listening to all kinds of music. I'm also into photography and cooking and I looove
-            cats.
+            Hi! I'm Jones, a student from Australia who loves learning new things and exploring in
+            general. I'm somewhere between an introvert and an extrovert, and I'm always happy to
+            chat.
           </p>
-          <p>
-            I read all kinds of books, especially The High Republic series, Keeper of the Lost
-            Cities, and Tom Clancy's John Clark novels. My favorite movies and shows are Star Wars,
-            the Dune films, Andor, Across the Spider-Verse, and The Rookie. My top video games are
-            Minecraft, Hollow Knight, Jedi Survivor, Halo, and Rainbow Six Siege.
-          </p>
+        </div>
+      </section>
+
+      <section class="panel about-section">
+        <div class="about-title">
+          <h2>Interests</h2>
+        </div>
+        <div class="about-body">
+          <div v-for="group in interests" :key="group.label" class="interest-row">
+            <span class="interest-label">{{ group.label }}</span>
+            <ul class="interest-chips">
+              <li v-for="item in group.items" :key="item.name" class="interest-chip">
+                {{ item.name }}
+              </li>
+            </ul>
+          </div>
         </div>
       </section>
 
@@ -332,6 +397,45 @@ const contacts = [
   color: var(--color-text-soft);
 }
 
+.interest-row {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  align-items: baseline;
+  gap: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--color-glass-border);
+}
+
+.interest-row:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.interest-label {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-muted);
+}
+
+.interest-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.interest-chip {
+  padding: 5px 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-text-soft);
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid var(--color-glass-border);
+  border-radius: 100px;
+}
+
 .contact-list {
   display: flex;
   flex-direction: column;
@@ -463,6 +567,15 @@ const contacts = [
     grid-template-columns: 1fr;
     text-align: center;
     padding: 24px 18px;
+  }
+
+  .interest-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .interest-chips {
+    justify-content: center;
   }
 
   .contact-row {
