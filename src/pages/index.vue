@@ -62,6 +62,11 @@ const interests = [
   },
 ];
 
+const palette = ['#b79cff', '#9a97ff', '#80b5ff', '#5fe3d6', '#86ebb0'];
+
+const chipColor = (groupIndex, itemIndex) =>
+  palette[(groupIndex * 3 + itemIndex * 2) % palette.length];
+
 const contacts = [
   {
     label: 'Email',
@@ -157,10 +162,15 @@ const contacts = [
           <h2>Interests</h2>
         </div>
         <div class="about-body">
-          <div v-for="group in interests" :key="group.label" class="interest-row">
+          <div v-for="(group, groupIndex) in interests" :key="group.label" class="interest-row">
             <span class="interest-label">{{ group.label }}</span>
             <ul class="interest-chips">
-              <li v-for="item in group.items" :key="item.name" class="interest-chip">
+              <li
+                v-for="(item, itemIndex) in group.items"
+                :key="item.name"
+                class="interest-chip"
+                :style="{ '--chip-accent': chipColor(groupIndex, itemIndex) }"
+              >
                 {{ item.name }}
               </li>
             </ul>
@@ -431,8 +441,8 @@ const contacts = [
   font-size: 14px;
   line-height: 1.5;
   color: var(--color-text-soft);
-  background: rgba(255, 255, 255, 0.025);
-  border: 1px solid var(--color-glass-border);
+  background: color-mix(in srgb, var(--chip-accent) 6%, transparent);
+  border: 1px solid color-mix(in srgb, var(--chip-accent) 18%, transparent);
   border-radius: 100px;
 }
 
