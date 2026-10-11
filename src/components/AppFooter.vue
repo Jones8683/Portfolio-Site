@@ -83,7 +83,6 @@ const time = builtAt.toLocaleTimeString('en-AU', {
 .source-link:hover,
 .source-link:focus-visible {
   color: var(--color-muted);
-  text-decoration: underline;
   text-underline-offset: 3px;
 }
 
