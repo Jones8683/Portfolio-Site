@@ -67,7 +67,6 @@ onGameKey(ALPHABET, (e) => guessLetter(e.key.toUpperCase()));
                 class="word-input"
                 type="text"
                 maxlength="30"
-                placeholder="TYPE A WORD OR PHRASE..."
                 @keydown.enter="submitWord"
                 autocomplete="off"
                 spellcheck="false"
@@ -85,7 +84,6 @@ onGameKey(ALPHABET, (e) => guessLetter(e.key.toUpperCase()));
                 </svg>
               </button>
             </div>
-            <p class="hint-text">Letters and spaces only · max 30 chars</p>
           </template>
 
           <template v-else>
@@ -385,12 +383,6 @@ onGameKey(ALPHABET, (e) => guessLetter(e.key.toUpperCase()));
 
 .submit-btn:not(:disabled):hover {
   opacity: 0.85;
-}
-
-.hint-text {
-  color: var(--color-faint);
-  font-size: 11px;
-  margin: 0;
 }
 
 .gallows-section {
