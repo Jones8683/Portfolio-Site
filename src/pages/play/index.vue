@@ -113,6 +113,10 @@ const games = [
     color 0.3s ease;
 }
 
+.arcade-card-bottom:focus-visible {
+  outline-offset: -3px;
+}
+
 .red-btn {
   background: color-mix(in srgb, var(--color-red) 5%, transparent);
   color: var(--color-red);
@@ -120,7 +124,7 @@ const games = [
 
 .red-btn:hover {
   background: var(--color-red);
-  color: #ffffff;
+  color: var(--color-background);
 }
 
 .blue-btn {
@@ -130,7 +134,7 @@ const games = [
 
 .blue-btn:hover {
   background: #00a2ff;
-  color: #ffffff;
+  color: var(--color-background);
 }
 
 .yellow-btn {
@@ -140,7 +144,7 @@ const games = [
 
 .yellow-btn:hover {
   background: var(--color-gold);
-  color: #000000;
+  color: var(--color-background);
 }
 
 .green-btn {
@@ -150,7 +154,7 @@ const games = [
 
 .green-btn:hover {
   background: var(--color-green);
-  color: #ffffff;
+  color: var(--color-background);
 }
 
 @media (max-width: 900px) {
