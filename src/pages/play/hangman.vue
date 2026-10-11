@@ -96,116 +96,93 @@ onGameKey(ALPHABET, (e) => guessLetter(e.key.toUpperCase()));
         <Transition name="slide-up">
           <div v-if="status !== 'start'" class="gallows-section">
             <svg class="gallows-svg" viewBox="0 0 220 230" fill="none" aria-hidden="true">
-              <line
-                x1="20"
-                y1="222"
-                x2="200"
-                y2="222"
-                stroke="rgba(255, 255, 255, 0.12)"
-                stroke-width="3"
+              <path
+                d="M30 220H190M62 220V14H148M62 58L106 14"
+                stroke="#4a4a4e"
+                stroke-width="9"
                 stroke-linecap="round"
-              />
-              <line
-                x1="58"
-                y1="222"
-                x2="58"
-                y2="12"
-                stroke="rgba(255, 255, 255, 0.12)"
-                stroke-width="3"
-                stroke-linecap="round"
-              />
-              <line
-                x1="58"
-                y1="12"
-                x2="148"
-                y2="12"
-                stroke="rgba(255, 255, 255, 0.12)"
-                stroke-width="3"
-                stroke-linecap="round"
+                stroke-linejoin="round"
               />
               <line
                 x1="148"
-                y1="12"
+                y1="18"
                 x2="148"
-                y2="38"
-                stroke="rgba(255, 255, 255, 0.12)"
+                y2="40"
+                stroke="#9a9a9e"
                 stroke-width="3"
-                stroke-linecap="round"
-              />
-              <line
-                x1="58"
-                y1="50"
-                x2="90"
-                y2="12"
-                stroke="rgba(255, 255, 255, 0.05)"
-                stroke-width="2"
                 stroke-linecap="round"
               />
 
-              <circle
-                v-if="wrongGuesses >= 1"
-                cx="148"
-                cy="57"
-                r="19"
-                stroke="#ffffff"
-                stroke-width="2.5"
-                class="part"
-              />
-              <line
-                v-if="wrongGuesses >= 2"
-                x1="148"
-                y1="76"
-                x2="148"
-                y2="138"
-                stroke="#ffffff"
-                stroke-width="2.5"
-                stroke-linecap="round"
-                class="part"
-              />
-              <line
-                v-if="wrongGuesses >= 3"
-                x1="148"
-                y1="94"
-                x2="118"
-                y2="122"
-                stroke="#ffffff"
-                stroke-width="2.5"
-                stroke-linecap="round"
-                class="part"
-              />
-              <line
-                v-if="wrongGuesses >= 4"
-                x1="148"
-                y1="94"
-                x2="178"
-                y2="122"
-                stroke="#ffffff"
-                stroke-width="2.5"
-                stroke-linecap="round"
-                class="part"
-              />
-              <line
-                v-if="wrongGuesses >= 5"
-                x1="148"
-                y1="138"
-                x2="122"
-                y2="178"
-                stroke="#ffffff"
-                stroke-width="2.5"
-                stroke-linecap="round"
-                class="part"
-              />
-              <line
-                v-if="wrongGuesses >= 6"
-                x1="148"
-                y1="138"
-                x2="174"
-                y2="178"
-                stroke="#ffffff"
-                stroke-width="2.5"
-                stroke-linecap="round"
-                class="part"
-              />
+              <g>
+                <g v-if="wrongGuesses >= 1" class="part">
+                  <circle
+                    cx="148"
+                    cy="58"
+                    r="18"
+                    fill="rgba(255, 255, 255, 0.06)"
+                    stroke="#ffffff"
+                    stroke-width="3.5"
+                  />
+                  <circle cx="142" cy="55" r="2.2" fill="#ffffff" />
+                  <circle cx="154" cy="55" r="2.2" fill="#ffffff" />
+                  <path d="M142 66h12" stroke="#ffffff" stroke-width="2" stroke-linecap="round" />
+                </g>
+                <line
+                  v-if="wrongGuesses >= 2"
+                  x1="148"
+                  y1="76"
+                  x2="148"
+                  y2="136"
+                  stroke="#ffffff"
+                  stroke-width="3.5"
+                  stroke-linecap="round"
+                  class="part"
+                />
+                <line
+                  v-if="wrongGuesses >= 3"
+                  x1="148"
+                  y1="92"
+                  x2="120"
+                  y2="118"
+                  stroke="#ffffff"
+                  stroke-width="3.5"
+                  stroke-linecap="round"
+                  class="part"
+                />
+                <line
+                  v-if="wrongGuesses >= 4"
+                  x1="148"
+                  y1="92"
+                  x2="176"
+                  y2="118"
+                  stroke="#ffffff"
+                  stroke-width="3.5"
+                  stroke-linecap="round"
+                  class="part"
+                />
+                <line
+                  v-if="wrongGuesses >= 5"
+                  x1="148"
+                  y1="136"
+                  x2="124"
+                  y2="178"
+                  stroke="#ffffff"
+                  stroke-width="3.5"
+                  stroke-linecap="round"
+                  class="part"
+                />
+                <line
+                  v-if="wrongGuesses >= 6"
+                  x1="148"
+                  y1="136"
+                  x2="172"
+                  y2="178"
+                  stroke="#ffffff"
+                  stroke-width="3.5"
+                  stroke-linecap="round"
+                  class="part"
+                />
+              </g>
             </svg>
 
             <div class="word-display">
@@ -224,9 +201,6 @@ onGameKey(ALPHABET, (e) => guessLetter(e.key.toUpperCase()));
         </Transition>
 
         <div v-if="status === 'won' || status === 'lost'" class="overlay-msg">
-          <div class="outcome-emoji">
-            {{ status === 'won' ? '🎉' : '💀' }}
-          </div>
           <h2 class="menu-title result-title outcome-title" :class="{ won: status === 'won' }">
             {{ status === 'won' ? 'YOU GOT IT!' : 'GAME OVER' }}
           </h2>
@@ -442,11 +416,6 @@ onGameKey(ALPHABET, (e) => guessLetter(e.key.toUpperCase()));
 .letter-slot.space {
   border-bottom: none;
   min-width: 12px;
-}
-
-.outcome-emoji {
-  font-size: 52px;
-  margin-bottom: 12px;
 }
 
 .outcome-title {
