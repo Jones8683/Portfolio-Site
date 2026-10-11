@@ -28,7 +28,7 @@ const time = builtAt.toLocaleTimeString('en-AU', {
         rel="noopener noreferrer"
         class="source-link"
       >
-        Build {{ hash }} · {{ date }} {{ time }}
+        Build {{ hash }} • {{ date }} {{ time }}
       </a>
     </div>
   </footer>
