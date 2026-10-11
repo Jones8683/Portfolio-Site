@@ -284,13 +284,6 @@ watch(y, (now, prev) => {
   height: 100%;
 }
 
-.nav-brand:focus-visible,
-.glass-btn:focus-visible,
-.nav-icon:focus-visible {
-  outline: 2px solid rgba(255, 255, 255, 0.5);
-  outline-offset: 2px;
-}
-
 @media (max-width: 650px) {
   .nav-shell {
     width: min(100% - 1.5rem, 1080px);

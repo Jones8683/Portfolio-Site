@@ -313,23 +313,9 @@ onGameKey(ALPHABET, (e) => guessLetter(e.key.toUpperCase()));
   font-size: 16px;
   font-weight: 700;
   padding: 11px 14px;
-  outline: none;
   letter-spacing: 2px;
-  transition: border-color 0.2s;
   min-width: 0;
   text-transform: uppercase;
-}
-
-.word-input::placeholder {
-  color: #334155;
-  font-weight: 400;
-  letter-spacing: 1px;
-  font-size: 12px;
-  text-transform: uppercase;
-}
-
-.word-input:focus {
-  border-color: rgba(255, 255, 255, 0.25);
 }
 
 .submit-btn {

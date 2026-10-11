@@ -98,9 +98,7 @@ const projects = [
 }
 
 .project-row:focus-visible {
-  outline: none;
   border-radius: 12px;
-  box-shadow: 0 0 0 3px rgba(135, 206, 250, 0.22);
 }
 
 .project-row-inner {
