@@ -1,3 +1,21 @@
+<script setup>
+const repo = 'https://github.com/Jones8683/Portfolio-Site';
+const hash = import.meta.env.VITE_BUILD_HASH;
+const builtAt = new Date(import.meta.env.VITE_BUILD_DATE);
+
+const date = builtAt.toLocaleDateString('en-AU', {
+  day: 'numeric',
+  month: 'short',
+  year: 'numeric',
+});
+
+const time = builtAt.toLocaleTimeString('en-AU', {
+  hour: 'numeric',
+  minute: '2-digit',
+  hour12: true,
+});
+</script>
+
 <template>
   <footer class="main-footer">
     <div class="footer-line"></div>
@@ -5,12 +23,12 @@
       <p>&copy; {{ new Date().getFullYear() }} Jones Jankovic</p>
       <span class="footer-divider" aria-hidden="true">|</span>
       <a
-        href="https://github.com/Jones8683/Portfolio-Site"
+        :href="`${repo}/commit/${hash}`"
         target="_blank"
         rel="noopener noreferrer"
         class="source-link"
       >
-        View source
+        Build {{ hash }} · {{ date }} {{ time }}
       </a>
     </div>
   </footer>
@@ -67,5 +85,17 @@
   color: var(--color-muted);
   text-decoration: underline;
   text-underline-offset: 3px;
+}
+
+@media (max-width: 600px) {
+  .footer-meta {
+    flex-direction: column;
+    gap: 4px;
+    text-align: center;
+  }
+
+  .footer-divider {
+    display: none;
+  }
 }
 </style>
