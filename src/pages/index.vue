@@ -1,10 +1,10 @@
 <script setup>
-import { useWindowScroll } from '@vueuse/core';
 import profilePic from '@/assets/kenobi.png';
+import { useScrollCue } from '@/composables/useScrollCue';
 
 definePage({ meta: { title: 'Home' } });
 
-const { y } = useWindowScroll();
+const { opacity: cueOpacity } = useScrollCue();
 
 const interests = [
   {
@@ -137,12 +137,12 @@ const contacts = [
       </div>
     </div>
 
-    <div class="scroll-cue" :class="{ hidden: y > 60 }">
-      <div class="scroll-cue-bounce">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <div class="scroll-cue" :style="{ opacity: cueOpacity }" aria-hidden="true">
+      <div class="scroll-cue-nudge">
+        <svg class="scroll-cue-icon" width="22" height="22" viewBox="0 0 24 24" fill="none">
           <path
             d="M6 9l6 6 6-6"
-            stroke="rgba(255, 255, 255, 0.18)"
+            stroke="currentColor"
             stroke-width="2"
             stroke-linecap="round"
             stroke-linejoin="round"
@@ -352,23 +352,24 @@ const contacts = [
 
 .scroll-cue {
   position: fixed;
+  right: 0;
   bottom: 28px;
-  left: 50%;
+  left: 0;
   z-index: 100;
-  transform: translateX(-50%);
-  transition:
-    opacity 0.5s ease,
-    transform 0.5s ease;
-}
-
-.scroll-cue.hidden {
-  opacity: 0;
-  transform: translateX(-50%) translateY(-20px);
+  display: flex;
+  justify-content: center;
   pointer-events: none;
+  transition: opacity 0.2s ease-out;
 }
 
-.scroll-cue-bounce {
-  animation: bounce-cue 2s ease-in-out infinite;
+.scroll-cue-nudge {
+  color: var(--color-muted);
+  animation: cue-nudge 2.2s ease-in-out 2.2s 4;
+}
+
+.scroll-cue-icon {
+  display: block;
+  animation: cue-in 0.8s ease-out 1.4s backwards;
 }
 
 .home-content {
@@ -570,13 +571,22 @@ const contacts = [
   }
 }
 
-@keyframes bounce-cue {
-  0%,
-  100% {
-    transform: translateY(0);
+@keyframes cue-in {
+  from {
+    opacity: 0;
   }
-  50% {
-    transform: translateY(6px);
+}
+
+@keyframes cue-nudge {
+  35% {
+    transform: translateY(7px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-cue-nudge,
+  .scroll-cue-icon {
+    animation: none;
   }
 }
 
