@@ -331,6 +331,7 @@ const contacts = [
   color: #64a8ff;
   background: rgba(58, 123, 213, 0.14);
   border: 1px solid rgba(58, 123, 213, 0.438);
+  user-select: none;
 }
 
 .snake-wrap {
