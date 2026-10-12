@@ -42,6 +42,7 @@ const time = builtAt.toLocaleTimeString('en-AU', {
   align-items: center;
   padding-bottom: 20px;
   margin-top: 40px;
+  user-select: none;
 }
 
 .footer-meta {
