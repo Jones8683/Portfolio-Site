@@ -151,7 +151,7 @@ watch(
       }
     } else if (current === null) {
       appear(next);
-    } else if (current.key === next.key) {
+    } else if (current.url === next.url) {
       shown.value = next;
     } else {
       switchTrack(next);

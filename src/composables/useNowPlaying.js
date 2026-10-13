@@ -24,13 +24,12 @@ export function useNowPlaying() {
     clearTimeout(graceTimer);
     graceTimer = undefined;
 
-    const key = `${data.track}|${data.artist}|${data.durationMs}`;
     const startedAt = Date.now() - data.progressMs;
     const current = track.value;
     const unchanged =
       current !== null &&
       !stale.value &&
-      current.key === key &&
+      current.url === data.url &&
       Math.abs(current.startedAt - startedAt) <= SEEK_TOLERANCE_MS;
 
     stale.value = false;
@@ -40,7 +39,6 @@ export function useNowPlaying() {
     trackId += 1;
     track.value = {
       id: trackId,
-      key,
       title: data.track,
       artist: data.artist,
       art: data.art,
