@@ -1,5 +1,6 @@
 <script setup>
 import profilePic from '@/assets/kenobi.png';
+import NowPlayingPill from '@/components/NowPlayingPill.vue';
 import { useScrollCue } from '@/composables/useScrollCue';
 
 definePage({ meta: { title: 'Home' } });
@@ -121,7 +122,7 @@ const contacts = [
 
         <h1 class="name-title">Jones Jankovic</h1>
 
-        <div class="status-pill">Student | Australia</div>
+        <NowPlayingPill />
       </div>
 
       <div class="snake-wrap">
@@ -248,6 +249,8 @@ const contacts = [
 }
 
 .hero-block {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -319,19 +322,6 @@ const contacts = [
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-}
-
-.status-pill {
-  padding: 6px 14px;
-  border-radius: 100px;
-  font-family: var(--font-ui);
-  font-size: 12px;
-  font-weight: 400;
-  letter-spacing: 0.04em;
-  color: #64a8ff;
-  background: rgba(58, 123, 213, 0.14);
-  border: 1px solid rgba(58, 123, 213, 0.438);
-  user-select: none;
 }
 
 .snake-wrap {
