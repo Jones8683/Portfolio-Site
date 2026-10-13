@@ -1,4 +1,4 @@
-import { onMounted, onScopeDispose, ref, watch } from 'vue';
+import { onMounted, onScopeDispose, ref, shallowRef, watch } from 'vue';
 import { useDocumentVisibility } from '@vueuse/core';
 
 const ENDPOINT = 'https://jjank.com/api/now-playing';
@@ -10,7 +10,7 @@ const SEEK_TOLERANCE_MS = 1500;
 const REQUEST_TIMEOUT_MS = 8000;
 
 export function useNowPlaying() {
-  const track = ref(null);
+  const track = shallowRef(null);
   const stale = ref(false);
   const visibility = useDocumentVisibility();
 
@@ -24,12 +24,13 @@ export function useNowPlaying() {
     clearTimeout(graceTimer);
     graceTimer = undefined;
 
+    const key = `${data.track}|${data.artist}|${data.durationMs}`;
     const startedAt = Date.now() - data.progressMs;
     const current = track.value;
     const unchanged =
       current !== null &&
       !stale.value &&
-      current.url === data.url &&
+      current.key === key &&
       Math.abs(current.startedAt - startedAt) <= SEEK_TOLERANCE_MS;
 
     stale.value = false;
@@ -39,6 +40,7 @@ export function useNowPlaying() {
     trackId += 1;
     track.value = {
       id: trackId,
+      key,
       title: data.track,
       artist: data.artist,
       art: data.art,
@@ -74,10 +76,7 @@ export function useNowPlaying() {
 
   async function poll() {
     try {
-      const response = await fetch(ENDPOINT, {
-        cache: 'no-store',
-        signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
-      });
+      const response = await fetch(ENDPOINT, { signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
       const data = await response.json();
 
       if (data.needsReauth && !warned) {

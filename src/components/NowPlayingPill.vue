@@ -1,5 +1,5 @@
 <script setup>
-import { computed, nextTick, ref, watch } from 'vue';
+import { computed, nextTick, ref, shallowRef, watch } from 'vue';
 import { usePreferredReducedMotion } from '@vueuse/core';
 import { useNowPlaying } from '@/composables/useNowPlaying';
 
@@ -14,7 +14,7 @@ const { track, stale } = useNowPlaying();
 const reducedMotion = usePreferredReducedMotion();
 
 const pill = ref(null);
-const shown = ref(null);
+const shown = shallowRef(null);
 const swapped = ref(false);
 const coverFailed = ref(false);
 
@@ -90,7 +90,8 @@ const morph = async (update) => {
   });
 };
 
-const switchTrack = async (next, token) => {
+const switchTrack = async (next) => {
+  const token = changeToken;
   const ready = preload(next.art);
   const content = pill.value?.querySelector('.live');
 
@@ -107,7 +108,11 @@ const switchTrack = async (next, token) => {
   });
 
   await Promise.all([fadeOut.finished.catch(() => {}), ready]);
-  if (token !== changeToken) return;
+
+  if (token !== changeToken) {
+    fadeOut.cancel();
+    return;
+  }
 
   await morph(() => {
     shown.value = next;
@@ -121,38 +126,36 @@ const switchTrack = async (next, token) => {
   });
 };
 
-const appear = async (next, token) => {
+const appear = async (next) => {
+  const token = changeToken;
   await preload(next.art);
-  if (token !== changeToken) return;
 
-  await morph(() => {
-    shown.value = next;
-  });
+  if (token === changeToken) {
+    await morph(() => {
+      shown.value = next;
+    });
+  }
 };
 
 watch(
   track,
-  (next, previous) => {
+  (next) => {
     changeToken += 1;
-
-    if (next !== null && previous !== null && next.url === previous.url) {
-      shown.value = next;
-      return;
-    }
+    const current = shown.value;
 
     if (next === null) {
-      morph(() => {
-        shown.value = null;
-      });
-      return;
+      if (current !== null) {
+        morph(() => {
+          shown.value = null;
+        });
+      }
+    } else if (current === null) {
+      appear(next);
+    } else if (current.key === next.key) {
+      shown.value = next;
+    } else {
+      switchTrack(next);
     }
-
-    if (previous === null) {
-      appear(next, changeToken);
-      return;
-    }
-
-    switchTrack(next, changeToken);
   },
   { flush: 'sync' },
 );
