@@ -249,12 +249,8 @@ watch(
 
 .status-pill.is-live {
   min-width: min(12rem, calc(100vw - 40px));
-  padding: 8px 18px 8px 8px;
+  padding: 0;
   border-radius: var(--live-radius);
-}
-
-.status-pill.is-live:not(:has(.cover)) {
-  padding-left: 18px;
 }
 
 .status-pill.is-live:hover {
@@ -277,7 +273,12 @@ watch(
   align-items: center;
   gap: 12px;
   min-width: 0;
+  padding: 8px 18px 8px 8px;
   color: inherit;
+}
+
+.live:not(:has(.cover)) {
+  padding-left: 18px;
 }
 
 .live:focus-visible {
