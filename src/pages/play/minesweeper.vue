@@ -1,7 +1,7 @@
 <script setup>
-import { computed, ref, watch } from 'vue';
-import { useIntervalFn, useWindowFocus } from '@vueuse/core';
-import GamePage, { onGameKey } from '@/components/GamePage.vue';
+import { computed, ref } from 'vue';
+import { useIntervalFn } from '@vueuse/core';
+import GamePage, { onGameKey, onPauseKeys } from '@/components/GamePage.vue';
 import GameControls from '@/components/GameControls.vue';
 
 definePage({ meta: { title: 'Minesweeper' } });
@@ -174,13 +174,7 @@ function togglePause() {
 }
 
 onGameKey(['r'], resetToStart);
-onGameKey(['Escape', 'p'], (e) => {
-  e.preventDefault();
-  togglePause();
-});
-watch(useWindowFocus(), (focused) => {
-  if (!focused && !isPaused.value) togglePause();
-});
+onPauseKeys(isPaused, togglePause);
 
 initGrid(currentDiff.value);
 

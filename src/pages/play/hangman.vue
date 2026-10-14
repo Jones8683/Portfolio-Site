@@ -11,6 +11,13 @@ const inputBuffer = ref('');
 const guessedLetters = ref(new Set());
 const MAX_WRONG = 6;
 const ALPHABET = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'];
+const LIMBS = [
+  'M148 76V136',
+  'M148 92L120 118',
+  'M148 92L176 118',
+  'M148 136L124 178',
+  'M148 136L172 178',
+];
 
 const maskedWord = computed(() =>
   [...secretWord.value].map((ch) => (ch === ' ' || guessedLetters.value.has(ch) ? ch : '_')),
@@ -21,6 +28,8 @@ const wrongLetters = computed(() =>
 );
 
 const wrongGuesses = computed(() => wrongLetters.value.length);
+
+const limbs = computed(() => LIMBS.slice(0, Math.max(wrongGuesses.value - 1, 0)));
 
 function onInput(e) {
   inputBuffer.value = e.target.value.toUpperCase().replaceAll(/[^A-Z ]/gu, '');
@@ -86,9 +95,7 @@ onGameKey(ALPHABET, (e) => guessLetter(e.key.toUpperCase()));
             </div>
           </template>
 
-          <template v-else>
-            <p class="subtitle">Guess the hidden word</p>
-          </template>
+          <p v-else class="subtitle">Guess the hidden word</p>
         </div>
 
         <div v-if="status !== 'start'" class="panel-divider"></div>
@@ -113,76 +120,28 @@ onGameKey(ALPHABET, (e) => guessLetter(e.key.toUpperCase()));
                 stroke-linecap="round"
               />
 
-              <g>
-                <g v-if="wrongGuesses >= 1" class="part">
-                  <circle
-                    cx="148"
-                    cy="58"
-                    r="18"
-                    fill="rgba(255, 255, 255, 0.06)"
-                    stroke="#ffffff"
-                    stroke-width="3.5"
-                  />
-                  <circle cx="142" cy="55" r="2.2" fill="#ffffff" />
-                  <circle cx="154" cy="55" r="2.2" fill="#ffffff" />
-                  <path d="M142 66h12" stroke="#ffffff" stroke-width="2" stroke-linecap="round" />
-                </g>
-                <line
-                  v-if="wrongGuesses >= 2"
-                  x1="148"
-                  y1="76"
-                  x2="148"
-                  y2="136"
+              <g v-if="wrongGuesses >= 1" class="part">
+                <circle
+                  cx="148"
+                  cy="58"
+                  r="18"
+                  fill="rgba(255, 255, 255, 0.06)"
                   stroke="#ffffff"
                   stroke-width="3.5"
-                  stroke-linecap="round"
-                  class="part"
                 />
-                <line
-                  v-if="wrongGuesses >= 3"
-                  x1="148"
-                  y1="92"
-                  x2="120"
-                  y2="118"
-                  stroke="#ffffff"
-                  stroke-width="3.5"
-                  stroke-linecap="round"
-                  class="part"
-                />
-                <line
-                  v-if="wrongGuesses >= 4"
-                  x1="148"
-                  y1="92"
-                  x2="176"
-                  y2="118"
-                  stroke="#ffffff"
-                  stroke-width="3.5"
-                  stroke-linecap="round"
-                  class="part"
-                />
-                <line
-                  v-if="wrongGuesses >= 5"
-                  x1="148"
-                  y1="136"
-                  x2="124"
-                  y2="178"
-                  stroke="#ffffff"
-                  stroke-width="3.5"
-                  stroke-linecap="round"
-                  class="part"
-                />
-                <line
-                  v-if="wrongGuesses >= 6"
-                  x1="148"
-                  y1="136"
-                  x2="172"
-                  y2="178"
-                  stroke="#ffffff"
-                  stroke-width="3.5"
-                  stroke-linecap="round"
-                  class="part"
-                />
+                <circle cx="142" cy="55" r="2.2" fill="#ffffff" />
+                <circle cx="154" cy="55" r="2.2" fill="#ffffff" />
+                <path d="M142 66h12" stroke="#ffffff" stroke-width="2" stroke-linecap="round" />
               </g>
+              <path
+                v-for="(limb, index) in limbs"
+                :key="index"
+                :d="limb"
+                stroke="#ffffff"
+                stroke-width="3.5"
+                stroke-linecap="round"
+                class="part"
+              />
             </svg>
 
             <div class="word-display">
@@ -367,9 +326,6 @@ onGameKey(ALPHABET, (e) => guessLetter(e.key.toUpperCase()));
   from {
     opacity: 0;
   }
-  to {
-    opacity: 1;
-  }
 }
 
 .word-display {
@@ -541,17 +497,15 @@ onGameKey(ALPHABET, (e) => guessLetter(e.key.toUpperCase()));
   background: color-mix(in srgb, var(--color-green) 13%, transparent);
   border-color: color-mix(in srgb, var(--color-green) 30%, transparent);
   color: var(--color-green);
-  cursor: default;
 }
 
 .key-btn.wrong {
   background: transparent;
   border-color: rgba(255, 255, 255, 0.03);
   color: var(--color-faint);
-  cursor: default;
 }
 
-.key-btn:disabled:not(.correct):not(.wrong) {
+.key-btn:disabled {
   cursor: default;
 }
 </style>

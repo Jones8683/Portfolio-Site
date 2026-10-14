@@ -50,6 +50,9 @@ const time = builtAt.toLocaleTimeString('en-AU', {
   align-items: center;
   justify-content: center;
   gap: 8px;
+  color: var(--color-subtle);
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
 }
 
 .footer-line {
@@ -60,31 +63,18 @@ const time = builtAt.toLocaleTimeString('en-AU', {
   margin-bottom: 20px;
 }
 
-.main-footer p {
-  color: var(--color-subtle);
-  font-family: var(--font-ui);
-  font-size: 0.85rem;
+.footer-meta p,
+.source-link {
   letter-spacing: 0.5px;
-}
-
-.footer-divider {
-  color: var(--color-subtle);
-  font-family: var(--font-ui);
-  font-size: 0.85rem;
 }
 
 .source-link {
-  color: var(--color-subtle);
-  font-family: var(--font-ui);
-  font-size: 0.85rem;
-  letter-spacing: 0.5px;
   transition: color 0.2s ease;
 }
 
 .source-link:hover,
 .source-link:focus-visible {
   color: var(--color-muted);
-  text-underline-offset: 3px;
 }
 
 @media (max-width: 600px) {

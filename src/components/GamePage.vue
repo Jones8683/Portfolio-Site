@@ -1,6 +1,6 @@
 <script>
-import { computed } from 'vue';
-import { onKeyStroke, useMagicKeys, useMediaQuery } from '@vueuse/core';
+import { computed, watch } from 'vue';
+import { onKeyStroke, useMagicKeys, useMediaQuery, useWindowFocus } from '@vueuse/core';
 
 const hasModifier = (event) => event.ctrlKey || event.metaKey || event.altKey;
 
@@ -9,6 +9,27 @@ export function onGameKey(keys, handler) {
     const key = event.key?.toLowerCase();
     return !hasModifier(event) && keys.some((gameKey) => gameKey.toLowerCase() === key);
   }, handler);
+}
+
+export function onPauseKeys(isPaused, togglePause) {
+  onGameKey(['Escape', 'p'], (event) => {
+    event.preventDefault();
+    togglePause();
+  });
+  watch(useWindowFocus(), (focused) => {
+    if (!focused && !isPaused.value) togglePause();
+  });
+}
+
+export function setupCanvas(canvas, width, height, scale = 1) {
+  const ratio = window.devicePixelRatio;
+  canvas.width = width * ratio;
+  canvas.height = height * ratio;
+  canvas.style.width = `${width}px`;
+  canvas.style.height = `${height}px`;
+  const context = canvas.getContext('2d');
+  context.scale(scale * ratio, scale * ratio);
+  return context;
 }
 
 export function useHeldKeys(preventedCodes) {

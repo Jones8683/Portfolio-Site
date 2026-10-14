@@ -1,7 +1,7 @@
 <script setup>
 import { ref, useTemplateRef, watch } from 'vue';
-import { useDevicePixelRatio, useRafFn, useStorage, useWindowFocus } from '@vueuse/core';
-import GamePage, { onGameKey } from '@/components/GamePage.vue';
+import { useRafFn, useStorage } from '@vueuse/core';
+import GamePage, { onGameKey, onPauseKeys, setupCanvas } from '@/components/GamePage.vue';
 import GameControls from '@/components/GameControls.vue';
 
 definePage({ meta: { title: 'Flappy Bird' } });
@@ -9,7 +9,6 @@ definePage({ meta: { title: 'Flappy Bird' } });
 const highScore = useStorage('flappy-bird-best-score', 0);
 
 const canvasRef = useTemplateRef('canvas');
-const { pixelRatio } = useDevicePixelRatio();
 const score = ref(0);
 const status = ref('start');
 const isPaused = ref(false);
@@ -421,28 +420,17 @@ function jump() {
   }
 }
 
-onGameKey(['Escape', 'p'], (e) => {
-  e.preventDefault();
-  togglePause();
-});
+onPauseKeys(isPaused, togglePause);
 onGameKey([' ', 'ArrowUp', 'w'], (e) => {
   e.preventDefault();
   jump();
-});
-watch(useWindowFocus(), (focused) => {
-  if (!focused && !isPaused.value) togglePause();
 });
 
 watch(
   canvasRef,
   (el) => {
     if (!el) return;
-    ctx = el.getContext('2d');
-    el.width = W * pixelRatio.value;
-    el.height = H * pixelRatio.value;
-    el.style.width = W + 'px';
-    el.style.height = H + 'px';
-    ctx.scale(pixelRatio.value, pixelRatio.value);
+    ctx = setupCanvas(el, W, H);
     initState();
     resume();
   },

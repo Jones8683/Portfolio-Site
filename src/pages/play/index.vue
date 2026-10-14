@@ -107,10 +107,17 @@ const games = [
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 1px;
+  color: var(--game-color);
+  background: color-mix(in srgb, var(--game-color) 5%, transparent);
   border-top: 1px solid var(--color-glass);
   transition:
     background-color 0.3s ease,
     color 0.3s ease;
+}
+
+.arcade-card-bottom:hover {
+  color: var(--color-background);
+  background: var(--game-color);
 }
 
 .arcade-card-bottom:focus-visible {
@@ -118,43 +125,19 @@ const games = [
 }
 
 .red-btn {
-  background: color-mix(in srgb, var(--color-red) 5%, transparent);
-  color: var(--color-red);
-}
-
-.red-btn:hover {
-  background: var(--color-red);
-  color: var(--color-background);
+  --game-color: var(--color-red);
 }
 
 .blue-btn {
-  background: rgba(0, 162, 255, 0.05);
-  color: #00a2ff;
-}
-
-.blue-btn:hover {
-  background: #00a2ff;
-  color: var(--color-background);
+  --game-color: #00a2ff;
 }
 
 .yellow-btn {
-  background: rgba(255, 215, 0, 0.05);
-  color: var(--color-gold);
-}
-
-.yellow-btn:hover {
-  background: var(--color-gold);
-  color: var(--color-background);
+  --game-color: var(--color-gold);
 }
 
 .green-btn {
-  background: color-mix(in srgb, var(--color-green) 5%, transparent);
-  color: var(--color-green);
-}
-
-.green-btn:hover {
-  background: var(--color-green);
-  color: var(--color-background);
+  --game-color: var(--color-green);
 }
 
 @media (max-width: 900px) {

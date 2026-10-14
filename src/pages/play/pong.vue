@@ -1,14 +1,18 @@
 <script setup>
 import { onUnmounted, ref, useTemplateRef, watch } from 'vue';
-import { useDevicePixelRatio, useRafFn, useTimeoutFn, useWindowFocus } from '@vueuse/core';
-import GamePage, { onGameKey, useHeldKeys } from '@/components/GamePage.vue';
+import { useRafFn, useTimeoutFn } from '@vueuse/core';
+import GamePage, {
+  onGameKey,
+  onPauseKeys,
+  setupCanvas,
+  useHeldKeys,
+} from '@/components/GamePage.vue';
 import GameControls from '@/components/GameControls.vue';
 
 definePage({ meta: { title: 'Pong' } });
 
 let ctx;
 const canvasRef = useTemplateRef('canvas');
-const { pixelRatio } = useDevicePixelRatio();
 const status = ref('start');
 const isPaused = ref(false);
 const winner = ref('');
@@ -346,24 +350,13 @@ const { pause, resume } = useRafFn(
   { immediate: false },
 );
 
-onGameKey(['Escape', 'p'], (e) => {
-  e.preventDefault();
-  togglePause();
-});
-watch(useWindowFocus(), (focused) => {
-  if (!focused && !isPaused.value) togglePause();
-});
+onPauseKeys(isPaused, togglePause);
 
 watch(
   canvasRef,
   (el) => {
     if (!el) return;
-    ctx = el.getContext('2d');
-    el.width = W * pixelRatio.value;
-    el.height = H * pixelRatio.value;
-    el.style.width = W + 'px';
-    el.style.height = H + 'px';
-    ctx.scale(pixelRatio.value, pixelRatio.value);
+    ctx = setupCanvas(el, W, H);
     drawField();
   },
   { flush: 'post' },

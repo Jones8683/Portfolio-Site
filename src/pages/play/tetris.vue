@@ -1,7 +1,12 @@
 <script setup>
 import { ref, useTemplateRef, watch } from 'vue';
-import { useDevicePixelRatio, useRafFn, useStorage, useWindowFocus } from '@vueuse/core';
-import GamePage, { onGameKey, useHeldKeys } from '@/components/GamePage.vue';
+import { useRafFn, useStorage } from '@vueuse/core';
+import GamePage, {
+  onGameKey,
+  onPauseKeys,
+  setupCanvas,
+  useHeldKeys,
+} from '@/components/GamePage.vue';
 import GameControls from '@/components/GameControls.vue';
 
 definePage({ meta: { title: 'Tetris' } });
@@ -9,7 +14,6 @@ definePage({ meta: { title: 'Tetris' } });
 const gameCanvasRef = useTemplateRef('gameCanvas');
 const nextCanvasRef = useTemplateRef('nextCanvas');
 const holdCanvasRef = useTemplateRef('holdCanvas');
-const { pixelRatio } = useDevicePixelRatio();
 const score = ref(0);
 const status = ref('playing');
 const isPaused = ref(false);
@@ -19,6 +23,7 @@ let nextCtx;
 let holdCtx;
 let animationFrame = 0;
 
+const BLOCK_SIZE = 25;
 const COLORS = [null, '#0dc2ff', '#3877ff', '#ff8e0d', '#ffe138', '#0dff72', '#ff0d72', '#f538ff'];
 
 const arena = createMatrix(12, 20);
@@ -563,29 +568,15 @@ for (const [action, key] of Object.entries(held)) {
 onGameKey(['ArrowUp', 'w'], () => isPlaying() && playerRotate(1));
 onGameKey([' '], () => isPlaying() && playerHardDrop());
 onGameKey(['c'], () => isPlaying() && playerHold());
-onGameKey(['Escape', 'p'], (e) => {
-  e.preventDefault();
-  togglePause();
-});
-watch(useWindowFocus(), (focused) => {
-  if (!focused && !isPaused.value) togglePause();
-});
-const setupCanvas = (c, w, h) => {
-  c.width = w * pixelRatio.value;
-  c.height = h * pixelRatio.value;
-  c.style.width = w + 'px';
-  c.style.height = h + 'px';
-  const context = c.getContext('2d');
-  context.scale(25 * pixelRatio.value, 25 * pixelRatio.value);
-  return context;
-};
+onPauseKeys(isPaused, togglePause);
+
 watch(
   gameCanvasRef,
   (el) => {
     if (!el) return;
-    ctx = setupCanvas(el, 300, 500);
-    nextCtx = setupCanvas(nextCanvasRef.value, 100, 100);
-    holdCtx = setupCanvas(holdCanvasRef.value, 100, 100);
+    ctx = setupCanvas(el, 300, 500, BLOCK_SIZE);
+    nextCtx = setupCanvas(nextCanvasRef.value, 100, 100, BLOCK_SIZE);
+    holdCtx = setupCanvas(holdCanvasRef.value, 100, 100, BLOCK_SIZE);
     resetGame();
   },
   { flush: 'post' },

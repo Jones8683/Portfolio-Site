@@ -11,55 +11,55 @@ const interests = [
   {
     label: 'Hobbies',
     items: [
-      { name: 'Orienteering' },
-      { name: 'Running' },
-      { name: 'Hiking' },
-      { name: 'Cats' },
-      { name: 'Photography' },
-      { name: 'Stargazing' },
-      { name: 'Electric guitar' },
-      { name: 'Piano' },
-      { name: 'Drawing' },
-      { name: 'Lego' },
-      { name: 'Cooking' },
+      'Orienteering',
+      'Running',
+      'Hiking',
+      'Cats',
+      'Photography',
+      'Stargazing',
+      'Electric guitar',
+      'Piano',
+      'Drawing',
+      'Lego',
+      'Cooking',
     ],
   },
   {
     label: 'Music',
     items: [
-      { name: 'Raye' },
-      { name: 'Kendrick Lamar' },
-      { name: 'Citizen The Artist' },
-      { name: 'Tame Impala' },
-      { name: 'Metro Boomin' },
-      { name: 'Future' },
+      'Raye',
+      'Kendrick Lamar',
+      'Citizen The Artist',
+      'Tame Impala',
+      'Metro Boomin',
+      'Future',
     ],
   },
   {
     label: 'Games',
     items: [
-      { name: 'Minecraft' },
-      { name: 'Hollow Knight' },
-      { name: 'Silksong' },
-      { name: 'Jedi Fallen Order' },
-      { name: 'Jedi Survivor' },
-      { name: 'Forza Horizon' },
-      { name: 'Halo' },
-      { name: 'Rainbow Six Siege' },
+      'Minecraft',
+      'Hollow Knight',
+      'Silksong',
+      'Jedi Fallen Order',
+      'Jedi Survivor',
+      'Forza Horizon',
+      'Halo',
+      'Rainbow Six Siege',
     ],
   },
   {
     label: 'Books & Shows',
     items: [
-      { name: 'The High Republic' },
-      { name: 'Keeper of the Lost Cities' },
-      { name: 'The Martian' },
-      { name: 'Project Hail Mary' },
-      { name: 'The Rookie' },
-      { name: 'Dune' },
-      { name: 'Interstellar' },
-      { name: 'Andor' },
-      { name: 'Spider-Verse' },
+      'The High Republic',
+      'Keeper of the Lost Cities',
+      'The Martian',
+      'Project Hail Mary',
+      'The Rookie',
+      'Dune',
+      'Interstellar',
+      'Andor',
+      'Spider-Verse',
     ],
   },
 ];
@@ -154,9 +154,7 @@ const contacts = [
 
     <div class="content-wrap home-content">
       <section class="panel about-section">
-        <div class="about-title">
-          <h2>About</h2>
-        </div>
+        <h2 class="about-title">About</h2>
         <div class="about-body">
           <p>
             Hi! I'm Jones, a student from Australia who loves learning new things and exploring in
@@ -167,20 +165,18 @@ const contacts = [
       </section>
 
       <section class="panel about-section">
-        <div class="about-title">
-          <h2>Interests</h2>
-        </div>
+        <h2 class="about-title">Interests</h2>
         <div class="about-body">
           <div v-for="(group, groupIndex) in interests" :key="group.label" class="interest-row">
             <span class="interest-label">{{ group.label }}</span>
             <ul class="interest-chips">
               <li
                 v-for="(item, itemIndex) in group.items"
-                :key="item.name"
+                :key="item"
                 class="interest-chip"
                 :style="{ '--chip-accent': chipColor(groupIndex, itemIndex) }"
               >
-                {{ item.name }}
+                {{ item }}
               </li>
             </ul>
           </div>
@@ -188,9 +184,7 @@ const contacts = [
       </section>
 
       <section class="panel about-section">
-        <div class="about-title">
-          <h2>Contact</h2>
-        </div>
+        <h2 class="about-title">Contact</h2>
         <div class="about-body">
           <p>Check out my socials to see what I'm up to:</p>
           <div class="contact-list">
@@ -391,7 +385,7 @@ const contacts = [
   text-align: left;
 }
 
-.about-title h2 {
+.about-title {
   font-size: clamp(1.5rem, 2vw, 1.9rem);
 }
 
