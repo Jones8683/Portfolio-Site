@@ -93,7 +93,8 @@ const progressStyle = computed(() => ({
 }));
 
 const label = computed(
-  () => `Listening to ${shown.value.title} by ${shown.value.artist} on Spotify`,
+  () =>
+    `${shown.value.playing ? 'Listening to' : 'Paused on'} ${shown.value.title} by ${shown.value.artist} on Spotify`,
 );
 
 const morph = async (update) => {
@@ -220,7 +221,7 @@ watch(
     <div
       ref="pill"
       class="status-pill"
-      :class="{ 'is-live': shown, swapped }"
+      :class="{ 'is-live': shown, 'is-paused': shown && !shown.playing, swapped }"
       :style="{ '--live-radius': `${LIVE_RADIUS}px`, '--tint': tint }"
     >
       <a
@@ -231,24 +232,31 @@ watch(
         rel="noopener noreferrer"
         :aria-label="label"
       >
-        <img
-          v-if="shown.art && !coverFailed"
-          class="cover"
-          :src="shown.art"
-          alt=""
-          crossorigin="anonymous"
-          width="40"
-          height="40"
-          decoding="sync"
-          @error="coverFailed = true"
-        />
+        <span v-if="shown.art && !coverFailed" class="art">
+          <img
+            class="cover"
+            :src="shown.art"
+            alt=""
+            crossorigin="anonymous"
+            width="40"
+            height="40"
+            decoding="sync"
+            @error="coverFailed = true"
+          />
+          <span class="pause" aria-hidden="true">
+            <svg viewBox="0 0 16 16" width="22" height="22">
+              <rect x="3" y="2" width="3.5" height="12" rx="1" />
+              <rect x="9.5" y="2" width="3.5" height="12" rx="1" />
+            </svg>
+          </span>
+        </span>
         <span class="text">
           <span class="title">{{ shown.title }}</span>
           <span class="artist">{{ shown.artist }}</span>
           <span
             :key="shown.id"
             class="progress"
-            :class="{ paused: stale }"
+            :class="{ paused: stale || !shown.playing }"
             :style="progressStyle"
             aria-hidden="true"
           >
@@ -331,7 +339,7 @@ watch(
   color: inherit;
 }
 
-.live:not(:has(.cover)) {
+.live:not(:has(.art)) {
   padding-left: 18px;
 }
 
@@ -339,12 +347,40 @@ watch(
   outline: none;
 }
 
-.cover {
+.art {
+  position: relative;
   width: 40px;
   height: 40px;
   flex: none;
+  overflow: hidden;
   border-radius: 10px;
+}
+
+.cover {
+  display: block;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
+}
+
+.pause {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #f4f7fb;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.pause svg {
+  fill: currentColor;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4));
+}
+
+.is-paused .pause {
+  opacity: 1;
 }
 
 .text {
@@ -449,7 +485,8 @@ watch(
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .status-pill {
+  .status-pill,
+  .pause {
     transition: none;
   }
 

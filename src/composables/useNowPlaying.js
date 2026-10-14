@@ -9,6 +9,8 @@ const IDLE_GRACE_MS = 6000;
 const SEEK_TOLERANCE_MS = 1500;
 const REQUEST_TIMEOUT_MS = 8000;
 
+const position = (track) => (track.playing ? Date.now() - track.startedAt : track.progressMs);
+
 export function useNowPlaying() {
   const track = shallowRef(null);
   const stale = ref(false);
@@ -30,7 +32,8 @@ export function useNowPlaying() {
       current !== null &&
       !stale.value &&
       current.url === data.url &&
-      Math.abs(current.startedAt - startedAt) <= SEEK_TOLERANCE_MS;
+      current.playing === data.isPlaying &&
+      Math.abs(position(current) - data.progressMs) <= SEEK_TOLERANCE_MS;
 
     stale.value = false;
 
@@ -44,7 +47,9 @@ export function useNowPlaying() {
       art: data.art,
       url: data.url,
       durationMs: data.durationMs,
+      progressMs: data.progressMs,
       startedAt,
+      playing: data.isPlaying,
     };
   };
 
@@ -60,7 +65,7 @@ export function useNowPlaying() {
   };
 
   const nextDelay = () => {
-    if (track.value === null || stale.value) return POLL_MS;
+    if (track.value === null || stale.value || !track.value.playing) return POLL_MS;
 
     const remaining = track.value.durationMs - (Date.now() - track.value.startedAt);
     return Math.min(POLL_MS, Math.max(MIN_POLL_MS, remaining + TRACK_END_MARGIN_MS));
@@ -82,7 +87,7 @@ export function useNowPlaying() {
         console.warn('Spotify needs to be linked again.');
       }
 
-      if (response.ok && data.isPlaying) showTrack(data);
+      if (response.ok && data.track) showTrack(data);
       else hideTrack();
     } catch {
       hideTrack();
