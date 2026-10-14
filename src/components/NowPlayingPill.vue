@@ -9,29 +9,82 @@ const FADE_OUT_MS = 140;
 const FADE_IN_MS = 260;
 const LIVE_RADIUS = 18;
 const PRELOAD_TIMEOUT_MS = 1500;
+const TINT_SAMPLE_SIZE = 16;
+const TINT_LIGHTNESS = 70;
 
 const { track, stale } = useNowPlaying();
 const reducedMotion = usePreferredReducedMotion();
 
 const pill = ref(null);
 const shown = shallowRef(null);
+const tint = ref(null);
 const swapped = ref(false);
 const coverFailed = ref(false);
 
 let changeToken = 0;
 
+const readTint = (image) => {
+  const canvas = document.createElement('canvas');
+  canvas.width = TINT_SAMPLE_SIZE;
+  canvas.height = TINT_SAMPLE_SIZE;
+
+  const context = canvas.getContext('2d', { willReadFrequently: true });
+  context.drawImage(image, 0, 0, TINT_SAMPLE_SIZE, TINT_SAMPLE_SIZE);
+  const { data } = context.getImageData(0, 0, TINT_SAMPLE_SIZE, TINT_SAMPLE_SIZE);
+
+  let red = 0;
+  let green = 0;
+  let blue = 0;
+  let total = 0;
+
+  for (let index = 0; index < data.length; index += 4) {
+    const [r, g, b] = data.subarray(index, index + 3);
+    const weight = Math.max(r, g, b) - Math.min(r, g, b) + 1;
+
+    red += r * weight;
+    green += g * weight;
+    blue += b * weight;
+    total += weight;
+  }
+
+  const r = red / total / 255;
+  const g = green / total / 255;
+  const b = blue / total / 255;
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  const delta = max - min;
+
+  if (delta === 0) return `hsl(0 0% ${TINT_LIGHTNESS}%)`;
+
+  const saturation = delta / (1 - Math.abs(max + min - 1));
+  const sector =
+    max === r ? (g - b) / delta + 6 : max === g ? (b - r) / delta + 2 : (r - g) / delta + 4;
+  const hue = (sector % 6) * 60;
+
+  return `hsl(${Math.round(hue)} ${Math.round(saturation * 100)}% ${TINT_LIGHTNESS}%)`;
+};
+
 const preload = (url) => {
-  if (!url) return Promise.resolve();
+  if (!url) return Promise.resolve(null);
 
   const image = new Image();
+  image.crossOrigin = 'anonymous';
   image.src = url;
 
   return Promise.race([
-    image.decode().catch(() => {}),
+    image
+      .decode()
+      .then(() => readTint(image))
+      .catch(() => null),
     new Promise((resolve) => {
-      setTimeout(resolve, PRELOAD_TIMEOUT_MS);
+      setTimeout(resolve, PRELOAD_TIMEOUT_MS, null);
     }),
   ]);
+};
+
+const show = (next, nextTint) => {
+  shown.value = next;
+  tint.value = nextTint;
 };
 
 const progressStyle = computed(() => ({
@@ -96,8 +149,8 @@ const switchTrack = async (next) => {
   const content = pill.value?.querySelector('.live');
 
   if (!content || reducedMotion.value === 'reduce') {
-    await ready;
-    if (token === changeToken) shown.value = next;
+    const nextTint = await ready;
+    if (token === changeToken) show(next, nextTint);
     return;
   }
 
@@ -107,16 +160,14 @@ const switchTrack = async (next) => {
     fill: 'forwards',
   });
 
-  await Promise.all([fadeOut.finished.catch(() => {}), ready]);
+  const [, nextTint] = await Promise.all([fadeOut.finished.catch(() => {}), ready]);
 
   if (token !== changeToken) {
     fadeOut.cancel();
     return;
   }
 
-  await morph(() => {
-    shown.value = next;
-  });
+  await morph(() => show(next, nextTint));
 
   const incoming = pill.value?.querySelector('.live');
   incoming?.getAnimations().forEach((animation) => animation.cancel());
@@ -128,13 +179,9 @@ const switchTrack = async (next) => {
 
 const appear = async (next) => {
   const token = changeToken;
-  await preload(next.art);
+  const nextTint = await preload(next.art);
 
-  if (token === changeToken) {
-    await morph(() => {
-      shown.value = next;
-    });
-  }
+  if (token === changeToken) await morph(() => show(next, nextTint));
 };
 
 watch(
@@ -174,7 +221,7 @@ watch(
       ref="pill"
       class="status-pill"
       :class="{ 'is-live': shown, swapped }"
-      :style="{ '--live-radius': `${LIVE_RADIUS}px` }"
+      :style="{ '--live-radius': `${LIVE_RADIUS}px`, '--tint': tint }"
     >
       <a
         v-if="shown"
@@ -189,6 +236,7 @@ watch(
           class="cover"
           :src="shown.art"
           alt=""
+          crossorigin="anonymous"
           width="40"
           height="40"
           decoding="sync"
@@ -253,11 +301,13 @@ watch(
   min-width: min(12rem, calc(100vw - 40px));
   padding: 0;
   border-radius: var(--live-radius);
+  background: color-mix(in srgb, var(--tint) 14%, transparent);
+  border-color: color-mix(in srgb, var(--tint) 44%, transparent);
 }
 
 .status-pill.is-live:hover {
-  background: rgba(58, 123, 213, 0.22);
-  border-color: rgba(58, 123, 213, 0.6);
+  background: color-mix(in srgb, var(--tint) 22%, transparent);
+  border-color: color-mix(in srgb, var(--tint) 60%, transparent);
 }
 
 .status-pill:has(.live:focus-visible) {
@@ -347,7 +397,7 @@ watch(
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: currentColor;
+  background: var(--tint);
 }
 
 .thumb {
