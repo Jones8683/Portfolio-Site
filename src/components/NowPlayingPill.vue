@@ -197,13 +197,15 @@ watch(
         <span class="text">
           <span class="title">{{ shown.title }}</span>
           <span class="artist">{{ shown.artist }}</span>
-          <span class="bar" aria-hidden="true">
-            <span
-              :key="shown.id"
-              class="fill"
-              :class="{ paused: stale }"
-              :style="progressStyle"
-            ></span>
+          <span
+            :key="shown.id"
+            class="progress"
+            :class="{ paused: stale }"
+            :style="progressStyle"
+            aria-hidden="true"
+          >
+            <span class="bar"><span class="fill"></span></span>
+            <span class="thumb"></span>
           </span>
         </span>
       </a>
@@ -321,25 +323,52 @@ watch(
   color: var(--color-muted);
 }
 
-.bar {
-  height: 3px;
+.progress {
+  --thumb: 7px;
+  position: relative;
   margin-top: 6px;
-  overflow: hidden;
-  border-radius: 999px;
-  background: rgba(100, 168, 255, 0.22);
 }
 
-.fill {
+.bar {
   display: block;
-  width: 100%;
-  height: 100%;
-  border-radius: inherit;
-  background: #64a8ff;
+  height: 3px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.fill,
+.thumb {
   transform: translateX(-100%);
   animation: track-progress var(--duration) linear var(--delay) both;
 }
 
-.fill.paused {
+.fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: currentColor;
+}
+
+.thumb {
+  position: absolute;
+  inset: 0;
+}
+
+.thumb::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 0;
+  width: var(--thumb);
+  height: var(--thumb);
+  border-radius: 50%;
+  background: #f4f7fb;
+  transform: translate(50%, -50%);
+}
+
+.paused .fill,
+.paused .thumb {
   animation-play-state: paused;
 }
 
