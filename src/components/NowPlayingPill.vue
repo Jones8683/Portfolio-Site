@@ -11,6 +11,7 @@ const LIVE_RADIUS = 18;
 const PRELOAD_TIMEOUT_MS = 1500;
 const TINT_SAMPLE_SIZE = 16;
 const TINT_LIGHTNESS = 70;
+const SPIN_STOP_MS = 600;
 
 const { track, stale } = useNowPlaying();
 const reducedMotion = usePreferredReducedMotion();
@@ -20,8 +21,10 @@ const shown = shallowRef(null);
 const tint = ref(null);
 const swapped = ref(false);
 const coverFailed = ref(false);
+const stopped = ref(true);
 
 let changeToken = 0;
+let stopFrame;
 
 const readTint = (image) => {
   const canvas = document.createElement('canvas');
@@ -216,6 +219,38 @@ watch(
     coverFailed.value = false;
   },
 );
+
+watch(
+  frozen,
+  (isFrozen) => {
+    cancelAnimationFrame(stopFrame);
+
+    const spin = pill.value?.querySelector('.cover')?.getAnimations()[0];
+    if (spin) spin.playbackRate = 1;
+
+    if (!isFrozen || !spin) {
+      stopped.value = isFrozen;
+      return;
+    }
+
+    let start;
+    const slow = (now) => {
+      start ??= now;
+      const progress = Math.min((now - start) / SPIN_STOP_MS, 1);
+      spin.playbackRate = 1 - progress;
+
+      if (progress < 1) {
+        stopFrame = requestAnimationFrame(slow);
+      } else {
+        stopped.value = true;
+        spin.playbackRate = 1;
+      }
+    };
+
+    stopFrame = requestAnimationFrame(slow);
+  },
+  { immediate: true },
+);
 </script>
 
 <template>
@@ -234,7 +269,7 @@ watch(
         rel="noopener noreferrer"
         :aria-label="label"
       >
-        <span v-if="shown.art && !coverFailed" class="art" :class="{ paused: frozen }">
+        <span v-if="shown.art && !coverFailed" class="art" :class="{ paused: stopped }">
           <img
             class="cover"
             :src="shown.art"
