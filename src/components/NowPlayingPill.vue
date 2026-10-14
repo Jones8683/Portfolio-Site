@@ -305,13 +305,15 @@ watch(
   border-color: color-mix(in srgb, var(--tint) 44%, transparent);
 }
 
-.status-pill.is-live:hover {
-  background: color-mix(in srgb, var(--tint) 22%, transparent);
-  border-color: color-mix(in srgb, var(--tint) 60%, transparent);
+@media (hover: hover) {
+  .status-pill.is-live:hover {
+    background: color-mix(in srgb, var(--tint) 22%, transparent);
+    border-color: color-mix(in srgb, var(--tint) 60%, transparent);
+  }
 }
 
 .status-pill:has(.live:focus-visible) {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--tint);
   outline-offset: 3px;
 }
 
@@ -414,6 +416,7 @@ watch(
   height: var(--thumb);
   border-radius: 50%;
   background: #f4f7fb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
   transform: translate(50%, -50%);
 }
 
