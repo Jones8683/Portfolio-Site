@@ -87,6 +87,8 @@ const show = (next, nextTint) => {
   tint.value = nextTint;
 };
 
+const frozen = computed(() => stale.value || !shown.value?.playing);
+
 const progressStyle = computed(() => ({
   '--duration': `${shown.value.durationMs}ms`,
   '--delay': `${shown.value.startedAt - Date.now()}ms`,
@@ -232,7 +234,7 @@ watch(
         rel="noopener noreferrer"
         :aria-label="label"
       >
-        <span v-if="shown.art && !coverFailed" class="art">
+        <span v-if="shown.art && !coverFailed" class="art" :class="{ paused: frozen }">
           <img
             class="cover"
             :src="shown.art"
@@ -256,7 +258,7 @@ watch(
           <span
             :key="shown.id"
             class="progress"
-            :class="{ paused: stale || !shown.playing }"
+            :class="{ paused: frozen }"
             :style="progressStyle"
             aria-hidden="true"
           >
@@ -353,7 +355,8 @@ watch(
   height: 40px;
   flex: none;
   overflow: hidden;
-  border-radius: 10px;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
 }
 
 .cover {
@@ -361,6 +364,11 @@ watch(
   width: 100%;
   height: 100%;
   object-fit: cover;
+  animation: record-spin 8s linear infinite;
+}
+
+.paused .cover {
+  animation-play-state: paused;
 }
 
 .pause {
@@ -472,6 +480,12 @@ watch(
   }
 }
 
+@keyframes record-spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
 @keyframes swap-in {
   from {
     opacity: 0;
@@ -491,7 +505,8 @@ watch(
   }
 
   .swapped .idle,
-  .swapped .live {
+  .swapped .live,
+  .cover {
     animation: none;
   }
 }
