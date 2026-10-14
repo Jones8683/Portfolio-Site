@@ -334,7 +334,7 @@ watch(
   font-weight: 400;
   letter-spacing: 0.04em;
   color: #64a8ff;
-  background: rgba(58, 123, 213, 0.14);
+  background: rgba(58, 123, 213, 0.28);
   border: 1px solid rgba(58, 123, 213, 0.438);
   user-select: none;
   transition:
@@ -346,13 +346,13 @@ watch(
   min-width: min(12rem, calc(100vw - 40px));
   padding: 0;
   border-radius: var(--live-radius);
-  background: color-mix(in srgb, var(--tint) 14%, transparent);
+  background: color-mix(in srgb, var(--tint) 28%, transparent);
   border-color: color-mix(in srgb, var(--tint) 44%, transparent);
 }
 
 @media (hover: hover) {
   .status-pill.is-live:hover {
-    background: color-mix(in srgb, var(--tint) 22%, transparent);
+    background: color-mix(in srgb, var(--tint) 36%, transparent);
     border-color: color-mix(in srgb, var(--tint) 60%, transparent);
   }
 }
