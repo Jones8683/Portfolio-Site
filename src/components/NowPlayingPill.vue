@@ -326,7 +326,7 @@ watch(
   position: relative;
   overflow: hidden;
   pointer-events: auto;
-  max-width: min(calc(100vw - 40px), 24rem);
+  max-width: min(calc(100vw - 40px), 384px);
   padding: 6px 14px;
   border-radius: 100px;
   font-family: var(--font-ui);
@@ -343,7 +343,7 @@ watch(
 }
 
 .status-pill.is-live {
-  min-width: min(12rem, calc(100vw - 40px));
+  min-width: min(192px, calc(100vw - 40px));
   padding: 0;
   border-radius: var(--live-radius);
   background: color-mix(in srgb, var(--tint) 28%, transparent);

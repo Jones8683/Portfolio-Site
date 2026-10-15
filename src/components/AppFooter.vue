@@ -52,7 +52,7 @@ const time = builtAt.toLocaleTimeString('en-AU', {
   gap: 8px;
   color: #7c8ba1;
   font-family: var(--font-ui);
-  font-size: 0.85rem;
+  font-size: 14px;
 }
 
 .footer-line {

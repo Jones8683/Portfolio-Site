@@ -94,7 +94,7 @@ watch(y, (now, prev) => {
   left: 0;
   right: 0;
   margin-inline: auto;
-  width: min(100% - 2rem, 1080px);
+  width: min(100% - 32px, 1080px);
   z-index: 1000;
   pointer-events: none;
 }
@@ -120,8 +120,8 @@ watch(y, (now, prev) => {
 
 .main-header.minimized {
   padding-inline: 16px;
-  background-color: hsl(240 5.9% 12%);
-  border-color: hsl(240 3.7% 19.9%);
+  background-color: #1d1d20;
+  border-color: #313135;
   box-shadow:
     rgba(24, 24, 27, 0.08) 0 0 0 1px,
     rgba(39, 39, 42, 0.08) 0 10px 15px -3px,
@@ -182,7 +182,7 @@ watch(y, (now, prev) => {
   position: relative;
   top: -2px;
   font-family: 'Cherry Bomb One', sans-serif;
-  font-size: 1.7rem;
+  font-size: 27px;
   font-weight: 400;
   line-height: 1;
   color: #ffffff;
@@ -238,7 +238,7 @@ watch(y, (now, prev) => {
   align-items: center;
   justify-content: center;
   padding: 6px 14px;
-  font-size: 0.85rem;
+  font-size: 14px;
   color: rgba(255, 255, 255, 0.8);
   background: var(--color-glass);
   border: 1px solid var(--color-hairline);
@@ -266,8 +266,8 @@ watch(y, (now, prev) => {
 .nav-icon {
   display: inline-flex;
   flex-shrink: 0;
-  width: 1.8rem;
-  height: 1.8rem;
+  width: 29px;
+  height: 29px;
   color: #ffffff;
   transition:
     opacity 0.3s ease,
@@ -286,7 +286,7 @@ watch(y, (now, prev) => {
 
 @media (width <= 720px) {
   .nav-shell {
-    width: min(100% - 1.5rem, 1080px);
+    width: min(100% - 24px, 1080px);
   }
 
   .main-header {

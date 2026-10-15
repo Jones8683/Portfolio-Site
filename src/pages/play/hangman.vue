@@ -20,25 +20,27 @@ const LIMBS = [
 ];
 
 const maskedWord = computed(() =>
-  [...secretWord.value].map((ch) => (ch === ' ' || guessedLetters.value.has(ch) ? ch : '_')),
+  [...secretWord.value].map((char) =>
+    char === ' ' || guessedLetters.value.has(char) ? char : '_',
+  ),
 );
 
 const wrongLetters = computed(() =>
-  [...guessedLetters.value].filter((l) => !secretWord.value.includes(l)),
+  [...guessedLetters.value].filter((letter) => !secretWord.value.includes(letter)),
 );
 
 const wrongGuesses = computed(() => wrongLetters.value.length);
 
 const limbs = computed(() => LIMBS.slice(0, Math.max(wrongGuesses.value - 1, 0)));
 
-function onInput(e) {
-  inputBuffer.value = e.target.value.toUpperCase().replaceAll(/[^A-Z ]/gu, '');
+function onInput(event) {
+  inputBuffer.value = event.target.value.toUpperCase().replaceAll(/[^A-Z ]/gu, '');
 }
 
 function submitWord() {
-  const w = inputBuffer.value.trim();
-  if (!w) return;
-  secretWord.value = w;
+  const word = inputBuffer.value.trim();
+  if (!word) return;
+  secretWord.value = word;
   inputBuffer.value = '';
   status.value = 'playing';
 }
@@ -55,7 +57,7 @@ function resetGame() {
   status.value = 'start';
 }
 
-onGameKey(ALPHABET, (e) => guessLetter(e.key.toUpperCase()));
+onGameKey(ALPHABET, (event) => guessLetter(event.key.toUpperCase()));
 </script>
 
 <template>
@@ -208,7 +210,7 @@ onGameKey(ALPHABET, (e) => guessLetter(e.key.toUpperCase()));
           </button>
         </div>
 
-        <GameControls :controls="[{ action: 'Guess letter', key: 'A - Z' }]" />
+        <GameControls :controls="[{ action: 'Guess Letter', key: 'A - Z' }]" />
       </div>
     </div>
   </GamePage>
@@ -288,7 +290,7 @@ onGameKey(ALPHABET, (e) => guessLetter(e.key.toUpperCase()));
   padding: 11px 18px;
   cursor: pointer;
   white-space: nowrap;
-  transition: opacity 0.15s;
+  transition: opacity 0.15s ease;
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
@@ -352,8 +354,8 @@ onGameKey(ALPHABET, (e) => guessLetter(e.key.toUpperCase()));
   color: #2d3748;
   border-bottom: 2px solid rgba(255, 255, 255, 0.12);
   transition:
-    color 0.2s,
-    border-color 0.2s;
+    color 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .letter-slot.revealed {
@@ -395,7 +397,7 @@ onGameKey(ALPHABET, (e) => guessLetter(e.key.toUpperCase()));
 }
 
 .right-section {
-  transition: opacity 0.3s;
+  transition: opacity 0.3s ease;
   padding-top: 1px;
 }
 
@@ -430,8 +432,8 @@ onGameKey(ALPHABET, (e) => guessLetter(e.key.toUpperCase()));
   background: var(--color-hairline);
   border: 1px solid rgba(255, 255, 255, 0.08);
   transition:
-    background 0.25s,
-    box-shadow 0.25s;
+    background-color 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 .pip.dead {
@@ -491,9 +493,8 @@ onGameKey(ALPHABET, (e) => guessLetter(e.key.toUpperCase()));
   font-size: 12px;
   font-weight: 700;
   cursor: pointer;
-  padding: 0;
   line-height: 1;
-  transition: background 0.12s;
+  transition: background-color 0.12s ease;
 }
 
 .key-btn:not(:disabled):hover {

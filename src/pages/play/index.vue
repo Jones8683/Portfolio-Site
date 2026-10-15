@@ -50,7 +50,7 @@ const games = [
 
 <style scoped>
 .page-title {
-  font-size: clamp(3rem, 10vw, 4.5rem);
+  font-size: clamp(48px, 10vw, 72px);
   line-height: 1;
   text-wrap: balance;
 }
@@ -101,12 +101,12 @@ const games = [
 }
 
 .arcade-icon {
-  font-size: 2.5rem;
+  font-size: 40px;
 }
 
 .arcade-name {
   color: #ffffff;
-  font-size: 1.6rem;
+  font-size: 26px;
 }
 
 .arcade-card-bottom {
@@ -115,7 +115,7 @@ const games = [
   align-items: center;
   justify-content: center;
   font-weight: 900;
-  font-size: 0.75rem;
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 1px;
   color: var(--game-color);

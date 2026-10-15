@@ -414,7 +414,7 @@ const contacts = [
 }
 
 .about-title {
-  font-size: clamp(1.5rem, 2vw, 1.9rem);
+  font-size: clamp(24px, 2vw, 30px);
 }
 
 .about-body {
@@ -453,8 +453,6 @@ const contacts = [
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin: 0;
-  padding: 0;
   list-style: none;
 }
 
@@ -486,7 +484,7 @@ const contacts = [
   overflow: hidden;
   min-width: 0;
   transition:
-    background 0.25s ease,
+    background-color 0.25s ease,
     border-color 0.25s ease,
     transform 0.25s cubic-bezier(0.23, 1, 0.32, 1);
 }
@@ -564,11 +562,8 @@ const contacts = [
 }
 
 @keyframes spin-ring {
-  from {
-    transform: rotate(0deg);
-  }
   to {
-    transform: rotate(360deg);
+    transform: rotate(1turn);
   }
 }
 
@@ -597,6 +592,8 @@ const contacts = [
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .avatar-ring,
+  .avatar-glow,
   .scroll-cue-nudge,
   .scroll-cue-icon {
     animation: none;

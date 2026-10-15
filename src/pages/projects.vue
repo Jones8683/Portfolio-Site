@@ -72,7 +72,7 @@ const projects = [
 
 <style scoped>
 .page-title {
-  font-size: clamp(3rem, 10vw, 4.5rem);
+  font-size: clamp(48px, 10vw, 72px);
   line-height: 1;
   text-wrap: balance;
 }
@@ -84,7 +84,7 @@ const projects = [
 
 .projects-page {
   width: min(92%, 840px);
-  padding: 0 0 56px;
+  padding-bottom: 56px;
 }
 
 .project-panel {
@@ -168,14 +168,14 @@ const projects = [
 
 .project-name {
   color: #ffffff;
-  font-size: 1.05rem;
+  font-size: 17px;
   font-weight: 700;
   letter-spacing: -0.01em;
 }
 
 .project-desc {
   color: var(--color-muted);
-  font-size: 0.92rem;
+  font-size: 15px;
   line-height: 1.5;
   transition: color 0.3s ease;
 }
@@ -188,6 +188,7 @@ const projects = [
   width: 16px;
   height: 16px;
   flex-shrink: 0;
+  margin-right: 24px;
   color: #3a4f6a;
   opacity: 0;
   transform: translateX(-6px);
@@ -195,7 +196,6 @@ const projects = [
     opacity 0.3s ease,
     transform 0.3s ease,
     color 0.3s ease;
-  margin-right: 24px;
 }
 
 .project-row:hover .project-arrow {
@@ -220,21 +220,27 @@ const projects = [
     width: min(95%, 840px);
     padding-bottom: 44px;
   }
+
   .project-panel {
     padding: 4px 18px;
   }
+
   .project-row {
     padding: 18px 2px;
   }
+
   .project-row-inner {
     gap: 14px;
   }
+
   .project-row:hover .project-row-inner {
     transform: translateX(12px);
   }
+
   .project-row-bar {
     left: -10px;
   }
+
   .project-logo {
     width: 40px;
     height: 40px;

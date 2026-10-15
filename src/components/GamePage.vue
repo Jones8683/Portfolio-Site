@@ -145,14 +145,14 @@ const isMobile = useMediaQuery('(pointer: coarse)');
   font-weight: 700;
   color: #000000;
   background: #ffffff;
-  border: 0;
+  border: none;
   border-radius: 4px;
   cursor: pointer;
 }
 
 :where(.game-page) canvas {
   display: block;
-  border: 0;
+  border: none;
   border-radius: 4px;
 }
 
@@ -171,7 +171,7 @@ const isMobile = useMediaQuery('(pointer: coarse)');
 
 <style scoped>
 .page-title {
-  font-size: clamp(3rem, 10vw, 4.5rem);
+  font-size: clamp(48px, 10vw, 72px);
   line-height: 1;
   text-wrap: balance;
 }

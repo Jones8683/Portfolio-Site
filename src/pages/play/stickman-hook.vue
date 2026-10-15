@@ -32,7 +32,7 @@ const { enter: enterFullscreen } = useFullscreen(gameIframe);
 
         <GameControls
           :controls="[
-            { action: 'Swing / Hook', key: 'Left Click' },
+            { action: 'Swing / Hook', key: 'Click' },
             { action: 'Alternative', key: 'Space' },
           ]"
         />
@@ -66,14 +66,14 @@ const { enter: enterFullscreen } = useFullscreen(gameIframe);
   height: 550px;
   background: #000000;
   display: block;
-  border: 0;
+  border: none;
   border-radius: 4px;
 }
 
 .fullscreen-btn {
   cursor: pointer;
   color: rgba(255, 255, 255, 0.8);
-  font-size: 0.75rem;
+  font-size: 12px;
   font-weight: 700;
   padding: 14px 16px;
   background: var(--color-glass);

@@ -428,8 +428,8 @@ onGameKey(['Escape', 'p'], (event) => {
 watch(useWindowFocus(), (focused) => {
   if (!focused && !isPaused.value) togglePause();
 });
-onGameKey([' ', 'ArrowUp', 'w'], (e) => {
-  e.preventDefault();
+onGameKey([' ', 'ArrowUp', 'w'], (event) => {
+  event.preventDefault();
   jump();
 });
 

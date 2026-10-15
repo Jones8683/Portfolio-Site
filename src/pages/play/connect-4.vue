@@ -238,7 +238,7 @@ onGameKey(['r'], resetGame);
   cursor: pointer;
   border-radius: 8px;
   padding: 4px;
-  transition: background 0.15s ease;
+  transition: background-color 0.15s ease;
 }
 
 .column.col-hovered {
@@ -263,7 +263,6 @@ onGameKey(['r'], resetGame);
   width: 42px;
   height: 42px;
   border-radius: 50%;
-  pointer-events: none;
 }
 
 .piece {
@@ -271,7 +270,7 @@ onGameKey(['r'], resetGame);
   height: 42px;
   border-radius: 50%;
   transition:
-    background 0.1s ease,
+    background-color 0.1s ease,
     box-shadow 0.1s ease;
 }
 
@@ -304,12 +303,12 @@ onGameKey(['r'], resetGame);
 .piece.dropping {
   position: relative;
   z-index: 10;
-  animation: drop-in var(--drop-dur, 0.25s) forwards;
+  animation: drop-in var(--drop-dur) forwards;
 }
 
 @keyframes drop-in {
   0% {
-    transform: translateY(var(--drop-dist, -200px));
+    transform: translateY(var(--drop-dist));
     animation-timing-function: cubic-bezier(0.55, 0, 1, 0.6);
   }
   82% {

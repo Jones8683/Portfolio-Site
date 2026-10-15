@@ -66,7 +66,7 @@ useEventListener(window, 'message', handleMessage);
   height: 530px;
   background: #faf8ef;
   display: block;
-  border: 0;
+  border: none;
   border-radius: 4px;
 }
 
