@@ -476,9 +476,9 @@ watch(
         </div>
         <GameControls
           :controls="[
-            { action: 'Jump', key: 'Click' },
-            { action: 'Alternative', key: ['Space', '↑', 'W'] },
-            { action: 'Pause', key: ['Esc', 'P'] },
+            { action: 'Jump', keys: 'Click' },
+            { action: 'Alternative', keys: ['Space', '↑', 'W'] },
+            { action: 'Pause', keys: ['Esc', 'P'] },
           ]"
         />
       </div>

@@ -211,8 +211,8 @@ onGameKey(['r'], resetGame);
 
         <GameControls
           :controls="[
-            { action: 'Drop Piece', key: 'Click' },
-            { action: 'Restart', key: 'R' },
+            { action: 'Drop Piece', keys: 'Click' },
+            { action: 'Restart', keys: 'R' },
           ]"
         />
       </div>

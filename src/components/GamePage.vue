@@ -152,7 +152,8 @@ const isMobile = useMediaQuery('(pointer: coarse)');
   cursor: pointer;
 }
 
-:where(.game-page) canvas {
+:where(.game-page) canvas,
+:where(.game-page) iframe {
   display: block;
   border: none;
   border-radius: 4px;

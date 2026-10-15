@@ -15,7 +15,7 @@ const SPIN_STOP_MS = 600;
 const { track, isStale } = useNowPlaying();
 
 const pill = useTemplateRef('pill');
-const live = useTemplateRef('live');
+const link = useTemplateRef('link');
 const cover = useTemplateRef('cover');
 const shown = shallowRef(null);
 const tint = ref(null);
@@ -112,7 +112,7 @@ async function morph(update) {
     return;
   }
 
-  live.value?.style.removeProperty('width');
+  link.value?.style.removeProperty('width');
 
   const from = element.getBoundingClientRect();
   const fromRadius = shown.value === null ? from.height / 2 : LIVE_RADIUS;
@@ -123,7 +123,7 @@ async function morph(update) {
   const to = element.getBoundingClientRect();
   const toRadius = shown.value === null ? to.height / 2 : LIVE_RADIUS;
 
-  const content = live.value;
+  const content = link.value;
   if (content) content.style.width = `${content.getBoundingClientRect().width}px`;
 
   const animation = element.animate(
@@ -152,7 +152,7 @@ async function morph(update) {
 async function switchTrack(next) {
   const token = changeToken;
   const ready = preload(next.art);
-  const content = live.value;
+  const content = link.value;
 
   if (!content) {
     const nextTint = await ready;
@@ -175,8 +175,8 @@ async function switchTrack(next) {
 
   await morph(() => show(next, nextTint));
 
-  for (const animation of live.value?.getAnimations() ?? []) animation.cancel();
-  live.value?.animate([{ opacity: 0 }, { opacity: 1 }], {
+  for (const animation of link.value?.getAnimations() ?? []) animation.cancel();
+  link.value?.animate([{ opacity: 0 }, { opacity: 1 }], {
     duration: FADE_IN_MS,
     easing: 'ease-out',
   });
@@ -262,7 +262,7 @@ watch(
     >
       <a
         v-if="shown"
-        ref="live"
+        ref="link"
         class="pill-live"
         :href="shown.url"
         target="_blank"
@@ -328,7 +328,6 @@ watch(
   padding: 6px 14px;
   font-family: 'Satoshi', sans-serif;
   font-size: 12px;
-  font-weight: 400;
   letter-spacing: 0.04em;
   color: #64a8ff;
   background: rgba(58, 123, 213, 0.28);
@@ -365,7 +364,6 @@ watch(
   gap: 12px;
   min-width: 0;
   padding: 8px 18px 8px 8px;
-  color: inherit;
 }
 
 .pill-live:not(:has(.pill-art)) {

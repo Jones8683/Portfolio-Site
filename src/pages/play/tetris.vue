@@ -168,7 +168,7 @@ const held = {
   right: isHeld('ArrowRight', 'KeyD'),
   softDrop: isHeld('ArrowDown', 'KeyS'),
 };
-const HELD_ACTIONS = { left: () => playerMove(-1), right: () => playerMove(1), softDrop };
+const heldActions = { left: () => playerMove(-1), right: () => playerMove(1), softDrop };
 
 const { pause, resume } = useRafFn(update, { immediate: false });
 
@@ -571,7 +571,7 @@ function resetGame() {
 for (const [action, key] of Object.entries(held)) {
   watch(key, (down) => {
     timers[action] = 0;
-    if (down && isPlaying()) HELD_ACTIONS[action]();
+    if (down && isPlaying()) heldActions[action]();
   });
 }
 
@@ -635,12 +635,12 @@ watch(
         </div>
         <GameControls
           :controls="[
-            { action: 'Move', key: ['←', '↓', '→'] },
-            { action: 'Rotate', key: '↑' },
-            { action: 'Alternative', key: ['A', 'S', 'D', 'W'] },
-            { action: 'Hard Drop', key: 'Space' },
-            { action: 'Hold', key: 'C' },
-            { action: 'Pause', key: ['Esc', 'P'] },
+            { action: 'Move', keys: ['←', '↓', '→'] },
+            { action: 'Rotate', keys: '↑' },
+            { action: 'Alternative', keys: ['A', 'S', 'D', 'W'] },
+            { action: 'Hard Drop', keys: 'Space' },
+            { action: 'Hold', keys: 'C' },
+            { action: 'Pause', keys: ['Esc', 'P'] },
           ]"
         />
       </div>

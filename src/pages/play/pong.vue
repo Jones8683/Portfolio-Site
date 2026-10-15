@@ -418,9 +418,9 @@ onScopeDispose(() => {
         </div>
         <GameControls
           :controls="[
-            { action: 'Left Paddle', key: ['W', 'S'] },
-            { action: 'Right Paddle', key: ['↑', '↓'] },
-            { action: 'Pause', key: ['Esc', 'P'] },
+            { action: 'Left Paddle', keys: ['W', 'S'] },
+            { action: 'Right Paddle', keys: ['↑', '↓'] },
+            { action: 'Pause', keys: ['Esc', 'P'] },
           ]"
         />
       </div>

@@ -260,10 +260,10 @@ watch(useWindowFocus(), (focused) => {
 
         <GameControls
           :controls="[
-            { action: 'Reveal', key: 'Click' },
-            { action: 'Flag', key: 'Right Click' },
-            { action: 'Pause', key: ['Esc', 'P'] },
-            { action: 'Restart', key: 'R' },
+            { action: 'Reveal', keys: 'Click' },
+            { action: 'Flag', keys: 'Right Click' },
+            { action: 'Pause', keys: ['Esc', 'P'] },
+            { action: 'Restart', keys: 'R' },
           ]"
         />
       </div>

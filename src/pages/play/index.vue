@@ -2,29 +2,29 @@
 definePage({ meta: { title: 'Arcade' } });
 
 const games = [
-  { name: 'Tetris', icon: '🧱', path: '/play/tetris', color: 'red' },
-  { name: '2048', icon: '🔢', path: '/play/2048', color: 'blue' },
-  { name: 'Pong', icon: '🏓', path: '/play/pong', color: 'yellow' },
+  { name: 'Tetris', icon: '🧱', path: '/play/tetris', color: '#ff4757' },
+  { name: '2048', icon: '🔢', path: '/play/2048', color: '#00a2ff' },
+  { name: 'Pong', icon: '🏓', path: '/play/pong', color: '#ffd700' },
   {
     name: 'Minesweeper',
     icon: '💣',
     path: '/play/minesweeper',
-    color: 'green',
+    color: '#2ed573',
   },
   {
     name: 'Stickman Hook',
     icon: '🪝',
     path: '/play/stickman-hook',
-    color: 'yellow',
+    color: '#ffd700',
   },
   {
     name: 'Flappy Bird',
     icon: '🐦',
     path: '/play/flappy-bird',
-    color: 'green',
+    color: '#2ed573',
   },
-  { name: 'Hangman', icon: '🧍', path: '/play/hangman', color: 'red' },
-  { name: 'Connect 4', icon: '🔵', path: '/play/connect-4', color: 'blue' },
+  { name: 'Hangman', icon: '🧍', path: '/play/hangman', color: '#ff4757' },
+  { name: 'Connect 4', icon: '🔵', path: '/play/connect-4', color: '#00a2ff' },
 ];
 </script>
 
@@ -40,7 +40,11 @@ const games = [
           <span class="arcade-icon">{{ game.icon }}</span>
           <h2 class="arcade-name">{{ game.name }}</h2>
         </div>
-        <RouterLink class="arcade-card-bottom" :class="`${game.color}-btn`" :to="game.path">
+        <RouterLink
+          class="arcade-card-bottom"
+          :style="{ '--game-color': game.color }"
+          :to="game.path"
+        >
           Play Now
         </RouterLink>
       </div>
@@ -132,22 +136,6 @@ const games = [
 
 .arcade-card-bottom:focus-visible {
   outline-offset: -3px;
-}
-
-.red-btn {
-  --game-color: #ff4757;
-}
-
-.blue-btn {
-  --game-color: #00a2ff;
-}
-
-.yellow-btn {
-  --game-color: #ffd700;
-}
-
-.green-btn {
-  --game-color: #2ed573;
 }
 
 @media (width <= 960px) {

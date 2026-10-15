@@ -52,9 +52,9 @@ useEventListener(window, 'message', handleMessage);
 
         <GameControls
           :controls="[
-            { action: 'Move Tiles', key: ['↑', '↓', '←', '→'] },
-            { action: 'Alternative', key: ['W', 'A', 'S', 'D'] },
-            { action: 'Restart', key: 'R' },
+            { action: 'Move Tiles', keys: ['↑', '↓', '←', '→'] },
+            { action: 'Alternative', keys: ['W', 'A', 'S', 'D'] },
+            { action: 'Restart', keys: 'R' },
           ]"
         />
       </div>
@@ -64,12 +64,9 @@ useEventListener(window, 'message', handleMessage);
 
 <style scoped>
 .game-iframe {
-  display: block;
   width: 530px;
   height: 530px;
   background: #faf8ef;
-  border: none;
-  border-radius: 4px;
 }
 
 .score-box {

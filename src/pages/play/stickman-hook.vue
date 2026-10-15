@@ -34,8 +34,8 @@ function focusIframe() {
 
         <GameControls
           :controls="[
-            { action: 'Swing / Hook', key: 'Click' },
-            { action: 'Alternative', key: 'Space' },
+            { action: 'Swing / Hook', keys: 'Click' },
+            { action: 'Alternative', keys: 'Space' },
           ]"
         />
 
@@ -64,12 +64,9 @@ function focusIframe() {
 
 <style scoped>
 .game-iframe {
-  display: block;
   width: 880px;
   height: 550px;
   background: #000000;
-  border: none;
-  border-radius: 4px;
 }
 
 .fullscreen-btn {

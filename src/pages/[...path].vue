@@ -25,14 +25,12 @@ definePage({ meta: { title: 'Page Not Found' } });
 
 <style scoped>
 .not-found-title {
-  margin-bottom: 4px;
   font-size: 120px;
   line-height: 1;
-  text-wrap: balance;
 }
 
 .not-found-subtitle {
-  margin-top: -8px;
+  margin-top: -4px;
   margin-bottom: 10px;
   color: #94a3b8;
 }

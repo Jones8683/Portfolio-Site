@@ -7,7 +7,7 @@ defineProps({ controls: { type: Array, required: true } });
     <div v-for="control in controls" :key="control.action" class="control-item">
       <span>{{ control.action }}</span>
       <div class="key-group">
-        <span v-for="key in [control.key].flat()" :key="key" class="key">{{ key }}</span>
+        <span v-for="key in [control.keys].flat()" :key="key" class="key">{{ key }}</span>
       </div>
     </div>
   </div>

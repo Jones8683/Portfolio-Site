@@ -179,7 +179,6 @@ watch(y, (now, prev) => {
   align-items: baseline;
   font-family: 'Cherry Bomb One', sans-serif;
   font-size: 27px;
-  font-weight: 400;
   line-height: 1;
 }
 

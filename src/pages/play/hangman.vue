@@ -214,7 +214,7 @@ onGameKey(ALPHABET, (event) => guessLetter(event.key.toUpperCase()));
           </button>
         </div>
 
-        <GameControls :controls="[{ action: 'Guess Letter', key: 'A - Z' }]" />
+        <GameControls :controls="[{ action: 'Guess Letter', keys: 'A - Z' }]" />
       </div>
     </div>
   </GamePage>

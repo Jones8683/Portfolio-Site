@@ -254,6 +254,10 @@ watch(
 </template>
 
 <style scoped>
+:global(main:has(.home)) {
+  padding-top: 74px;
+}
+
 .home {
   display: flex;
   flex-direction: column;
