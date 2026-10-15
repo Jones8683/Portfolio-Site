@@ -1,7 +1,7 @@
 <script setup>
-import { computed, ref } from 'vue';
-import { useIntervalFn } from '@vueuse/core';
-import GamePage, { onGameKey, onPauseKeys } from '@/components/GamePage.vue';
+import { computed, ref, watch } from 'vue';
+import { useIntervalFn, useWindowFocus } from '@vueuse/core';
+import GamePage, { onGameKey } from '@/components/GamePage.vue';
 import GameControls from '@/components/GameControls.vue';
 
 definePage({ meta: { title: 'Minesweeper' } });
@@ -174,7 +174,14 @@ function togglePause() {
 }
 
 onGameKey(['r'], resetToStart);
-onPauseKeys(isPaused, togglePause);
+onGameKey(['Escape', 'p'], (event) => {
+  event.preventDefault();
+  togglePause();
+});
+
+watch(useWindowFocus(), (focused) => {
+  if (!focused && !isPaused.value) togglePause();
+});
 
 initGrid(currentDiff.value);
 
@@ -279,11 +286,11 @@ const gridStyle = computed(() => ({
 }
 
 .result-title {
-  color: var(--color-red);
+  color: #ff4757;
 }
 
 .result-title.won {
-  color: var(--color-green);
+  color: #2ed573;
 }
 
 .grid-frame {
@@ -327,12 +334,12 @@ const gridStyle = computed(() => ({
 }
 
 .mines-label {
-  color: var(--color-gold);
+  color: #ffd700;
   margin-bottom: 4px;
 }
 
 .mines-value {
-  color: var(--color-gold);
+  color: #ffd700;
   font-size: 38px;
 }
 

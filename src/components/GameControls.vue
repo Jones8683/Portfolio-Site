@@ -24,7 +24,7 @@ defineProps({ controls: { type: Array, required: true } });
   justify-content: space-between;
   align-items: center;
   font-size: 11px;
-  color: var(--color-subtle);
+  color: #7c8ba1;
   margin-bottom: 6px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
   padding-bottom: 4px;

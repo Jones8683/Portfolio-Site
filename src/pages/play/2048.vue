@@ -77,4 +77,21 @@ useEventListener(window, 'message', handleMessage);
 .label {
   margin-bottom: 4px;
 }
+
+.high-score-label {
+  font-size: 11px;
+}
+
+.high-score-value {
+  font-size: 24px;
+  color: #ffd700;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+}
+
+.score-divider {
+  width: 100%;
+  height: 1px;
+  margin: 8px 0;
+  background: var(--color-hairline);
+}
 </style>

@@ -1,12 +1,7 @@
 <script setup>
-import { onUnmounted, ref, useTemplateRef, watch } from 'vue';
-import { useRafFn, useTimeoutFn } from '@vueuse/core';
-import GamePage, {
-  onGameKey,
-  onPauseKeys,
-  setupCanvas,
-  useHeldKeys,
-} from '@/components/GamePage.vue';
+import { computed, onUnmounted, ref, useTemplateRef, watch } from 'vue';
+import { useMagicKeys, useRafFn, useTimeoutFn, useWindowFocus } from '@vueuse/core';
+import GamePage, { onGameKey } from '@/components/GamePage.vue';
 import GameControls from '@/components/GameControls.vue';
 
 definePage({ meta: { title: 'Pong' } });
@@ -94,7 +89,15 @@ function spawnParticles(x, y, rgb) {
   }
 }
 
-const isHeld = useHeldKeys(['ArrowUp', 'ArrowDown', 'Space']);
+const keys = useMagicKeys({
+  passive: false,
+  onEventFired: (event) => {
+    if (['ArrowUp', 'ArrowDown', 'Space'].includes(event.code)) event.preventDefault();
+  },
+});
+const isModifierHeld = computed(() => keys.ctrl.value || keys.meta.value || keys.alt.value);
+const isHeld = (...names) =>
+  computed(() => !isModifierHeld.value && names.some((name) => keys[name].value));
 const w = isHeld('w');
 const s = isHeld('s');
 const ArrowUp = isHeld('ArrowUp');
@@ -350,13 +353,26 @@ const { pause, resume } = useRafFn(
   { immediate: false },
 );
 
-onPauseKeys(isPaused, togglePause);
+onGameKey(['Escape', 'p'], (event) => {
+  event.preventDefault();
+  togglePause();
+});
+
+watch(useWindowFocus(), (focused) => {
+  if (!focused && !isPaused.value) togglePause();
+});
 
 watch(
   canvasRef,
   (el) => {
     if (!el) return;
-    ctx = setupCanvas(el, W, H);
+    const ratio = window.devicePixelRatio;
+    el.width = W * ratio;
+    el.height = H * ratio;
+    el.style.width = `${W}px`;
+    el.style.height = `${H}px`;
+    ctx = el.getContext('2d');
+    ctx.scale(ratio, ratio);
     drawField();
   },
   { flush: 'post' },

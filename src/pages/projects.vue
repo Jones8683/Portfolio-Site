@@ -71,6 +71,17 @@ const projects = [
 </template>
 
 <style scoped>
+.page-title {
+  font-size: clamp(3rem, 10vw, 4.5rem);
+  line-height: 1;
+  text-wrap: balance;
+}
+
+.page-subtitle {
+  margin-bottom: 12px;
+  color: var(--color-muted);
+}
+
 .projects-page {
   width: min(92%, 840px);
   padding: 0 0 56px;
@@ -83,7 +94,7 @@ const projects = [
   margin-top: 16px;
   padding: 4px 32px;
   border-radius: 16px;
-  background: var(--color-surface);
+  background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(148, 163, 184, 0.2);
   box-shadow: 0 24px 50px rgba(4, 6, 16, 0.45);
 }
@@ -170,7 +181,7 @@ const projects = [
 }
 
 .project-row:hover .project-desc {
-  color: var(--color-text-soft);
+  color: #cbd5e1;
 }
 
 .project-arrow {
@@ -190,7 +201,7 @@ const projects = [
 .project-row:hover .project-arrow {
   opacity: 1;
   transform: translateX(0);
-  color: var(--color-accent);
+  color: #87cefa;
 }
 
 @keyframes pull-up {

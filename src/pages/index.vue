@@ -1,11 +1,35 @@
+<script>
+import { ref } from 'vue';
+
+const cueDismissed = ref(false);
+</script>
+
 <script setup>
+import { computed, watch } from 'vue';
+import { useWindowScroll } from '@vueuse/core';
 import profilePic from '@/assets/kenobi.png';
 import NowPlayingPill from '@/components/NowPlayingPill.vue';
-import { useScrollCue } from '@/composables/useScrollCue';
 
 definePage({ meta: { title: 'Home' } });
 
-const { opacity: cueOpacity } = useScrollCue();
+const CUE_FADE_DISTANCE = 120;
+const CUE_TOP_THRESHOLD = 20;
+
+const { y } = useWindowScroll();
+let wasAtTop = false;
+
+watch(
+  y,
+  (value) => {
+    if (value < CUE_TOP_THRESHOLD) wasAtTop = true;
+    else if (wasAtTop && value > CUE_FADE_DISTANCE) cueDismissed.value = true;
+  },
+  { immediate: true },
+);
+
+const cueOpacity = computed(() =>
+  cueDismissed.value ? 0 : Math.max(0, 1 - y.value / CUE_FADE_DISTANCE),
+);
 
 const interests = [
   {
@@ -384,7 +408,7 @@ const contacts = [
   gap: 24px;
   text-align: left;
   border-radius: 16px;
-  background: var(--color-surface);
+  background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(148, 163, 184, 0.2);
   box-shadow: 0 24px 50px rgba(4, 6, 16, 0.45);
 }
@@ -402,7 +426,7 @@ const contacts = [
 .about-body p {
   font-size: 15px;
   line-height: 1.7;
-  color: var(--color-text-soft);
+  color: #cbd5e1;
 }
 
 .interest-row {
@@ -411,7 +435,7 @@ const contacts = [
   align-items: baseline;
   gap: 16px;
   padding-bottom: 12px;
-  border-bottom: 1px solid var(--color-glass-border);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .interest-row:last-child {
@@ -438,7 +462,7 @@ const contacts = [
   padding: 5px 12px;
   font-size: 14px;
   line-height: 1.5;
-  color: var(--color-text-soft);
+  color: #cbd5e1;
   background: color-mix(in srgb, var(--chip-accent) 7%, transparent);
   border: 1px solid color-mix(in srgb, var(--chip-accent) 22%, transparent);
   border-radius: 100px;
@@ -457,7 +481,7 @@ const contacts = [
   gap: 14px;
   padding: 12px 16px;
   background: rgba(255, 255, 255, 0.025);
-  border: 1px solid var(--color-glass-border);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 10px;
   overflow: hidden;
   min-width: 0;
@@ -491,7 +515,7 @@ const contacts = [
 }
 
 .contact-row:hover .contact-row-icon {
-  color: var(--color-accent);
+  color: #87cefa;
 }
 
 .contact-row-label {
@@ -503,14 +527,14 @@ const contacts = [
 }
 
 .contact-row:hover .contact-row-label {
-  color: var(--color-text-soft);
+  color: #cbd5e1;
 }
 
 .contact-row-value {
   flex: 1;
   min-width: 0;
   font-size: 15px;
-  color: var(--color-accent);
+  color: #87cefa;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -532,7 +556,7 @@ const contacts = [
 .contact-row:hover .contact-row-arrow {
   opacity: 1;
   transform: translateX(0);
-  color: var(--color-accent);
+  color: #87cefa;
 }
 
 .contact-outro {

@@ -206,6 +206,12 @@ onGameKey(['r'], resetGame);
 </template>
 
 <style scoped>
+.row {
+  display: flex;
+  gap: 15px;
+  width: 100%;
+}
+
 .left-section {
   display: flex;
   flex-direction: column;

@@ -1,7 +1,7 @@
 <script setup>
 import { ref, useTemplateRef, watch } from 'vue';
-import { useRafFn, useStorage } from '@vueuse/core';
-import GamePage, { onGameKey, onPauseKeys, setupCanvas } from '@/components/GamePage.vue';
+import { useRafFn, useStorage, useWindowFocus } from '@vueuse/core';
+import GamePage, { onGameKey } from '@/components/GamePage.vue';
 import GameControls from '@/components/GameControls.vue';
 
 definePage({ meta: { title: 'Flappy Bird' } });
@@ -420,7 +420,14 @@ function jump() {
   }
 }
 
-onPauseKeys(isPaused, togglePause);
+onGameKey(['Escape', 'p'], (event) => {
+  event.preventDefault();
+  togglePause();
+});
+
+watch(useWindowFocus(), (focused) => {
+  if (!focused && !isPaused.value) togglePause();
+});
 onGameKey([' ', 'ArrowUp', 'w'], (e) => {
   e.preventDefault();
   jump();
@@ -430,7 +437,13 @@ watch(
   canvasRef,
   (el) => {
     if (!el) return;
-    ctx = setupCanvas(el, W, H);
+    const ratio = window.devicePixelRatio;
+    el.width = W * ratio;
+    el.height = H * ratio;
+    el.style.width = `${W}px`;
+    el.style.height = `${H}px`;
+    ctx = el.getContext('2d');
+    ctx.scale(ratio, ratio);
     initState();
     resume();
   },
@@ -469,6 +482,24 @@ watch(
 </template>
 
 <style scoped>
+.high-score-label {
+  margin-bottom: 2px;
+  font-size: 11px;
+}
+
+.high-score-value {
+  font-size: 24px;
+  color: #ffd700;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+}
+
+.score-divider {
+  width: 100%;
+  height: 1px;
+  margin: 8px 0;
+  background: var(--color-hairline);
+}
+
 canvas {
   cursor: pointer;
 }

@@ -1,47 +1,12 @@
 <script>
-import { computed, watch } from 'vue';
-import { onKeyStroke, useMagicKeys, useMediaQuery, useWindowFocus } from '@vueuse/core';
-
-const hasModifier = (event) => event.ctrlKey || event.metaKey || event.altKey;
+import { onKeyStroke, useMediaQuery } from '@vueuse/core';
 
 export function onGameKey(keys, handler) {
   onKeyStroke((event) => {
+    if (event.ctrlKey || event.metaKey || event.altKey) return false;
     const key = event.key?.toLowerCase();
-    return !hasModifier(event) && keys.some((gameKey) => gameKey.toLowerCase() === key);
+    return keys.some((gameKey) => gameKey.toLowerCase() === key);
   }, handler);
-}
-
-export function onPauseKeys(isPaused, togglePause) {
-  onGameKey(['Escape', 'p'], (event) => {
-    event.preventDefault();
-    togglePause();
-  });
-  watch(useWindowFocus(), (focused) => {
-    if (!focused && !isPaused.value) togglePause();
-  });
-}
-
-export function setupCanvas(canvas, width, height, scale = 1) {
-  const ratio = window.devicePixelRatio;
-  canvas.width = width * ratio;
-  canvas.height = height * ratio;
-  canvas.style.width = `${width}px`;
-  canvas.style.height = `${height}px`;
-  const context = canvas.getContext('2d');
-  context.scale(scale * ratio, scale * ratio);
-  return context;
-}
-
-export function useHeldKeys(preventedCodes) {
-  const keys = useMagicKeys({
-    passive: false,
-    onEventFired: (event) => {
-      if (preventedCodes.includes(event.code)) event.preventDefault();
-    },
-  });
-  const isModifierHeld = computed(() => keys.ctrl.value || keys.meta.value || keys.alt.value);
-  return (...names) =>
-    computed(() => !isModifierHeld.value && names.some((name) => keys[name].value));
 }
 </script>
 
@@ -111,12 +76,6 @@ const isMobile = useMediaQuery('(pointer: coarse)');
   line-height: 1;
 }
 
-.row {
-  display: flex;
-  gap: 15px;
-  width: 100%;
-}
-
 .info-box {
   display: flex;
   flex-direction: column;
@@ -149,12 +108,7 @@ const isMobile = useMediaQuery('(pointer: coarse)');
 
 .score-label {
   margin-bottom: 4px;
-  color: var(--color-gold);
-}
-
-.high-score-label {
-  margin-bottom: 2px;
-  font-size: 11px;
+  color: #ffd700;
 }
 
 .value {
@@ -167,19 +121,6 @@ const isMobile = useMediaQuery('(pointer: coarse)');
 .score-value {
   font-size: 42px;
   text-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
-}
-
-.high-score-value {
-  font-size: 24px;
-  color: var(--color-gold);
-  text-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
-}
-
-.score-divider {
-  width: 100%;
-  height: 1px;
-  margin: 8px 0;
-  background: var(--color-hairline);
 }
 
 .overlay-msg {
@@ -229,6 +170,12 @@ const isMobile = useMediaQuery('(pointer: coarse)');
 </style>
 
 <style scoped>
+.page-title {
+  font-size: clamp(3rem, 10vw, 4.5rem);
+  line-height: 1;
+  text-wrap: balance;
+}
+
 .back-link {
   display: inline-flex;
   align-items: center;
@@ -237,14 +184,17 @@ const isMobile = useMediaQuery('(pointer: coarse)');
   font-weight: 700;
   line-height: 1;
   white-space: nowrap;
-  color: var(--color-accent);
+  color: #87cefa;
 }
 
 .back-link:hover {
   text-decoration: underline;
 }
 
-.back-link .arrow-icon {
+.arrow-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
   transform: scaleX(-1);
 }
 </style>

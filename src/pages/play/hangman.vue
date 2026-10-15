@@ -239,7 +239,7 @@ onGameKey(ALPHABET, (e) => guessLetter(e.key.toUpperCase()));
   text-transform: uppercase;
   color: var(--color-muted);
   background: rgba(255, 255, 255, 0.06);
-  border: 1px solid var(--color-glass-border);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   padding: 4px 10px;
   border-radius: 100px;
   display: inline-block;
@@ -252,7 +252,7 @@ onGameKey(ALPHABET, (e) => guessLetter(e.key.toUpperCase()));
 }
 
 .subtitle {
-  color: var(--color-subtle);
+  color: #7c8ba1;
   font-size: 13px;
   margin: 0 0 14px;
 }
@@ -302,6 +302,12 @@ onGameKey(ALPHABET, (e) => guessLetter(e.key.toUpperCase()));
 
 .submit-btn:not(:disabled):hover {
   opacity: 0.85;
+}
+
+.arrow-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
 }
 
 .gallows-section {
@@ -362,15 +368,15 @@ onGameKey(ALPHABET, (e) => guessLetter(e.key.toUpperCase()));
 
 .outcome-title {
   margin-bottom: 6px;
-  color: var(--color-red);
+  color: #ff4757;
 }
 
 .outcome-title.won {
-  color: var(--color-green);
+  color: #2ed573;
 }
 
 .outcome-word {
-  color: var(--color-subtle);
+  color: #7c8ba1;
   font-size: 11px;
   letter-spacing: 3px;
   text-transform: uppercase;
@@ -404,16 +410,12 @@ onGameKey(ALPHABET, (e) => guessLetter(e.key.toUpperCase()));
 }
 
 .danger-box {
-  background: linear-gradient(
-    135deg,
-    color-mix(in srgb, var(--color-red) 7%, transparent),
-    transparent
-  );
-  border-color: color-mix(in srgb, var(--color-red) 18%, transparent);
+  background: linear-gradient(135deg, color-mix(in srgb, #ff4757 7%, transparent), transparent);
+  border-color: color-mix(in srgb, #ff4757 18%, transparent);
 }
 
 .red-lbl {
-  color: var(--color-red);
+  color: #ff4757;
 }
 
 .pips-row {
@@ -426,16 +428,16 @@ onGameKey(ALPHABET, (e) => guessLetter(e.key.toUpperCase()));
   height: 11px;
   border-radius: 50%;
   background: var(--color-hairline);
-  border: 1px solid var(--color-glass-border);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   transition:
     background 0.25s,
     box-shadow 0.25s;
 }
 
 .pip.dead {
-  background: var(--color-red);
+  background: #ff4757;
   border-color: transparent;
-  box-shadow: 0 0 8px color-mix(in srgb, var(--color-red) 55%, transparent);
+  box-shadow: 0 0 8px color-mix(in srgb, #ff4757 55%, transparent);
 }
 
 .wrong-count {
@@ -464,9 +466,9 @@ onGameKey(ALPHABET, (e) => guessLetter(e.key.toUpperCase()));
 }
 
 .wrong-chip {
-  background: color-mix(in srgb, var(--color-red) 8%, transparent);
-  border: 1px solid color-mix(in srgb, var(--color-red) 22%, transparent);
-  color: var(--color-red);
+  background: color-mix(in srgb, #ff4757 8%, transparent);
+  border: 1px solid color-mix(in srgb, #ff4757 22%, transparent);
+  color: #ff4757;
   font-weight: 900;
   font-size: 11px;
   padding: 3px 8px;
@@ -483,7 +485,7 @@ onGameKey(ALPHABET, (e) => guessLetter(e.key.toUpperCase()));
 .key-btn {
   aspect-ratio: 1;
   background: rgba(255, 255, 255, 0.06);
-  border: 1px solid var(--color-glass-border);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 6px;
   color: #ffffff;
   font-size: 12px;
@@ -499,9 +501,9 @@ onGameKey(ALPHABET, (e) => guessLetter(e.key.toUpperCase()));
 }
 
 .key-btn.correct {
-  background: color-mix(in srgb, var(--color-green) 13%, transparent);
-  border-color: color-mix(in srgb, var(--color-green) 30%, transparent);
-  color: var(--color-green);
+  background: color-mix(in srgb, #2ed573 13%, transparent);
+  border-color: color-mix(in srgb, #2ed573 30%, transparent);
+  color: #2ed573;
 }
 
 .key-btn.wrong {

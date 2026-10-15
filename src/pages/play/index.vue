@@ -49,6 +49,17 @@ const games = [
 </template>
 
 <style scoped>
+.page-title {
+  font-size: clamp(3rem, 10vw, 4.5rem);
+  line-height: 1;
+  text-wrap: balance;
+}
+
+.page-subtitle {
+  margin-bottom: 12px;
+  color: var(--color-muted);
+}
+
 .arcade-page {
   width: min(92%, 1080px);
   padding-bottom: 60px;
@@ -62,8 +73,8 @@ const games = [
 }
 
 .arcade-card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-glass-border);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
   overflow: hidden;
   display: flex;
@@ -125,7 +136,7 @@ const games = [
 }
 
 .red-btn {
-  --game-color: var(--color-red);
+  --game-color: #ff4757;
 }
 
 .blue-btn {
@@ -133,11 +144,11 @@ const games = [
 }
 
 .yellow-btn {
-  --game-color: var(--color-gold);
+  --game-color: #ffd700;
 }
 
 .green-btn {
-  --game-color: var(--color-green);
+  --game-color: #2ed573;
 }
 
 @media (width <= 960px) {

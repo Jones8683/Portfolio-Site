@@ -4,11 +4,11 @@ definePage({ meta: { title: 'Page not found' } });
 
 <template>
   <div class="content-wrap">
-    <h1 class="page-title not-found-title">404</h1>
+    <h1 class="not-found-title">404</h1>
 
-    <p class="page-subtitle not-found-subtitle">This is not the page you're looking for</p>
+    <p class="not-found-subtitle">This is not the page you're looking for</p>
 
-    <RouterLink to="/" class="back-link not-found-link">
+    <RouterLink to="/" class="back-link">
       <svg class="arrow-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
         <path
           d="M4 10h11m0 0-4-4m4 4-4 4"
@@ -24,37 +24,39 @@ definePage({ meta: { title: 'Page not found' } });
 </template>
 
 <style scoped>
+.not-found-title {
+  margin-bottom: 4px;
+  font-size: 120px;
+  line-height: 1;
+  text-wrap: balance;
+}
+
+.not-found-subtitle {
+  margin-top: -8px;
+  margin-bottom: 10px;
+  color: var(--color-muted);
+}
+
 .back-link {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-size: 14px;
+  margin-top: 20px;
+  font-size: 16px;
   font-weight: 700;
   line-height: 1;
   white-space: nowrap;
-  color: var(--color-accent);
+  color: #87cefa;
 }
 
 .back-link:hover {
   text-decoration: underline;
 }
 
-.back-link .arrow-icon {
+.arrow-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
   transform: scaleX(-1);
-}
-
-.not-found-title {
-  margin-bottom: 4px;
-  font-size: 120px;
-}
-
-.not-found-subtitle {
-  margin-top: -8px;
-  margin-bottom: 10px;
-}
-
-.not-found-link {
-  margin-top: 20px;
-  font-size: 16px;
 }
 </style>

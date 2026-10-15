@@ -446,7 +446,7 @@ watch(
   font-weight: 700;
   line-height: 16px;
   letter-spacing: 0.02em;
-  color: var(--color-text-soft);
+  color: #cbd5e1;
 }
 
 .artist {

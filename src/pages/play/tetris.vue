@@ -1,12 +1,7 @@
 <script setup>
-import { ref, useTemplateRef, watch } from 'vue';
-import { useRafFn, useStorage } from '@vueuse/core';
-import GamePage, {
-  onGameKey,
-  onPauseKeys,
-  setupCanvas,
-  useHeldKeys,
-} from '@/components/GamePage.vue';
+import { computed, ref, useTemplateRef, watch } from 'vue';
+import { useMagicKeys, useRafFn, useStorage, useWindowFocus } from '@vueuse/core';
+import GamePage, { onGameKey } from '@/components/GamePage.vue';
 import GameControls from '@/components/GameControls.vue';
 
 definePage({ meta: { title: 'Tetris' } });
@@ -550,7 +545,16 @@ function resetGame() {
 
 const isPlaying = () => status.value === 'playing' && !isPaused.value;
 
-const isHeld = useHeldKeys(['ArrowLeft', 'ArrowRight', 'ArrowDown', 'ArrowUp', 'Space']);
+const keys = useMagicKeys({
+  passive: false,
+  onEventFired: (event) => {
+    if (['ArrowLeft', 'ArrowRight', 'ArrowDown', 'ArrowUp', 'Space'].includes(event.code))
+      event.preventDefault();
+  },
+});
+const isModifierHeld = computed(() => keys.ctrl.value || keys.meta.value || keys.alt.value);
+const isHeld = (...names) =>
+  computed(() => !isModifierHeld.value && names.some((name) => keys[name].value));
 const held = {
   left: isHeld('ArrowLeft', 'KeyA'),
   right: isHeld('ArrowRight', 'KeyD'),
@@ -568,15 +572,33 @@ for (const [action, key] of Object.entries(held)) {
 onGameKey(['ArrowUp', 'w'], () => isPlaying() && playerRotate(1));
 onGameKey([' '], () => isPlaying() && playerHardDrop());
 onGameKey(['c'], () => isPlaying() && playerHold());
-onPauseKeys(isPaused, togglePause);
+onGameKey(['Escape', 'p'], (event) => {
+  event.preventDefault();
+  togglePause();
+});
+
+watch(useWindowFocus(), (focused) => {
+  if (!focused && !isPaused.value) togglePause();
+});
+
+const setupCanvas = (canvas, width, height) => {
+  const ratio = window.devicePixelRatio;
+  canvas.width = width * ratio;
+  canvas.height = height * ratio;
+  canvas.style.width = `${width}px`;
+  canvas.style.height = `${height}px`;
+  const context = canvas.getContext('2d');
+  context.scale(BLOCK_SIZE * ratio, BLOCK_SIZE * ratio);
+  return context;
+};
 
 watch(
   gameCanvasRef,
   (el) => {
     if (!el) return;
-    ctx = setupCanvas(el, 300, 500, BLOCK_SIZE);
-    nextCtx = setupCanvas(nextCanvasRef.value, 100, 100, BLOCK_SIZE);
-    holdCtx = setupCanvas(holdCanvasRef.value, 100, 100, BLOCK_SIZE);
+    ctx = setupCanvas(el, 300, 500);
+    nextCtx = setupCanvas(nextCanvasRef.value, 100, 100);
+    holdCtx = setupCanvas(holdCanvasRef.value, 100, 100);
     resetGame();
   },
   { flush: 'post' },
@@ -631,6 +653,30 @@ watch(
 </template>
 
 <style scoped>
+.row {
+  display: flex;
+  gap: 15px;
+  width: 100%;
+}
+
+.high-score-label {
+  margin-bottom: 2px;
+  font-size: 11px;
+}
+
+.high-score-value {
+  font-size: 24px;
+  color: #ffd700;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+}
+
+.score-divider {
+  width: 100%;
+  height: 1px;
+  margin: 8px 0;
+  background: var(--color-hairline);
+}
+
 .info-box {
   flex: 1;
   aspect-ratio: 1;

@@ -50,7 +50,7 @@ const time = builtAt.toLocaleTimeString('en-AU', {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  color: var(--color-subtle);
+  color: #7c8ba1;
   font-family: var(--font-ui);
   font-size: 0.85rem;
 }
