@@ -12,7 +12,6 @@ const date = builtAt.toLocaleDateString('en-AU', {
 const time = builtAt.toLocaleTimeString('en-AU', {
   hour: 'numeric',
   minute: '2-digit',
-  hour12: true,
 });
 </script>
 
@@ -53,6 +52,7 @@ const time = builtAt.toLocaleTimeString('en-AU', {
   color: #7c8ba1;
   font-family: var(--font-ui);
   font-size: 14px;
+  letter-spacing: 0.5px;
 }
 
 .footer-line {
@@ -61,11 +61,6 @@ const time = builtAt.toLocaleTimeString('en-AU', {
   height: 1px;
   background: var(--color-hairline);
   margin-bottom: 20px;
-}
-
-.footer-meta p,
-.source-link {
-  letter-spacing: 0.5px;
 }
 
 .source-link {

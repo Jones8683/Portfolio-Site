@@ -72,17 +72,17 @@ onGameKey(ALPHABET, (event) => guessLetter(event.key.toUpperCase()));
             <p class="subtitle">Enter a secret word for Player 2 to guess</p>
             <div class="word-input-row">
               <input
-                aria-label="Secret word"
-                :value="inputBuffer"
-                @input="onInput"
                 class="word-input"
                 type="text"
+                aria-label="Secret word"
+                :value="inputBuffer"
                 maxlength="30"
-                @keydown.enter="submitWord"
                 autocomplete="off"
                 spellcheck="false"
+                @input="onInput"
+                @keydown.enter="submitWord"
               />
-              <button class="submit-btn" @click="submitWord" :disabled="!inputBuffer.trim()">
+              <button class="submit-btn" :disabled="!inputBuffer.trim()" @click="submitWord">
                 Set Word
                 <svg class="arrow-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
                   <path

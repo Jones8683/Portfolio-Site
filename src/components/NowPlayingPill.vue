@@ -1,5 +1,5 @@
 <script setup>
-import { computed, nextTick, ref, shallowRef, watch } from 'vue';
+import { computed, nextTick, ref, shallowRef, useTemplateRef, watch } from 'vue';
 import { useNowPlaying } from '@/composables/useNowPlaying';
 
 const MORPH_MS = 560;
@@ -14,7 +14,9 @@ const SPIN_STOP_MS = 600;
 
 const { track, stale } = useNowPlaying();
 
-const pill = ref(null);
+const pill = useTemplateRef('pill');
+const live = useTemplateRef('live');
+const cover = useTemplateRef('cover');
 const shown = shallowRef(null);
 const tint = ref(null);
 const swapped = ref(false);
@@ -110,7 +112,7 @@ const morph = async (update) => {
     return;
   }
 
-  element.querySelector('.live')?.style.removeProperty('width');
+  live.value?.style.removeProperty('width');
 
   const from = element.getBoundingClientRect();
   const fromRadius = shown.value === null ? from.height / 2 : LIVE_RADIUS;
@@ -121,7 +123,7 @@ const morph = async (update) => {
   const to = element.getBoundingClientRect();
   const toRadius = shown.value === null ? to.height / 2 : LIVE_RADIUS;
 
-  const content = element.querySelector('.live');
+  const content = live.value;
   if (content) content.style.width = `${content.getBoundingClientRect().width}px`;
 
   const animation = element.animate(
@@ -150,7 +152,7 @@ const morph = async (update) => {
 const switchTrack = async (next) => {
   const token = changeToken;
   const ready = preload(next.art);
-  const content = pill.value?.querySelector('.live');
+  const content = live.value;
 
   if (!content) {
     const nextTint = await ready;
@@ -173,9 +175,8 @@ const switchTrack = async (next) => {
 
   await morph(() => show(next, nextTint));
 
-  const incoming = pill.value?.querySelector('.live');
-  incoming?.getAnimations().forEach((animation) => animation.cancel());
-  incoming?.animate([{ opacity: 0 }, { opacity: 1 }], {
+  live.value?.getAnimations().forEach((animation) => animation.cancel());
+  live.value?.animate([{ opacity: 0 }, { opacity: 1 }], {
     duration: FADE_IN_MS,
     easing: 'ease-out',
   });
@@ -223,7 +224,7 @@ watch(
   (isFrozen) => {
     cancelAnimationFrame(stopFrame);
 
-    const spin = pill.value?.querySelector('.cover')?.getAnimations()[0];
+    const spin = cover.value?.getAnimations()[0];
     if (spin) spin.playbackRate = 1;
 
     if (!isFrozen || !spin) {
@@ -261,6 +262,7 @@ watch(
     >
       <a
         v-if="shown"
+        ref="live"
         class="live"
         :href="shown.url"
         target="_blank"
@@ -269,6 +271,7 @@ watch(
       >
         <span v-if="shown.art && !coverFailed" class="art" :class="{ paused: stopped }">
           <img
+            ref="cover"
             class="cover"
             :src="shown.art"
             alt=""

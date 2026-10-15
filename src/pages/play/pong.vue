@@ -10,7 +10,7 @@ let ctx;
 const canvasRef = useTemplateRef('canvas');
 const status = ref('start');
 const isPaused = ref(false);
-const winner = ref('');
+const outcome = ref('');
 const score = ref({ left: 0, right: 0 });
 
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
@@ -98,10 +98,10 @@ const keys = useMagicKeys({
 const isModifierHeld = computed(() => keys.ctrl.value || keys.meta.value || keys.alt.value);
 const isHeld = (...names) =>
   computed(() => !isModifierHeld.value && names.some((name) => keys[name].value));
-const w = isHeld('w');
-const s = isHeld('s');
-const ArrowUp = isHeld('ArrowUp');
-const ArrowDown = isHeld('ArrowDown');
+const leftUp = isHeld('w');
+const leftDown = isHeld('s');
+const rightUp = isHeld('ArrowUp');
+const rightDown = isHeld('ArrowDown');
 
 function resetMatch() {
   score.value.left = 0;
@@ -149,16 +149,16 @@ function togglePause() {
 }
 
 function updatePaddles(dt) {
-  if (ArrowUp.value) rightPaddle.y -= rightPaddle.speed * dt;
-  if (ArrowDown.value) rightPaddle.y += rightPaddle.speed * dt;
+  if (rightUp.value) rightPaddle.y -= rightPaddle.speed * dt;
+  if (rightDown.value) rightPaddle.y += rightPaddle.speed * dt;
 
   if (gameMode === 'cpu') {
     const target = ball.y - PADDLE_H / 2;
     const move = clamp((target - leftPaddle.y) * 0.18, -leftPaddle.aiSpeed, leftPaddle.aiSpeed);
     leftPaddle.y += move * dt;
   } else {
-    if (w.value) leftPaddle.y -= leftPaddle.speed * dt;
-    if (s.value) leftPaddle.y += leftPaddle.speed * dt;
+    if (leftUp.value) leftPaddle.y -= leftPaddle.speed * dt;
+    if (leftDown.value) leftPaddle.y += leftPaddle.speed * dt;
   }
 
   leftPaddle.y = clamp(leftPaddle.y, 0, H - PADDLE_H);
@@ -211,7 +211,7 @@ function updateBallScoring() {
   beep(140, 0.35, 'sawtooth', 0.2);
   shakeFrames = 14;
   shakeIntensity = 7;
-  scoreUpdate();
+  checkWin();
 }
 
 function updateParticles(dt) {
@@ -250,7 +250,7 @@ function update(dt) {
   updateParticles(dt);
 }
 
-function scoreUpdate() {
+function checkWin() {
   if (score.value.left < WIN_SCORE && score.value.right < WIN_SCORE) {
     resetPositions();
     return;
@@ -258,8 +258,8 @@ function scoreUpdate() {
   status.value = 'over';
   pause();
   const rightWon = score.value.right >= WIN_SCORE;
-  if (gameMode === 'cpu') winner.value = rightWon ? 'YOU WIN!' : 'COMPUTER WINS!';
-  else winner.value = rightWon ? 'RIGHT PLAYER WINS!' : 'LEFT PLAYER WINS!';
+  if (gameMode === 'cpu') outcome.value = rightWon ? 'YOU WIN!' : 'COMPUTER WINS!';
+  else outcome.value = rightWon ? 'RIGHT PLAYER WINS!' : 'LEFT PLAYER WINS!';
 }
 
 function collision(b, p) {
@@ -399,7 +399,7 @@ onUnmounted(() => {
         </div>
         <div v-else-if="status === 'over'" class="overlay-msg">
           <h2 class="menu-title">GAME OVER</h2>
-          <div class="winner">{{ winner }}</div>
+          <div class="outcome">{{ outcome }}</div>
           <button class="overlay-btn" @click="showStartScreen">MENU</button>
         </div>
         <div v-else-if="isPaused" class="overlay-msg">
@@ -446,7 +446,7 @@ canvas {
   border: 1px solid #333333;
 }
 
-.winner {
+.outcome {
   color: var(--color-muted);
   margin-bottom: 20px;
   font-size: 14px;
