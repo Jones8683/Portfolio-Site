@@ -17,7 +17,7 @@ const isMobile = useMediaQuery('(pointer: coarse)');
 <template>
   <div class="game-page">
     <div v-if="isMobile" class="content-wrap">
-      <h1 class="page-title">Not supported on mobile</h1>
+      <h1 class="page-title">Not supported on touch screens</h1>
       <RouterLink to="/play" class="back-link">
         <svg class="arrow-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
           <path

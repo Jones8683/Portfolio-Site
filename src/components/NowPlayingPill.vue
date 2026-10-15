@@ -1,6 +1,5 @@
 <script setup>
 import { computed, nextTick, ref, shallowRef, watch } from 'vue';
-import { usePreferredReducedMotion } from '@vueuse/core';
 import { useNowPlaying } from '@/composables/useNowPlaying';
 
 const MORPH_MS = 560;
@@ -14,7 +13,6 @@ const TINT_LIGHTNESS = 70;
 const SPIN_STOP_MS = 600;
 
 const { track, stale } = useNowPlaying();
-const reducedMotion = usePreferredReducedMotion();
 
 const pill = ref(null);
 const shown = shallowRef(null);
@@ -107,7 +105,7 @@ const morph = async (update) => {
 
   const element = pill.value;
 
-  if (!element || reducedMotion.value === 'reduce') {
+  if (!element) {
     update();
     return;
   }
@@ -154,7 +152,7 @@ const switchTrack = async (next) => {
   const ready = preload(next.art);
   const content = pill.value?.querySelector('.live');
 
-  if (!content || reducedMotion.value === 'reduce') {
+  if (!content) {
     const nextTint = await ready;
     if (token === changeToken) show(next, nextTint);
     return;
@@ -530,19 +528,6 @@ watch(
 @media (width <= 720px) {
   .slot {
     --slot-overlap: -8px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .status-pill,
-  .pause {
-    transition: none;
-  }
-
-  .swapped .idle,
-  .swapped .live,
-  .cover {
-    animation: none;
   }
 }
 </style>

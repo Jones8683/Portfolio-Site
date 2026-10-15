@@ -591,15 +591,6 @@ const contacts = [
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .avatar-ring,
-  .avatar-glow,
-  .scroll-cue-nudge,
-  .scroll-cue-icon {
-    animation: none;
-  }
-}
-
 @media (width <= 720px) {
   .about-section {
     grid-template-columns: 1fr;
