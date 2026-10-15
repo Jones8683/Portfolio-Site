@@ -13,14 +13,14 @@ const position = (track) => (track.playing ? Date.now() - track.startedAt : trac
 
 export function useNowPlaying() {
   const track = shallowRef(null);
-  const stale = ref(false);
+  const isStale = ref(false);
   const visibility = useDocumentVisibility();
 
   let pollTimer;
   let graceTimer;
   let trackId = 0;
-  let warned = false;
-  let disposed = false;
+  let hasWarned = false;
+  let isDisposed = false;
 
   const showTrack = (data) => {
     clearTimeout(graceTimer);
@@ -30,12 +30,12 @@ export function useNowPlaying() {
     const current = track.value;
     const unchanged =
       current !== null &&
-      !stale.value &&
+      !isStale.value &&
       current.url === data.url &&
       current.playing === data.isPlaying &&
       Math.abs(position(current) - data.progressMs) <= SEEK_TOLERANCE_MS;
 
-    stale.value = false;
+    isStale.value = false;
 
     if (unchanged) return;
 
@@ -56,16 +56,16 @@ export function useNowPlaying() {
   const hideTrack = () => {
     if (track.value === null || graceTimer !== undefined) return;
 
-    stale.value = true;
+    isStale.value = true;
     graceTimer = setTimeout(() => {
       graceTimer = undefined;
-      stale.value = false;
+      isStale.value = false;
       track.value = null;
     }, IDLE_GRACE_MS);
   };
 
   const nextDelay = () => {
-    if (track.value === null || stale.value || !track.value.playing) return POLL_MS;
+    if (track.value === null || isStale.value || !track.value.playing) return POLL_MS;
 
     const remaining = track.value.durationMs - (Date.now() - track.value.startedAt);
     return Math.min(POLL_MS, Math.max(MIN_POLL_MS, remaining + TRACK_END_MARGIN_MS));
@@ -73,7 +73,7 @@ export function useNowPlaying() {
 
   const schedule = () => {
     clearTimeout(pollTimer);
-    if (disposed || visibility.value === 'hidden') return;
+    if (isDisposed || visibility.value === 'hidden') return;
     pollTimer = setTimeout(poll, nextDelay());
   };
 
@@ -82,8 +82,8 @@ export function useNowPlaying() {
       const response = await fetch(ENDPOINT, { signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
       const data = await response.json();
 
-      if (data.needsReauth && !warned) {
-        warned = true;
+      if (data.needsReauth && !hasWarned) {
+        hasWarned = true;
         console.warn('Spotify needs to be linked again.');
       }
 
@@ -106,10 +106,10 @@ export function useNowPlaying() {
   });
 
   onScopeDispose(() => {
-    disposed = true;
+    isDisposed = true;
     clearTimeout(pollTimer);
     clearTimeout(graceTimer);
   });
 
-  return { track, stale };
+  return { track, isStale };
 }

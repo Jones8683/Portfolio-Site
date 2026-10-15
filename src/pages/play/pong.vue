@@ -11,18 +11,18 @@ const canvas = useTemplateRef('canvas');
 const status = ref('start');
 const isPaused = ref(false);
 const outcome = ref('');
-const score = ref({ left: 0, right: 0 });
+const scores = ref({ left: 0, right: 0 });
 
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 
-const W = 700;
-const H = 500;
+const WIDTH = 700;
+const HEIGHT = 500;
 const WIN_SCORE = 7;
-const PADDLE_W = 12;
-const PADDLE_H = 85;
-const BALL_R = 7;
+const PADDLE_WIDTH = 12;
+const PADDLE_HEIGHT = 85;
+const BALL_RADIUS = 7;
 const TARGET_FPS = 60;
-const STEP = 1000 / TARGET_FPS;
+const STEP_MS = 1000 / TARGET_FPS;
 
 let gameMode = 'cpu';
 let isResetting = false;
@@ -37,10 +37,10 @@ const { start: serveBall, stop: cancelServe } = useTimeoutFn(
   { immediate: false },
 );
 
-const PADDLE_Y = (H - PADDLE_H) / 2;
+const PADDLE_Y = (HEIGHT - PADDLE_HEIGHT) / 2;
 const leftPaddle = { x: 20, y: PADDLE_Y, speed: 10.5, aiSpeed: 5.7, flash: 0 };
-const rightPaddle = { x: W - 20 - PADDLE_W, y: PADDLE_Y, speed: 10.5, flash: 0 };
-const ball = { x: W / 2, y: H / 2, dx: 0, dy: 0, speed: 4, baseSpeed: 4 };
+const rightPaddle = { x: WIDTH - 20 - PADDLE_WIDTH, y: PADDLE_Y, speed: 10.5, flash: 0 };
+const ball = { x: WIDTH / 2, y: HEIGHT / 2, dx: 0, dy: 0, speed: 4, baseSpeed: 4 };
 
 let trail = [];
 let particles = [];
@@ -57,19 +57,19 @@ function getAudioCtx() {
   return audioCtx;
 }
 
-function beep(freq, duration, type = 'square', vol = 0.15) {
-  const ac = getAudioCtx();
-  if (!ac) return;
-  const osc = ac.createOscillator();
-  const gain = ac.createGain();
-  osc.connect(gain);
-  gain.connect(ac.destination);
-  osc.type = type;
-  osc.frequency.setValueAtTime(freq, ac.currentTime);
-  gain.gain.setValueAtTime(vol, ac.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + duration);
-  osc.start(ac.currentTime);
-  osc.stop(ac.currentTime + duration);
+function beep(frequency, duration, type = 'square', volume = 0.15) {
+  const audio = getAudioCtx();
+  if (!audio) return;
+  const oscillator = audio.createOscillator();
+  const gain = audio.createGain();
+  oscillator.connect(gain);
+  gain.connect(audio.destination);
+  oscillator.type = type;
+  oscillator.frequency.setValueAtTime(frequency, audio.currentTime);
+  gain.gain.setValueAtTime(volume, audio.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + duration);
+  oscillator.start(audio.currentTime);
+  oscillator.stop(audio.currentTime + duration);
 }
 
 function spawnParticles(x, y, rgb) {
@@ -104,8 +104,8 @@ const rightUp = isHeld('ArrowUp');
 const rightDown = isHeld('ArrowDown');
 
 function resetMatch() {
-  score.value.left = 0;
-  score.value.right = 0;
+  scores.value.left = 0;
+  scores.value.right = 0;
   trail = [];
   particles = [];
 }
@@ -118,7 +118,7 @@ function showStartScreen() {
   drawField();
 }
 
-function initGame(mode) {
+function startGame(mode) {
   gameMode = mode;
   status.value = 'playing';
   isPaused.value = false;
@@ -129,8 +129,8 @@ function initGame(mode) {
 }
 
 function resetPositions() {
-  ball.x = W / 2;
-  ball.y = H / 2;
+  ball.x = WIDTH / 2;
+  ball.y = HEIGHT / 2;
   ball.speed = ball.baseSpeed;
   ball.dx = 0;
   ball.dy = 0;
@@ -153,7 +153,7 @@ function updatePaddles(dt) {
   if (rightDown.value) rightPaddle.y += rightPaddle.speed * dt;
 
   if (gameMode === 'cpu') {
-    const target = ball.y - PADDLE_H / 2;
+    const target = ball.y - PADDLE_HEIGHT / 2;
     const move = clamp((target - leftPaddle.y) * 0.18, -leftPaddle.aiSpeed, leftPaddle.aiSpeed);
     leftPaddle.y += move * dt;
   } else {
@@ -161,13 +161,13 @@ function updatePaddles(dt) {
     if (leftDown.value) leftPaddle.y += leftPaddle.speed * dt;
   }
 
-  leftPaddle.y = clamp(leftPaddle.y, 0, H - PADDLE_H);
-  rightPaddle.y = clamp(rightPaddle.y, 0, H - PADDLE_H);
+  leftPaddle.y = clamp(leftPaddle.y, 0, HEIGHT - PADDLE_HEIGHT);
+  rightPaddle.y = clamp(rightPaddle.y, 0, HEIGHT - PADDLE_HEIGHT);
 }
 
 function updateBallWallCollision() {
-  if (ball.y - BALL_R < 0) ball.y = BALL_R;
-  else if (ball.y + BALL_R > H) ball.y = H - BALL_R;
+  if (ball.y - BALL_RADIUS < 0) ball.y = BALL_RADIUS;
+  else if (ball.y + BALL_RADIUS > HEIGHT) ball.y = HEIGHT - BALL_RADIUS;
   else return;
 
   ball.dy *= -1;
@@ -177,37 +177,37 @@ function updateBallWallCollision() {
 }
 
 function updateBallPaddleCollision() {
-  const paddle = ball.x < W / 2 ? leftPaddle : rightPaddle;
-  if (!collision(ball, paddle)) return;
+  const paddle = ball.x < WIDTH / 2 ? leftPaddle : rightPaddle;
+  if (!hitsPaddle(paddle)) return;
 
-  const cp = clamp((ball.y - (paddle.y + PADDLE_H / 2)) / (PADDLE_H / 2), -1, 1);
-  const angle = (Math.PI / 4) * cp;
-  const dir = ball.x < W / 2 ? 1 : -1;
+  const hitOffset = clamp((ball.y - (paddle.y + PADDLE_HEIGHT / 2)) / (PADDLE_HEIGHT / 2), -1, 1);
+  const angle = (Math.PI / 4) * hitOffset;
+  const dir = ball.x < WIDTH / 2 ? 1 : -1;
   ball.speed = Math.min(ball.speed + 0.45, 16);
   ball.dx = dir * ball.speed * Math.cos(angle);
   ball.dy = ball.speed * Math.sin(angle);
   if (paddle === leftPaddle) {
-    ball.x = leftPaddle.x + PADDLE_W + BALL_R;
+    ball.x = leftPaddle.x + PADDLE_WIDTH + BALL_RADIUS;
     leftPaddle.flash = 8;
   } else {
-    ball.x = rightPaddle.x - BALL_R;
+    ball.x = rightPaddle.x - BALL_RADIUS;
     rightPaddle.flash = 8;
   }
-  beep(300 + Math.abs(cp) * 100, 0.07, 'square');
+  beep(300 + Math.abs(hitOffset) * 100, 0.07, 'square');
   shakeFrames = 6;
   shakeIntensity = 3.5;
 }
 
 function updateBallScoring() {
-  const scorer = ball.x < 0 ? 'right' : ball.x > W ? 'left' : null;
+  const scorer = ball.x < 0 ? 'right' : ball.x > WIDTH ? 'left' : null;
   if (!scorer) return;
 
   spawnParticles(
-    scorer === 'right' ? 0 : W,
+    scorer === 'right' ? 0 : WIDTH,
     ball.y,
     scorer === 'right' ? '255,100,100' : '100,200,255',
   );
-  score.value[scorer]++;
+  scores.value[scorer]++;
   beep(140, 0.35, 'sawtooth', 0.2);
   shakeFrames = 14;
   shakeIntensity = 7;
@@ -216,13 +216,13 @@ function updateBallScoring() {
 
 function updateParticles(dt) {
   for (let i = particles.length - 1; i >= 0; i--) {
-    const p = particles[i];
-    p.x += p.vx * dt;
-    p.y += p.vy * dt;
-    p.vx *= Math.pow(0.92, dt);
-    p.vy *= Math.pow(0.92, dt);
-    p.life -= p.decay * dt;
-    if (p.life <= 0) particles.splice(i, 1);
+    const particle = particles[i];
+    particle.x += particle.vx * dt;
+    particle.y += particle.vy * dt;
+    particle.vx *= Math.pow(0.92, dt);
+    particle.vy *= Math.pow(0.92, dt);
+    particle.life -= particle.decay * dt;
+    if (particle.life <= 0) particles.splice(i, 1);
   }
 }
 
@@ -251,70 +251,70 @@ function update(dt) {
 }
 
 function checkWin() {
-  if (score.value.left < WIN_SCORE && score.value.right < WIN_SCORE) {
+  if (scores.value.left < WIN_SCORE && scores.value.right < WIN_SCORE) {
     resetPositions();
     return;
   }
   status.value = 'over';
   pause();
-  const rightWon = score.value.right >= WIN_SCORE;
+  const rightWon = scores.value.right >= WIN_SCORE;
   if (gameMode === 'cpu') outcome.value = rightWon ? 'YOU WIN!' : 'COMPUTER WINS!';
   else outcome.value = rightWon ? 'RIGHT PLAYER WINS!' : 'LEFT PLAYER WINS!';
 }
 
-function collision(b, p) {
+function hitsPaddle(paddle) {
   return (
-    b.x + BALL_R > p.x &&
-    b.x - BALL_R < p.x + PADDLE_W &&
-    b.y + BALL_R > p.y &&
-    b.y - BALL_R < p.y + PADDLE_H
+    ball.x + BALL_RADIUS > paddle.x &&
+    ball.x - BALL_RADIUS < paddle.x + PADDLE_WIDTH &&
+    ball.y + BALL_RADIUS > paddle.y &&
+    ball.y - BALL_RADIUS < paddle.y + PADDLE_HEIGHT
   );
 }
 
 function drawField() {
   ctx.fillStyle = '#0d0d0d';
-  ctx.fillRect(-10, -10, W + 20, H + 20);
+  ctx.fillRect(-10, -10, WIDTH + 20, HEIGHT + 20);
   drawCenterLine();
 }
 
 function drawCenterLine() {
-  const segH = 18;
-  const segGap = 12;
-  const totalSegs = Math.floor(H / (segH + segGap));
-  const startY = (H - totalSegs * (segH + segGap) + segGap) / 2;
+  const segmentHeight = 18;
+  const segmentGap = 12;
+  const segmentCount = Math.floor(HEIGHT / (segmentHeight + segmentGap));
+  const startY = (HEIGHT - segmentCount * (segmentHeight + segmentGap) + segmentGap) / 2;
   ctx.fillStyle = 'rgba(255, 255, 255, 0.07)';
-  for (let i = 0; i < totalSegs; i++) {
-    const y = startY + i * (segH + segGap);
+  for (let i = 0; i < segmentCount; i++) {
+    const y = startY + i * (segmentHeight + segmentGap);
     ctx.beginPath();
-    ctx.roundRect(W / 2 - 1.5, y, 3, segH, 2);
+    ctx.roundRect(WIDTH / 2 - 1.5, y, 3, segmentHeight, 2);
     ctx.fill();
   }
 }
 
 function draw() {
-  const sx = shakeFrames > 0 ? (Math.random() - 0.5) * shakeIntensity : 0;
-  const sy = shakeFrames > 0 ? (Math.random() - 0.5) * shakeIntensity : 0;
+  const shakeX = shakeFrames > 0 ? (Math.random() - 0.5) * shakeIntensity : 0;
+  const shakeY = shakeFrames > 0 ? (Math.random() - 0.5) * shakeIntensity : 0;
 
   ctx.save();
-  ctx.translate(sx, sy);
+  ctx.translate(shakeX, shakeY);
 
   drawField();
 
   for (let i = 1; i < trail.length; i++) {
-    const frac = i / trail.length;
+    const fraction = i / trail.length;
     ctx.beginPath();
     ctx.moveTo(trail[i - 1].x, trail[i - 1].y);
     ctx.lineTo(trail[i].x, trail[i].y);
-    ctx.strokeStyle = `rgba(255, 255, 255, ${frac * 0.22})`;
-    ctx.lineWidth = frac * BALL_R * 1.4;
+    ctx.strokeStyle = `rgba(255, 255, 255, ${fraction * 0.22})`;
+    ctx.lineWidth = fraction * BALL_RADIUS * 1.4;
     ctx.lineCap = 'round';
     ctx.stroke();
   }
 
-  for (const p of particles) {
+  for (const particle of particles) {
     ctx.beginPath();
-    ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(${p.rgb}, ${p.life * 0.9})`;
+    ctx.arc(particle.x, particle.y, particle.size * particle.life, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(${particle.rgb}, ${particle.life * 0.9})`;
     ctx.fill();
   }
 
@@ -329,7 +329,7 @@ function draw() {
       ? `rgba(255, 255, 255, ${0.7 + 0.3 * (paddle.flash / 8)})`
       : 'rgba(255, 255, 255, 0.9)';
     ctx.beginPath();
-    ctx.roundRect(paddle.x, paddle.y, PADDLE_W, PADDLE_H, 5);
+    ctx.roundRect(paddle.x, paddle.y, PADDLE_WIDTH, PADDLE_HEIGHT, 5);
     ctx.fill();
     ctx.restore();
   };
@@ -339,7 +339,7 @@ function draw() {
 
   ctx.fillStyle = '#ffffff';
   ctx.beginPath();
-  ctx.arc(ball.x, ball.y, BALL_R, 0, Math.PI * 2);
+  ctx.arc(ball.x, ball.y, BALL_RADIUS, 0, Math.PI * 2);
   ctx.fill();
 
   ctx.restore();
@@ -347,7 +347,7 @@ function draw() {
 
 const { pause, resume } = useRafFn(
   ({ delta }) => {
-    update(Math.min(delta, 50) / STEP);
+    update(Math.min(delta, 50) / STEP_MS);
     draw();
   },
   { immediate: false },
@@ -364,14 +364,14 @@ watch(useWindowFocus(), (focused) => {
 
 watch(
   canvas,
-  (el) => {
-    if (!el) return;
+  (element) => {
+    if (!element) return;
     const ratio = window.devicePixelRatio;
-    el.width = W * ratio;
-    el.height = H * ratio;
-    el.style.width = `${W}px`;
-    el.style.height = `${H}px`;
-    ctx = el.getContext('2d');
+    element.width = WIDTH * ratio;
+    element.height = HEIGHT * ratio;
+    element.style.width = `${WIDTH}px`;
+    element.style.height = `${HEIGHT}px`;
+    ctx = element.getContext('2d');
     ctx.scale(ratio, ratio);
     drawField();
   },
@@ -393,8 +393,8 @@ onUnmounted(() => {
         <div v-if="status === 'start'" class="overlay-msg">
           <h2 class="menu-title">PONG</h2>
           <div class="overlay-actions">
-            <button class="overlay-btn" @click="initGame('cpu')">1 PLAYER</button>
-            <button class="overlay-btn" @click="initGame('pvp')">2 PLAYERS</button>
+            <button class="overlay-btn" @click="startGame('cpu')">1 PLAYER</button>
+            <button class="overlay-btn" @click="startGame('pvp')">2 PLAYERS</button>
           </div>
         </div>
         <div v-else-if="status === 'over'" class="overlay-msg">
@@ -411,11 +411,11 @@ onUnmounted(() => {
         <h1 class="game-title">Pong</h1>
         <div class="info-box score-box">
           <div class="label score-label">Score</div>
-          <div class="value score-value">{{ score.left }} - {{ score.right }}</div>
+          <div class="value score-value">{{ scores.left }} - {{ scores.right }}</div>
         </div>
         <GameControls
           :controls="[
-            { action: 'Left Paddle', key: ['W', 'S'] },
+            { action: 'Left Paddle', key: ['WIDTH', 'S'] },
             { action: 'Right Paddle', key: ['↑', '↓'] },
             { action: 'Pause', key: 'Esc' },
           ]"

@@ -13,48 +13,48 @@ const score = ref(0);
 const status = ref('start');
 const isPaused = ref(false);
 
-const W = 360;
-const H = 568;
+const WIDTH = 360;
+const HEIGHT = 568;
 const GROUND_Y = 480;
 const GRAVITY = 0.42;
 const JUMP_VY = -6.8;
 const MAX_FALL = 9;
 const PIPE_SPEED = 2.85;
-const PIPE_W = 56;
+const PIPE_WIDTH = 56;
 const PIPE_GAP = 120;
-const PIPE_EVERY = 1200;
+const PIPE_INTERVAL_MS = 1200;
 const TARGET_FPS = 60;
-const STEP = 1000 / TARGET_FPS;
+const STEP_MS = 1000 / TARGET_FPS;
 
-let groundOff = 0;
-let cityOff = 0;
-let cloudOff = 0;
+let groundOffset = 0;
+let cityOffset = 0;
+let cloudOffset = 0;
 let ctx;
 let bird;
 let pipes;
-let lastPipeTs;
+let lastPipeTime;
 let deathTimer;
 let wingFrame = 0;
-let pauseTs = 0;
+let pausedAt = 0;
 
-function initState() {
+function resetGame() {
   bird = { x: 80, y: GROUND_Y / 2, vy: 0, angle: 0 };
   pipes = [];
   score.value = 0;
-  lastPipeTs = -9999;
+  lastPipeTime = -9999;
   deathTimer = 0;
-  groundOff = 0;
+  groundOffset = 0;
 }
 
-function addPipe(ts) {
+function addPipe(timestamp) {
   const minTop = 60;
   const maxTop = GROUND_Y - PIPE_GAP - 60;
   pipes.push({
-    x: W + 10,
+    x: WIDTH + 10,
     topH: minTop + Math.random() * (maxTop - minTop),
-    passed: false,
+    isPassed: false,
   });
-  lastPipeTs = ts;
+  lastPipeTime = timestamp;
 }
 
 function hitTest() {
@@ -62,32 +62,32 @@ function hitTest() {
   const by = bird.y;
   const br = 11;
   if (by + br >= GROUND_Y) return true;
-  for (const p of pipes) {
-    const inX = bx + br > p.x && bx - br < p.x + PIPE_W;
-    if (inX && (by - br < p.topH || by + br > p.topH + PIPE_GAP)) return true;
+  for (const pipe of pipes) {
+    const inX = bx + br > pipe.x && bx - br < pipe.x + PIPE_WIDTH;
+    if (inX && (by - br < pipe.topH || by + br > pipe.topH + PIPE_GAP)) return true;
   }
   return false;
 }
 
-function txt(str, x, y, size, fill, strokeCol) {
+function drawText(text, x, y, size, fill, stroke) {
   ctx.save();
   ctx.font = `900 ${size}px Satoshi, sans-serif`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  if (strokeCol) {
-    ctx.strokeStyle = strokeCol;
+  if (stroke) {
+    ctx.strokeStyle = stroke;
     ctx.lineWidth = size * 0.22;
     ctx.lineJoin = 'round';
-    ctx.strokeText(str, x, y);
+    ctx.strokeText(text, x, y);
   }
   ctx.fillStyle = fill;
-  ctx.fillText(str, x, y);
+  ctx.fillText(text, x, y);
   ctx.restore();
 }
 
 function drawSky() {
   ctx.fillStyle = '#70c5ce';
-  ctx.fillRect(0, 0, W, GROUND_Y + 2);
+  ctx.fillRect(0, 0, WIDTH, GROUND_Y + 2);
 }
 
 const CLOUDS = [
@@ -98,82 +98,82 @@ const CLOUDS = [
 
 function drawClouds() {
   ctx.fillStyle = '#ffffff';
-  for (const c of CLOUDS) {
-    const wrap = W + c.w + 20;
-    const x = ((c.ox - (cloudOff % wrap) + wrap * 2) % wrap) - c.w - 20;
-    ctx.fillRect(x, c.y + c.h * 0.4, c.w, c.h * 0.6);
-    ctx.fillRect(x + c.w * 0.1, c.y + c.h * 0.2, c.w * 0.5, c.h * 0.4);
-    ctx.fillRect(x + c.w * 0.4, c.y, c.w * 0.4, c.h * 0.45);
+  for (const cloud of CLOUDS) {
+    const wrap = WIDTH + cloud.w + 20;
+    const x = ((cloud.ox - (cloudOffset % wrap) + wrap * 2) % wrap) - cloud.w - 20;
+    ctx.fillRect(x, cloud.y + cloud.h * 0.4, cloud.w, cloud.h * 0.6);
+    ctx.fillRect(x + cloud.w * 0.1, cloud.y + cloud.h * 0.2, cloud.w * 0.5, cloud.h * 0.4);
+    ctx.fillRect(x + cloud.w * 0.4, cloud.y, cloud.w * 0.4, cloud.h * 0.45);
   }
 }
 
-const CITY_TILE_W = 720;
+const CITY_TILE_WIDTH = 720;
 const BUILDINGS = [
-  { x: 0, w: 38, h: 90, windows: true, style: 'wide' },
-  { x: 40, w: 22, h: 55, windows: false, style: 'thin' },
-  { x: 64, w: 44, h: 130, windows: true, style: 'tall' },
-  { x: 110, w: 28, h: 70, windows: true, style: 'wide' },
-  { x: 140, w: 18, h: 48, windows: false, style: 'thin' },
-  { x: 160, w: 50, h: 110, windows: true, style: 'tall' },
-  { x: 212, w: 30, h: 65, windows: true, style: 'wide' },
-  { x: 244, w: 20, h: 42, windows: false, style: 'thin' },
-  { x: 266, w: 40, h: 95, windows: true, style: 'wide' },
-  { x: 308, w: 24, h: 58, windows: false, style: 'thin' },
-  { x: 334, w: 46, h: 120, windows: true, style: 'tall' },
-  { x: 382, w: 28, h: 72, windows: true, style: 'wide' },
-  { x: 412, w: 16, h: 44, windows: false, style: 'thin' },
-  { x: 430, w: 42, h: 100, windows: true, style: 'tall' },
-  { x: 474, w: 32, h: 60, windows: true, style: 'wide' },
-  { x: 508, w: 20, h: 50, windows: false, style: 'thin' },
-  { x: 530, w: 48, h: 115, windows: true, style: 'tall' },
-  { x: 580, w: 26, h: 68, windows: true, style: 'wide' },
-  { x: 608, w: 18, h: 40, windows: false, style: 'thin' },
-  { x: 628, w: 44, h: 88, windows: true, style: 'wide' },
-  { x: 674, w: 22, h: 54, windows: false, style: 'thin' },
-  { x: 698, w: 22, h: 78, windows: true, style: 'wide' },
+  { x: 0, w: 38, h: 90, hasWindows: true, style: 'wide' },
+  { x: 40, w: 22, h: 55, hasWindows: false, style: 'thin' },
+  { x: 64, w: 44, h: 130, hasWindows: true, style: 'tall' },
+  { x: 110, w: 28, h: 70, hasWindows: true, style: 'wide' },
+  { x: 140, w: 18, h: 48, hasWindows: false, style: 'thin' },
+  { x: 160, w: 50, h: 110, hasWindows: true, style: 'tall' },
+  { x: 212, w: 30, h: 65, hasWindows: true, style: 'wide' },
+  { x: 244, w: 20, h: 42, hasWindows: false, style: 'thin' },
+  { x: 266, w: 40, h: 95, hasWindows: true, style: 'wide' },
+  { x: 308, w: 24, h: 58, hasWindows: false, style: 'thin' },
+  { x: 334, w: 46, h: 120, hasWindows: true, style: 'tall' },
+  { x: 382, w: 28, h: 72, hasWindows: true, style: 'wide' },
+  { x: 412, w: 16, h: 44, hasWindows: false, style: 'thin' },
+  { x: 430, w: 42, h: 100, hasWindows: true, style: 'tall' },
+  { x: 474, w: 32, h: 60, hasWindows: true, style: 'wide' },
+  { x: 508, w: 20, h: 50, hasWindows: false, style: 'thin' },
+  { x: 530, w: 48, h: 115, hasWindows: true, style: 'tall' },
+  { x: 580, w: 26, h: 68, hasWindows: true, style: 'wide' },
+  { x: 608, w: 18, h: 40, hasWindows: false, style: 'thin' },
+  { x: 628, w: 44, h: 88, hasWindows: true, style: 'wide' },
+  { x: 674, w: 22, h: 54, hasWindows: false, style: 'thin' },
+  { x: 698, w: 22, h: 78, hasWindows: true, style: 'wide' },
 ];
 
 function drawCity() {
-  const off = cityOff % CITY_TILE_W;
+  const offset = cityOffset % CITY_TILE_WIDTH;
 
   for (let tile = -1; tile <= 2; tile++) {
-    for (const b of BUILDINGS) {
-      const rx = b.x - off + tile * CITY_TILE_W;
-      if (rx + b.w < 0 || rx > W) continue;
-      const by = GROUND_Y - b.h;
+    for (const building of BUILDINGS) {
+      const rx = building.x - offset + tile * CITY_TILE_WIDTH;
+      if (rx + building.w < 0 || rx > WIDTH) continue;
+      const by = GROUND_Y - building.h;
 
       ctx.fillStyle = '#3ea8b4';
-      ctx.fillRect(rx, by, b.w, b.h);
+      ctx.fillRect(rx, by, building.w, building.h);
 
       ctx.fillStyle = '#48bcc8';
-      ctx.fillRect(rx, by, 3, b.h);
+      ctx.fillRect(rx, by, 3, building.h);
 
       ctx.fillStyle = '#329aa6';
-      ctx.fillRect(rx + b.w - 3, by, 3, b.h);
+      ctx.fillRect(rx + building.w - 3, by, 3, building.h);
 
       ctx.fillStyle = '#52cad6';
-      ctx.fillRect(rx, by, b.w, 2);
+      ctx.fillRect(rx, by, building.w, 2);
 
-      if (b.style === 'tall') {
+      if (building.style === 'tall') {
         ctx.fillStyle = '#3ea8b4';
-        ctx.fillRect(rx + Math.floor(b.w / 2) - 1, by - 12, 2, 12);
-        ctx.fillRect(rx + Math.floor(b.w / 2) - 3, by - 14, 6, 3);
+        ctx.fillRect(rx + Math.floor(building.w / 2) - 1, by - 12, 2, 12);
+        ctx.fillRect(rx + Math.floor(building.w / 2) - 3, by - 14, 6, 3);
       }
 
-      if (b.windows) {
+      if (building.hasWindows) {
         const ww = 5;
         const wh = 5;
         const gx = 8;
         const gy = 9;
-        const cols = Math.floor((b.w - 6) / (ww + gx)) || 1;
-        const rows = Math.floor((b.h - 10) / (wh + gy));
-        const startX = rx + Math.floor((b.w - cols * (ww + gx) + gx) / 2);
+        const cols = Math.floor((building.w - 6) / (ww + gx)) || 1;
+        const rows = Math.floor((building.h - 10) / (wh + gy));
+        const startX = rx + Math.floor((building.w - cols * (ww + gx) + gx) / 2);
 
         for (let row = 0; row < rows; row++) {
           for (let col = 0; col < cols; col++) {
             const wx = startX + col * (ww + gx);
             const wy = by + 8 + row * (wh + gy);
-            const lit = (row * 3 + col * 7 + b.x) % 5 !== 0;
+            const lit = (row * 3 + col * 7 + building.x) % 5 !== 0;
             ctx.fillStyle = lit ? 'rgba(255, 240, 180, 0.55)' : 'rgba(0, 0, 0, 0.2)';
             ctx.fillRect(wx, wy, ww, wh);
           }
@@ -184,27 +184,27 @@ function drawCity() {
 }
 
 function drawGround() {
-  const SAND_Y = GROUND_Y + 18;
+  const sandY = GROUND_Y + 18;
 
   ctx.fillStyle = '#ded895';
-  ctx.fillRect(0, SAND_Y, W, H - SAND_Y);
+  ctx.fillRect(0, sandY, WIDTH, HEIGHT - sandY);
 
   ctx.fillStyle = '#ccc07a';
-  ctx.fillRect(0, SAND_Y, W, 4);
+  ctx.fillRect(0, sandY, WIDTH, 4);
   ctx.fillStyle = '#d4c882';
-  ctx.fillRect(0, SAND_Y + 4, W, 3);
+  ctx.fillRect(0, sandY + 4, WIDTH, 3);
 
   ctx.fillStyle = '#74bf2e';
-  ctx.fillRect(0, GROUND_Y, W, 18);
+  ctx.fillRect(0, GROUND_Y, WIDTH, 18);
 
   ctx.save();
   ctx.beginPath();
-  ctx.rect(0, GROUND_Y, W, 18);
+  ctx.rect(0, GROUND_Y, WIDTH, 18);
   ctx.clip();
   ctx.strokeStyle = '#5aa820';
   ctx.lineWidth = 3;
-  const stripeOff = Math.round(-groundOff % 20);
-  for (let x = stripeOff - 40; x < W + 40; x += 20) {
+  const stripeOffset = Math.round(-groundOffset % 20);
+  for (let x = stripeOffset - 40; x < WIDTH + 40; x += 20) {
     ctx.beginPath();
     ctx.moveTo(x, GROUND_Y);
     ctx.lineTo(x + 18, GROUND_Y + 18);
@@ -213,13 +213,13 @@ function drawGround() {
   ctx.restore();
 
   ctx.fillStyle = '#a0e050';
-  ctx.fillRect(0, GROUND_Y, W, 2);
+  ctx.fillRect(0, GROUND_Y, WIDTH, 2);
   ctx.fillStyle = '#4a9c18';
-  ctx.fillRect(0, GROUND_Y + 15, W, 3);
+  ctx.fillRect(0, GROUND_Y + 15, WIDTH, 3);
 }
 
-const CAP_H = 26;
-const BODY_W = PIPE_W - 6;
+const CAP_HEIGHT = 26;
+const BODY_WIDTH = PIPE_WIDTH - 6;
 
 function drawPipeSegment(x, y, w, h, shadeW) {
   ctx.fillStyle = '#5dbe2b';
@@ -231,20 +231,26 @@ function drawPipeSegment(x, y, w, h, shadeW) {
 }
 
 function drawPipeCap(x, y, gapBelow) {
-  drawPipeSegment(x, y, PIPE_W, CAP_H, 10);
+  drawPipeSegment(x, y, PIPE_WIDTH, CAP_HEIGHT, 10);
   ctx.fillStyle = '#8aee50';
-  ctx.fillRect(x, gapBelow ? y : y + CAP_H - 3, PIPE_W, 3);
+  ctx.fillRect(x, gapBelow ? y : y + CAP_HEIGHT - 3, PIPE_WIDTH, 3);
   ctx.fillStyle = '#3a8a10';
-  ctx.fillRect(x, gapBelow ? y + CAP_H - 3 : y, PIPE_W, 3);
+  ctx.fillRect(x, gapBelow ? y + CAP_HEIGHT - 3 : y, PIPE_WIDTH, 3);
 }
 
 function drawPipes() {
-  for (const p of pipes) {
-    const botY = p.topH + PIPE_GAP;
-    drawPipeSegment(p.x + 3, 0, BODY_W, p.topH - CAP_H, 8);
-    drawPipeCap(p.x, p.topH - CAP_H, true);
-    drawPipeCap(p.x, botY, false);
-    drawPipeSegment(p.x + 3, botY + CAP_H, BODY_W, GROUND_Y - (botY + CAP_H), 8);
+  for (const pipe of pipes) {
+    const bottomY = pipe.topH + PIPE_GAP;
+    drawPipeSegment(pipe.x + 3, 0, BODY_WIDTH, pipe.topH - CAP_HEIGHT, 8);
+    drawPipeCap(pipe.x, pipe.topH - CAP_HEIGHT, true);
+    drawPipeCap(pipe.x, bottomY, false);
+    drawPipeSegment(
+      pipe.x + 3,
+      bottomY + CAP_HEIGHT,
+      BODY_WIDTH,
+      GROUND_Y - (bottomY + CAP_HEIGHT),
+      8,
+    );
   }
 }
 
@@ -255,13 +261,13 @@ function drawBird() {
   bird.angle += (targetAngle - bird.angle) * 0.25;
   ctx.rotate(bird.angle);
 
-  const R = 13;
+  const radius = 13;
 
   ctx.fillStyle = '#f8d030';
   ctx.strokeStyle = '#b87800';
   ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.arc(0, 0, R, 0, Math.PI * 2);
+  ctx.arc(0, 0, radius, 0, Math.PI * 2);
   ctx.fill();
   ctx.stroke();
 
@@ -316,9 +322,9 @@ function drawBird() {
 }
 
 function drawIdle() {
-  const a = 0.8 + Math.sin(wingFrame * 0.05) * 0.2;
-  ctx.globalAlpha = a;
-  txt('Tap or press SPACE', W / 2, GROUND_Y / 2 + 60, 16, '#ffffff', '#2a1a00');
+  const alpha = 0.8 + Math.sin(wingFrame * 0.05) * 0.2;
+  ctx.globalAlpha = alpha;
+  drawText('Tap or press SPACE', WIDTH / 2, GROUND_Y / 2 + 60, 16, '#ffffff', '#2a1a00');
   ctx.globalAlpha = 1;
 }
 
@@ -326,22 +332,22 @@ function drawDead() {
   const flash = Math.max(0, 0.55 - deathTimer * 0.027);
   if (flash > 0) {
     ctx.fillStyle = `rgba(255, 255, 255, ${flash})`;
-    ctx.fillRect(0, 0, W, H);
+    ctx.fillRect(0, 0, WIDTH, HEIGHT);
   }
   if (deathTimer < 20) return;
 
-  txt('GAME OVER', W / 2, GROUND_Y / 2 - 10, 32, '#ffffff', '#3a2a10');
+  drawText('GAME OVER', WIDTH / 2, GROUND_Y / 2 - 10, 32, '#ffffff', '#3a2a10');
 
   if (deathTimer > 50) {
-    const a = 0.7 + Math.sin(wingFrame * 0.07) * 0.3;
-    ctx.globalAlpha = a;
-    txt('Tap to retry', W / 2, GROUND_Y / 2 + 36, 16, '#ffffff', '#3a2a10');
+    const alpha = 0.7 + Math.sin(wingFrame * 0.07) * 0.3;
+    ctx.globalAlpha = alpha;
+    drawText('Tap to retry', WIDTH / 2, GROUND_Y / 2 + 36, 16, '#ffffff', '#3a2a10');
     ctx.globalAlpha = 1;
   }
 }
 
 function render() {
-  ctx.clearRect(0, 0, W, H);
+  ctx.clearRect(0, 0, WIDTH, HEIGHT);
   drawSky();
   drawClouds();
   drawCity();
@@ -352,31 +358,31 @@ function render() {
   if (status.value === 'over') drawDead();
 }
 
-function frame({ delta, timestamp: ts }) {
-  const dt = Math.min(delta, 50) / STEP;
+function frame({ delta, timestamp }) {
+  const dt = Math.min(delta, 50) / STEP_MS;
   wingFrame++;
 
   if (status.value === 'start') {
     bird.y = GROUND_Y / 2 + Math.sin(wingFrame * 0.03) * 8;
-    cloudOff += 0.15;
+    cloudOffset += 0.15;
   }
 
   if (status.value === 'playing') {
-    groundOff += PIPE_SPEED * 1.1 * dt;
-    cityOff += PIPE_SPEED * 0.18 * dt;
-    cloudOff += PIPE_SPEED * 0.04 * dt;
-    if (ts - lastPipeTs > PIPE_EVERY) addPipe(ts);
+    groundOffset += PIPE_SPEED * 1.1 * dt;
+    cityOffset += PIPE_SPEED * 0.18 * dt;
+    cloudOffset += PIPE_SPEED * 0.04 * dt;
+    if (timestamp - lastPipeTime > PIPE_INTERVAL_MS) addPipe(timestamp);
     bird.vy = Math.min(bird.vy + GRAVITY * dt, MAX_FALL);
     bird.y += bird.vy * dt;
-    for (const p of pipes) {
-      p.x -= PIPE_SPEED * dt;
-      if (!p.passed && p.x + PIPE_W < bird.x) {
-        p.passed = true;
+    for (const pipe of pipes) {
+      pipe.x -= PIPE_SPEED * dt;
+      if (!pipe.isPassed && pipe.x + PIPE_WIDTH < bird.x) {
+        pipe.isPassed = true;
         score.value++;
         highScore.value = Math.max(highScore.value, score.value);
       }
     }
-    pipes = pipes.filter((p) => p.x + PIPE_W > -10);
+    pipes = pipes.filter((pipe) => pipe.x + PIPE_WIDTH > -10);
     if (hitTest()) status.value = 'over';
   }
 
@@ -384,7 +390,7 @@ function frame({ delta, timestamp: ts }) {
     deathTimer++;
     bird.vy = Math.min(bird.vy + GRAVITY * 1.6 * dt, MAX_FALL);
     bird.y = Math.min(bird.y + bird.vy * dt, GROUND_Y - 13);
-    cloudOff += PIPE_SPEED * 0.04 * dt;
+    cloudOffset += PIPE_SPEED * 0.04 * dt;
   }
 
   render();
@@ -396,10 +402,10 @@ function togglePause() {
   if (status.value !== 'playing') return;
   isPaused.value = !isPaused.value;
   if (isPaused.value) {
-    pauseTs = performance.now();
+    pausedAt = performance.now();
     pause();
   } else {
-    lastPipeTs += performance.now() - pauseTs;
+    lastPipeTime += performance.now() - pausedAt;
     resume();
   }
 }
@@ -409,12 +415,12 @@ function jump() {
   if (status.value === 'start') {
     status.value = 'playing';
     bird.vy = JUMP_VY;
-    lastPipeTs = performance.now();
+    lastPipeTime = performance.now();
     wingFrame = 0;
   } else if (status.value === 'playing') {
     bird.vy = JUMP_VY;
   } else if (deathTimer > 50) {
-    initState();
+    resetGame();
     status.value = 'start';
     wingFrame = 0;
   }
@@ -435,16 +441,16 @@ onGameKey([' ', 'ArrowUp', 'w'], (event) => {
 
 watch(
   canvas,
-  (el) => {
-    if (!el) return;
+  (element) => {
+    if (!element) return;
     const ratio = window.devicePixelRatio;
-    el.width = W * ratio;
-    el.height = H * ratio;
-    el.style.width = `${W}px`;
-    el.style.height = `${H}px`;
-    ctx = el.getContext('2d');
+    element.width = WIDTH * ratio;
+    element.height = HEIGHT * ratio;
+    element.style.width = `${WIDTH}px`;
+    element.style.height = `${HEIGHT}px`;
+    ctx = element.getContext('2d');
     ctx.scale(ratio, ratio);
-    initState();
+    resetGame();
     resume();
   },
   { flush: 'post' },

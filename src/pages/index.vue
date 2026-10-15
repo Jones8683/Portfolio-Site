@@ -1,7 +1,7 @@
 <script>
 import { ref } from 'vue';
 
-const cueDismissed = ref(false);
+const isCueDismissed = ref(false);
 </script>
 
 <script setup>
@@ -22,13 +22,13 @@ watch(
   y,
   (value) => {
     if (value < CUE_TOP_THRESHOLD) wasAtTop = true;
-    else if (wasAtTop && value > CUE_FADE_DISTANCE) cueDismissed.value = true;
+    else if (wasAtTop && value > CUE_FADE_DISTANCE) isCueDismissed.value = true;
   },
   { immediate: true },
 );
 
 const cueOpacity = computed(() =>
-  cueDismissed.value ? 0 : Math.max(0, 1 - y.value / CUE_FADE_DISTANCE),
+  isCueDismissed.value ? 0 : Math.max(0, 1 - y.value / CUE_FADE_DISTANCE),
 );
 
 const interests = [

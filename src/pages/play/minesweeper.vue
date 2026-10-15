@@ -27,7 +27,8 @@ const DIFFICULTIES = {
 
 const grid = ref([]);
 const status = ref('start');
-const currentDiff = ref(DIFFICULTIES.medium);
+const isWon = ref(false);
+const difficulty = ref(DIFFICULTIES.medium);
 const timer = ref(0);
 const { resume: startTimer, pause: stopTimer } = useIntervalFn(() => timer.value++, 1000, {
   immediate: false,
@@ -49,14 +50,14 @@ const NUMBER_COLORS = [
 ];
 
 const formattedTime = computed(() => {
-  const mins = Math.floor(timer.value / 60);
-  const secs = timer.value % 60;
-  return `${mins}:${secs.toString().padStart(2, '0')}`;
+  const minutes = Math.floor(timer.value / 60);
+  const seconds = timer.value % 60;
+  return `${minutes}:${seconds.toString().padStart(2, '0')}`;
 });
 
-function initGrid(diff) {
-  grid.value = range(diff.rows).map((y) =>
-    range(diff.cols).map((x) => ({
+function createGrid({ rows, cols }) {
+  return range(rows).map((y) =>
+    range(cols).map((x) => ({
       x,
       y,
       isMine: false,
@@ -73,25 +74,25 @@ function resetBoard() {
   flagsPlaced.value = 0;
   isFirstClick = true;
   isPaused.value = false;
-  initGrid(currentDiff.value);
+  grid.value = createGrid(difficulty.value);
 }
 
-function resetToStart() {
+function showStartScreen() {
   status.value = 'start';
   resetBoard();
 }
 
-function initGame(difficultyKey) {
-  currentDiff.value = DIFFICULTIES[difficultyKey];
+function startGame(level) {
+  difficulty.value = DIFFICULTIES[level];
   status.value = 'playing';
   resetBoard();
 }
 
 function placeMines(safeX, safeY) {
-  let minesToPlace = currentDiff.value.mines;
+  let minesToPlace = difficulty.value.mines;
   while (minesToPlace > 0) {
-    const y = Math.floor(Math.random() * currentDiff.value.rows);
-    const x = Math.floor(Math.random() * currentDiff.value.cols);
+    const y = Math.floor(Math.random() * difficulty.value.rows);
+    const x = Math.floor(Math.random() * difficulty.value.cols);
     if (grid.value[y][x].isMine) continue;
     if (Math.abs(x - safeX) <= 1 && Math.abs(y - safeY) <= 1) continue;
     grid.value[y][x].isMine = true;
@@ -101,11 +102,11 @@ function placeMines(safeX, safeY) {
 }
 
 const inBounds = (x, y) =>
-  x >= 0 && x < currentDiff.value.cols && y >= 0 && y < currentDiff.value.rows;
+  x >= 0 && x < difficulty.value.cols && y >= 0 && y < difficulty.value.rows;
 
 function calculateNumbers() {
-  for (let y = 0; y < currentDiff.value.rows; y++) {
-    for (let x = 0; x < currentDiff.value.cols; x++) {
+  for (let y = 0; y < difficulty.value.rows; y++) {
+    for (let x = 0; x < difficulty.value.cols; x++) {
       if (grid.value[y][x].isMine) continue;
       grid.value[y][x].neighborCount = NEIGHBORS.filter(
         ([dx, dy]) => inBounds(x + dx, y + dy) && grid.value[y + dy][x + dx].isMine,
@@ -152,17 +153,18 @@ function revealCell(startX, startY) {
 }
 
 function checkWin() {
-  const revealedCount = grid.value.flat().filter((c) => c.isRevealed).length;
-  if (currentDiff.value.rows * currentDiff.value.cols - revealedCount === currentDiff.value.mines)
+  const revealedCount = grid.value.flat().filter((cell) => cell.isRevealed).length;
+  if (difficulty.value.rows * difficulty.value.cols - revealedCount === difficulty.value.mines)
     gameOver(true);
 }
 
 function gameOver(won) {
   stopTimer();
-  status.value = won ? 'won' : 'lost';
+  status.value = 'over';
+  isWon.value = won;
   if (!won)
-    grid.value.flat().forEach((c) => {
-      if (c.isMine) c.isRevealed = true;
+    grid.value.flat().forEach((cell) => {
+      if (cell.isMine) cell.isRevealed = true;
     });
 }
 
@@ -173,7 +175,7 @@ function togglePause() {
   else startTimer();
 }
 
-onGameKey(['r'], resetToStart);
+onGameKey(['r'], showStartScreen);
 onGameKey(['Escape', 'p'], (event) => {
   event.preventDefault();
   togglePause();
@@ -183,10 +185,10 @@ watch(useWindowFocus(), (focused) => {
   if (!focused && !isPaused.value) togglePause();
 });
 
-initGrid(currentDiff.value);
+grid.value = createGrid(difficulty.value);
 
 const gridStyle = computed(() => ({
-  gridTemplateColumns: `repeat(${currentDiff.value.cols}, 1fr)`,
+  gridTemplateColumns: `repeat(${difficulty.value.cols}, 1fr)`,
 }));
 </script>
 
@@ -197,8 +199,8 @@ const gridStyle = computed(() => ({
         <div class="grid-frame">
           <div class="grid" :style="gridStyle">
             <div
-              v-for="(cell, i) in grid.flat()"
-              :key="i"
+              v-for="(cell, index) in grid.flat()"
+              :key="index"
               class="cell"
               :class="{
                 revealed: cell.isRevealed,
@@ -221,17 +223,17 @@ const gridStyle = computed(() => ({
         <div v-if="status === 'start'" class="overlay-msg">
           <h2 class="menu-title">MINESWEEPER</h2>
           <div class="overlay-actions">
-            <button class="overlay-btn" @click="initGame('easy')">EASY</button>
-            <button class="overlay-btn" @click="initGame('medium')">MED</button>
-            <button class="overlay-btn" @click="initGame('hard')">HARD</button>
+            <button class="overlay-btn" @click="startGame('easy')">EASY</button>
+            <button class="overlay-btn" @click="startGame('medium')">MED</button>
+            <button class="overlay-btn" @click="startGame('hard')">HARD</button>
           </div>
         </div>
 
-        <div v-if="status === 'won' || status === 'lost'" class="overlay-msg">
-          <h2 class="menu-title result-title" :class="{ won: status === 'won' }">
-            {{ status === 'won' ? 'YOU WIN!' : 'GAME OVER' }}
+        <div v-if="status === 'over'" class="overlay-msg">
+          <h2 class="menu-title result-title" :class="{ won: isWon }">
+            {{ isWon ? 'YOU WIN!' : 'GAME OVER' }}
           </h2>
-          <button class="overlay-btn" @click="resetToStart">PLAY AGAIN</button>
+          <button class="overlay-btn" @click="showStartScreen">PLAY AGAIN</button>
         </div>
 
         <div v-if="isPaused" class="overlay-msg">
@@ -245,7 +247,7 @@ const gridStyle = computed(() => ({
         <div class="info-box score-box">
           <div class="label mines-label">Mines Left</div>
           <div class="value mines-value">
-            {{ currentDiff.mines - flagsPlaced }}
+            {{ difficulty.mines - flagsPlaced }}
           </div>
 
           <div class="mines-divider"></div>

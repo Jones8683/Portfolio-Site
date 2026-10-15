@@ -12,16 +12,16 @@ const TINT_SAMPLE_SIZE = 16;
 const TINT_LIGHTNESS = 70;
 const SPIN_STOP_MS = 600;
 
-const { track, stale } = useNowPlaying();
+const { track, isStale } = useNowPlaying();
 
 const pill = useTemplateRef('pill');
 const live = useTemplateRef('live');
 const cover = useTemplateRef('cover');
 const shown = shallowRef(null);
 const tint = ref(null);
-const swapped = ref(false);
-const coverFailed = ref(false);
-const stopped = ref(true);
+const isSwapped = ref(false);
+const hasCoverError = ref(false);
+const isStopped = ref(true);
 
 let changeToken = 0;
 let stopFrame;
@@ -31,17 +31,17 @@ const readTint = (image) => {
   canvas.width = TINT_SAMPLE_SIZE;
   canvas.height = TINT_SAMPLE_SIZE;
 
-  const context = canvas.getContext('2d', { willReadFrequently: true });
-  context.drawImage(image, 0, 0, TINT_SAMPLE_SIZE, TINT_SAMPLE_SIZE);
-  const { data } = context.getImageData(0, 0, TINT_SAMPLE_SIZE, TINT_SAMPLE_SIZE);
+  const ctx = canvas.getContext('2d', { willReadFrequently: true });
+  ctx.drawImage(image, 0, 0, TINT_SAMPLE_SIZE, TINT_SAMPLE_SIZE);
+  const { data } = ctx.getImageData(0, 0, TINT_SAMPLE_SIZE, TINT_SAMPLE_SIZE);
 
   let red = 0;
   let green = 0;
   let blue = 0;
   let total = 0;
 
-  for (let index = 0; index < data.length; index += 4) {
-    const [r, g, b] = data.subarray(index, index + 3);
+  for (let i = 0; i < data.length; i += 4) {
+    const [r, g, b] = data.subarray(i, i + 3);
     const weight = Math.max(r, g, b) - Math.min(r, g, b) + 1;
 
     red += r * weight;
@@ -90,7 +90,7 @@ const show = (next, nextTint) => {
   tint.value = nextTint;
 };
 
-const frozen = computed(() => stale.value || !shown.value?.playing);
+const isFrozen = computed(() => isStale.value || !shown.value?.playing);
 
 const progressStyle = computed(() => ({
   '--duration': `${shown.value.durationMs}ms`,
@@ -103,7 +103,7 @@ const label = computed(
 );
 
 const morph = async (update) => {
-  swapped.value = true;
+  isSwapped.value = true;
 
   const element = pill.value;
 
@@ -215,20 +215,20 @@ watch(
 watch(
   () => shown.value?.art,
   () => {
-    coverFailed.value = false;
+    hasCoverError.value = false;
   },
 );
 
 watch(
-  frozen,
-  (isFrozen) => {
+  isFrozen,
+  (frozen) => {
     cancelAnimationFrame(stopFrame);
 
     const spin = cover.value?.getAnimations()[0];
     if (spin) spin.playbackRate = 1;
 
-    if (!isFrozen || !spin) {
-      stopped.value = isFrozen;
+    if (!frozen || !spin) {
+      isStopped.value = frozen;
       return;
     }
 
@@ -241,7 +241,7 @@ watch(
       if (progress < 1) {
         stopFrame = requestAnimationFrame(slow);
       } else {
-        stopped.value = true;
+        isStopped.value = true;
         spin.playbackRate = 1;
       }
     };
@@ -257,7 +257,7 @@ watch(
     <div
       ref="pill"
       class="status-pill"
-      :class="{ 'is-live': shown, 'is-paused': shown && !shown.playing, swapped }"
+      :class="{ 'is-live': shown, 'is-paused': shown && !shown.playing, swapped: isSwapped }"
       :style="{ '--live-radius': `${LIVE_RADIUS}px`, '--tint': tint }"
     >
       <a
@@ -269,7 +269,7 @@ watch(
         rel="noopener noreferrer"
         :aria-label="label"
       >
-        <span v-if="shown.art && !coverFailed" class="art" :class="{ paused: stopped }">
+        <span v-if="shown.art && !hasCoverError" class="art" :class="{ paused: isStopped }">
           <img
             ref="cover"
             class="cover"
@@ -279,7 +279,7 @@ watch(
             width="40"
             height="40"
             decoding="sync"
-            @error="coverFailed = true"
+            @error="hasCoverError = true"
           />
           <span class="pause" aria-hidden="true">
             <svg viewBox="0 0 16 16" width="22" height="22">
@@ -294,7 +294,7 @@ watch(
           <span
             :key="shown.id"
             class="progress"
-            :class="{ paused: frozen }"
+            :class="{ paused: isFrozen }"
             :style="progressStyle"
             aria-hidden="true"
           >

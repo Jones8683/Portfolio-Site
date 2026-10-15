@@ -31,9 +31,11 @@ const wrongLetters = computed(() =>
 
 const wrongGuesses = computed(() => wrongLetters.value.length);
 
+const isWon = computed(() => !maskedWord.value.includes('_'));
+
 const limbs = computed(() => LIMBS.slice(0, Math.max(wrongGuesses.value - 1, 0)));
 
-function onInput(event) {
+function handleInput(event) {
   inputBuffer.value = event.target.value.toUpperCase().replaceAll(/[^A-Z ]/gu, '');
 }
 
@@ -48,8 +50,7 @@ function submitWord() {
 function guessLetter(letter) {
   if (status.value !== 'playing' || guessedLetters.value.has(letter)) return;
   guessedLetters.value.add(letter);
-  if (!maskedWord.value.includes('_')) status.value = 'won';
-  else if (wrongGuesses.value >= MAX_WRONG) status.value = 'lost';
+  if (isWon.value || wrongGuesses.value >= MAX_WRONG) status.value = 'over';
 }
 
 function resetGame() {
@@ -79,7 +80,7 @@ onGameKey(ALPHABET, (event) => guessLetter(event.key.toUpperCase()));
                 maxlength="30"
                 autocomplete="off"
                 spellcheck="false"
-                @input="onInput"
+                @input="handleInput"
                 @keydown.enter="submitWord"
               />
               <button class="submit-btn" :disabled="!inputBuffer.trim()" @click="submitWord">
@@ -148,22 +149,22 @@ onGameKey(ALPHABET, (event) => guessLetter(event.key.toUpperCase()));
 
             <div class="word-display">
               <span
-                v-for="(ch, i) in maskedWord"
-                :key="i"
+                v-for="(char, index) in maskedWord"
+                :key="index"
                 class="letter-slot"
                 :class="{
-                  revealed: ch !== '_' && ch !== ' ',
-                  space: ch === ' ',
+                  revealed: char !== '_' && char !== ' ',
+                  space: char === ' ',
                 }"
-                >{{ ch }}</span
+                >{{ char }}</span
               >
             </div>
           </div>
         </Transition>
 
-        <div v-if="status === 'won' || status === 'lost'" class="overlay-msg">
-          <h2 class="menu-title outcome-title" :class="{ won: status === 'won' }">
-            {{ status === 'won' ? 'YOU GOT IT!' : 'GAME OVER' }}
+        <div v-if="status === 'over'" class="overlay-msg">
+          <h2 class="menu-title outcome-title" :class="{ won: isWon }">
+            {{ isWon ? 'YOU GOT IT!' : 'GAME OVER' }}
           </h2>
           <p class="outcome-word">{{ secretWord }}</p>
           <button class="overlay-btn" @click="resetGame">PLAY AGAIN</button>
@@ -190,7 +191,9 @@ onGameKey(ALPHABET, (event) => guessLetter(event.key.toUpperCase()));
           <div class="label">Wrong Letters</div>
           <div class="wrong-letters">
             <span v-if="wrongLetters.length === 0" class="no-letters">—</span>
-            <span v-for="l in wrongLetters" :key="l" class="wrong-chip">{{ l }}</span>
+            <span v-for="letter in wrongLetters" :key="letter" class="wrong-chip">{{
+              letter
+            }}</span>
           </div>
         </div>
 

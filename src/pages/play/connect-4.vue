@@ -19,10 +19,10 @@ const DIRECTIONS = [
 const createBoard = () =>
   Array.from({ length: ROWS }, () => Array.from({ length: COLS }, () => null));
 
+const status = ref('playing');
 const board = ref(createBoard());
 const currentPlayer = ref(1);
 const winner = ref(null);
-const isDraw = ref(false);
 const winningCells = ref([]);
 const hoveredCol = ref(null);
 const scores = ref({ 1: 0, 2: 0 });
@@ -51,7 +51,7 @@ const columns = computed(() =>
 );
 
 const isGhostCell = (r, c) => {
-  if (winner.value || isDraw.value || isProcessing.value) return false;
+  if (status.value !== 'playing' || isProcessing.value) return false;
   return hoveredCol.value === c && getGhostRow(c) === r;
 };
 
@@ -66,7 +66,7 @@ const getDropStyle = (r, c) => {
 };
 
 const makeMove = (col) => {
-  if (winner.value || isDraw.value || isProcessing.value) return;
+  if (status.value !== 'playing' || isProcessing.value) return;
 
   const row = getGhostRow(col);
   if (row === null) return;
@@ -77,11 +77,12 @@ const makeMove = (col) => {
 
   const win = checkWinner(row, col);
   if (win) {
+    status.value = 'over';
     winner.value = currentPlayer.value;
     winningCells.value = win;
     scores.value[currentPlayer.value]++;
   } else if (board.value[0].every((cell) => cell !== null)) {
-    isDraw.value = true;
+    status.value = 'over';
   } else {
     currentPlayer.value = currentPlayer.value === 1 ? 2 : 1;
   }
@@ -114,7 +115,7 @@ const resetGame = () => {
   board.value = createBoard();
   currentPlayer.value = 1;
   winner.value = null;
-  isDraw.value = false;
+  status.value = 'playing';
   winningCells.value = [];
   droppingCell.value = null;
   isProcessing.value = false;
@@ -132,7 +133,9 @@ onGameKey(['r'], resetGame);
             v-for="(cells, col) in columns"
             :key="col"
             class="column"
-            :class="{ 'col-hovered': hoveredCol === col && !winner && !isDraw && !isColFull(col) }"
+            :class="{
+              'col-hovered': hoveredCol === col && status === 'playing' && !isColFull(col),
+            }"
             @click="makeMove(col)"
             @mouseenter="hoveredCol = col"
             @mouseleave="hoveredCol = null"
@@ -159,7 +162,7 @@ onGameKey(['r'], resetGame);
           </div>
         </div>
 
-        <div v-if="winner || isDraw" class="overlay-msg">
+        <div v-if="status === 'over'" class="overlay-msg">
           <h2 class="menu-title">
             <span v-if="winner" class="player-text" :class="`p${winner}`">
               PLAYER {{ winner }} WINS!
@@ -188,7 +191,11 @@ onGameKey(['r'], resetGame);
           <div class="info-box turn-box">
             <div class="label">Turn</div>
             <div class="value">
-              <div v-if="!winner && !isDraw" class="turn-piece" :class="`p${currentPlayer}`"></div>
+              <div
+                v-if="status === 'playing'"
+                class="turn-piece"
+                :class="`p${currentPlayer}`"
+              ></div>
               <span v-else class="no-turn-text">-</span>
             </div>
           </div>
