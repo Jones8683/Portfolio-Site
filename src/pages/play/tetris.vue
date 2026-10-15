@@ -6,9 +6,9 @@ import GameControls from '@/components/GameControls.vue';
 
 definePage({ meta: { title: 'Tetris' } });
 
-const gameCanvasRef = useTemplateRef('gameCanvas');
-const nextCanvasRef = useTemplateRef('nextCanvas');
-const holdCanvasRef = useTemplateRef('holdCanvas');
+const gameCanvas = useTemplateRef('gameCanvas');
+const nextCanvas = useTemplateRef('nextCanvas');
+const holdCanvas = useTemplateRef('holdCanvas');
 const score = ref(0);
 const status = ref('playing');
 const isPaused = ref(false);
@@ -593,12 +593,12 @@ const setupCanvas = (canvas, width, height) => {
 };
 
 watch(
-  gameCanvasRef,
+  gameCanvas,
   (el) => {
     if (!el) return;
     ctx = setupCanvas(el, 300, 500);
-    nextCtx = setupCanvas(nextCanvasRef.value, 100, 100);
-    holdCtx = setupCanvas(holdCanvasRef.value, 100, 100);
+    nextCtx = setupCanvas(nextCanvas.value, 100, 100);
+    holdCtx = setupCanvas(holdCanvas.value, 100, 100);
     resetGame();
   },
   { flush: 'post' },

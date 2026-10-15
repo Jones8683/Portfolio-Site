@@ -7,7 +7,7 @@ import GameControls from '@/components/GameControls.vue';
 definePage({ meta: { title: 'Pong' } });
 
 let ctx;
-const canvasRef = useTemplateRef('canvas');
+const canvas = useTemplateRef('canvas');
 const status = ref('start');
 const isPaused = ref(false);
 const outcome = ref('');
@@ -363,7 +363,7 @@ watch(useWindowFocus(), (focused) => {
 });
 
 watch(
-  canvasRef,
+  canvas,
   (el) => {
     if (!el) return;
     const ratio = window.devicePixelRatio;

@@ -8,7 +8,7 @@ definePage({ meta: { title: 'Flappy Bird' } });
 
 const highScore = useStorage('flappy-bird-best-score', 0);
 
-const canvasRef = useTemplateRef('canvas');
+const canvas = useTemplateRef('canvas');
 const score = ref(0);
 const status = ref('start');
 const isPaused = ref(false);
@@ -434,7 +434,7 @@ onGameKey([' ', 'ArrowUp', 'w'], (event) => {
 });
 
 watch(
-  canvasRef,
+  canvas,
   (el) => {
     if (!el) return;
     const ratio = window.devicePixelRatio;

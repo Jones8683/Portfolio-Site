@@ -6,10 +6,10 @@ import GameControls from '@/components/GameControls.vue';
 
 definePage({ meta: { title: 'Stickman Hook' } });
 
-const gameIframe = useTemplateRef('iframe');
+const iframe = useTemplateRef('iframe');
 
-const focusIframe = () => gameIframe.value?.focus();
-const { enter: enterFullscreen } = useFullscreen(gameIframe);
+const focusIframe = () => iframe.value?.focus();
+const { enter: enterFullscreen } = useFullscreen(iframe);
 </script>
 
 <template>

@@ -6,14 +6,14 @@ import GameControls from '@/components/GameControls.vue';
 
 definePage({ meta: { title: '2048' } });
 
-const gameIframe = useTemplateRef('iframe');
+const iframe = useTemplateRef('iframe');
 const score = ref(0);
 const highScore = useStorage('2048-best-score', 0);
 
-const focusIframe = () => gameIframe.value?.focus();
+const focusIframe = () => iframe.value?.focus();
 
 const handleMessage = ({ source, data }) => {
-  if (source !== gameIframe.value?.contentWindow || data?.type !== '2048-update') return;
+  if (source !== iframe.value?.contentWindow || data?.type !== '2048-update') return;
   score.value = data.score;
   highScore.value = Math.max(highScore.value, data.score);
 };
