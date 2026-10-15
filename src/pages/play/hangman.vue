@@ -140,11 +140,11 @@ onGameKey(ALPHABET, (event) => guessLetter(event.key.toUpperCase()));
               <path
                 v-for="(limb, index) in limbs"
                 :key="index"
+                class="part"
                 :d="limb"
                 stroke="#ffffff"
                 stroke-width="3.5"
                 stroke-linecap="round"
-                class="part"
               />
             </svg>
 
@@ -165,10 +165,10 @@ onGameKey(ALPHABET, (event) => guessLetter(event.key.toUpperCase()));
 
         <div v-if="status === 'over'" class="overlay-msg">
           <h2 class="menu-title outcome-title" :class="{ won: isWon }">
-            {{ isWon ? 'YOU GOT IT!' : 'GAME OVER' }}
+            {{ isWon ? 'You Win!' : 'Game Over' }}
           </h2>
           <p class="outcome-word">{{ secretWord }}</p>
-          <button class="overlay-btn" @click="resetGame">PLAY AGAIN</button>
+          <button class="overlay-btn" @click="resetGame">Play Again</button>
         </div>
       </div>
 

@@ -1,5 +1,5 @@
 <script setup>
-definePage({ meta: { title: 'Page not found' } });
+definePage({ meta: { title: 'Page Not Found' } });
 </script>
 
 <template>
@@ -8,7 +8,7 @@ definePage({ meta: { title: 'Page not found' } });
 
     <p class="not-found-subtitle">This is not the page you're looking for</p>
 
-    <RouterLink to="/" class="back-link">
+    <RouterLink class="back-link" to="/">
       <svg class="arrow-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
         <path
           d="M4 10h11m0 0-4-4m4 4-4 4"
@@ -18,7 +18,7 @@ definePage({ meta: { title: 'Page not found' } });
           stroke-linejoin="round"
         />
       </svg>
-      Take me home
+      Take Me Home
     </RouterLink>
   </div>
 </template>

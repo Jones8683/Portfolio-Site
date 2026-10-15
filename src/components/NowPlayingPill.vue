@@ -275,9 +275,9 @@ watch(
             class="cover"
             :src="shown.art"
             alt=""
-            crossorigin="anonymous"
             width="40"
             height="40"
+            crossorigin="anonymous"
             decoding="sync"
             @error="hasCoverError = true"
           />

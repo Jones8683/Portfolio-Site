@@ -223,23 +223,23 @@ watch(useWindowFocus(), (focused) => {
         </div>
 
         <div v-if="status === 'start'" class="overlay-msg">
-          <h2 class="menu-title">MINESWEEPER</h2>
+          <h2 class="menu-title">Minesweeper</h2>
           <div class="overlay-actions">
-            <button class="overlay-btn" @click="startGame('easy')">EASY</button>
-            <button class="overlay-btn" @click="startGame('medium')">MED</button>
-            <button class="overlay-btn" @click="startGame('hard')">HARD</button>
+            <button class="overlay-btn" @click="startGame('easy')">Easy</button>
+            <button class="overlay-btn" @click="startGame('medium')">Medium</button>
+            <button class="overlay-btn" @click="startGame('hard')">Hard</button>
           </div>
         </div>
 
         <div v-if="status === 'over'" class="overlay-msg">
           <h2 class="menu-title result-title" :class="{ won: isWon }">
-            {{ isWon ? 'YOU WIN!' : 'GAME OVER' }}
+            {{ isWon ? 'You Win!' : 'Game Over' }}
           </h2>
-          <button class="overlay-btn" @click="showStartScreen">PLAY AGAIN</button>
+          <button class="overlay-btn" @click="showStartScreen">Play Again</button>
         </div>
 
         <div v-if="isPaused" class="overlay-msg">
-          <h2 class="menu-title">PAUSED</h2>
+          <h2 class="menu-title">Paused</h2>
         </div>
       </div>
 
@@ -260,9 +260,9 @@ watch(useWindowFocus(), (focused) => {
 
         <GameControls
           :controls="[
-            { action: 'Reveal', key: 'Left Click' },
+            { action: 'Reveal', key: 'Click' },
             { action: 'Flag', key: 'Right Click' },
-            { action: 'Pause', key: 'Esc' },
+            { action: 'Pause', key: ['Esc', 'P'] },
             { action: 'Restart', key: 'R' },
           ]"
         />

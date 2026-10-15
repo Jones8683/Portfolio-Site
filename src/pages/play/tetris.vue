@@ -606,11 +606,11 @@ watch(
       <div class="left-section">
         <canvas ref="gameCanvas" class="game-canvas"></canvas>
         <div v-if="status === 'over'" class="overlay-msg">
-          <h2 class="menu-title">GAME OVER</h2>
-          <button class="overlay-btn" @click="resetGame">PLAY AGAIN</button>
+          <h2 class="menu-title">Game Over</h2>
+          <button class="overlay-btn" @click="resetGame">Play Again</button>
         </div>
         <div v-if="isPaused" class="overlay-msg">
-          <h2 class="menu-title">PAUSED</h2>
+          <h2 class="menu-title">Paused</h2>
         </div>
       </div>
 
@@ -637,9 +637,10 @@ watch(
           :controls="[
             { action: 'Move', key: ['←', '↓', '→'] },
             { action: 'Rotate', key: '↑' },
+            { action: 'Alternative', key: ['A', 'S', 'D', 'W'] },
             { action: 'Hard Drop', key: 'Space' },
             { action: 'Hold', key: 'C' },
-            { action: 'Pause', key: 'Esc' },
+            { action: 'Pause', key: ['Esc', 'P'] },
           ]"
         />
       </div>

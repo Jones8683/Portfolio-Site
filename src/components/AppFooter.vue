@@ -22,10 +22,10 @@ const time = builtAt.toLocaleTimeString('en-AU', {
       <p>&copy; {{ new Date().getFullYear() }} Jones Jankovic</p>
       <span class="footer-divider" aria-hidden="true">|</span>
       <a
+        class="source-link"
         :href="`${repo}/commit/${hash}`"
         target="_blank"
         rel="noopener noreferrer"
-        class="source-link"
       >
         Build {{ hash }} • {{ date }} {{ time }}
       </a>

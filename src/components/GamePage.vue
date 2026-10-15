@@ -17,8 +17,8 @@ const isMobile = useMediaQuery('(pointer: coarse)');
 <template>
   <div class="game-page">
     <div v-if="isMobile" class="content-wrap">
-      <h1 class="page-title">Not supported on touch screens</h1>
-      <RouterLink to="/play" class="back-link">
+      <h1 class="page-title">Not Supported on Touch Screens</h1>
+      <RouterLink class="back-link" to="/play">
         <svg class="arrow-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
           <path
             d="M4 10h11m0 0-4-4m4 4-4 4"
@@ -28,7 +28,7 @@ const isMobile = useMediaQuery('(pointer: coarse)');
             stroke-linejoin="round"
           />
         </svg>
-        Back to arcade
+        Back to Arcade
       </RouterLink>
     </div>
     <slot v-else />
@@ -138,6 +138,7 @@ const isMobile = useMediaQuery('(pointer: coarse)');
 .menu-title {
   font-size: 32px;
   margin-bottom: 20px;
+  text-transform: uppercase;
 }
 
 .overlay-btn {
@@ -147,6 +148,7 @@ const isMobile = useMediaQuery('(pointer: coarse)');
   background: #ffffff;
   border: none;
   border-radius: 4px;
+  text-transform: uppercase;
   cursor: pointer;
 }
 

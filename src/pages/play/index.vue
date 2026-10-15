@@ -38,9 +38,9 @@ const games = [
       <div v-for="game in games" :key="game.path" class="arcade-card">
         <div class="arcade-card-top">
           <span class="arcade-icon">{{ game.icon }}</span>
-          <h3 class="arcade-name">{{ game.name }}</h3>
+          <h2 class="arcade-name">{{ game.name }}</h2>
         </div>
-        <RouterLink :to="game.path" class="arcade-card-bottom" :class="`${game.color}-btn`">
+        <RouterLink class="arcade-card-bottom" :class="`${game.color}-btn`" :to="game.path">
           Play Now
         </RouterLink>
       </div>

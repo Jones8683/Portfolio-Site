@@ -250,8 +250,8 @@ function checkWin() {
   status.value = 'over';
   pause();
   const rightWon = scores.value.right >= WIN_SCORE;
-  if (gameMode === 'cpu') outcome.value = rightWon ? 'YOU WIN!' : 'COMPUTER WINS!';
-  else outcome.value = rightWon ? 'RIGHT PLAYER WINS!' : 'LEFT PLAYER WINS!';
+  if (gameMode === 'cpu') outcome.value = rightWon ? 'You Win!' : 'Computer Wins!';
+  else outcome.value = rightWon ? 'Right Player Wins!' : 'Left Player Wins!';
 }
 
 function updatePaddles(dt) {
@@ -394,19 +394,19 @@ onScopeDispose(() => {
       <div class="left-section">
         <canvas ref="canvas"></canvas>
         <div v-if="status === 'start'" class="overlay-msg">
-          <h2 class="menu-title">PONG</h2>
+          <h2 class="menu-title">Pong</h2>
           <div class="overlay-actions">
-            <button class="overlay-btn" @click="startGame('cpu')">1 PLAYER</button>
-            <button class="overlay-btn" @click="startGame('pvp')">2 PLAYERS</button>
+            <button class="overlay-btn" @click="startGame('cpu')">1 Player</button>
+            <button class="overlay-btn" @click="startGame('pvp')">2 Players</button>
           </div>
         </div>
         <div v-else-if="status === 'over'" class="overlay-msg">
-          <h2 class="menu-title">GAME OVER</h2>
+          <h2 class="menu-title">Game Over</h2>
           <div class="outcome">{{ outcome }}</div>
-          <button class="overlay-btn" @click="showStartScreen">MENU</button>
+          <button class="overlay-btn" @click="showStartScreen">Play Again</button>
         </div>
         <div v-else-if="isPaused" class="overlay-msg">
-          <h2 class="menu-title">PAUSED</h2>
+          <h2 class="menu-title">Paused</h2>
         </div>
       </div>
 
@@ -418,9 +418,9 @@ onScopeDispose(() => {
         </div>
         <GameControls
           :controls="[
-            { action: 'Left Paddle', key: ['WIDTH', 'S'] },
+            { action: 'Left Paddle', key: ['W', 'S'] },
             { action: 'Right Paddle', key: ['↑', '↓'] },
-            { action: 'Pause', key: 'Esc' },
+            { action: 'Pause', key: ['Esc', 'P'] },
           ]"
         />
       </div>
@@ -453,6 +453,7 @@ canvas {
   color: var(--color-muted);
   margin-bottom: 20px;
   font-size: 14px;
+  text-transform: uppercase;
 }
 
 .score-box {

@@ -462,7 +462,7 @@ watch(
       <div class="left-section">
         <canvas ref="canvas" @mousedown="jump"></canvas>
         <div v-if="isPaused" class="overlay-msg">
-          <h2 class="menu-title">PAUSED</h2>
+          <h2 class="menu-title">Paused</h2>
         </div>
       </div>
       <div class="right-section">
@@ -477,8 +477,8 @@ watch(
         <GameControls
           :controls="[
             { action: 'Jump', key: 'Click' },
-            { action: 'Alternative', key: 'Space' },
-            { action: 'Pause', key: 'Esc' },
+            { action: 'Alternative', key: ['Space', '↑', 'W'] },
+            { action: 'Pause', key: ['Esc', 'P'] },
           ]"
         />
       </div>

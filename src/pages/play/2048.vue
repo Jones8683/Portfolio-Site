@@ -29,8 +29,8 @@ useEventListener(window, 'message', handleMessage);
       <div class="left-section" @click="focusIframe">
         <iframe
           ref="iframe"
-          src="/gameassets/2048.html"
           class="game-iframe"
+          src="/gameassets/2048.html"
           title="2048 game"
           scrolling="no"
           @load="focusIframe"

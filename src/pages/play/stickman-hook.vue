@@ -20,8 +20,8 @@ function focusIframe() {
       <div class="left-section" @click="focusIframe">
         <iframe
           ref="iframe"
-          src="/gameassets/stickmanhook.html"
           class="game-iframe"
+          src="/gameassets/stickmanhook.html"
           title="Stickman Hook game"
           scrolling="no"
           allow="fullscreen"
@@ -41,9 +41,9 @@ function focusIframe() {
 
         <button class="fullscreen-btn" @click="enterFullscreen">
           <svg
+            viewBox="0 0 24 24"
             width="14"
             height="14"
-            viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
             stroke-width="2"

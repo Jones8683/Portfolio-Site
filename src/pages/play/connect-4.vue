@@ -156,7 +156,6 @@ onGameKey(['r'], resetGame);
               ></div>
               <div
                 class="piece"
-                :style="getDropStyle(cell.row, col)"
                 :class="[
                   cell.value && `p${cell.value}`,
                   {
@@ -165,6 +164,7 @@ onGameKey(['r'], resetGame);
                   },
                   isGhostCell(cell.row, col) && ['ghost', `p${currentPlayer}`],
                 ]"
+                :style="getDropStyle(cell.row, col)"
               ></div>
             </div>
           </div>
@@ -173,11 +173,11 @@ onGameKey(['r'], resetGame);
         <div v-if="status === 'over'" class="overlay-msg">
           <h2 class="menu-title">
             <span v-if="winner" class="player-text" :class="`p${winner}`">
-              PLAYER {{ winner }} WINS!
+              Player {{ winner }} Wins!
             </span>
-            <span v-else>DRAW!</span>
+            <span v-else>Draw!</span>
           </h2>
-          <button class="overlay-btn" @click="resetGame">PLAY AGAIN</button>
+          <button class="overlay-btn" @click="resetGame">Play Again</button>
         </div>
       </div>
 

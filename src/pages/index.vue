@@ -141,7 +141,7 @@ watch(
         <div class="avatar-wrap">
           <div class="avatar-ring ring-1"></div>
           <div class="avatar-ring ring-2"></div>
-          <img :src="profilePic" class="avatar-img" alt="Jones Jankovic" />
+          <img class="avatar-img" :src="profilePic" alt="Jones Jankovic" />
           <div class="avatar-glow"></div>
         </div>
 
@@ -152,11 +152,11 @@ watch(
 
       <div class="snake-wrap">
         <img
+          class="snake-image"
           src="https://raw.githubusercontent.com/jones8683/jones8683/output/github-contribution-grid-snake-dark.svg"
           alt="GitHub contribution snake"
           width="880"
           height="192"
-          class="snake-image"
           fetchpriority="high"
           decoding="async"
         />
@@ -165,7 +165,7 @@ watch(
 
     <div class="scroll-cue" :style="{ opacity: cueOpacity }" aria-hidden="true">
       <div class="scroll-cue-nudge">
-        <svg class="scroll-cue-icon" width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <svg class="scroll-cue-icon" viewBox="0 0 24 24" width="22" height="22" fill="none">
           <path
             d="M6 9l6 6 6-6"
             stroke="currentColor"
@@ -216,10 +216,10 @@ watch(
             <a
               v-for="contact in contacts"
               :key="contact.label"
+              class="contact-row"
               :href="contact.href"
               :target="contact.href.startsWith('http') ? '_blank' : undefined"
               rel="noopener noreferrer"
-              class="contact-row"
             >
               <svg
                 class="contact-row-icon"

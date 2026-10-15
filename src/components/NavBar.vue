@@ -22,7 +22,7 @@ watch(y, (now, prev) => {
   <div class="nav-shell">
     <header class="main-header" :class="{ minimized: isMinimized }" :data-show="shouldShow">
       <div class="nav-left">
-        <RouterLink to="/" class="nav-brand" aria-label="Jones Jankovic — Home">
+        <RouterLink class="nav-brand" to="/" aria-label="Jones Jankovic — Home">
           <span class="nav-name">
             <span class="name-anchor-first" aria-hidden="true">J</span>
             <span class="name-segment" aria-hidden="true">
@@ -51,17 +51,17 @@ watch(y, (now, prev) => {
           </span>
         </RouterLink>
         <nav class="glass-nav">
-          <RouterLink to="/projects" class="glass-btn" active-class="active">Projects</RouterLink>
-          <RouterLink to="/play" class="glass-btn" active-class="active">Arcade</RouterLink>
+          <RouterLink class="glass-btn" active-class="active" to="/projects">Projects</RouterLink>
+          <RouterLink class="glass-btn" active-class="active" to="/play">Arcade</RouterLink>
         </nav>
       </div>
       <div class="nav-actions">
         <a
+          class="nav-icon"
           href="https://discord.com/users/1537745548000497716"
           target="_blank"
           rel="noopener noreferrer"
-          aria-label="Discord Profile"
-          class="nav-icon"
+          aria-label="Discord profile"
         >
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path
@@ -71,11 +71,11 @@ watch(y, (now, prev) => {
           </svg>
         </a>
         <a
+          class="nav-icon"
           href="https://github.com/Jones8683"
           target="_blank"
           rel="noopener noreferrer"
-          aria-label="GitHub Profile"
-          class="nav-icon"
+          aria-label="GitHub profile"
         >
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path

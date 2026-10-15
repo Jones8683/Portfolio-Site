@@ -27,7 +27,7 @@ const projects = [
 </script>
 
 <template>
-  <section class="content-wrap projects-page">
+  <div class="content-wrap projects-page">
     <h1 class="page-title">Projects</h1>
     <p class="page-subtitle">A collection of projects I have made and contributed to.</p>
 
@@ -35,18 +35,18 @@ const projects = [
       <a
         v-for="(project, index) in projects"
         :key="project.name"
+        class="project-row"
+        :style="{ animationDelay: `${0.1 + index * 0.07}s` }"
         :href="`https://github.com/${project.repo}`"
         target="_blank"
         rel="noopener noreferrer"
-        class="project-row"
-        :style="{ animationDelay: `${0.1 + index * 0.07}s` }"
       >
         <span class="project-row-bar" aria-hidden="true"></span>
         <span class="project-row-inner">
           <img
+            class="project-logo"
             :src="`https://avatars.githubusercontent.com/${project.repo.split('/')[0]}?s=92`"
             alt=""
-            class="project-logo"
             width="46"
             height="46"
             decoding="async"
@@ -67,7 +67,7 @@ const projects = [
         </span>
       </a>
     </div>
-  </section>
+  </div>
 </template>
 
 <style scoped>
