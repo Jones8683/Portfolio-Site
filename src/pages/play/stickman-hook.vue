@@ -64,38 +64,38 @@ function focusIframe() {
 
 <style scoped>
 .game-iframe {
+  display: block;
   width: 880px;
   height: 550px;
   background: #000000;
-  display: block;
   border: none;
   border-radius: 4px;
 }
 
 .fullscreen-btn {
-  cursor: pointer;
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 12px;
-  font-weight: 700;
-  padding: 14px 16px;
-  background: var(--color-glass);
-  border: 1px solid var(--color-hairline);
-  border-radius: 10px;
-  transition:
-    background-color 0.3s ease,
-    border-color 0.3s ease,
-    transform 0.3s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  padding: 14px 16px;
   margin-top: 5px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  cursor: pointer;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    transform 0.3s ease;
 }
 
 .fullscreen-btn:hover {
-  background: var(--color-hairline);
+  background: rgba(255, 255, 255, 0.1);
   border-color: rgba(255, 255, 255, 0.2);
   transform: translateY(-2px);
 }

@@ -57,7 +57,7 @@ const games = [
 
 .page-subtitle {
   margin-bottom: 12px;
-  color: var(--color-muted);
+  color: #94a3b8;
 }
 
 .arcade-page {
@@ -73,21 +73,21 @@ const games = [
 }
 
 .arcade-card {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 16px;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
   height: 210px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
   transition:
     transform 0.3s ease,
     border-color 0.3s ease;
 }
 
 .arcade-card:hover {
-  transform: translateY(-4px);
   border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-4px);
 }
 
 .arcade-card-top {
@@ -105,22 +105,21 @@ const games = [
 }
 
 .arcade-name {
-  color: #ffffff;
   font-size: 26px;
 }
 
 .arcade-card-bottom {
-  height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
+  height: 50px;
   font-weight: 900;
   font-size: 12px;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.08em;
   color: var(--game-color);
   background: color-mix(in srgb, var(--game-color) 5%, transparent);
-  border-top: 1px solid var(--color-glass);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
   transition:
     background-color 0.3s ease,
     color 0.3s ease;

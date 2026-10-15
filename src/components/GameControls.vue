@@ -23,11 +23,11 @@ defineProps({ controls: { type: Array, required: true } });
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 6px;
+  padding-bottom: 4px;
   font-size: 11px;
   color: #7c8ba1;
-  margin-bottom: 6px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-  padding-bottom: 4px;
 }
 
 .control-item:last-child {
@@ -40,14 +40,14 @@ defineProps({ controls: { type: Array, required: true } });
 }
 
 .key {
+  display: inline-block;
+  min-width: 18px;
+  padding: 2px 6px;
   color: #ffffff;
   font-weight: 700;
-  background: var(--color-hairline);
-  padding: 2px 6px;
-  border-radius: 4px;
   font-size: 10px;
-  min-width: 18px;
   text-align: center;
-  display: inline-block;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
 }
 </style>

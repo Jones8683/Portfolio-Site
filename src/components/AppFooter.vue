@@ -35,10 +35,10 @@ const time = builtAt.toLocaleTimeString('en-AU', {
 
 <style scoped>
 .main-footer {
-  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
   padding-bottom: 20px;
   margin-top: 40px;
   user-select: none;
@@ -50,17 +50,17 @@ const time = builtAt.toLocaleTimeString('en-AU', {
   justify-content: center;
   gap: 8px;
   color: #7c8ba1;
-  font-family: var(--font-ui);
+  font-family: 'Satoshi', sans-serif;
   font-size: 14px;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.04em;
 }
 
 .footer-line {
   width: 90%;
   max-width: 1200px;
   height: 1px;
-  background: var(--color-hairline);
   margin-bottom: 20px;
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .source-link {
@@ -69,7 +69,7 @@ const time = builtAt.toLocaleTimeString('en-AU', {
 
 .source-link:hover,
 .source-link:focus-visible {
-  color: var(--color-muted);
+  color: #94a3b8;
 }
 
 @media (width <= 480px) {

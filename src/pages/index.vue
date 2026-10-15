@@ -255,20 +255,20 @@ watch(
 
 <style scoped>
 .home {
-  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
 }
 
 .above-fold {
-  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 20px;
-  padding: 4px 40px 0;
+  width: 100%;
   min-height: calc(100svh - 74px);
+  padding: 4px 40px 0;
 }
 
 .hero-block {
@@ -285,21 +285,21 @@ watch(
 
 .avatar-wrap {
   position: relative;
-  width: 190px;
-  height: 190px;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 190px;
+  height: 190px;
 }
 
 .avatar-img {
-  width: 140px;
-  height: 140px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid rgba(255, 255, 255, 0.12);
   position: relative;
   z-index: 2;
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.12);
   box-shadow: 0 0 40px rgba(58, 123, 213, 0.3);
 }
 
@@ -328,11 +328,11 @@ watch(
 
 .avatar-glow {
   position: absolute;
+  z-index: 1;
   width: 140px;
   height: 140px;
-  border-radius: 50%;
   background: radial-gradient(circle, rgba(58, 123, 213, 0.25) 0%, transparent 70%);
-  z-index: 1;
+  border-radius: 50%;
   animation: glow-pulse 3s ease-in-out infinite;
 }
 
@@ -341,16 +341,16 @@ watch(
   font-size: clamp(36px, 6vw, 56px);
   line-height: 1;
   text-align: center;
+  -webkit-text-fill-color: transparent;
   background: linear-gradient(130deg, #80b5ff 0%, #6eeded 100%);
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .snake-wrap {
-  width: min(100%, 900px);
   display: flex;
   justify-content: center;
+  width: min(100%, 900px);
   margin: -18px 0 8px;
   transition:
     opacity 0.7s ease 0.3s,
@@ -377,7 +377,7 @@ watch(
 }
 
 .scroll-cue-nudge {
-  color: var(--color-muted);
+  color: #94a3b8;
   animation: cue-nudge 2.2s ease-in-out 2.2s 4;
 }
 
@@ -405,15 +405,15 @@ watch(
 }
 
 .about-section {
-  width: 100%;
-  margin-top: 20px;
-  padding: 28px 32px;
   display: grid;
   grid-template-columns: minmax(140px, 200px) minmax(0, 1fr);
   gap: 24px;
+  width: 100%;
+  margin-top: 20px;
+  padding: 28px 32px;
   text-align: left;
-  border-radius: 16px;
   background: rgba(255, 255, 255, 0.03);
+  border-radius: 16px;
   border: 1px solid rgba(148, 163, 184, 0.2);
   box-shadow: 0 24px 50px rgba(4, 6, 16, 0.45);
 }
@@ -440,7 +440,7 @@ watch(
   align-items: baseline;
   gap: 16px;
   padding-bottom: 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .interest-row:last-child {
@@ -451,7 +451,7 @@ watch(
 .interest-label {
   font-size: 15px;
   font-weight: 700;
-  color: var(--color-muted);
+  color: #94a3b8;
 }
 
 .interest-chips {
@@ -468,7 +468,7 @@ watch(
   color: #cbd5e1;
   background: color-mix(in srgb, var(--chip-accent) 7%, transparent);
   border: 1px solid color-mix(in srgb, var(--chip-accent) 22%, transparent);
-  border-radius: 100px;
+  border-radius: 999px;
 }
 
 .contact-list {
@@ -482,12 +482,12 @@ watch(
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 12px 16px;
-  background: rgba(255, 255, 255, 0.025);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
   overflow: hidden;
   min-width: 0;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
   transition:
     background-color 0.25s ease,
     border-color 0.25s ease,
@@ -501,9 +501,9 @@ watch(
 }
 
 .contact-row-icon {
+  flex-shrink: 0;
   width: 22px;
   height: 22px;
-  flex-shrink: 0;
   color: #4a5e7a;
   fill: currentColor;
   transition: color 0.25s ease;
@@ -525,7 +525,7 @@ watch(
   min-width: 68px;
   font-size: 15px;
   font-weight: 700;
-  color: var(--color-muted);
+  color: #94a3b8;
   transition: color 0.25s ease;
 }
 
@@ -536,17 +536,17 @@ watch(
 .contact-row-value {
   flex: 1;
   min-width: 0;
+  overflow: hidden;
   font-size: 15px;
   color: #87cefa;
   white-space: nowrap;
-  overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .contact-row-arrow {
+  flex-shrink: 0;
   width: 16px;
   height: 16px;
-  flex-shrink: 0;
   color: #3a4f6a;
   opacity: 0;
   transform: translateX(-6px);
@@ -557,9 +557,9 @@ watch(
 }
 
 .contact-row:hover .contact-row-arrow {
+  color: #87cefa;
   opacity: 1;
   transform: translateX(0);
-  color: #87cefa;
 }
 
 .contact-outro {
@@ -597,10 +597,38 @@ watch(
 }
 
 @media (width <= 720px) {
+  .above-fold {
+    padding: 32px 20px 16px;
+  }
+
+  .avatar-wrap {
+    width: 160px;
+    height: 160px;
+  }
+
+  .avatar-img {
+    width: 110px;
+    height: 110px;
+  }
+
+  .ring-1 {
+    width: 128px;
+    height: 128px;
+  }
+
+  .ring-2 {
+    width: 145px;
+    height: 145px;
+  }
+
+  .name-title {
+    font-size: clamp(30px, 8vw, 44px);
+  }
+
   .about-section {
     grid-template-columns: 1fr;
-    text-align: center;
     padding: 24px 18px;
+    text-align: center;
   }
 
   .interest-row {
@@ -624,43 +652,15 @@ watch(
   .contact-row-value {
     font-size: 14px;
   }
-
-  .above-fold {
-    padding: 32px 20px 16px;
-  }
-
-  .name-title {
-    font-size: clamp(30px, 8vw, 44px);
-  }
-
-  .avatar-img {
-    width: 110px;
-    height: 110px;
-  }
-
-  .ring-1 {
-    width: 128px;
-    height: 128px;
-  }
-
-  .ring-2 {
-    width: 145px;
-    height: 145px;
-  }
-
-  .avatar-wrap {
-    width: 160px;
-    height: 160px;
-  }
 }
 
 @media (width <= 480px) {
-  .contact-row-value {
-    display: none;
-  }
-
   .contact-row-label {
     flex: 1;
+  }
+
+  .contact-row-value {
+    display: none;
   }
 }
 </style>

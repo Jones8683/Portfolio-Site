@@ -253,26 +253,26 @@ watch(
 </script>
 
 <template>
-  <div class="slot">
+  <div class="pill-slot">
     <div
       ref="pill"
-      class="status-pill"
-      :class="{ 'is-live': shown, 'is-paused': shown && !shown.playing, swapped: isSwapped }"
+      class="pill"
+      :class="{ live: shown, paused: shown && !shown.playing, swapped: isSwapped }"
       :style="{ '--live-radius': `${LIVE_RADIUS}px`, '--tint': tint }"
     >
       <a
         v-if="shown"
         ref="live"
-        class="live"
+        class="pill-live"
         :href="shown.url"
         target="_blank"
         rel="noopener noreferrer"
         :aria-label="label"
       >
-        <span v-if="shown.art && !hasCoverError" class="art" :class="{ paused: isStopped }">
+        <span v-if="shown.art && !hasCoverError" class="pill-art" :class="{ stopped: isStopped }">
           <img
             ref="cover"
-            class="cover"
+            class="pill-cover"
             :src="shown.art"
             alt=""
             width="40"
@@ -281,94 +281,85 @@ watch(
             decoding="sync"
             @error="hasCoverError = true"
           />
-          <span class="pause" aria-hidden="true">
+          <span class="pill-pause" aria-hidden="true">
             <svg viewBox="0 0 16 16" width="22" height="22">
               <rect x="3" y="2" width="3.5" height="12" rx="1" />
               <rect x="9.5" y="2" width="3.5" height="12" rx="1" />
             </svg>
           </span>
         </span>
-        <span class="text">
-          <span class="title">{{ shown.title }}</span>
-          <span class="artist">{{ shown.artist }}</span>
+        <span class="pill-text">
+          <span class="pill-title">{{ shown.title }}</span>
+          <span class="pill-artist">{{ shown.artist }}</span>
           <span
             :key="shown.id"
-            class="progress"
-            :class="{ paused: isFrozen }"
+            class="pill-progress"
+            :class="{ frozen: isFrozen }"
             :style="progressStyle"
             aria-hidden="true"
           >
-            <span class="bar"><span class="fill"></span></span>
-            <span class="thumb"></span>
+            <span class="pill-bar"><span class="pill-fill"></span></span>
+            <span class="pill-thumb"></span>
           </span>
         </span>
       </a>
-      <span v-else class="idle">Student | Australia</span>
+      <span v-else class="pill-idle">Student | Australia</span>
     </div>
   </div>
 </template>
 
 <style scoped>
-.slot {
-  --slot-height: 58px;
-  --slot-overlap: 10px;
+.pill-slot {
   position: relative;
   z-index: 1;
   display: flex;
   justify-content: center;
   align-items: flex-start;
   width: 100%;
-  height: var(--slot-height);
-  margin-bottom: calc(var(--slot-overlap) * -1);
+  height: 58px;
+  margin-bottom: -10px;
   pointer-events: none;
 }
 
-.status-pill {
+.pill {
   position: relative;
   overflow: hidden;
-  pointer-events: auto;
   max-width: min(calc(100vw - 40px), 384px);
   padding: 6px 14px;
-  border-radius: 100px;
-  font-family: var(--font-ui);
+  font-family: 'Satoshi', sans-serif;
   font-size: 12px;
   font-weight: 400;
   letter-spacing: 0.04em;
   color: #64a8ff;
   background: rgba(58, 123, 213, 0.28);
-  border: 1px solid rgba(58, 123, 213, 0.438);
+  border-radius: 999px;
+  border: 1px solid rgba(58, 123, 213, 0.44);
+  pointer-events: auto;
   user-select: none;
   transition:
     background-color 0.2s ease,
     border-color 0.2s ease;
 }
 
-.status-pill.is-live {
+.pill.live {
   min-width: min(192px, calc(100vw - 40px));
   padding: 0;
-  border-radius: var(--live-radius);
   background: color-mix(in srgb, var(--tint) 28%, transparent);
+  border-radius: var(--live-radius);
   border-color: color-mix(in srgb, var(--tint) 44%, transparent);
 }
 
-@media (hover: hover) {
-  .status-pill.is-live:hover {
-    background: color-mix(in srgb, var(--tint) 36%, transparent);
-    border-color: color-mix(in srgb, var(--tint) 60%, transparent);
-  }
-}
-
-.status-pill:has(.live:focus-visible) {
+.pill:has(.pill-live:focus-visible) {
   outline: 2px solid var(--tint);
   outline-offset: 3px;
 }
 
-.idle {
+.pill-idle {
   display: block;
   white-space: nowrap;
 }
 
-.live {
+.pill-live {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -377,25 +368,25 @@ watch(
   color: inherit;
 }
 
-.live:not(:has(.art)) {
+.pill-live:not(:has(.pill-art)) {
   padding-left: 18px;
 }
 
-.live:focus-visible {
+.pill-live:focus-visible {
   outline: none;
 }
 
-.art {
+.pill-art {
   position: relative;
+  flex-shrink: 0;
   width: 40px;
   height: 40px;
-  flex: none;
   overflow: hidden;
   border-radius: 50%;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
 }
 
-.cover {
+.pill-cover {
   display: block;
   width: 100%;
   height: 100%;
@@ -403,11 +394,11 @@ watch(
   animation: record-spin 8s linear infinite;
 }
 
-.paused .cover {
+.stopped .pill-cover {
   animation-play-state: paused;
 }
 
-.pause {
+.pill-pause {
   position: absolute;
   inset: 0;
   display: grid;
@@ -418,31 +409,31 @@ watch(
   transition: opacity 0.2s ease;
 }
 
-.pause svg {
+.pill-pause svg {
   fill: currentColor;
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4));
 }
 
-.is-paused .pause {
+.paused .pill-pause {
   opacity: 1;
 }
 
-.text {
+.pill-text {
   display: flex;
   flex-direction: column;
-  min-width: 0;
   flex: 1;
+  min-width: 0;
 }
 
-.title,
-.artist {
+.pill-title,
+.pill-artist {
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.title {
+.pill-title {
   font-size: 13px;
   font-weight: 700;
   line-height: 16px;
@@ -450,63 +441,62 @@ watch(
   color: #cbd5e1;
 }
 
-.artist {
+.pill-artist {
   line-height: 15px;
-  color: var(--color-muted);
+  color: #94a3b8;
 }
 
-.progress {
-  --thumb: 7px;
+.pill-progress {
   position: relative;
   margin-top: 6px;
 }
 
-.bar {
+.pill-bar {
   display: block;
   height: 3px;
   overflow: hidden;
-  border-radius: 999px;
   background: rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
 }
 
-.fill,
-.thumb {
+.pill-fill,
+.pill-thumb {
   transform: translateX(-100%);
   animation: track-progress var(--duration) linear var(--delay) both;
 }
 
-.fill {
+.pill-fill {
   display: block;
   height: 100%;
-  border-radius: inherit;
   background: var(--tint);
+  border-radius: inherit;
 }
 
-.thumb {
+.pill-thumb {
   position: absolute;
   inset: 0;
 }
 
-.thumb::after {
+.pill-thumb::after {
   content: '';
   position: absolute;
   top: 50%;
   right: 0;
-  width: var(--thumb);
-  height: var(--thumb);
-  border-radius: 50%;
+  width: 7px;
+  height: 7px;
   background: #f4f7fb;
+  border-radius: 50%;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
   transform: translate(50%, -50%);
 }
 
-.paused .fill,
-.paused .thumb {
+.frozen .pill-fill,
+.frozen .pill-thumb {
   animation-play-state: paused;
 }
 
-.swapped .idle,
-.swapped .live {
+.swapped .pill-idle,
+.swapped .pill-live {
   animation: swap-in 0.3s ease-out 0.14s both;
 }
 
@@ -528,9 +518,16 @@ watch(
   }
 }
 
+@media (hover: hover) {
+  .pill.live:hover {
+    background: color-mix(in srgb, var(--tint) 36%, transparent);
+    border-color: color-mix(in srgb, var(--tint) 60%, transparent);
+  }
+}
+
 @media (width <= 720px) {
-  .slot {
-    --slot-overlap: -8px;
+  .pill-slot {
+    margin-bottom: 8px;
   }
 }
 </style>

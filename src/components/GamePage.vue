@@ -43,7 +43,7 @@ const isMobile = useMediaQuery('(pointer: coarse)');
   width: 100%;
   min-height: 85vh;
   text-align: center;
-  font-family: var(--font-ui);
+  font-family: 'Satoshi', sans-serif;
 }
 
 .game-wrapper {
@@ -57,7 +57,7 @@ const isMobile = useMediaQuery('(pointer: coarse)');
   position: relative;
   padding: 12px;
   background: #1a1a1a;
-  border: 1px solid var(--color-hairline);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 16px;
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
 }
@@ -71,8 +71,8 @@ const isMobile = useMediaQuery('(pointer: coarse)');
 }
 
 .game-title {
-  font-size: 72px;
   margin-bottom: 10px;
+  font-size: 72px;
   line-height: 1;
 }
 
@@ -82,8 +82,8 @@ const isMobile = useMediaQuery('(pointer: coarse)');
   align-items: center;
   justify-content: center;
   padding: 10px;
-  background: var(--color-glass);
-  border: 1px solid var(--color-hairline);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
 }
 
@@ -100,10 +100,10 @@ const isMobile = useMediaQuery('(pointer: coarse)');
   margin-bottom: 8px;
   font-size: 10px;
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   text-align: center;
-  color: var(--color-muted);
+  color: #94a3b8;
 }
 
 .score-label {
@@ -136,8 +136,8 @@ const isMobile = useMediaQuery('(pointer: coarse)');
 }
 
 .menu-title {
-  font-size: 32px;
   margin-bottom: 20px;
+  font-size: 32px;
   text-transform: uppercase;
 }
 
@@ -145,10 +145,10 @@ const isMobile = useMediaQuery('(pointer: coarse)');
   padding: 10px 20px;
   font-weight: 700;
   color: #000000;
+  text-transform: uppercase;
   background: #ffffff;
   border: none;
   border-radius: 4px;
-  text-transform: uppercase;
   cursor: pointer;
 }
 
@@ -194,9 +194,9 @@ const isMobile = useMediaQuery('(pointer: coarse)');
 }
 
 .arrow-icon {
+  flex-shrink: 0;
   width: 16px;
   height: 16px;
-  flex-shrink: 0;
   transform: scaleX(-1);
 }
 </style>

@@ -502,7 +502,7 @@ watch(
   width: 100%;
   height: 1px;
   margin: 8px 0;
-  background: var(--color-hairline);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 canvas {

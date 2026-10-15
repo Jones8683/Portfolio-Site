@@ -64,10 +64,10 @@ useEventListener(window, 'message', handleMessage);
 
 <style scoped>
 .game-iframe {
+  display: block;
   width: 530px;
   height: 530px;
   background: #faf8ef;
-  display: block;
   border: none;
   border-radius: 4px;
 }
@@ -94,6 +94,6 @@ useEventListener(window, 'message', handleMessage);
   width: 100%;
   height: 1px;
   margin: 8px 0;
-  background: var(--color-hairline);
+  background: rgba(255, 255, 255, 0.1);
 }
 </style>

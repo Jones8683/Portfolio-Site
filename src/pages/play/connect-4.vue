@@ -142,7 +142,7 @@ onGameKey(['r'], resetGame);
             :key="col"
             class="column"
             :class="{
-              'col-hovered': hoveredCol === col && status === 'playing' && !isColFull(col),
+              hovered: hoveredCol === col && status === 'playing' && !isColFull(col),
             }"
             @click="makeMove(col)"
             @mouseenter="hoveredCol = col"
@@ -204,7 +204,7 @@ onGameKey(['r'], resetGame);
                 class="turn-piece"
                 :class="`p${currentPlayer}`"
               ></div>
-              <span v-else class="no-turn-text">-</span>
+              <span v-else>-</span>
             </div>
           </div>
         </div>
@@ -241,8 +241,8 @@ onGameKey(['r'], resetGame);
 .board {
   display: flex;
   gap: 8px;
-  background-color: #0d0d0d;
   padding: 16px;
+  background: #0d0d0d;
   border-radius: 12px;
 }
 
@@ -250,27 +250,27 @@ onGameKey(['r'], resetGame);
   display: flex;
   flex-direction: column;
   gap: 8px;
-  cursor: pointer;
-  border-radius: 8px;
   padding: 4px;
+  border-radius: 8px;
+  cursor: pointer;
   transition: background-color 0.15s ease;
 }
 
-.column.col-hovered {
+.column.hovered {
   background: rgba(255, 255, 255, 0.04);
 }
 
 .cell {
-  width: 54px;
-  height: 54px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--color-glass);
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 54px;
+  height: 54px;
   overflow: visible;
-  position: relative;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .drop-target {
@@ -310,15 +310,36 @@ onGameKey(['r'], resetGame);
 
 .drop-target,
 .piece.ghost {
-  pointer-events: none;
   background: color-mix(in srgb, var(--player) 25%, transparent);
   box-shadow: 0 0 8px color-mix(in srgb, var(--player) 15%, transparent);
+  pointer-events: none;
 }
 
 .piece.dropping {
   position: relative;
   z-index: 10;
   animation: drop-in var(--drop-dur) forwards;
+}
+
+.piece.winning-piece {
+  animation: pulse 0.75s ease-in-out infinite alternate;
+}
+
+.info-box {
+  flex: 1;
+  aspect-ratio: 1;
+}
+
+.turn-box {
+  aspect-ratio: auto;
+  min-height: 60px;
+  padding: 8px;
+}
+
+.turn-piece {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
 }
 
 @keyframes drop-in {
@@ -342,10 +363,6 @@ onGameKey(['r'], resetGame);
   }
 }
 
-.piece.winning-piece {
-  animation: pulse 0.75s ease-in-out infinite alternate;
-}
-
 @keyframes pulse {
   from {
     opacity: 1;
@@ -355,26 +372,5 @@ onGameKey(['r'], resetGame);
     opacity: 0.55;
     transform: scale(0.88);
   }
-}
-
-.info-box {
-  flex: 1;
-  aspect-ratio: 1;
-}
-
-.turn-box {
-  aspect-ratio: auto;
-  min-height: 60px;
-  padding: 8px;
-}
-
-.turn-piece {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-}
-
-.no-turn-text {
-  color: #ffffff;
 }
 </style>

@@ -232,7 +232,7 @@ watch(useWindowFocus(), (focused) => {
         </div>
 
         <div v-if="status === 'over'" class="overlay-msg">
-          <h2 class="menu-title result-title" :class="{ won: isWon }">
+          <h2 class="menu-title outcome-title" :class="{ won: isWon }">
             {{ isWon ? 'You Win!' : 'Game Over' }}
           </h2>
           <button class="overlay-btn" @click="showStartScreen">Play Again</button>
@@ -252,7 +252,7 @@ watch(useWindowFocus(), (focused) => {
             {{ difficulty.mines - flagsPlaced }}
           </div>
 
-          <div class="mines-divider"></div>
+          <div class="score-divider"></div>
 
           <div class="label time-label">Time</div>
           <div class="value time-value">{{ formattedTime }}</div>
@@ -273,11 +273,11 @@ watch(useWindowFocus(), (focused) => {
 
 <style scoped>
 .left-section {
-  min-width: 300px;
-  min-height: 300px;
   display: flex;
   align-items: center;
   justify-content: center;
+  min-width: 300px;
+  min-height: 300px;
 }
 
 .game-title {
@@ -289,17 +289,17 @@ watch(useWindowFocus(), (focused) => {
   gap: 10px;
 }
 
-.result-title {
+.outcome-title {
   color: #ff4757;
 }
 
-.result-title.won {
+.outcome-title.won {
   color: #2ed573;
 }
 
 .grid-frame {
-  background: #444444;
   padding: 10px;
+  background: #444444;
   border-radius: 4px;
   border: 1px solid #333333;
 }
@@ -312,19 +312,19 @@ watch(useWindowFocus(), (focused) => {
 }
 
 .cell {
-  width: 26px;
-  height: 26px;
-  background: #333333;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 26px;
+  height: 26px;
   font-weight: 900;
-  cursor: pointer;
   font-size: 16px;
+  background: #333333;
   border-top: 2px solid rgba(255, 255, 255, 0.2);
   border-left: 2px solid rgba(255, 255, 255, 0.2);
   border-bottom: 2px solid rgba(0, 0, 0, 0.5);
   border-right: 2px solid rgba(0, 0, 0, 0.5);
+  cursor: pointer;
 }
 
 .cell.revealed {
@@ -338,8 +338,8 @@ watch(useWindowFocus(), (focused) => {
 }
 
 .mines-label {
-  color: #ffd700;
   margin-bottom: 4px;
+  color: #ffd700;
 }
 
 .mines-value {
@@ -347,20 +347,20 @@ watch(useWindowFocus(), (focused) => {
   font-size: 38px;
 }
 
-.mines-divider {
+.score-divider {
   width: 100%;
   height: 1px;
-  background: var(--color-hairline);
   margin: 12px 0;
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .time-label {
-  color: var(--color-muted);
   margin-bottom: 4px;
+  color: #94a3b8;
 }
 
 .time-value {
-  color: var(--color-muted);
+  color: #94a3b8;
   font-size: 24px;
 }
 </style>

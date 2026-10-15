@@ -55,7 +55,7 @@ const projects = [
             <span class="project-name">{{ project.name }}</span>
             <span class="project-desc">{{ project.description }}</span>
           </span>
-          <svg class="project-arrow" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <svg class="project-row-arrow" viewBox="0 0 20 20" fill="none" aria-hidden="true">
             <path
               d="M4 10h11m0 0-4-4m4 4-4 4"
               stroke="currentColor"
@@ -79,7 +79,7 @@ const projects = [
 
 .page-subtitle {
   margin-bottom: 12px;
-  color: var(--color-muted);
+  color: #94a3b8;
 }
 
 .projects-page {
@@ -88,13 +88,13 @@ const projects = [
 }
 
 .project-panel {
-  width: 100%;
   display: flex;
   flex-direction: column;
+  width: 100%;
   margin-top: 16px;
   padding: 4px 32px;
-  border-radius: 16px;
   background: rgba(255, 255, 255, 0.03);
+  border-radius: 16px;
   border: 1px solid rgba(148, 163, 184, 0.2);
   box-shadow: 0 24px 50px rgba(4, 6, 16, 0.45);
 }
@@ -135,8 +135,8 @@ const projects = [
   top: 14px;
   bottom: 14px;
   width: 3px;
-  border-radius: 2px;
   background: #ffffff;
+  border-radius: 2px;
   opacity: 0;
   transition: opacity 0.2s ease;
 }
@@ -146,11 +146,11 @@ const projects = [
 }
 
 .project-logo {
+  flex-shrink: 0;
   width: 46px;
   height: 46px;
-  border-radius: 12px;
   object-fit: cover;
-  flex-shrink: 0;
+  border-radius: 12px;
   transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
@@ -159,22 +159,21 @@ const projects = [
 }
 
 .project-info {
-  min-width: 0;
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 4px;
+  min-width: 0;
 }
 
 .project-name {
-  color: #ffffff;
   font-size: 17px;
   font-weight: 700;
   letter-spacing: -0.01em;
 }
 
 .project-desc {
-  color: var(--color-muted);
+  color: #94a3b8;
   font-size: 15px;
   line-height: 1.5;
   transition: color 0.3s ease;
@@ -184,10 +183,10 @@ const projects = [
   color: #cbd5e1;
 }
 
-.project-arrow {
+.project-row-arrow {
+  flex-shrink: 0;
   width: 16px;
   height: 16px;
-  flex-shrink: 0;
   margin-right: 24px;
   color: #3a4f6a;
   opacity: 0;
@@ -198,10 +197,10 @@ const projects = [
     color 0.3s ease;
 }
 
-.project-row:hover .project-arrow {
+.project-row:hover .project-row-arrow {
+  color: #87cefa;
   opacity: 1;
   transform: translateX(0);
-  color: #87cefa;
 }
 
 @keyframes pull-up {
@@ -249,7 +248,7 @@ const projects = [
 }
 
 @media (width <= 480px) {
-  .project-arrow {
+  .project-row-arrow {
     display: none;
   }
 }

@@ -40,22 +40,15 @@
   src: url('/fonts/satoshi-900.woff2') format('woff2');
 }
 
-:root {
-  --color-muted: #94a3b8;
-  --color-glass: rgba(255, 255, 255, 0.05);
-  --color-hairline: rgba(255, 255, 255, 0.1);
-  --font-ui: 'Satoshi', sans-serif;
-}
-
 * {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
 }
 
 html {
+  background: #1a1c24;
   color-scheme: dark;
-  background-color: #1a1c24;
   scrollbar-gutter: stable;
 }
 
@@ -74,9 +67,9 @@ html {
 }
 
 body {
-  min-height: 100dvh;
   display: flex;
   flex-direction: column;
+  min-height: 100dvh;
   color: #ffffff;
   font-family: 'Andika', sans-serif;
 }
@@ -86,7 +79,6 @@ body::before {
   position: fixed;
   inset: 0;
   z-index: -1;
-  pointer-events: none;
   background-image:
     radial-gradient(farthest-side at 0% 0%, rgba(51, 124, 226, 0.25) 0, transparent 100%),
     radial-gradient(farthest-side at 100% 0%, rgba(30, 144, 255, 0.25) 0, transparent 100%),
@@ -94,6 +86,7 @@ body::before {
     radial-gradient(farthest-side at 50% 50%, rgba(58, 123, 213, 0.12) 0, transparent 100%),
     radial-gradient(farthest-side at 0% 100%, rgba(0, 123, 255, 0.07) 0, transparent 100%),
     radial-gradient(farthest-side at 100% 100%, rgba(58, 123, 213, 0.07) 0, transparent 100%);
+  pointer-events: none;
 }
 
 img {
@@ -115,7 +108,7 @@ a {
 
 a,
 button {
-  font-family: var(--font-ui);
+  font-family: 'Satoshi', sans-serif;
 }
 
 :focus-visible {
@@ -152,11 +145,11 @@ main:has(.home) {
 }
 
 .content-wrap {
-  width: min(90%, 800px);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 16px;
+  width: min(90%, 800px);
   text-align: center;
 }
 

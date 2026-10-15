@@ -174,7 +174,7 @@ onGameKey(ALPHABET, (event) => guessLetter(event.key.toUpperCase()));
 
       <div class="right-section" :class="{ faded: status === 'start' }">
         <div class="info-box danger-box">
-          <div class="label red-lbl">Wrong Guesses</div>
+          <div class="label danger-label">Wrong Guesses</div>
           <div class="pips-row">
             <span
               v-for="n in MAX_WRONG"
@@ -234,22 +234,22 @@ onGameKey(ALPHABET, (event) => guessLetter(event.key.toUpperCase()));
 
 .panel-divider {
   height: 1px;
-  background: rgba(255, 255, 255, 0.07);
   margin: 0 20px;
+  background: rgba(255, 255, 255, 0.07);
 }
 
 .pill {
+  display: inline-block;
+  padding: 4px 10px;
+  margin-bottom: 4px;
   font-size: 10px;
   font-weight: 700;
-  letter-spacing: 2px;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--color-muted);
+  color: #94a3b8;
   background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 4px 10px;
-  border-radius: 100px;
-  display: inline-block;
-  margin-bottom: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
 }
 
 .game-title {
@@ -258,9 +258,9 @@ onGameKey(ALPHABET, (event) => guessLetter(event.key.toUpperCase()));
 }
 
 .subtitle {
+  margin: 0 0 14px;
   color: #7c8ba1;
   font-size: 13px;
-  margin: 0 0 14px;
 }
 
 .word-input-row {
@@ -271,34 +271,34 @@ onGameKey(ALPHABET, (event) => guessLetter(event.key.toUpperCase()));
 
 .word-input {
   flex: 1;
-  background: var(--color-glass);
-  border: 1px solid var(--color-hairline);
-  border-radius: 10px;
+  min-width: 0;
+  padding: 11px 14px;
   color: #ffffff;
   font-size: 16px;
   font-weight: 700;
-  padding: 11px 14px;
-  letter-spacing: 2px;
-  min-width: 0;
+  letter-spacing: 0.125em;
   text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
 }
 
 .submit-btn {
-  background: #ffffff;
-  color: #000000;
-  border: none;
-  border-radius: 10px;
-  font-size: 13px;
-  font-weight: 900;
-  line-height: 1;
-  padding: 11px 18px;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: opacity 0.15s ease;
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  padding: 11px 18px;
+  color: #000000;
+  font-size: 13px;
+  font-weight: 900;
+  line-height: 1;
+  white-space: nowrap;
+  background: #ffffff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
 }
 
 .submit-btn:disabled {
@@ -311,17 +311,17 @@ onGameKey(ALPHABET, (event) => guessLetter(event.key.toUpperCase()));
 }
 
 .arrow-icon {
+  flex-shrink: 0;
   width: 16px;
   height: 16px;
-  flex-shrink: 0;
 }
 
 .gallows-section {
-  padding: 16px 20px 24px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 20px;
+  padding: 16px 20px 24px;
 }
 
 .gallows-svg {
@@ -332,12 +332,6 @@ onGameKey(ALPHABET, (event) => guessLetter(event.key.toUpperCase()));
 
 .part {
   animation: pop-in 0.15s ease-out;
-}
-
-@keyframes pop-in {
-  from {
-    opacity: 0;
-  }
 }
 
 .word-display {
@@ -368,8 +362,8 @@ onGameKey(ALPHABET, (event) => guessLetter(event.key.toUpperCase()));
 }
 
 .letter-slot.space {
-  border-bottom: none;
   min-width: 12px;
+  border-bottom: none;
 }
 
 .outcome-title {
@@ -382,11 +376,11 @@ onGameKey(ALPHABET, (event) => guessLetter(event.key.toUpperCase()));
 }
 
 .outcome-word {
+  margin: 0 0 24px;
   color: #7c8ba1;
   font-size: 11px;
-  letter-spacing: 3px;
+  letter-spacing: 0.27em;
   text-transform: uppercase;
-  margin: 0 0 24px;
 }
 
 .slide-up-enter-active {
@@ -401,8 +395,8 @@ onGameKey(ALPHABET, (event) => guessLetter(event.key.toUpperCase()));
 }
 
 .right-section {
-  transition: opacity 0.3s ease;
   padding-top: 1px;
+  transition: opacity 0.3s ease;
 }
 
 .right-section.faded {
@@ -416,11 +410,11 @@ onGameKey(ALPHABET, (event) => guessLetter(event.key.toUpperCase()));
 }
 
 .danger-box {
-  background: linear-gradient(135deg, color-mix(in srgb, #ff4757 7%, transparent), transparent);
-  border-color: color-mix(in srgb, #ff4757 18%, transparent);
+  background: linear-gradient(135deg, rgba(255, 71, 87, 0.07), transparent);
+  border-color: rgba(255, 71, 87, 0.18);
 }
 
-.red-lbl {
+.danger-label {
   color: #ff4757;
 }
 
@@ -432,9 +426,9 @@ onGameKey(ALPHABET, (event) => guessLetter(event.key.toUpperCase()));
 .pip {
   width: 11px;
   height: 11px;
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 50%;
-  background: var(--color-hairline);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   transition:
     background-color 0.25s ease,
     box-shadow 0.25s ease;
@@ -443,13 +437,12 @@ onGameKey(ALPHABET, (event) => guessLetter(event.key.toUpperCase()));
 .pip.dead {
   background: #ff4757;
   border-color: transparent;
-  box-shadow: 0 0 8px color-mix(in srgb, #ff4757 55%, transparent);
+  box-shadow: 0 0 8px rgba(255, 71, 87, 0.55);
 }
 
 .wrong-count {
   font-size: 42px;
   font-weight: 900;
-  color: #ffffff;
   line-height: 1;
 }
 
@@ -462,8 +455,8 @@ onGameKey(ALPHABET, (event) => guessLetter(event.key.toUpperCase()));
   display: flex;
   flex-wrap: wrap;
   gap: 5px;
-  min-height: 26px;
   align-items: center;
+  min-height: 26px;
 }
 
 .no-letters {
@@ -472,14 +465,14 @@ onGameKey(ALPHABET, (event) => guessLetter(event.key.toUpperCase()));
 }
 
 .wrong-chip {
-  background: color-mix(in srgb, #ff4757 8%, transparent);
-  border: 1px solid color-mix(in srgb, #ff4757 22%, transparent);
+  padding: 3px 8px;
   color: #ff4757;
   font-weight: 900;
   font-size: 11px;
-  padding: 3px 8px;
+  letter-spacing: 0.09em;
+  background: rgba(255, 71, 87, 0.08);
+  border: 1px solid rgba(255, 71, 87, 0.22);
   border-radius: 4px;
-  letter-spacing: 1px;
 }
 
 .keyboard-grid {
@@ -490,14 +483,14 @@ onGameKey(ALPHABET, (event) => guessLetter(event.key.toUpperCase()));
 
 .key-btn {
   aspect-ratio: 1;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 6px;
   color: #ffffff;
   font-size: 12px;
   font-weight: 700;
-  cursor: pointer;
   line-height: 1;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  cursor: pointer;
   transition: background-color 0.12s ease;
 }
 
@@ -506,18 +499,24 @@ onGameKey(ALPHABET, (event) => guessLetter(event.key.toUpperCase()));
 }
 
 .key-btn.correct {
-  background: color-mix(in srgb, #2ed573 13%, transparent);
-  border-color: color-mix(in srgb, #2ed573 30%, transparent);
   color: #2ed573;
+  background: rgba(46, 213, 115, 0.13);
+  border-color: rgba(46, 213, 115, 0.3);
 }
 
 .key-btn.wrong {
+  color: #2d3748;
   background: transparent;
   border-color: rgba(255, 255, 255, 0.03);
-  color: #2d3748;
 }
 
 .key-btn:disabled {
   cursor: default;
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+  }
 }
 </style>

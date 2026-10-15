@@ -20,7 +20,7 @@ watch(y, (now, prev) => {
 
 <template>
   <div class="nav-shell">
-    <header class="main-header" :class="{ minimized: isMinimized }" :data-show="shouldShow">
+    <header class="main-header" :class="{ minimized: isMinimized, hidden: !shouldShow }">
       <div class="nav-left">
         <RouterLink class="nav-brand" to="/" aria-label="Jones Jankovic — Home">
           <span class="nav-name">
@@ -91,14 +91,13 @@ watch(y, (now, prev) => {
 
 <style scoped>
 .nav-shell {
-  --ease: cubic-bezier(0.4, 0, 0.2, 1);
   position: fixed;
   top: 22px;
   left: 0;
   right: 0;
-  margin-inline: auto;
-  width: min(100% - 32px, 1080px);
   z-index: 1000;
+  width: min(100% - 32px, 1080px);
+  margin-inline: auto;
   pointer-events: none;
 }
 
@@ -113,9 +112,9 @@ watch(y, (now, prev) => {
   border-radius: 16px;
   pointer-events: auto;
   transition:
-    margin-inline 0.3s var(--ease),
-    padding 0.3s var(--ease),
-    transform 0.3s var(--ease),
+    margin-inline 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    padding 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
     background-color 0.15s ease,
     border-color 0.15s ease,
     box-shadow 0.15s ease;
@@ -123,7 +122,7 @@ watch(y, (now, prev) => {
 
 .main-header.minimized {
   padding-inline: 16px;
-  background-color: #1d1d20;
+  background: #1d1d20;
   border-color: #313135;
   box-shadow:
     rgba(24, 24, 27, 0.08) 0 0 0 1px,
@@ -131,21 +130,15 @@ watch(y, (now, prev) => {
     rgba(39, 39, 42, 0.08) 0 4px 6px -4px;
 }
 
-.main-header[data-show='false'] {
+.main-header.hidden {
   transform: translateY(calc(-100% - 46px));
-}
-
-@media (width > 960px) {
-  .main-header.minimized {
-    margin-inline: 8%;
-  }
 }
 
 .nav-left {
   display: flex;
   align-items: center;
   gap: 20px;
-  transition: margin-inline-start 0.3s var(--ease);
+  transition: margin-inline-start 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .main-header.minimized .nav-left {
@@ -157,8 +150,8 @@ watch(y, (now, prev) => {
   align-items: center;
   gap: 20px;
   transition:
-    gap 0.3s var(--ease),
-    margin-inline-end 0.3s var(--ease);
+    gap 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    margin-inline-end 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .main-header.minimized .nav-actions {
@@ -180,15 +173,14 @@ watch(y, (now, prev) => {
 }
 
 .nav-name {
-  display: inline-flex;
-  align-items: baseline;
   position: relative;
   top: -2px;
+  display: inline-flex;
+  align-items: baseline;
   font-family: 'Cherry Bomb One', sans-serif;
   font-size: 27px;
   font-weight: 400;
   line-height: 1;
-  color: #ffffff;
 }
 
 .name-anchor-first {
@@ -225,17 +217,6 @@ watch(y, (now, prev) => {
   transition-delay: calc(var(--offset) * 120ms + 40ms);
 }
 
-@media (hover: hover) {
-  .nav-brand:hover .name-segment {
-    grid-template-columns: 1fr;
-  }
-
-  .nav-brand:hover .name-letter {
-    opacity: 1;
-    transition-delay: calc(var(--offset) * 120ms + 40ms);
-  }
-}
-
 .glass-btn {
   display: inline-flex;
   align-items: center;
@@ -243,8 +224,8 @@ watch(y, (now, prev) => {
   padding: 6px 14px;
   font-size: 14px;
   color: rgba(255, 255, 255, 0.8);
-  background: var(--color-glass);
-  border: 1px solid var(--color-hairline);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 10px;
   transition:
     background-color 0.3s ease,
@@ -271,7 +252,6 @@ watch(y, (now, prev) => {
   flex-shrink: 0;
   width: 29px;
   height: 29px;
-  color: #ffffff;
   transition:
     opacity 0.3s ease,
     transform 0.3s ease;
@@ -285,6 +265,23 @@ watch(y, (now, prev) => {
 .nav-icon svg {
   width: 100%;
   height: 100%;
+}
+
+@media (width > 960px) {
+  .main-header.minimized {
+    margin-inline: 8%;
+  }
+}
+
+@media (hover: hover) {
+  .nav-brand:hover .name-segment {
+    grid-template-columns: 1fr;
+  }
+
+  .nav-brand:hover .name-letter {
+    opacity: 1;
+    transition-delay: calc(var(--offset) * 120ms + 40ms);
+  }
 }
 
 @media (width <= 720px) {

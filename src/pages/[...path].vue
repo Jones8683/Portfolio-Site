@@ -34,7 +34,7 @@ definePage({ meta: { title: 'Page Not Found' } });
 .not-found-subtitle {
   margin-top: -8px;
   margin-bottom: 10px;
-  color: var(--color-muted);
+  color: #94a3b8;
 }
 
 .back-link {
@@ -54,9 +54,9 @@ definePage({ meta: { title: 'Page Not Found' } });
 }
 
 .arrow-icon {
+  flex-shrink: 0;
   width: 16px;
   height: 16px;
-  flex-shrink: 0;
   transform: scaleX(-1);
 }
 </style>

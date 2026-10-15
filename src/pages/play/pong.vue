@@ -430,11 +430,11 @@ onScopeDispose(() => {
 
 <style scoped>
 .left-section {
-  width: 724px;
-  height: 524px;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 724px;
+  height: 524px;
 }
 
 .overlay-actions {
@@ -443,15 +443,15 @@ onScopeDispose(() => {
 }
 
 canvas {
-  background-color: #0d0d0d;
+  background: #0d0d0d;
   border-radius: 8px;
-  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.5);
   border: 1px solid #333333;
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.5);
 }
 
 .outcome {
-  color: var(--color-muted);
   margin-bottom: 20px;
+  color: #94a3b8;
   font-size: 14px;
   text-transform: uppercase;
 }

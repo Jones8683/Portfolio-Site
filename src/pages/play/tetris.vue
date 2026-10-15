@@ -670,7 +670,7 @@ watch(
   width: 100%;
   height: 1px;
   margin: 8px 0;
-  background: var(--color-hairline);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .info-box {
@@ -683,7 +683,7 @@ watch(
 }
 
 .game-canvas {
+  background: #0d0d0d;
   user-select: none;
-  background-color: #0d0d0d;
 }
 </style>
