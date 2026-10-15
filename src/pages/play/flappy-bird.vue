@@ -6,13 +6,6 @@ import GameControls from '@/components/GameControls.vue';
 
 definePage({ meta: { title: 'Flappy Bird' } });
 
-const highScore = useStorage('flappy-bird-best-score', 0);
-
-const canvas = useTemplateRef('canvas');
-const score = ref(0);
-const status = ref('start');
-const isPaused = ref(false);
-
 const WIDTH = 360;
 const HEIGHT = 568;
 const GROUND_Y = 480;
@@ -25,6 +18,46 @@ const PIPE_GAP = 120;
 const PIPE_INTERVAL_MS = 1200;
 const TARGET_FPS = 60;
 const STEP_MS = 1000 / TARGET_FPS;
+const CAP_HEIGHT = 26;
+const BODY_WIDTH = PIPE_WIDTH - 6;
+const CITY_TILE_WIDTH = 720;
+
+const CLOUDS = [
+  { ox: 30, y: 60, w: 80, h: 40 },
+  { ox: 200, y: 90, w: 64, h: 32 },
+  { ox: 310, y: 52, w: 72, h: 36 },
+];
+
+const BUILDINGS = [
+  { x: 0, w: 38, h: 90, hasWindows: true, style: 'wide' },
+  { x: 40, w: 22, h: 55, hasWindows: false, style: 'thin' },
+  { x: 64, w: 44, h: 130, hasWindows: true, style: 'tall' },
+  { x: 110, w: 28, h: 70, hasWindows: true, style: 'wide' },
+  { x: 140, w: 18, h: 48, hasWindows: false, style: 'thin' },
+  { x: 160, w: 50, h: 110, hasWindows: true, style: 'tall' },
+  { x: 212, w: 30, h: 65, hasWindows: true, style: 'wide' },
+  { x: 244, w: 20, h: 42, hasWindows: false, style: 'thin' },
+  { x: 266, w: 40, h: 95, hasWindows: true, style: 'wide' },
+  { x: 308, w: 24, h: 58, hasWindows: false, style: 'thin' },
+  { x: 334, w: 46, h: 120, hasWindows: true, style: 'tall' },
+  { x: 382, w: 28, h: 72, hasWindows: true, style: 'wide' },
+  { x: 412, w: 16, h: 44, hasWindows: false, style: 'thin' },
+  { x: 430, w: 42, h: 100, hasWindows: true, style: 'tall' },
+  { x: 474, w: 32, h: 60, hasWindows: true, style: 'wide' },
+  { x: 508, w: 20, h: 50, hasWindows: false, style: 'thin' },
+  { x: 530, w: 48, h: 115, hasWindows: true, style: 'tall' },
+  { x: 580, w: 26, h: 68, hasWindows: true, style: 'wide' },
+  { x: 608, w: 18, h: 40, hasWindows: false, style: 'thin' },
+  { x: 628, w: 44, h: 88, hasWindows: true, style: 'wide' },
+  { x: 674, w: 22, h: 54, hasWindows: false, style: 'thin' },
+  { x: 698, w: 22, h: 78, hasWindows: true, style: 'wide' },
+];
+
+const canvas = useTemplateRef('canvas');
+const status = ref('start');
+const isPaused = ref(false);
+const score = ref(0);
+const highScore = useStorage('flappy-bird-best-score', 0);
 
 let groundOffset = 0;
 let cityOffset = 0;
@@ -36,6 +69,8 @@ let lastPipeTime;
 let deathTimer;
 let wingFrame = 0;
 let pausedAt = 0;
+
+const { pause, resume } = useRafFn(frame, { immediate: false });
 
 function resetGame() {
   bird = { x: 80, y: GROUND_Y / 2, vy: 0, angle: 0 };
@@ -90,12 +125,6 @@ function drawSky() {
   ctx.fillRect(0, 0, WIDTH, GROUND_Y + 2);
 }
 
-const CLOUDS = [
-  { ox: 30, y: 60, w: 80, h: 40 },
-  { ox: 200, y: 90, w: 64, h: 32 },
-  { ox: 310, y: 52, w: 72, h: 36 },
-];
-
 function drawClouds() {
   ctx.fillStyle = '#ffffff';
   for (const cloud of CLOUDS) {
@@ -106,32 +135,6 @@ function drawClouds() {
     ctx.fillRect(x + cloud.w * 0.4, cloud.y, cloud.w * 0.4, cloud.h * 0.45);
   }
 }
-
-const CITY_TILE_WIDTH = 720;
-const BUILDINGS = [
-  { x: 0, w: 38, h: 90, hasWindows: true, style: 'wide' },
-  { x: 40, w: 22, h: 55, hasWindows: false, style: 'thin' },
-  { x: 64, w: 44, h: 130, hasWindows: true, style: 'tall' },
-  { x: 110, w: 28, h: 70, hasWindows: true, style: 'wide' },
-  { x: 140, w: 18, h: 48, hasWindows: false, style: 'thin' },
-  { x: 160, w: 50, h: 110, hasWindows: true, style: 'tall' },
-  { x: 212, w: 30, h: 65, hasWindows: true, style: 'wide' },
-  { x: 244, w: 20, h: 42, hasWindows: false, style: 'thin' },
-  { x: 266, w: 40, h: 95, hasWindows: true, style: 'wide' },
-  { x: 308, w: 24, h: 58, hasWindows: false, style: 'thin' },
-  { x: 334, w: 46, h: 120, hasWindows: true, style: 'tall' },
-  { x: 382, w: 28, h: 72, hasWindows: true, style: 'wide' },
-  { x: 412, w: 16, h: 44, hasWindows: false, style: 'thin' },
-  { x: 430, w: 42, h: 100, hasWindows: true, style: 'tall' },
-  { x: 474, w: 32, h: 60, hasWindows: true, style: 'wide' },
-  { x: 508, w: 20, h: 50, hasWindows: false, style: 'thin' },
-  { x: 530, w: 48, h: 115, hasWindows: true, style: 'tall' },
-  { x: 580, w: 26, h: 68, hasWindows: true, style: 'wide' },
-  { x: 608, w: 18, h: 40, hasWindows: false, style: 'thin' },
-  { x: 628, w: 44, h: 88, hasWindows: true, style: 'wide' },
-  { x: 674, w: 22, h: 54, hasWindows: false, style: 'thin' },
-  { x: 698, w: 22, h: 78, hasWindows: true, style: 'wide' },
-];
 
 function drawCity() {
   const offset = cityOffset % CITY_TILE_WIDTH;
@@ -217,9 +220,6 @@ function drawGround() {
   ctx.fillStyle = '#4a9c18';
   ctx.fillRect(0, GROUND_Y + 15, WIDTH, 3);
 }
-
-const CAP_HEIGHT = 26;
-const BODY_WIDTH = PIPE_WIDTH - 6;
 
 function drawPipeSegment(x, y, w, h, shadeW) {
   ctx.fillStyle = '#5dbe2b';
@@ -396,8 +396,6 @@ function frame({ delta, timestamp }) {
   render();
 }
 
-const { pause, resume } = useRafFn(frame, { immediate: false });
-
 function togglePause() {
   if (status.value !== 'playing') return;
   isPaused.value = !isPaused.value;
@@ -431,12 +429,13 @@ onGameKey(['Escape', 'p'], (event) => {
   togglePause();
 });
 
-watch(useWindowFocus(), (focused) => {
-  if (!focused && !isPaused.value) togglePause();
-});
 onGameKey([' ', 'ArrowUp', 'w'], (event) => {
   event.preventDefault();
   jump();
+});
+
+watch(useWindowFocus(), (focused) => {
+  if (!focused && !isPaused.value) togglePause();
 });
 
 watch(

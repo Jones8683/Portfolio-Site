@@ -9,7 +9,9 @@ const IDLE_GRACE_MS = 6000;
 const SEEK_TOLERANCE_MS = 1500;
 const REQUEST_TIMEOUT_MS = 8000;
 
-const position = (track) => (track.playing ? Date.now() - track.startedAt : track.progressMs);
+function position(track) {
+  return track.playing ? Date.now() - track.startedAt : track.progressMs;
+}
 
 export function useNowPlaying() {
   const track = shallowRef(null);
@@ -22,7 +24,7 @@ export function useNowPlaying() {
   let hasWarned = false;
   let isDisposed = false;
 
-  const showTrack = (data) => {
+  function showTrack(data) {
     clearTimeout(graceTimer);
     graceTimer = undefined;
 
@@ -39,7 +41,7 @@ export function useNowPlaying() {
 
     if (unchanged) return;
 
-    trackId += 1;
+    trackId++;
     track.value = {
       id: trackId,
       title: data.track,
@@ -51,9 +53,9 @@ export function useNowPlaying() {
       startedAt,
       playing: data.isPlaying,
     };
-  };
+  }
 
-  const hideTrack = () => {
+  function hideTrack() {
     if (track.value === null || graceTimer !== undefined) return;
 
     isStale.value = true;
@@ -62,20 +64,20 @@ export function useNowPlaying() {
       isStale.value = false;
       track.value = null;
     }, IDLE_GRACE_MS);
-  };
+  }
 
-  const nextDelay = () => {
+  function nextDelay() {
     if (track.value === null || isStale.value || !track.value.playing) return POLL_MS;
 
     const remaining = track.value.durationMs - (Date.now() - track.value.startedAt);
     return Math.min(POLL_MS, Math.max(MIN_POLL_MS, remaining + TRACK_END_MARGIN_MS));
-  };
+  }
 
-  const schedule = () => {
+  function schedule() {
     clearTimeout(pollTimer);
     if (isDisposed || visibility.value === 'hidden') return;
     pollTimer = setTimeout(poll, nextDelay());
-  };
+  }
 
   async function poll() {
     try {

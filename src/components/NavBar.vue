@@ -2,7 +2,10 @@
 import { computed, ref, watch } from 'vue';
 import { useWindowScroll } from '@vueuse/core';
 
-const toLetters = (word) => [...word].map((char, i) => ({ char, offset: i / (word.length - 1) }));
+function toLetters(word) {
+  return [...word].map((char, i) => ({ char, offset: i / (word.length - 1) }));
+}
+
 const jonesLetters = toLetters('ones');
 const jankovicLetters = toLetters('ovic');
 

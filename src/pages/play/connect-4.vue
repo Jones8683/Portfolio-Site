@@ -16,9 +16,6 @@ const DIRECTIONS = [
   [1, -1],
 ];
 
-const createBoard = () =>
-  Array.from({ length: ROWS }, () => Array.from({ length: COLS }, () => null));
-
 const status = ref('playing');
 const board = ref(createBoard());
 const currentPlayer = ref(1);
@@ -37,35 +34,67 @@ const { start: finishMove } = useTimeoutFn(
   { immediate: false },
 );
 
-const getGhostRow = (col) => {
-  for (let r = ROWS - 1; r >= 0; r--) {
-    if (!board.value[r][col]) return r;
-  }
-  return null;
-};
-
 const columns = computed(() =>
   Array.from({ length: COLS }, (_, col) =>
     Array.from({ length: ROWS }, (__, row) => ({ row, value: board.value[row][col] })),
   ),
 );
 
-const isGhostCell = (r, c) => {
+function createBoard() {
+  return Array.from({ length: ROWS }, () => Array.from({ length: COLS }, () => null));
+}
+
+function getGhostRow(col) {
+  for (let r = ROWS - 1; r >= 0; r--) {
+    if (!board.value[r][col]) return r;
+  }
+  return null;
+}
+
+function isColFull(col) {
+  return getGhostRow(col) === null;
+}
+
+function isGhostCell(r, c) {
   if (status.value !== 'playing' || isProcessing.value) return false;
   return hoveredCol.value === c && getGhostRow(c) === r;
-};
+}
 
-const isDropTarget = (r, c) => droppingCell.value?.row === r && droppingCell.value?.col === c;
+function isDropTarget(r, c) {
+  return droppingCell.value?.row === r && droppingCell.value?.col === c;
+}
 
-const getDropStyle = (r, c) => {
+function getDropStyle(r, c) {
   if (!isDropTarget(r, c)) return {};
   return {
     '--drop-dist': `-${r * CELL_SIZE || 30}px`,
     '--drop-dur': `${r === 0 ? 0.1 : 0.08 + Math.sqrt(r) * 0.09}s`,
   };
-};
+}
 
-const makeMove = (col) => {
+function isWinningCell(r, c) {
+  return winningCells.value.some(([wr, wc]) => wr === r && wc === c);
+}
+
+function checkWinner(row, col) {
+  const player = board.value[row][col];
+
+  function runFrom(dr, dc) {
+    const cells = [];
+    for (let r = row + dr, c = col + dc; board.value[r]?.[c] === player; r += dr, c += dc) {
+      cells.push([r, c]);
+    }
+    return cells;
+  }
+
+  for (const [dr, dc] of DIRECTIONS) {
+    const cells = [[row, col], ...runFrom(dr, dc), ...runFrom(-dr, -dc)];
+    if (cells.length >= 4) return cells;
+  }
+  return null;
+}
+
+function makeMove(col) {
   if (status.value !== 'playing' || isProcessing.value) return;
 
   const row = getGhostRow(col);
@@ -88,38 +117,17 @@ const makeMove = (col) => {
   }
 
   finishMove();
-};
+}
 
-const checkWinner = (row, col) => {
-  const player = board.value[row][col];
-  const runFrom = (dr, dc) => {
-    const cells = [];
-    for (let r = row + dr, c = col + dc; board.value[r]?.[c] === player; r += dr, c += dc) {
-      cells.push([r, c]);
-    }
-    return cells;
-  };
-
-  for (const [dr, dc] of DIRECTIONS) {
-    const cells = [[row, col], ...runFrom(dr, dc), ...runFrom(-dr, -dc)];
-    if (cells.length >= 4) return cells;
-  }
-  return null;
-};
-
-const isWinningCell = (r, c) => winningCells.value.some(([wr, wc]) => wr === r && wc === c);
-
-const isColFull = (col) => getGhostRow(col) === null;
-
-const resetGame = () => {
+function resetGame() {
+  status.value = 'playing';
   board.value = createBoard();
   currentPlayer.value = 1;
   winner.value = null;
-  status.value = 'playing';
   winningCells.value = [];
   droppingCell.value = null;
   isProcessing.value = false;
-};
+}
 
 onGameKey(['r'], resetGame);
 </script>

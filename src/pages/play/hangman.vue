@@ -5,10 +5,6 @@ import GameControls from '@/components/GameControls.vue';
 
 definePage({ meta: { title: 'Hangman' } });
 
-const status = ref('start');
-const secretWord = ref('');
-const inputBuffer = ref('');
-const guessedLetters = ref(new Set());
 const MAX_WRONG = 6;
 const ALPHABET = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'];
 const LIMBS = [
@@ -18,6 +14,11 @@ const LIMBS = [
   'M148 136L124 178',
   'M148 136L172 178',
 ];
+
+const status = ref('start');
+const secretWord = ref('');
+const inputBuffer = ref('');
+const guessedLetters = ref(new Set());
 
 const maskedWord = computed(() =>
   [...secretWord.value].map((char) =>

@@ -6,8 +6,6 @@ import GameControls from '@/components/GameControls.vue';
 
 definePage({ meta: { title: 'Minesweeper' } });
 
-const range = (n) => Array.from({ length: n }, (_, i) => i);
-
 const NEIGHBORS = [
   [-1, -1],
   [0, -1],
@@ -25,18 +23,6 @@ const DIFFICULTIES = {
   hard: { rows: 20, cols: 24, mines: 99 },
 };
 
-const grid = ref([]);
-const status = ref('start');
-const isWon = ref(false);
-const difficulty = ref(DIFFICULTIES.medium);
-const timer = ref(0);
-const { resume: startTimer, pause: stopTimer } = useIntervalFn(() => timer.value++, 1000, {
-  immediate: false,
-});
-const flagsPlaced = ref(0);
-const isPaused = ref(false);
-let isFirstClick = true;
-
 const NUMBER_COLORS = [
   null,
   '#5c5cff',
@@ -49,11 +35,31 @@ const NUMBER_COLORS = [
   '#888888',
 ];
 
+const status = ref('start');
+const isWon = ref(false);
+const isPaused = ref(false);
+const difficulty = ref(DIFFICULTIES.medium);
+const grid = ref(createGrid(difficulty.value));
+const flagsPlaced = ref(0);
+const timer = ref(0);
+const { resume: startTimer, pause: stopTimer } = useIntervalFn(() => timer.value++, 1000, {
+  immediate: false,
+});
+let isFirstClick = true;
+
 const formattedTime = computed(() => {
   const minutes = Math.floor(timer.value / 60);
   const seconds = timer.value % 60;
   return `${minutes}:${seconds.toString().padStart(2, '0')}`;
 });
+
+const gridStyle = computed(() => ({
+  gridTemplateColumns: `repeat(${difficulty.value.cols}, 1fr)`,
+}));
+
+function range(n) {
+  return Array.from({ length: n }, (_, i) => i);
+}
 
 function createGrid({ rows, cols }) {
   return range(rows).map((y) =>
@@ -88,21 +94,9 @@ function startGame(level) {
   resetBoard();
 }
 
-function placeMines(safeX, safeY) {
-  let minesToPlace = difficulty.value.mines;
-  while (minesToPlace > 0) {
-    const y = Math.floor(Math.random() * difficulty.value.rows);
-    const x = Math.floor(Math.random() * difficulty.value.cols);
-    if (grid.value[y][x].isMine) continue;
-    if (Math.abs(x - safeX) <= 1 && Math.abs(y - safeY) <= 1) continue;
-    grid.value[y][x].isMine = true;
-    minesToPlace--;
-  }
-  calculateNumbers();
+function inBounds(x, y) {
+  return x >= 0 && x < difficulty.value.cols && y >= 0 && y < difficulty.value.rows;
 }
-
-const inBounds = (x, y) =>
-  x >= 0 && x < difficulty.value.cols && y >= 0 && y < difficulty.value.rows;
 
 function calculateNumbers() {
   for (let y = 0; y < difficulty.value.rows; y++) {
@@ -115,24 +109,17 @@ function calculateNumbers() {
   }
 }
 
-function handleLeftClick(cell) {
-  if (status.value !== 'playing' || isPaused.value || cell.isRevealed || cell.isFlagged) return;
-  if (isFirstClick) {
-    placeMines(cell.x, cell.y);
-    isFirstClick = false;
-    startTimer();
+function placeMines(safeX, safeY) {
+  let minesToPlace = difficulty.value.mines;
+  while (minesToPlace > 0) {
+    const y = Math.floor(Math.random() * difficulty.value.rows);
+    const x = Math.floor(Math.random() * difficulty.value.cols);
+    if (grid.value[y][x].isMine) continue;
+    if (Math.abs(x - safeX) <= 1 && Math.abs(y - safeY) <= 1) continue;
+    grid.value[y][x].isMine = true;
+    minesToPlace--;
   }
-  if (cell.isMine) gameOver(false);
-  else {
-    revealCell(cell.x, cell.y);
-    checkWin();
-  }
-}
-
-function handleRightClick(cell) {
-  if (status.value !== 'playing' || isPaused.value || cell.isRevealed) return;
-  cell.isFlagged = !cell.isFlagged;
-  flagsPlaced.value += cell.isFlagged ? 1 : -1;
+  calculateNumbers();
 }
 
 function revealCell(startX, startY) {
@@ -152,20 +139,41 @@ function revealCell(startX, startY) {
   }
 }
 
-function checkWin() {
-  const revealedCount = grid.value.flat().filter((cell) => cell.isRevealed).length;
-  if (difficulty.value.rows * difficulty.value.cols - revealedCount === difficulty.value.mines)
-    gameOver(true);
-}
-
 function gameOver(won) {
   stopTimer();
   status.value = 'over';
   isWon.value = won;
-  if (!won)
-    grid.value.flat().forEach((cell) => {
-      if (cell.isMine) cell.isRevealed = true;
-    });
+  if (won) return;
+  for (const cell of grid.value.flat()) {
+    if (cell.isMine) cell.isRevealed = true;
+  }
+}
+
+function checkWin() {
+  const { rows, cols, mines } = difficulty.value;
+  const revealedCount = grid.value.flat().filter((cell) => cell.isRevealed).length;
+  if (rows * cols - revealedCount === mines) gameOver(true);
+}
+
+function handleLeftClick(cell) {
+  if (status.value !== 'playing' || isPaused.value || cell.isRevealed || cell.isFlagged) return;
+  if (isFirstClick) {
+    placeMines(cell.x, cell.y);
+    isFirstClick = false;
+    startTimer();
+  }
+  if (cell.isMine) {
+    gameOver(false);
+  } else {
+    revealCell(cell.x, cell.y);
+    checkWin();
+  }
+}
+
+function handleRightClick(cell) {
+  if (status.value !== 'playing' || isPaused.value || cell.isRevealed) return;
+  cell.isFlagged = !cell.isFlagged;
+  flagsPlaced.value += cell.isFlagged ? 1 : -1;
 }
 
 function togglePause() {
@@ -184,12 +192,6 @@ onGameKey(['Escape', 'p'], (event) => {
 watch(useWindowFocus(), (focused) => {
   if (!focused && !isPaused.value) togglePause();
 });
-
-grid.value = createGrid(difficulty.value);
-
-const gridStyle = computed(() => ({
-  gridTemplateColumns: `repeat(${difficulty.value.cols}, 1fr)`,
-}));
 </script>
 
 <template>

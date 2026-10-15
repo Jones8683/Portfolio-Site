@@ -10,13 +10,15 @@ const iframe = useTemplateRef('iframe');
 const score = ref(0);
 const highScore = useStorage('2048-best-score', 0);
 
-const focusIframe = () => iframe.value?.focus();
+function focusIframe() {
+  iframe.value?.focus();
+}
 
-const handleMessage = ({ source, data }) => {
+function handleMessage({ source, data }) {
   if (source !== iframe.value?.contentWindow || data?.type !== '2048-update') return;
   score.value = data.score;
   highScore.value = Math.max(highScore.value, data.score);
-};
+}
 
 useEventListener(window, 'message', handleMessage);
 </script>

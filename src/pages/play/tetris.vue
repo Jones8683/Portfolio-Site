@@ -6,55 +6,19 @@ import GameControls from '@/components/GameControls.vue';
 
 definePage({ meta: { title: 'Tetris' } });
 
-const gameCanvas = useTemplateRef('gameCanvas');
-const nextCanvas = useTemplateRef('nextCanvas');
-const holdCanvas = useTemplateRef('holdCanvas');
-const score = ref(0);
-const status = ref('playing');
-const isPaused = ref(false);
-
-let ctx;
-let nextCtx;
-let holdCtx;
-let animationFrame = 0;
-
 const BLOCK_SIZE = 25;
 const COLORS = [null, '#0dc2ff', '#3877ff', '#ff8e0d', '#ffe138', '#0dff72', '#ff0d72', '#f538ff'];
-
-const arena = createMatrix(12, 20);
-
-const highScore = useStorage('tetris-best-score', 0);
-
-const player = {
-  pos: { x: 0, y: 0 },
-  matrix: null,
-  lines: 0,
-  next: null,
-  hold: null,
-  canHold: true,
-  rotation: 0,
-};
-
-let dropCounter = 0;
-let dropInterval = 1000;
-let lockDelayCounter = 0;
-let lockMovesCounter = 0;
 const LOCK_DELAY_MS = 500;
 const MAX_LOCK_MOVES = 15;
-let isLanded = false;
-
 const SHIFT_DELAY_MS = 170;
 const SHIFT_REPEAT_MS = 33;
 const SOFT_DROP_REPEAT_MS = 30;
-const timers = { left: 0, right: 0, softDrop: 0 };
+const LINE_SCORES = [0, 100, 300, 500, 800];
 
-let hardDropEffect = { alpha: 0, trails: [] };
-
-let piecesBag = [];
-
-function createMatrix(w, h) {
-  return Array.from({ length: h }, () => Array.from({ length: w }, () => 0));
-}
+const GRAVITY_BY_LEVEL = [
+  0, 0.01667, 0.021017, 0.026977, 0.035256, 0.04693, 0.06361, 0.0879, 0.1236, 0.1775, 0.2598, 0.388,
+  0.59, 0.92, 1.46, 2.36, 3.91, 6.61, 11.43, 20.0,
+];
 
 const PIECES = {
   I: [
@@ -94,218 +58,7 @@ const PIECES = {
   ],
 };
 
-function createPiece(type) {
-  return structuredClone(PIECES[type]);
-}
-
-function getNextPiece() {
-  if (piecesBag.length === 0) {
-    piecesBag = ['I', 'L', 'J', 'O', 'Z', 'S', 'T'];
-    for (let i = piecesBag.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [piecesBag[i], piecesBag[j]] = [piecesBag[j], piecesBag[i]];
-    }
-  }
-  return createPiece(piecesBag.pop());
-}
-
-function draw() {
-  ctx.fillStyle = '#0d0d0d';
-  ctx.fillRect(0, 0, arena[0].length, arena.length);
-
-  if (hardDropEffect.alpha > 0) {
-    hardDropEffect.trails.forEach((trail) => {
-      const gradient = ctx.createLinearGradient(0, trail.y, 0, trail.y + trail.h);
-
-      let fadeStop = 0;
-      if (trail.h > 0) {
-        fadeStop = Math.min(3, trail.h) / trail.h;
-      }
-
-      gradient.addColorStop(0, `rgba(255, 255, 255, 0)`);
-      if (fadeStop > 0 && fadeStop < 1) {
-        gradient.addColorStop(fadeStop, `rgba(255, 255, 255, ${hardDropEffect.alpha})`);
-      }
-      gradient.addColorStop(1, `rgba(255, 255, 255, ${hardDropEffect.alpha})`);
-
-      ctx.fillStyle = gradient;
-      ctx.fillRect(trail.x, trail.y, 1, trail.h);
-    });
-
-    hardDropEffect.alpha -= 0.08;
-  }
-
-  drawMatrix(arena, { x: 0, y: 0 }, ctx);
-
-  drawMatrix(player.matrix, { x: player.pos.x, y: getGhostY() }, ctx, true);
-  drawMatrix(player.matrix, player.pos, ctx, false);
-}
-
-function drawMatrix(matrix, offset, target, isGhost = false) {
-  matrix.forEach((row, y) => {
-    row.forEach((value, x) => {
-      if (value !== 0) {
-        const bx = x + offset.x;
-        const by = y + offset.y;
-
-        if (isGhost) {
-          target.fillStyle = 'rgba(255, 255, 255, 0.1)';
-          target.fillRect(bx, by, 1, 1);
-          return;
-        }
-
-        target.fillStyle = COLORS[value];
-        target.fillRect(bx, by, 1, 1);
-
-        if (isLanded && target === ctx && matrix === player.matrix) {
-          const alpha = 0.3 + 0.3 * Math.sin(animationFrame * 0.08);
-          target.fillStyle = `rgba(0, 0, 0, ${alpha})`;
-          target.fillRect(bx, by, 1, 1);
-        }
-
-        target.fillStyle = 'rgba(255, 255, 255, 0.4)';
-        target.fillRect(bx, by, 1, 0.15);
-        target.fillRect(bx, by, 0.15, 1);
-        target.fillStyle = 'rgba(0, 0, 0, 0.4)';
-        target.fillRect(bx, by + 0.85, 1, 0.15);
-        target.fillRect(bx + 0.85, by, 0.15, 1);
-        target.fillStyle = 'rgba(0, 0, 0, 0.1)';
-        target.fillRect(bx + 0.2, by + 0.2, 0.6, 0.6);
-      }
-    });
-  });
-}
-
-function drawPreview(target, matrix) {
-  target.clearRect(0, 0, 4, 4);
-  if (!matrix) return;
-  const offsetX = (4 - matrix[0].length) / 2;
-  const offsetY = (4 - matrix.length) / 2;
-  drawMatrix(matrix, { x: offsetX, y: offsetY }, target);
-}
-
-function getGhostY() {
-  const pos = { ...player.pos };
-  while (!collide({ pos, matrix: player.matrix })) pos.y++;
-  return pos.y - 1;
-}
-
-function collide(piece) {
-  const { matrix, pos } = piece;
-  for (let y = 0; y < matrix.length; ++y) {
-    for (let x = 0; x < matrix[y].length; ++x) {
-      if (matrix[y][x] !== 0 && arena[y + pos.y]?.[x + pos.x] !== 0) {
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
-const LINE_SCORES = [0, 100, 300, 500, 800];
-
-function arenaSweep() {
-  let rowCount = 0;
-  outer: for (let y = arena.length - 1; y >= 0; --y) {
-    for (let x = 0; x < arena[y].length; ++x) {
-      if (arena[y][x] === 0) continue outer;
-    }
-    const row = arena.splice(y, 1)[0].fill(0);
-    arena.unshift(row);
-    ++y;
-    rowCount++;
-  }
-
-  const level = Math.floor(player.lines / 10) + 1;
-  score.value += LINE_SCORES[rowCount] * level;
-  player.lines += rowCount;
-}
-
-function merge() {
-  player.matrix.forEach((row, y) => {
-    row.forEach((value, x) => {
-      if (value !== 0) arena[y + player.pos.y][x + player.pos.x] = value;
-    });
-  });
-}
-
-function playerDrop() {
-  player.pos.y++;
-  if (collide(player)) {
-    player.pos.y--;
-    return false;
-  }
-  dropCounter = 0;
-  lockDelayCounter = 0;
-  lockMovesCounter = 0;
-  return true;
-}
-
-function playerLock() {
-  merge();
-  arenaSweep();
-  updateScore();
-  playerReset();
-  player.canHold = true;
-  dropCounter = 0;
-  lockDelayCounter = 0;
-  lockMovesCounter = 0;
-}
-
-function playerHardDrop() {
-  const startY = player.pos.y;
-  const ghostY = getGhostY();
-  const trails = [];
-
-  for (let x = 0; x < player.matrix[0].length; x++) {
-    const topY = player.matrix.findIndex((row) => row[x] !== 0);
-    if (topY !== -1) {
-      trails.push({ x: player.pos.x + x, y: startY + topY, h: ghostY - startY });
-    }
-  }
-
-  score.value += (ghostY - startY) * 2;
-  player.pos.y = ghostY;
-  hardDropEffect = { alpha: 0.4, trails };
-  playerLock();
-}
-
-function playerMove(dir) {
-  player.pos.x += dir;
-  if (collide(player)) {
-    player.pos.x -= dir;
-    return false;
-  }
-  refreshLockDelay();
-  return true;
-}
-
-function refreshLockDelay() {
-  player.pos.y++;
-  if (collide(player) && lockMovesCounter < MAX_LOCK_MOVES) {
-    lockDelayCounter = 0;
-    lockMovesCounter++;
-  }
-  player.pos.y--;
-}
-
-function centerPiece() {
-  player.pos.y = 0;
-  player.pos.x = Math.floor(arena[0].length / 2) - Math.floor(player.matrix[0].length / 2);
-  player.rotation = 0;
-}
-
-function playerReset() {
-  if (player.next === null) player.next = getNextPiece();
-  player.matrix = player.next;
-  player.next = getNextPiece();
-  drawPreview(nextCtx, player.next);
-  centerPiece();
-  if (collide(player)) {
-    status.value = 'over';
-    pause();
-  }
-}
+const PIECE_TYPES = [null, 'I', 'J', 'L', 'O', 'S', 'Z', 'T'];
 
 const KICKS_JLSTZ = [
   [
@@ -369,6 +122,293 @@ const KICKS_I = [
   ],
 ];
 
+const gameCanvas = useTemplateRef('gameCanvas');
+const nextCanvas = useTemplateRef('nextCanvas');
+const holdCanvas = useTemplateRef('holdCanvas');
+const status = ref('playing');
+const isPaused = ref(false);
+const score = ref(0);
+const highScore = useStorage('tetris-best-score', 0);
+
+let ctx;
+let nextCtx;
+let holdCtx;
+let animationFrame = 0;
+let dropCounter = 0;
+let dropInterval = 1000;
+let lockDelayCounter = 0;
+let lockMovesCounter = 0;
+let isLanded = false;
+let hardDropEffect = { alpha: 0, trails: [] };
+let piecesBag = [];
+
+const arena = createMatrix(12, 20);
+const player = {
+  pos: { x: 0, y: 0 },
+  matrix: null,
+  lines: 0,
+  next: null,
+  hold: null,
+  canHold: true,
+  rotation: 0,
+};
+const timers = { left: 0, right: 0, softDrop: 0 };
+
+const keys = useMagicKeys({
+  passive: false,
+  onEventFired: (event) => {
+    if (['ArrowLeft', 'ArrowRight', 'ArrowDown', 'ArrowUp', 'Space'].includes(event.code)) {
+      event.preventDefault();
+    }
+  },
+});
+const isModifierHeld = computed(() => keys.ctrl.value || keys.meta.value || keys.alt.value);
+const held = {
+  left: isHeld('ArrowLeft', 'KeyA'),
+  right: isHeld('ArrowRight', 'KeyD'),
+  softDrop: isHeld('ArrowDown', 'KeyS'),
+};
+const HELD_ACTIONS = { left: () => playerMove(-1), right: () => playerMove(1), softDrop };
+
+const { pause, resume } = useRafFn(update, { immediate: false });
+
+function createMatrix(width, height) {
+  return Array.from({ length: height }, () => Array.from({ length: width }, () => 0));
+}
+
+function isHeld(...names) {
+  return computed(() => !isModifierHeld.value && names.some((name) => keys[name].value));
+}
+
+function isPlaying() {
+  return status.value === 'playing' && !isPaused.value;
+}
+
+function createPiece(type) {
+  return structuredClone(PIECES[type]);
+}
+
+function getNextPiece() {
+  if (piecesBag.length === 0) {
+    piecesBag = ['I', 'L', 'J', 'O', 'Z', 'S', 'T'];
+    for (let i = piecesBag.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [piecesBag[i], piecesBag[j]] = [piecesBag[j], piecesBag[i]];
+    }
+  }
+  return createPiece(piecesBag.pop());
+}
+
+function getPieceType(matrix) {
+  const value = matrix.flat().find((v) => v !== 0);
+  return PIECE_TYPES[value];
+}
+
+function collide(piece) {
+  const { matrix, pos } = piece;
+  for (let y = 0; y < matrix.length; y++) {
+    for (let x = 0; x < matrix[y].length; x++) {
+      if (matrix[y][x] !== 0 && arena[y + pos.y]?.[x + pos.x] !== 0) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+function getGhostY() {
+  const pos = { ...player.pos };
+  while (!collide({ pos, matrix: player.matrix })) pos.y++;
+  return pos.y - 1;
+}
+
+function rotate(matrix, dir) {
+  for (let y = 0; y < matrix.length; y++) {
+    for (let x = 0; x < y; x++) {
+      [matrix[x][y], matrix[y][x]] = [matrix[y][x], matrix[x][y]];
+    }
+  }
+  if (dir > 0) for (const row of matrix) row.reverse();
+  else matrix.reverse();
+}
+
+function drawMatrix(matrix, offset, target, isGhost = false) {
+  for (const [y, row] of matrix.entries()) {
+    for (const [x, value] of row.entries()) {
+      if (value === 0) continue;
+
+      const bx = x + offset.x;
+      const by = y + offset.y;
+
+      if (isGhost) {
+        target.fillStyle = 'rgba(255, 255, 255, 0.1)';
+        target.fillRect(bx, by, 1, 1);
+        continue;
+      }
+
+      target.fillStyle = COLORS[value];
+      target.fillRect(bx, by, 1, 1);
+
+      if (isLanded && target === ctx && matrix === player.matrix) {
+        const alpha = 0.3 + 0.3 * Math.sin(animationFrame * 0.08);
+        target.fillStyle = `rgba(0, 0, 0, ${alpha})`;
+        target.fillRect(bx, by, 1, 1);
+      }
+
+      target.fillStyle = 'rgba(255, 255, 255, 0.4)';
+      target.fillRect(bx, by, 1, 0.15);
+      target.fillRect(bx, by, 0.15, 1);
+      target.fillStyle = 'rgba(0, 0, 0, 0.4)';
+      target.fillRect(bx, by + 0.85, 1, 0.15);
+      target.fillRect(bx + 0.85, by, 0.15, 1);
+      target.fillStyle = 'rgba(0, 0, 0, 0.1)';
+      target.fillRect(bx + 0.2, by + 0.2, 0.6, 0.6);
+    }
+  }
+}
+
+function drawPreview(target, matrix) {
+  target.clearRect(0, 0, 4, 4);
+  if (!matrix) return;
+  const offsetX = (4 - matrix[0].length) / 2;
+  const offsetY = (4 - matrix.length) / 2;
+  drawMatrix(matrix, { x: offsetX, y: offsetY }, target);
+}
+
+function draw() {
+  ctx.fillStyle = '#0d0d0d';
+  ctx.fillRect(0, 0, arena[0].length, arena.length);
+
+  if (hardDropEffect.alpha > 0) {
+    for (const trail of hardDropEffect.trails) {
+      const gradient = ctx.createLinearGradient(0, trail.y, 0, trail.y + trail.h);
+
+      let fadeStop = 0;
+      if (trail.h > 0) {
+        fadeStop = Math.min(3, trail.h) / trail.h;
+      }
+
+      gradient.addColorStop(0, 'rgba(255, 255, 255, 0)');
+      if (fadeStop > 0 && fadeStop < 1) {
+        gradient.addColorStop(fadeStop, `rgba(255, 255, 255, ${hardDropEffect.alpha})`);
+      }
+      gradient.addColorStop(1, `rgba(255, 255, 255, ${hardDropEffect.alpha})`);
+
+      ctx.fillStyle = gradient;
+      ctx.fillRect(trail.x, trail.y, 1, trail.h);
+    }
+
+    hardDropEffect.alpha -= 0.08;
+  }
+
+  drawMatrix(arena, { x: 0, y: 0 }, ctx);
+
+  drawMatrix(player.matrix, { x: player.pos.x, y: getGhostY() }, ctx, true);
+  drawMatrix(player.matrix, player.pos, ctx, false);
+}
+
+function setupCanvas(canvas, width, height) {
+  const ratio = window.devicePixelRatio;
+  canvas.width = width * ratio;
+  canvas.height = height * ratio;
+  canvas.style.width = `${width}px`;
+  canvas.style.height = `${height}px`;
+  const canvasCtx = canvas.getContext('2d');
+  canvasCtx.scale(BLOCK_SIZE * ratio, BLOCK_SIZE * ratio);
+  return canvasCtx;
+}
+
+function updateScore() {
+  highScore.value = Math.max(highScore.value, score.value);
+  const level = Math.min(Math.floor(player.lines / 10) + 1, GRAVITY_BY_LEVEL.length - 1);
+  dropInterval = 1000 / (60 * GRAVITY_BY_LEVEL[level]);
+}
+
+function arenaSweep() {
+  let rowCount = 0;
+  outer: for (let y = arena.length - 1; y >= 0; y--) {
+    for (let x = 0; x < arena[y].length; x++) {
+      if (arena[y][x] === 0) continue outer;
+    }
+    const row = arena.splice(y, 1)[0].fill(0);
+    arena.unshift(row);
+    y++;
+    rowCount++;
+  }
+
+  const level = Math.floor(player.lines / 10) + 1;
+  score.value += LINE_SCORES[rowCount] * level;
+  player.lines += rowCount;
+}
+
+function merge() {
+  for (const [y, row] of player.matrix.entries()) {
+    for (const [x, value] of row.entries()) {
+      if (value !== 0) arena[y + player.pos.y][x + player.pos.x] = value;
+    }
+  }
+}
+
+function centerPiece() {
+  player.pos.y = 0;
+  player.pos.x = Math.floor(arena[0].length / 2) - Math.floor(player.matrix[0].length / 2);
+  player.rotation = 0;
+}
+
+function playerReset() {
+  if (player.next === null) player.next = getNextPiece();
+  player.matrix = player.next;
+  player.next = getNextPiece();
+  drawPreview(nextCtx, player.next);
+  centerPiece();
+  if (collide(player)) {
+    status.value = 'over';
+    pause();
+  }
+}
+
+function playerLock() {
+  merge();
+  arenaSweep();
+  updateScore();
+  playerReset();
+  player.canHold = true;
+  dropCounter = 0;
+  lockDelayCounter = 0;
+  lockMovesCounter = 0;
+}
+
+function playerDrop() {
+  player.pos.y++;
+  if (collide(player)) {
+    player.pos.y--;
+    return false;
+  }
+  dropCounter = 0;
+  lockDelayCounter = 0;
+  lockMovesCounter = 0;
+  return true;
+}
+
+function refreshLockDelay() {
+  player.pos.y++;
+  if (collide(player) && lockMovesCounter < MAX_LOCK_MOVES) {
+    lockDelayCounter = 0;
+    lockMovesCounter++;
+  }
+  player.pos.y--;
+}
+
+function playerMove(dir) {
+  player.pos.x += dir;
+  if (collide(player)) {
+    player.pos.x -= dir;
+    return false;
+  }
+  refreshLockDelay();
+  return true;
+}
+
 function playerRotate(dir) {
   const prevState = player.rotation;
   const nextState = (prevState + (dir > 0 ? 1 : -1) + 4) % 4;
@@ -398,21 +438,22 @@ function playerRotate(dir) {
   rotate(player.matrix, -dir);
 }
 
-function rotate(matrix, dir) {
-  for (let y = 0; y < matrix.length; ++y) {
-    for (let x = 0; x < y; ++x) {
-      [matrix[x][y], matrix[y][x]] = [matrix[y][x], matrix[x][y]];
+function playerHardDrop() {
+  const startY = player.pos.y;
+  const ghostY = getGhostY();
+  const trails = [];
+
+  for (let x = 0; x < player.matrix[0].length; x++) {
+    const topY = player.matrix.findIndex((row) => row[x] !== 0);
+    if (topY !== -1) {
+      trails.push({ x: player.pos.x + x, y: startY + topY, h: ghostY - startY });
     }
   }
-  if (dir > 0) for (const row of matrix) row.reverse();
-  else matrix.reverse();
-}
 
-const PIECE_TYPES = [null, 'I', 'J', 'L', 'O', 'S', 'Z', 'T'];
-
-function getPieceType(matrix) {
-  const value = matrix.flat().find((v) => v !== 0);
-  return PIECE_TYPES[value];
+  score.value += (ghostY - startY) * 2;
+  player.pos.y = ghostY;
+  hardDropEffect = { alpha: 0.4, trails };
+  playerLock();
 }
 
 function playerHold() {
@@ -434,16 +475,9 @@ function playerHold() {
   player.canHold = false;
 }
 
-function togglePause() {
-  if (status.value !== 'playing') return;
-  isPaused.value = !isPaused.value;
-  if (isPaused.value) pause();
-  else resume();
-}
-
 function softDrop() {
   if (playerDrop()) {
-    score.value += 1;
+    score.value++;
     updateScore();
   }
 }
@@ -488,8 +522,6 @@ function checkCollisionAndLand(deltaTime) {
   if (lockDelayCounter > LOCK_DELAY_MS) playerLock();
 }
 
-const { pause, resume } = useRafFn(update, { immediate: false });
-
 function update({ delta: deltaTime }) {
   animationFrame++;
 
@@ -502,22 +534,18 @@ function update({ delta: deltaTime }) {
   draw();
 }
 
-const GRAVITY_BY_LEVEL = [
-  0, 0.01667, 0.021017, 0.026977, 0.035256, 0.04693, 0.06361, 0.0879, 0.1236, 0.1775, 0.2598, 0.388,
-  0.59, 0.92, 1.46, 2.36, 3.91, 6.61, 11.43, 20.0,
-];
-
-function updateScore() {
-  highScore.value = Math.max(highScore.value, score.value);
-  const level = Math.min(Math.floor(player.lines / 10) + 1, GRAVITY_BY_LEVEL.length - 1);
-  dropInterval = 1000 / (60 * GRAVITY_BY_LEVEL[level]);
+function togglePause() {
+  if (status.value !== 'playing') return;
+  isPaused.value = !isPaused.value;
+  if (isPaused.value) pause();
+  else resume();
 }
 
 function resetGame() {
   pause();
   animationFrame = 0;
 
-  arena.forEach((row) => row.fill(0));
+  for (const row of arena) row.fill(0);
   score.value = 0;
   player.lines = 0;
   player.hold = null;
@@ -529,7 +557,7 @@ function resetGame() {
   lockMovesCounter = 0;
   isLanded = false;
   hardDropEffect = { alpha: 0, trails: [] };
-  for (const action in timers) timers[action] = 0;
+  for (const action of Object.keys(timers)) timers[action] = 0;
 
   drawPreview(holdCtx, null);
   updateScore();
@@ -539,25 +567,6 @@ function resetGame() {
   draw();
   resume();
 }
-
-const isPlaying = () => status.value === 'playing' && !isPaused.value;
-
-const keys = useMagicKeys({
-  passive: false,
-  onEventFired: (event) => {
-    if (['ArrowLeft', 'ArrowRight', 'ArrowDown', 'ArrowUp', 'Space'].includes(event.code))
-      event.preventDefault();
-  },
-});
-const isModifierHeld = computed(() => keys.ctrl.value || keys.meta.value || keys.alt.value);
-const isHeld = (...names) =>
-  computed(() => !isModifierHeld.value && names.some((name) => keys[name].value));
-const held = {
-  left: isHeld('ArrowLeft', 'KeyA'),
-  right: isHeld('ArrowRight', 'KeyD'),
-  softDrop: isHeld('ArrowDown', 'KeyS'),
-};
-const HELD_ACTIONS = { left: () => playerMove(-1), right: () => playerMove(1), softDrop };
 
 for (const [action, key] of Object.entries(held)) {
   watch(key, (down) => {
@@ -577,17 +586,6 @@ onGameKey(['Escape', 'p'], (event) => {
 watch(useWindowFocus(), (focused) => {
   if (!focused && !isPaused.value) togglePause();
 });
-
-const setupCanvas = (canvas, width, height) => {
-  const ratio = window.devicePixelRatio;
-  canvas.width = width * ratio;
-  canvas.height = height * ratio;
-  canvas.style.width = `${width}px`;
-  canvas.style.height = `${height}px`;
-  const canvasCtx = canvas.getContext('2d');
-  canvasCtx.scale(BLOCK_SIZE * ratio, BLOCK_SIZE * ratio);
-  return canvasCtx;
-};
 
 watch(
   gameCanvas,

@@ -26,7 +26,19 @@ const isStopped = ref(true);
 let changeToken = 0;
 let stopFrame;
 
-const readTint = (image) => {
+const isFrozen = computed(() => isStale.value || !shown.value?.playing);
+
+const progressStyle = computed(() => ({
+  '--duration': `${shown.value.durationMs}ms`,
+  '--delay': `${shown.value.startedAt - Date.now()}ms`,
+}));
+
+const label = computed(
+  () =>
+    `${shown.value.playing ? 'Listening to' : 'Paused on'} ${shown.value.title} by ${shown.value.artist} on Spotify`,
+);
+
+function readTint(image) {
   const canvas = document.createElement('canvas');
   canvas.width = TINT_SAMPLE_SIZE;
   canvas.height = TINT_SAMPLE_SIZE;
@@ -65,9 +77,9 @@ const readTint = (image) => {
   const hue = (sector % 6) * 60;
 
   return `hsl(${Math.round(hue)} ${Math.round(saturation * 100)}% ${TINT_LIGHTNESS}%)`;
-};
+}
 
-const preload = (url) => {
+function preload(url) {
   if (!url) return Promise.resolve(null);
 
   const image = new Image();
@@ -83,26 +95,14 @@ const preload = (url) => {
       setTimeout(resolve, PRELOAD_TIMEOUT_MS, null);
     }),
   ]);
-};
+}
 
-const show = (next, nextTint) => {
+function show(next, nextTint) {
   shown.value = next;
   tint.value = nextTint;
-};
+}
 
-const isFrozen = computed(() => isStale.value || !shown.value?.playing);
-
-const progressStyle = computed(() => ({
-  '--duration': `${shown.value.durationMs}ms`,
-  '--delay': `${shown.value.startedAt - Date.now()}ms`,
-}));
-
-const label = computed(
-  () =>
-    `${shown.value.playing ? 'Listening to' : 'Paused on'} ${shown.value.title} by ${shown.value.artist} on Spotify`,
-);
-
-const morph = async (update) => {
+async function morph(update) {
   isSwapped.value = true;
 
   const element = pill.value;
@@ -147,9 +147,9 @@ const morph = async (update) => {
   animation.addEventListener('finish', () => content?.style.removeProperty('width'), {
     once: true,
   });
-};
+}
 
-const switchTrack = async (next) => {
+async function switchTrack(next) {
   const token = changeToken;
   const ready = preload(next.art);
   const content = live.value;
@@ -175,24 +175,24 @@ const switchTrack = async (next) => {
 
   await morph(() => show(next, nextTint));
 
-  live.value?.getAnimations().forEach((animation) => animation.cancel());
+  for (const animation of live.value?.getAnimations() ?? []) animation.cancel();
   live.value?.animate([{ opacity: 0 }, { opacity: 1 }], {
     duration: FADE_IN_MS,
     easing: 'ease-out',
   });
-};
+}
 
-const appear = async (next) => {
+async function appear(next) {
   const token = changeToken;
   const nextTint = await preload(next.art);
 
   if (token === changeToken) await morph(() => show(next, nextTint));
-};
+}
 
 watch(
   track,
   (next) => {
-    changeToken += 1;
+    changeToken++;
     const current = shown.value;
 
     if (next === null) {
@@ -233,7 +233,7 @@ watch(
     }
 
     let start;
-    const slow = (now) => {
+    function slow(now) {
       start ??= now;
       const progress = Math.min((now - start) / SPIN_STOP_MS, 1);
       spin.playbackRate = 1 - progress;
@@ -244,7 +244,7 @@ watch(
         isStopped.value = true;
         spin.playbackRate = 1;
       }
-    };
+    }
 
     stopFrame = requestAnimationFrame(slow);
   },

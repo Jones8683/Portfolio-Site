@@ -1,31 +1,52 @@
 <script setup>
-import { computed, onUnmounted, ref, useTemplateRef, watch } from 'vue';
+import { computed, onScopeDispose, ref, useTemplateRef, watch } from 'vue';
 import { useMagicKeys, useRafFn, useTimeoutFn, useWindowFocus } from '@vueuse/core';
 import GamePage, { onGameKey } from '@/components/GamePage.vue';
 import GameControls from '@/components/GameControls.vue';
 
 definePage({ meta: { title: 'Pong' } });
 
-let ctx;
+const WIDTH = 700;
+const HEIGHT = 500;
+const WIN_SCORE = 7;
+const PADDLE_WIDTH = 12;
+const PADDLE_HEIGHT = 85;
+const PADDLE_Y = (HEIGHT - PADDLE_HEIGHT) / 2;
+const BALL_RADIUS = 7;
+const TARGET_FPS = 60;
+const STEP_MS = 1000 / TARGET_FPS;
+
 const canvas = useTemplateRef('canvas');
 const status = ref('start');
 const isPaused = ref(false);
 const outcome = ref('');
 const scores = ref({ left: 0, right: 0 });
 
-const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
-
-const WIDTH = 700;
-const HEIGHT = 500;
-const WIN_SCORE = 7;
-const PADDLE_WIDTH = 12;
-const PADDLE_HEIGHT = 85;
-const BALL_RADIUS = 7;
-const TARGET_FPS = 60;
-const STEP_MS = 1000 / TARGET_FPS;
-
+let ctx;
+let audioCtx = null;
 let gameMode = 'cpu';
 let isResetting = false;
+let trail = [];
+let particles = [];
+let shakeFrames = 0;
+let shakeIntensity = 0;
+
+const leftPaddle = { x: 20, y: PADDLE_Y, speed: 10.5, aiSpeed: 5.7, flash: 0 };
+const rightPaddle = { x: WIDTH - 20 - PADDLE_WIDTH, y: PADDLE_Y, speed: 10.5, flash: 0 };
+const ball = { x: WIDTH / 2, y: HEIGHT / 2, dx: 0, dy: 0, speed: 4, baseSpeed: 4 };
+
+const keys = useMagicKeys({
+  passive: false,
+  onEventFired: (event) => {
+    if (['ArrowUp', 'ArrowDown', 'Space'].includes(event.code)) event.preventDefault();
+  },
+});
+const isModifierHeld = computed(() => keys.ctrl.value || keys.meta.value || keys.alt.value);
+const leftUp = isHeld('w');
+const leftDown = isHeld('s');
+const rightUp = isHeld('ArrowUp');
+const rightDown = isHeld('ArrowDown');
+
 const { start: serveBall, stop: cancelServe } = useTimeoutFn(
   () => {
     isResetting = false;
@@ -37,17 +58,21 @@ const { start: serveBall, stop: cancelServe } = useTimeoutFn(
   { immediate: false },
 );
 
-const PADDLE_Y = (HEIGHT - PADDLE_HEIGHT) / 2;
-const leftPaddle = { x: 20, y: PADDLE_Y, speed: 10.5, aiSpeed: 5.7, flash: 0 };
-const rightPaddle = { x: WIDTH - 20 - PADDLE_WIDTH, y: PADDLE_Y, speed: 10.5, flash: 0 };
-const ball = { x: WIDTH / 2, y: HEIGHT / 2, dx: 0, dy: 0, speed: 4, baseSpeed: 4 };
+const { pause, resume } = useRafFn(
+  ({ delta }) => {
+    update(Math.min(delta, 50) / STEP_MS);
+    draw();
+  },
+  { immediate: false },
+);
 
-let trail = [];
-let particles = [];
-let shakeFrames = 0;
-let shakeIntensity = 0;
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(max, value));
+}
 
-let audioCtx = null;
+function isHeld(...names) {
+  return computed(() => !isModifierHeld.value && names.some((name) => keys[name].value));
+}
 
 function getAudioCtx() {
   if (!audioCtx && typeof AudioContext !== 'undefined') {
@@ -89,25 +114,107 @@ function spawnParticles(x, y, rgb) {
   }
 }
 
-const keys = useMagicKeys({
-  passive: false,
-  onEventFired: (event) => {
-    if (['ArrowUp', 'ArrowDown', 'Space'].includes(event.code)) event.preventDefault();
-  },
-});
-const isModifierHeld = computed(() => keys.ctrl.value || keys.meta.value || keys.alt.value);
-const isHeld = (...names) =>
-  computed(() => !isModifierHeld.value && names.some((name) => keys[name].value));
-const leftUp = isHeld('w');
-const leftDown = isHeld('s');
-const rightUp = isHeld('ArrowUp');
-const rightDown = isHeld('ArrowDown');
+function hitsPaddle(paddle) {
+  return (
+    ball.x + BALL_RADIUS > paddle.x &&
+    ball.x - BALL_RADIUS < paddle.x + PADDLE_WIDTH &&
+    ball.y + BALL_RADIUS > paddle.y &&
+    ball.y - BALL_RADIUS < paddle.y + PADDLE_HEIGHT
+  );
+}
+
+function drawCenterLine() {
+  const segmentHeight = 18;
+  const segmentGap = 12;
+  const segmentCount = Math.floor(HEIGHT / (segmentHeight + segmentGap));
+  const startY = (HEIGHT - segmentCount * (segmentHeight + segmentGap) + segmentGap) / 2;
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.07)';
+  for (let i = 0; i < segmentCount; i++) {
+    const y = startY + i * (segmentHeight + segmentGap);
+    ctx.beginPath();
+    ctx.roundRect(WIDTH / 2 - 1.5, y, 3, segmentHeight, 2);
+    ctx.fill();
+  }
+}
+
+function drawField() {
+  ctx.fillStyle = '#0d0d0d';
+  ctx.fillRect(-10, -10, WIDTH + 20, HEIGHT + 20);
+  drawCenterLine();
+}
+
+function drawPaddle(paddle) {
+  const isFlashing = paddle.flash > 0;
+  ctx.save();
+  if (isFlashing) {
+    ctx.shadowColor = '#ffffff';
+    ctx.shadowBlur = 24;
+  }
+  ctx.fillStyle = isFlashing
+    ? `rgba(255, 255, 255, ${0.7 + 0.3 * (paddle.flash / 8)})`
+    : 'rgba(255, 255, 255, 0.9)';
+  ctx.beginPath();
+  ctx.roundRect(paddle.x, paddle.y, PADDLE_WIDTH, PADDLE_HEIGHT, 5);
+  ctx.fill();
+  ctx.restore();
+}
+
+function draw() {
+  const shakeX = shakeFrames > 0 ? (Math.random() - 0.5) * shakeIntensity : 0;
+  const shakeY = shakeFrames > 0 ? (Math.random() - 0.5) * shakeIntensity : 0;
+
+  ctx.save();
+  ctx.translate(shakeX, shakeY);
+
+  drawField();
+
+  for (let i = 1; i < trail.length; i++) {
+    const fraction = i / trail.length;
+    ctx.beginPath();
+    ctx.moveTo(trail[i - 1].x, trail[i - 1].y);
+    ctx.lineTo(trail[i].x, trail[i].y);
+    ctx.strokeStyle = `rgba(255, 255, 255, ${fraction * 0.22})`;
+    ctx.lineWidth = fraction * BALL_RADIUS * 1.4;
+    ctx.lineCap = 'round';
+    ctx.stroke();
+  }
+
+  for (const particle of particles) {
+    ctx.beginPath();
+    ctx.arc(particle.x, particle.y, particle.size * particle.life, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(${particle.rgb}, ${particle.life * 0.9})`;
+    ctx.fill();
+  }
+
+  drawPaddle(leftPaddle);
+  drawPaddle(rightPaddle);
+
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.arc(ball.x, ball.y, BALL_RADIUS, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.restore();
+}
 
 function resetMatch() {
   scores.value.left = 0;
   scores.value.right = 0;
   trail = [];
   particles = [];
+}
+
+function resetPositions() {
+  ball.x = WIDTH / 2;
+  ball.y = HEIGHT / 2;
+  ball.speed = ball.baseSpeed;
+  ball.dx = 0;
+  ball.dy = 0;
+  leftPaddle.y = PADDLE_Y;
+  rightPaddle.y = PADDLE_Y;
+  trail = [];
+  isResetting = true;
+  serveBall();
 }
 
 function showStartScreen() {
@@ -128,24 +235,23 @@ function startGame(mode) {
   resume();
 }
 
-function resetPositions() {
-  ball.x = WIDTH / 2;
-  ball.y = HEIGHT / 2;
-  ball.speed = ball.baseSpeed;
-  ball.dx = 0;
-  ball.dy = 0;
-  leftPaddle.y = PADDLE_Y;
-  rightPaddle.y = PADDLE_Y;
-  trail = [];
-  isResetting = true;
-  serveBall();
-}
-
 function togglePause() {
   if (status.value !== 'playing') return;
   isPaused.value = !isPaused.value;
   if (isPaused.value) pause();
   else resume();
+}
+
+function checkWin() {
+  if (scores.value.left < WIN_SCORE && scores.value.right < WIN_SCORE) {
+    resetPositions();
+    return;
+  }
+  status.value = 'over';
+  pause();
+  const rightWon = scores.value.right >= WIN_SCORE;
+  if (gameMode === 'cpu') outcome.value = rightWon ? 'YOU WIN!' : 'COMPUTER WINS!';
+  else outcome.value = rightWon ? 'RIGHT PLAYER WINS!' : 'LEFT PLAYER WINS!';
 }
 
 function updatePaddles(dt) {
@@ -219,8 +325,8 @@ function updateParticles(dt) {
     const particle = particles[i];
     particle.x += particle.vx * dt;
     particle.y += particle.vy * dt;
-    particle.vx *= Math.pow(0.92, dt);
-    particle.vy *= Math.pow(0.92, dt);
+    particle.vx *= 0.92 ** dt;
+    particle.vy *= 0.92 ** dt;
     particle.life -= particle.decay * dt;
     if (particle.life <= 0) particles.splice(i, 1);
   }
@@ -250,109 +356,6 @@ function update(dt) {
   updateParticles(dt);
 }
 
-function checkWin() {
-  if (scores.value.left < WIN_SCORE && scores.value.right < WIN_SCORE) {
-    resetPositions();
-    return;
-  }
-  status.value = 'over';
-  pause();
-  const rightWon = scores.value.right >= WIN_SCORE;
-  if (gameMode === 'cpu') outcome.value = rightWon ? 'YOU WIN!' : 'COMPUTER WINS!';
-  else outcome.value = rightWon ? 'RIGHT PLAYER WINS!' : 'LEFT PLAYER WINS!';
-}
-
-function hitsPaddle(paddle) {
-  return (
-    ball.x + BALL_RADIUS > paddle.x &&
-    ball.x - BALL_RADIUS < paddle.x + PADDLE_WIDTH &&
-    ball.y + BALL_RADIUS > paddle.y &&
-    ball.y - BALL_RADIUS < paddle.y + PADDLE_HEIGHT
-  );
-}
-
-function drawField() {
-  ctx.fillStyle = '#0d0d0d';
-  ctx.fillRect(-10, -10, WIDTH + 20, HEIGHT + 20);
-  drawCenterLine();
-}
-
-function drawCenterLine() {
-  const segmentHeight = 18;
-  const segmentGap = 12;
-  const segmentCount = Math.floor(HEIGHT / (segmentHeight + segmentGap));
-  const startY = (HEIGHT - segmentCount * (segmentHeight + segmentGap) + segmentGap) / 2;
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.07)';
-  for (let i = 0; i < segmentCount; i++) {
-    const y = startY + i * (segmentHeight + segmentGap);
-    ctx.beginPath();
-    ctx.roundRect(WIDTH / 2 - 1.5, y, 3, segmentHeight, 2);
-    ctx.fill();
-  }
-}
-
-function draw() {
-  const shakeX = shakeFrames > 0 ? (Math.random() - 0.5) * shakeIntensity : 0;
-  const shakeY = shakeFrames > 0 ? (Math.random() - 0.5) * shakeIntensity : 0;
-
-  ctx.save();
-  ctx.translate(shakeX, shakeY);
-
-  drawField();
-
-  for (let i = 1; i < trail.length; i++) {
-    const fraction = i / trail.length;
-    ctx.beginPath();
-    ctx.moveTo(trail[i - 1].x, trail[i - 1].y);
-    ctx.lineTo(trail[i].x, trail[i].y);
-    ctx.strokeStyle = `rgba(255, 255, 255, ${fraction * 0.22})`;
-    ctx.lineWidth = fraction * BALL_RADIUS * 1.4;
-    ctx.lineCap = 'round';
-    ctx.stroke();
-  }
-
-  for (const particle of particles) {
-    ctx.beginPath();
-    ctx.arc(particle.x, particle.y, particle.size * particle.life, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(${particle.rgb}, ${particle.life * 0.9})`;
-    ctx.fill();
-  }
-
-  const drawPaddle = (paddle) => {
-    const isFlashing = paddle.flash > 0;
-    ctx.save();
-    if (isFlashing) {
-      ctx.shadowColor = '#ffffff';
-      ctx.shadowBlur = 24;
-    }
-    ctx.fillStyle = isFlashing
-      ? `rgba(255, 255, 255, ${0.7 + 0.3 * (paddle.flash / 8)})`
-      : 'rgba(255, 255, 255, 0.9)';
-    ctx.beginPath();
-    ctx.roundRect(paddle.x, paddle.y, PADDLE_WIDTH, PADDLE_HEIGHT, 5);
-    ctx.fill();
-    ctx.restore();
-  };
-
-  drawPaddle(leftPaddle);
-  drawPaddle(rightPaddle);
-
-  ctx.fillStyle = '#ffffff';
-  ctx.beginPath();
-  ctx.arc(ball.x, ball.y, BALL_RADIUS, 0, Math.PI * 2);
-  ctx.fill();
-
-  ctx.restore();
-}
-
-const { pause, resume } = useRafFn(
-  ({ delta }) => {
-    update(Math.min(delta, 50) / STEP_MS);
-    draw();
-  },
-  { immediate: false },
-);
-
 onGameKey(['Escape', 'p'], (event) => {
   event.preventDefault();
   togglePause();
@@ -378,7 +381,7 @@ watch(
   { flush: 'post' },
 );
 
-onUnmounted(() => {
+onScopeDispose(() => {
   if (audioCtx && audioCtx.state !== 'closed') {
     audioCtx.close();
   }
