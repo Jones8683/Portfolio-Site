@@ -153,7 +153,7 @@ const contacts = [
     </div>
 
     <div class="content-wrap home-content">
-      <section class="panel about-section">
+      <section class="about-section">
         <h2 class="about-title">About</h2>
         <div class="about-body">
           <p>
@@ -164,7 +164,7 @@ const contacts = [
         </div>
       </section>
 
-      <section class="panel about-section">
+      <section class="about-section">
         <h2 class="about-title">Interests</h2>
         <div class="about-body">
           <div v-for="(group, groupIndex) in interests" :key="group.label" class="interest-row">
@@ -183,7 +183,7 @@ const contacts = [
         </div>
       </section>
 
-      <section class="panel about-section">
+      <section class="about-section">
         <h2 class="about-title">Contact</h2>
         <div class="about-body">
           <p>Check out my socials to see what I'm up to:</p>
@@ -239,7 +239,7 @@ const contacts = [
   align-items: center;
   gap: 20px;
   padding: 4px 40px 0;
-  min-height: calc(100svh - var(--nav-height));
+  min-height: calc(100svh - 74px);
 }
 
 .hero-block {
@@ -383,6 +383,10 @@ const contacts = [
   grid-template-columns: minmax(140px, 200px) minmax(0, 1fr);
   gap: 24px;
   text-align: left;
+  border-radius: 16px;
+  background: var(--color-surface);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  box-shadow: 0 24px 50px rgba(4, 6, 16, 0.45);
 }
 
 .about-title {
@@ -575,7 +579,7 @@ const contacts = [
   }
 }
 
-@media (max-width: 720px) {
+@media (width <= 720px) {
   .about-section {
     grid-template-columns: 1fr;
     text-align: center;
@@ -633,7 +637,7 @@ const contacts = [
   }
 }
 
-@media (max-width: 420px) {
+@media (width <= 480px) {
   .contact-row-value {
     display: none;
   }

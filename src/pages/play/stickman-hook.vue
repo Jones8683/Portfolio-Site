@@ -61,14 +61,13 @@ const { enter: enterFullscreen } = useFullscreen(gameIframe);
 </template>
 
 <style scoped>
-.right-section {
-  width: 260px;
-}
-
 .game-iframe {
   width: 880px;
   height: 550px;
   background: #000000;
+  display: block;
+  border: 0;
+  border-radius: 4px;
 }
 
 .fullscreen-btn {
@@ -99,25 +98,10 @@ const { enter: enterFullscreen } = useFullscreen(gameIframe);
   transform: translateY(-2px);
 }
 
-@media (max-width: 1200px) {
-  .game-iframe {
-    width: 700px;
-    height: 525px;
-  }
-}
-
-@media (max-width: 1000px) {
+@media (width <= 960px) {
   .game-iframe {
     width: 580px;
     height: 435px;
-  }
-  .game-wrapper {
-    flex-direction: column;
-    align-items: center;
-  }
-  .right-section {
-    width: 100%;
-    max-width: 580px;
   }
 }
 </style>

@@ -527,7 +527,7 @@ watch(
   }
 }
 
-@media (max-width: 720px) {
+@media (width <= 720px) {
   .slot {
     --slot-overlap: -8px;
   }

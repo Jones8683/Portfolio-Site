@@ -24,6 +24,25 @@ definePage({ meta: { title: 'Page not found' } });
 </template>
 
 <style scoped>
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--color-accent);
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+.back-link .arrow-icon {
+  transform: scaleX(-1);
+}
+
 .not-found-title {
   margin-bottom: 4px;
   font-size: 120px;

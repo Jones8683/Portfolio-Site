@@ -160,7 +160,7 @@ onGameKey(ALPHABET, (e) => guessLetter(e.key.toUpperCase()));
         </Transition>
 
         <div v-if="status === 'won' || status === 'lost'" class="overlay-msg">
-          <h2 class="menu-title result-title outcome-title" :class="{ won: status === 'won' }">
+          <h2 class="menu-title outcome-title" :class="{ won: status === 'won' }">
             {{ status === 'won' ? 'YOU GOT IT!' : 'GAME OVER' }}
           </h2>
           <p class="outcome-word">{{ secretWord }}</p>
@@ -343,7 +343,7 @@ onGameKey(ALPHABET, (e) => guessLetter(e.key.toUpperCase()));
   height: 42px;
   font-size: 24px;
   font-weight: 900;
-  color: var(--color-faint);
+  color: #2d3748;
   border-bottom: 2px solid rgba(255, 255, 255, 0.12);
   transition:
     color 0.2s,
@@ -362,6 +362,11 @@ onGameKey(ALPHABET, (e) => guessLetter(e.key.toUpperCase()));
 
 .outcome-title {
   margin-bottom: 6px;
+  color: var(--color-red);
+}
+
+.outcome-title.won {
+  color: var(--color-green);
 }
 
 .outcome-word {
@@ -454,7 +459,7 @@ onGameKey(ALPHABET, (e) => guessLetter(e.key.toUpperCase()));
 }
 
 .no-letters {
-  color: var(--color-faint);
+  color: #2d3748;
   font-size: 13px;
 }
 
@@ -502,7 +507,7 @@ onGameKey(ALPHABET, (e) => guessLetter(e.key.toUpperCase()));
 .key-btn.wrong {
   background: transparent;
   border-color: rgba(255, 255, 255, 0.03);
-  color: var(--color-faint);
+  color: #2d3748;
 }
 
 .key-btn:disabled {

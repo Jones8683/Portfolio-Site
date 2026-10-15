@@ -31,7 +31,7 @@ const projects = [
     <h1 class="page-title">Projects</h1>
     <p class="page-subtitle">A collection of projects I have made and contributed to.</p>
 
-    <div class="panel project-panel">
+    <div class="project-panel">
       <a
         v-for="(project, index) in projects"
         :key="project.name"
@@ -82,6 +82,10 @@ const projects = [
   flex-direction: column;
   margin-top: 16px;
   padding: 4px 32px;
+  border-radius: 16px;
+  background: var(--color-surface);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  box-shadow: 0 24px 50px rgba(4, 6, 16, 0.45);
 }
 
 .project-row {
@@ -200,7 +204,7 @@ const projects = [
   }
 }
 
-@media (max-width: 640px) {
+@media (width <= 720px) {
   .projects-page {
     width: min(95%, 840px);
     padding-bottom: 44px;
@@ -227,7 +231,7 @@ const projects = [
   }
 }
 
-@media (max-width: 420px) {
+@media (width <= 480px) {
   .project-arrow {
     display: none;
   }

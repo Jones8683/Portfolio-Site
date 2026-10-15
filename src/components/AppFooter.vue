@@ -77,7 +77,7 @@ const time = builtAt.toLocaleTimeString('en-AU', {
   color: var(--color-muted);
 }
 
-@media (max-width: 600px) {
+@media (width <= 480px) {
   .footer-meta {
     flex-direction: column;
     gap: 4px;

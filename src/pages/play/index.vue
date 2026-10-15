@@ -116,7 +116,7 @@ const games = [
 }
 
 .arcade-card-bottom:hover {
-  color: var(--color-background);
+  color: #1a1c24;
   background: var(--game-color);
 }
 
@@ -140,13 +140,13 @@ const games = [
   --game-color: var(--color-green);
 }
 
-@media (max-width: 900px) {
+@media (width <= 960px) {
   .arcade-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (max-width: 600px) {
+@media (width <= 480px) {
   .arcade-grid {
     grid-template-columns: 1fr;
   }

@@ -90,7 +90,7 @@ watch(y, (now, prev) => {
 .nav-shell {
   --ease: cubic-bezier(0.4, 0, 0.2, 1);
   position: fixed;
-  top: var(--nav-offset);
+  top: 22px;
   left: 0;
   right: 0;
   margin-inline: auto;
@@ -104,7 +104,7 @@ watch(y, (now, prev) => {
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  min-height: var(--nav-bar-height);
+  min-height: 52px;
   padding: 6px 20px;
   border: 2px solid transparent;
   border-radius: 16px;
@@ -129,10 +129,10 @@ watch(y, (now, prev) => {
 }
 
 .main-header[data-show='false'] {
-  transform: translateY(calc(-100% - var(--nav-offset) - 24px));
+  transform: translateY(calc(-100% - 46px));
 }
 
-@media (min-width: 800px) {
+@media (width > 960px) {
   .main-header.minimized {
     margin-inline: 8%;
   }
@@ -181,7 +181,7 @@ watch(y, (now, prev) => {
   align-items: baseline;
   position: relative;
   top: -2px;
-  font-family: var(--font-display);
+  font-family: 'Cherry Bomb One', sans-serif;
   font-size: 1.7rem;
   font-weight: 400;
   line-height: 1;
@@ -284,7 +284,7 @@ watch(y, (now, prev) => {
   height: 100%;
 }
 
-@media (max-width: 650px) {
+@media (width <= 720px) {
   .nav-shell {
     width: min(100% - 1.5rem, 1080px);
   }

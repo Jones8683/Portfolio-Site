@@ -418,8 +418,9 @@ onUnmounted(() => {
   justify-content: center;
 }
 
-.right-section {
-  width: 220px;
+.overlay-actions {
+  display: flex;
+  gap: 10px;
 }
 
 canvas {

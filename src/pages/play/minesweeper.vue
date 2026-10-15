@@ -273,6 +273,19 @@ const gridStyle = computed(() => ({
   font-size: 48px;
 }
 
+.overlay-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.result-title {
+  color: var(--color-red);
+}
+
+.result-title.won {
+  color: var(--color-green);
+}
+
 .grid-frame {
   background: #444444;
   padding: 10px;

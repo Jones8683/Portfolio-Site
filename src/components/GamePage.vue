@@ -46,7 +46,7 @@ export function useHeldKeys(preventedCodes) {
 </script>
 
 <script setup>
-const isMobile = useMediaQuery('(max-width: 850px)');
+const isMobile = useMediaQuery('(pointer: coarse)');
 </script>
 
 <template>
@@ -199,19 +199,6 @@ const isMobile = useMediaQuery('(max-width: 850px)');
   margin-bottom: 20px;
 }
 
-.result-title {
-  color: var(--color-red);
-}
-
-.result-title.won {
-  color: var(--color-green);
-}
-
-.overlay-actions {
-  display: flex;
-  gap: 10px;
-}
-
 .overlay-btn {
   padding: 10px 20px;
   font-weight: 700;
@@ -222,10 +209,42 @@ const isMobile = useMediaQuery('(max-width: 850px)');
   cursor: pointer;
 }
 
-.game-iframe,
 :where(.game-page) canvas {
   display: block;
   border: 0;
   border-radius: 4px;
+}
+
+@media (width <= 1200px) {
+  .game-wrapper {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .right-section {
+    width: 100%;
+    text-align: center;
+  }
+}
+</style>
+
+<style scoped>
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--color-accent);
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+.back-link .arrow-icon {
+  transform: scaleX(-1);
 }
 </style>

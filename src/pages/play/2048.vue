@@ -65,10 +65,9 @@ useEventListener(window, 'message', handleMessage);
   width: 530px;
   height: 530px;
   background: #faf8ef;
-}
-
-.right-section {
-  width: 260px;
+  display: block;
+  border: 0;
+  border-radius: 4px;
 }
 
 .score-box {
@@ -77,23 +76,5 @@ useEventListener(window, 'message', handleMessage);
 
 .label {
   margin-bottom: 4px;
-}
-
-@media (max-width: 1200px) {
-  .game-wrapper {
-    flex-direction: column;
-    gap: 20px;
-    align-items: center;
-  }
-
-  .right-section {
-    width: 100%;
-    max-width: 550px;
-    text-align: center;
-  }
-
-  .game-title {
-    text-align: center;
-  }
 }
 </style>
