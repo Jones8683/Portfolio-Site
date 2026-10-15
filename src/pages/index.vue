@@ -124,6 +124,10 @@ function chipColor(groupIndex, itemIndex) {
   return palette[(groupIndex * 3 + itemIndex * 2) % palette.length];
 }
 
+function isExternal(href) {
+  return href.startsWith('http');
+}
+
 watch(
   y,
   (value) => {
@@ -218,8 +222,8 @@ watch(
               :key="contact.label"
               class="contact-row"
               :href="contact.href"
-              :target="contact.href.startsWith('http') ? '_blank' : undefined"
-              rel="noopener noreferrer"
+              :target="isExternal(contact.href) ? '_blank' : undefined"
+              :rel="isExternal(contact.href) ? 'noopener noreferrer' : undefined"
             >
               <svg
                 class="contact-row-icon"
