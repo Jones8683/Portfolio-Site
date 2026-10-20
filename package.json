@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "description": "My personal website and portfolio",
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "dev": "vite",
