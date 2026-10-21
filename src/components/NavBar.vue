@@ -58,7 +58,7 @@ watch(y, (now, prev) => {
       <div class="nav-actions">
         <a
           class="nav-icon"
-          href="https://discord.com/users/1537745548000497716"
+          href="https://discord.com/users/1562426082185973802"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Discord profile"
