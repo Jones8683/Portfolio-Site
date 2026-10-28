@@ -104,25 +104,19 @@ main {
 }
 
 .animate {
-  opacity: 0;
-  animation: fade-in-up 300ms forwards;
+  animation: fade-in-up 0.3s ease both;
 }
 
 @media (prefers-reduced-motion) {
   .animate {
-    animation-duration: 100ms;
+    animation-duration: 0.1s;
   }
 }
 
 @keyframes fade-in-up {
   from {
     opacity: 0;
-    transform: translateY(2rem);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
+    transform: translateY(32px);
   }
 }
 
@@ -130,9 +124,11 @@ main {
   font-size: clamp(48px, 10vw, 72px);
   line-height: 1;
   text-wrap: balance;
+  animation-delay: 0.05s;
 }
 
 .page-subtitle {
   margin-bottom: 12px;
   color: #94a3b8;
+  animation-delay: 0.05s;
 }

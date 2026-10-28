@@ -43,44 +43,33 @@ import GameLayout from '../../layouts/GameLayout.astro';
 </GameLayout>
 
 <script>
-  import { readNumber, writeNumber } from '../../scripts/game';
+  import { defineElement, readNumber, writeNumber } from '../../scripts/game';
 
   const HIGH_SCORE_KEY = '2048-best-score';
 
-  class Game2048 extends HTMLElement {
-    iframe!: HTMLIFrameElement;
-    scoreText!: HTMLElement;
-    highScoreText!: HTMLElement;
+  defineElement('game-2048', (root) => {
+    const iframe = root.querySelector('iframe');
+    const scoreText = root.querySelector('[data-score]');
+    const highScoreText = root.querySelector('[data-high-score]');
+    const focus = () => iframe.focus();
 
-    connectedCallback() {
-      this.iframe = this.querySelector('iframe') as HTMLIFrameElement;
-      this.scoreText = this.querySelector('[data-score]') as HTMLElement;
-      this.highScoreText = this.querySelector('[data-high-score]') as HTMLElement;
-      this.highScoreText.textContent = String(readNumber(HIGH_SCORE_KEY));
-
-      this.querySelector('.left-section')?.addEventListener('click', this.focusGame);
-      this.iframe.addEventListener('load', this.focusGame);
-      addEventListener('message', this.onMessage);
-      this.focusGame();
-    }
-
-    disconnectedCallback() {
-      removeEventListener('message', this.onMessage);
-    }
-
-    focusGame = () => this.iframe.focus();
-
-    onMessage = ({ source, data }: MessageEvent) => {
-      if (source !== this.iframe.contentWindow || data?.type !== '2048-update') return;
+    const onMessage = ({ source, data }: MessageEvent) => {
+      if (source !== iframe.contentWindow || data?.type !== '2048-update') return;
 
       const highScore = Math.max(readNumber(HIGH_SCORE_KEY), data.score);
       writeNumber(HIGH_SCORE_KEY, highScore);
-      this.scoreText.textContent = String(data.score);
-      this.highScoreText.textContent = String(highScore);
+      scoreText.textContent = String(data.score);
+      highScoreText.textContent = String(highScore);
     };
-  }
 
-  customElements.define('game-2048', Game2048);
+    highScoreText.textContent = String(readNumber(HIGH_SCORE_KEY));
+    root.querySelector('.left-section').addEventListener('click', focus);
+    iframe.addEventListener('load', focus);
+    addEventListener('message', onMessage);
+    focus();
+
+    return () => removeEventListener('message', onMessage);
+  });
 </script>
 
 <style>
@@ -96,22 +85,5 @@ import GameLayout from '../../layouts/GameLayout.astro';
 
   .label {
     margin-bottom: 4px;
-  }
-
-  .high-score-label {
-    font-size: 11px;
-  }
-
-  .high-score-value {
-    font-size: 24px;
-    color: #ffd700;
-    text-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
-  }
-
-  .score-divider {
-    width: 100%;
-    height: 1px;
-    margin: 8px 0;
-    background: rgba(255, 255, 255, 0.1);
   }
 </style>

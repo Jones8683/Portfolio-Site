@@ -4,7 +4,7 @@ import GameLayout from '../../layouts/GameLayout.astro';
 ---
 
 <GameLayout title="Stickman Hook">
-  <stickman-hook class="game-wrapper">
+  <game-stickman-hook class="game-wrapper">
     <div class="left-section">
       <iframe
         class="game-iframe"
@@ -25,7 +25,7 @@ import GameLayout from '../../layouts/GameLayout.astro';
         ]}
       />
 
-      <button class="fullscreen-btn" type="button">
+      <button class="fullscreen-btn">
         <svg
           viewBox="0 0 24 24"
           width="14"
@@ -42,25 +42,23 @@ import GameLayout from '../../layouts/GameLayout.astro';
         Fullscreen
       </button>
     </div>
-  </stickman-hook>
+  </game-stickman-hook>
 </GameLayout>
 
 <script>
-  class StickmanHook extends HTMLElement {
-    connectedCallback() {
-      const iframe = this.querySelector('iframe') as HTMLIFrameElement;
-      const focus = () => iframe.focus();
+  import { defineElement } from '../../scripts/game';
 
-      this.querySelector('.left-section')?.addEventListener('click', focus);
-      this.querySelector('.fullscreen-btn')?.addEventListener('click', () =>
-        iframe.requestFullscreen(),
-      );
-      iframe.addEventListener('load', focus);
-      focus();
-    }
-  }
+  defineElement('game-stickman-hook', (root) => {
+    const iframe = root.querySelector('iframe');
+    const focus = () => iframe.focus();
 
-  customElements.define('stickman-hook', StickmanHook);
+    root.querySelector('.left-section').addEventListener('click', focus);
+    root
+      .querySelector('.fullscreen-btn')
+      .addEventListener('click', () => iframe.requestFullscreen());
+    iframe.addEventListener('load', focus);
+    focus();
+  });
 </script>
 
 <style>

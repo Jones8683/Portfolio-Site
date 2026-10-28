@@ -1,10 +1,6 @@
 ---
 import Layout from './Layout.astro';
 
-interface Props {
-  title: string;
-}
-
 const { title } = Astro.props;
 ---
 
@@ -66,6 +62,12 @@ const { title } = Astro.props;
     text-align: left;
   }
 
+  .row {
+    display: flex;
+    gap: 15px;
+    width: 100%;
+  }
+
   .game-title {
     margin-bottom: 10px;
     font-size: 72px;
@@ -119,6 +121,24 @@ const { title } = Astro.props;
     text-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
   }
 
+  .score-divider {
+    width: 100%;
+    height: 1px;
+    margin: 8px 0;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .high-score-label {
+    margin-bottom: 2px;
+    font-size: 11px;
+  }
+
+  .high-score-value {
+    font-size: 24px;
+    color: #ffd700;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+  }
+
   .overlay-msg {
     position: absolute;
     inset: 0;
@@ -148,6 +168,11 @@ const { title } = Astro.props;
     cursor: pointer;
   }
 
+  .overlay-actions {
+    display: flex;
+    gap: 10px;
+  }
+
   :where(.game-page) canvas,
   :where(.game-page) iframe {
     display: block;
@@ -170,7 +195,7 @@ const { title } = Astro.props;
 
 <style>
   .game-page {
-    animation-delay: 50ms;
+    animation-delay: 0.05s;
   }
 
   .touch-message {

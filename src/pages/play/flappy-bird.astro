@@ -4,7 +4,7 @@ import GameLayout from '../../layouts/GameLayout.astro';
 ---
 
 <GameLayout title="Flappy Bird">
-  <flappy-bird class="game-wrapper">
+  <game-flappy-bird class="game-wrapper">
     <div class="left-section">
       <canvas></canvas>
       <div class="overlay-msg" data-paused hidden>
@@ -36,46 +36,12 @@ import GameLayout from '../../layouts/GameLayout.astro';
         ]}
       />
     </div>
-  </flappy-bird>
+  </game-flappy-bird>
 </GameLayout>
 
-<script>
-  import { createFlappyBird } from '../../scripts/games/flappy-bird';
-
-  class FlappyBird extends HTMLElement {
-    destroy = () => {};
-
-    connectedCallback() {
-      this.destroy = createFlappyBird(this);
-    }
-
-    disconnectedCallback() {
-      this.destroy();
-    }
-  }
-
-  customElements.define('flappy-bird', FlappyBird);
-</script>
+<script src="../../scripts/games/flappy-bird.js"></script>
 
 <style>
-  .high-score-label {
-    margin-bottom: 2px;
-    font-size: 11px;
-  }
-
-  .high-score-value {
-    font-size: 24px;
-    color: #ffd700;
-    text-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
-  }
-
-  .score-divider {
-    width: 100%;
-    height: 1px;
-    margin: 8px 0;
-    background: rgba(255, 255, 255, 0.1);
-  }
-
   canvas {
     cursor: pointer;
   }

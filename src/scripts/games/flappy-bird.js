@@ -1,4 +1,12 @@
-import { createLoop, onBlur, onGameKey, readNumber, writeNumber } from '../game';
+import {
+  createLoop,
+  defineElement,
+  onGameKey,
+  onPause,
+  readNumber,
+  setupCanvas,
+  writeNumber,
+} from '../game';
 
 const WIDTH = 360;
 const HEIGHT = 568;
@@ -46,22 +54,17 @@ const BUILDINGS = [
   { x: 674, w: 22, h: 54, hasWindows: false, style: 'thin' },
   { x: 698, w: 22, h: 78, hasWindows: true, style: 'wide' },
 ];
+
 const HIGH_SCORE_KEY = 'flappy-bird-best-score';
 
-export function createFlappyBird(root) {
+defineElement('game-flappy-bird', (root) => {
   const canvas = root.querySelector('canvas');
   const pausedOverlay = root.querySelector('[data-paused]');
   const scoreText = root.querySelector('[data-score]');
   const highScoreText = root.querySelector('[data-high-score]');
   const fontFamily = getComputedStyle(document.documentElement).getPropertyValue('--font-satoshi');
 
-  const ratio = window.devicePixelRatio;
-  canvas.width = WIDTH * ratio;
-  canvas.height = HEIGHT * ratio;
-  canvas.style.width = `${WIDTH}px`;
-  canvas.style.height = `${HEIGHT}px`;
-  const ctx = canvas.getContext('2d');
-  ctx.scale(ratio, ratio);
+  const ctx = setupCanvas(canvas, WIDTH, HEIGHT);
 
   let status = 'start';
   let isPaused = false;
@@ -70,10 +73,10 @@ export function createFlappyBird(root) {
 
   const loop = createLoop((delta, timestamp) => {
     frame(delta, timestamp);
-    sync();
+    render();
   });
 
-  function sync() {
+  function render() {
     pausedOverlay.hidden = !isPaused;
     scoreText.textContent = String(score);
     highScoreText.textContent = String(highScore);
@@ -364,7 +367,7 @@ export function createFlappyBird(root) {
     }
   }
 
-  function render() {
+  function draw() {
     ctx.clearRect(0, 0, WIDTH, HEIGHT);
     drawSky();
     drawClouds();
@@ -412,7 +415,7 @@ export function createFlappyBird(root) {
       cloudOffset += PIPE_SPEED * 0.04 * dt;
     }
 
-    render();
+    draw();
   }
 
   function togglePause() {
@@ -425,6 +428,7 @@ export function createFlappyBird(root) {
       lastPipeTime += performance.now() - pausedAt;
       loop.start();
     }
+    render();
   }
 
   function jump() {
@@ -444,28 +448,20 @@ export function createFlappyBird(root) {
   }
 
   const cleanups = [
-    onGameKey(['Escape', 'p'], (event) => {
-      event.preventDefault();
-      togglePause();
-      sync();
-    }),
+    onPause(togglePause, () => isPaused),
     onGameKey([' ', 'ArrowUp', 'w'], (event) => {
       event.preventDefault();
       jump();
-    }),
-    onBlur(() => {
-      if (!isPaused) togglePause();
-      sync();
     }),
   ];
 
   canvas.addEventListener('mousedown', jump);
   resetGame();
-  sync();
+  render();
   loop.start();
 
   return () => {
     loop.stop();
     for (const cleanup of cleanups) cleanup();
   };
-}
+});

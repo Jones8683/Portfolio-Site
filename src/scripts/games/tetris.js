@@ -1,4 +1,13 @@
-import { createLoop, onBlur, onGameKey, readNumber, trackKeys, writeNumber } from '../game';
+import {
+  createLoop,
+  defineElement,
+  onGameKey,
+  onPause,
+  readNumber,
+  setupCanvas,
+  trackKeys,
+  writeNumber,
+} from '../game';
 
 const BLOCK_SIZE = 25;
 const COLORS = [null, '#0dc2ff', '#3877ff', '#ff8e0d', '#ffe138', '#0dff72', '#ff0d72', '#f538ff'];
@@ -140,26 +149,15 @@ function rotate(matrix, dir) {
   else matrix.reverse();
 }
 
-function setupCanvas(canvas, width, height) {
-  const ratio = window.devicePixelRatio;
-  canvas.width = width * ratio;
-  canvas.height = height * ratio;
-  canvas.style.width = `${width}px`;
-  canvas.style.height = `${height}px`;
-  const canvasCtx = canvas.getContext('2d');
-  canvasCtx.scale(BLOCK_SIZE * ratio, BLOCK_SIZE * ratio);
-  return canvasCtx;
-}
-
-export function createTetris(root) {
+defineElement('game-tetris', (root) => {
   const scoreText = root.querySelector('[data-score]');
   const highScoreText = root.querySelector('[data-high-score]');
   const overOverlay = root.querySelector('[data-over]');
   const pausedOverlay = root.querySelector('[data-paused]');
 
-  const ctx = setupCanvas(root.querySelector('[data-game]'), 300, 500);
-  const nextCtx = setupCanvas(root.querySelector('[data-next]'), 100, 100);
-  const holdCtx = setupCanvas(root.querySelector('[data-hold]'), 100, 100);
+  const ctx = setupCanvas(root.querySelector('[data-game]'), 300, 500, BLOCK_SIZE);
+  const nextCtx = setupCanvas(root.querySelector('[data-next]'), 100, 100, BLOCK_SIZE);
+  const holdCtx = setupCanvas(root.querySelector('[data-hold]'), 100, 100, BLOCK_SIZE);
 
   let status = 'playing';
   let isPaused = false;
@@ -207,7 +205,7 @@ export function createTetris(root) {
     return status === 'playing' && !isPaused;
   }
 
-  function sync() {
+  function render() {
     scoreText.textContent = String(score);
     highScoreText.textContent = String(highScore);
     overOverlay.hidden = status !== 'over';
@@ -533,7 +531,7 @@ export function createTetris(root) {
     checkCollisionAndLand(deltaTime);
 
     draw();
-    sync();
+    render();
   }
 
   function togglePause() {
@@ -541,7 +539,7 @@ export function createTetris(root) {
     isPaused = !isPaused;
     if (isPaused) loop.stop();
     else loop.start();
-    sync();
+    render();
   }
 
   function resetGame() {
@@ -568,7 +566,7 @@ export function createTetris(root) {
     isPaused = false;
     playerReset();
     draw();
-    sync();
+    render();
     loop.start();
   }
 
@@ -580,13 +578,13 @@ export function createTetris(root) {
       timers[action] = 0;
       if (down && isPlaying()) heldActions[action]();
     }
-    sync();
+    render();
   }
 
   const whenPlaying = (action) => () => {
     if (!isPlaying()) return;
     action();
-    sync();
+    render();
   };
 
   const cleanups = [
@@ -596,13 +594,7 @@ export function createTetris(root) {
     ),
     onGameKey([' '], whenPlaying(playerHardDrop)),
     onGameKey(['c'], whenPlaying(playerHold)),
-    onGameKey(['Escape', 'p'], (event) => {
-      event.preventDefault();
-      togglePause();
-    }),
-    onBlur(() => {
-      if (!isPaused) togglePause();
-    }),
+    onPause(togglePause, () => isPaused),
   ];
 
   root.querySelector('[data-restart]').addEventListener('click', resetGame);
@@ -613,4 +605,4 @@ export function createTetris(root) {
     keys.destroy();
     for (const cleanup of cleanups) cleanup();
   };
-}
+});

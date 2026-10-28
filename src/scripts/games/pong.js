@@ -1,4 +1,4 @@
-import { createLoop, onBlur, onGameKey, trackKeys } from '../game';
+import { createLoop, defineElement, onPause, setupCanvas, trackKeys } from '../game';
 
 const WIDTH = 700;
 const HEIGHT = 500;
@@ -14,21 +14,14 @@ function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
 }
 
-export function createPong(root) {
-  const canvas = root.querySelector('canvas');
+defineElement('game-pong', (root) => {
   const startOverlay = root.querySelector('[data-start]');
   const overOverlay = root.querySelector('[data-over]');
   const pausedOverlay = root.querySelector('[data-paused]');
   const outcomeText = root.querySelector('[data-outcome]');
   const scoreText = root.querySelector('[data-score]');
 
-  const ratio = window.devicePixelRatio;
-  canvas.width = WIDTH * ratio;
-  canvas.height = HEIGHT * ratio;
-  canvas.style.width = `${WIDTH}px`;
-  canvas.style.height = `${HEIGHT}px`;
-  const ctx = canvas.getContext('2d');
-  ctx.scale(ratio, ratio);
+  const ctx = setupCanvas(root.querySelector('canvas'), WIDTH, HEIGHT);
 
   let status = 'start';
   let isPaused = false;
@@ -48,16 +41,16 @@ export function createPong(root) {
   const rightPaddle = { x: WIDTH - 20 - PADDLE_WIDTH, y: PADDLE_Y, speed: 10.5, flash: 0 };
   const ball = { x: WIDTH / 2, y: HEIGHT / 2, dx: 0, dy: 0, speed: 4, baseSpeed: 4 };
 
-  const keys = trackKeys(['ArrowUp', 'ArrowDown', 'Space'], () => {});
+  const keys = trackKeys(['ArrowUp', 'ArrowDown', 'Space']);
   const isHeld = (name) => !keys.isModifierDown() && keys.isDown(name);
 
   const loop = createLoop((delta) => {
     update(Math.min(delta, 50) / STEP_MS);
     draw();
-    sync();
+    render();
   });
 
-  function sync() {
+  function render() {
     startOverlay.hidden = status !== 'start';
     overOverlay.hidden = status !== 'over';
     pausedOverlay.hidden = status === 'start' || status === 'over' || !isPaused;
@@ -224,7 +217,7 @@ export function createPong(root) {
     loop.stop();
     resetMatch();
     drawField();
-    sync();
+    render();
   }
 
   function startGame(mode) {
@@ -234,7 +227,7 @@ export function createPong(root) {
     resetMatch();
     getAudioCtx();
     resetPositions();
-    sync();
+    render();
     loop.start();
   }
 
@@ -243,7 +236,7 @@ export function createPong(root) {
     isPaused = !isPaused;
     if (isPaused) loop.stop();
     else loop.start();
-    sync();
+    render();
   }
 
   function checkWin() {
@@ -360,22 +353,14 @@ export function createPong(root) {
     updateParticles(dt);
   }
 
-  const cleanups = [
-    onGameKey(['Escape', 'p'], (event) => {
-      event.preventDefault();
-      togglePause();
-    }),
-    onBlur(() => {
-      if (!isPaused) togglePause();
-    }),
-  ];
+  const cleanups = [onPause(togglePause, () => isPaused)];
 
   root.querySelector('[data-mode="cpu"]').addEventListener('click', () => startGame('cpu'));
   root.querySelector('[data-mode="pvp"]').addEventListener('click', () => startGame('pvp'));
   root.querySelector('[data-restart]').addEventListener('click', showStartScreen);
 
   drawField();
-  sync();
+  render();
 
   return () => {
     loop.stop();
@@ -384,4 +369,4 @@ export function createPong(root) {
     for (const cleanup of cleanups) cleanup();
     if (audioCtx && audioCtx.state !== 'closed') audioCtx.close();
   };
-}
+});

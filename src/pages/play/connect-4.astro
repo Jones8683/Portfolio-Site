@@ -4,7 +4,7 @@ import GameLayout from '../../layouts/GameLayout.astro';
 ---
 
 <GameLayout title="Connect 4">
-  <connect-four class="game-wrapper">
+  <game-connect-4 class="game-wrapper">
     <div class="left-section">
       <div class="board">
         {Array.from({ length: 7 }, () => (
@@ -24,7 +24,7 @@ import GameLayout from '../../layouts/GameLayout.astro';
           <span class="player-text" data-winner hidden></span>
           <span data-draw>Draw!</span>
         </h2>
-        <button class="overlay-btn" type="button" data-restart>
+        <button class="overlay-btn" data-restart>
           Play Again
         </button>
       </div>
@@ -67,34 +67,12 @@ import GameLayout from '../../layouts/GameLayout.astro';
         ]}
       />
     </div>
-  </connect-four>
+  </game-connect-4>
 </GameLayout>
 
-<script>
-  import { createConnect4 } from '../../scripts/games/connect-4';
-
-  class ConnectFour extends HTMLElement {
-    destroy = () => {};
-
-    connectedCallback() {
-      this.destroy = createConnect4(this);
-    }
-
-    disconnectedCallback() {
-      this.destroy();
-    }
-  }
-
-  customElements.define('connect-four', ConnectFour);
-</script>
+<script src="../../scripts/games/connect-4.js"></script>
 
 <style>
-  .row {
-    display: flex;
-    gap: 15px;
-    width: 100%;
-  }
-
   .left-section {
     display: flex;
     flex-direction: column;

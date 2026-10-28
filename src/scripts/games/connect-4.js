@@ -1,4 +1,4 @@
-import { onGameKey } from '../game';
+import { defineElement, onGameKey } from '../game';
 
 const ROWS = 6;
 const COLS = 7;
@@ -14,7 +14,7 @@ function createBoard() {
   return Array.from({ length: ROWS }, () => Array.from({ length: COLS }, () => null));
 }
 
-export function createConnect4(root) {
+defineElement('game-connect-4', (root) => {
   const columns = [...root.querySelectorAll('.column')];
   const overOverlay = root.querySelector('[data-over]');
   const winnerText = root.querySelector('[data-winner]');
@@ -197,4 +197,4 @@ export function createConnect4(root) {
     clearTimeout(finishTimer);
     removeKey();
   };
-}
+});

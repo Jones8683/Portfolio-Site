@@ -4,7 +4,7 @@ import GameLayout from '../../layouts/GameLayout.astro';
 ---
 
 <GameLayout title="Hangman">
-  <hangman-game class="game-wrapper">
+  <game-hangman class="game-wrapper">
     <div class="left-section">
       <div class="panel-header">
         <span class="pill">Player 1</span>
@@ -21,7 +21,7 @@ import GameLayout from '../../layouts/GameLayout.astro';
               autocomplete="off"
               spellcheck="false"
             />
-            <button class="submit-btn" type="button" disabled>
+            <button class="submit-btn" disabled>
               Set Word
               <svg class="arrow-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
                 <path
@@ -105,7 +105,7 @@ import GameLayout from '../../layouts/GameLayout.astro';
           Game Over
         </h2>
         <p class="outcome-word"></p>
-        <button class="overlay-btn" type="button" data-restart>
+        <button class="overlay-btn" data-restart>
           Play Again
         </button>
       </div>
@@ -129,7 +129,6 @@ import GameLayout from '../../layouts/GameLayout.astro';
         <div class="label">Wrong Letters</div>
         <div class="wrong-letters">
           <span class="no-letters">—</span>
-          <span data-wrong-letters></span>
         </div>
         <template data-chip>
           <span class="wrong-chip"></span>
@@ -138,7 +137,7 @@ import GameLayout from '../../layouts/GameLayout.astro';
 
       <div class="keyboard-grid">
         {[...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'].map((letter) => (
-          <button class="key-btn" type="button" data-letter={letter} disabled>
+          <button class="key-btn" data-letter={letter} disabled>
             {letter}
           </button>
         ))}
@@ -146,26 +145,10 @@ import GameLayout from '../../layouts/GameLayout.astro';
 
       <GameControls controls={[{ action: 'Guess Letter', keys: 'A - Z' }]} />
     </div>
-  </hangman-game>
+  </game-hangman>
 </GameLayout>
 
-<script>
-  import { createHangman } from '../../scripts/games/hangman';
-
-  class HangmanGame extends HTMLElement {
-    destroy = () => {};
-
-    connectedCallback() {
-      this.destroy = createHangman(this);
-    }
-
-    disconnectedCallback() {
-      this.destroy();
-    }
-  }
-
-  customElements.define('hangman-game', HangmanGame);
-</script>
+<script src="../../scripts/games/hangman.js"></script>
 
 <style>
   .left-section {
@@ -338,10 +321,6 @@ import GameLayout from '../../layouts/GameLayout.astro';
     font-size: 11px;
     letter-spacing: 0.27em;
     text-transform: uppercase;
-  }
-
-  [data-wrong-letters] {
-    display: contents;
   }
 
   .right-section {

@@ -1,4 +1,4 @@
-import { onGameKey } from '../game';
+import { defineElement, onGameKey } from '../game';
 
 const MAX_WRONG = 6;
 const ALPHABET = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'];
@@ -9,7 +9,7 @@ function clone(template, text) {
   return element;
 }
 
-export function createHangman(root) {
+defineElement('game-hangman', (root) => {
   const playerPill = root.querySelector('.pill');
   const startGroup = root.querySelector('[data-start]');
   const playingSubtitle = root.querySelector('[data-playing]');
@@ -27,8 +27,8 @@ export function createHangman(root) {
   const rightSection = root.querySelector('.right-section');
   const pips = [...root.querySelectorAll('.pip')];
   const wrongCount = root.querySelector('[data-wrong-count]');
+  const wrongLetterList = root.querySelector('.wrong-letters');
   const noLetters = root.querySelector('.no-letters');
-  const wrongLetterList = root.querySelector('[data-wrong-letters]');
   const chipTemplate = root.querySelector('template[data-chip]');
   const keyButtons = [...root.querySelectorAll('.key-btn')];
 
@@ -73,8 +73,9 @@ export function createHangman(root) {
     rightSection.classList.toggle('faded', isStart);
     for (const [index, pip] of pips.entries()) pip.classList.toggle('dead', index < wrong.length);
     wrongCount.textContent = String(wrong.length);
-    noLetters.hidden = wrong.length > 0;
-    wrongLetterList.replaceChildren(...wrong.map((letter) => clone(chipTemplate, letter)));
+    wrongLetterList.replaceChildren(
+      ...(wrong.length > 0 ? wrong.map((letter) => clone(chipTemplate, letter)) : [noLetters]),
+    );
 
     for (const button of keyButtons) {
       const { letter } = button.dataset;
@@ -126,4 +127,4 @@ export function createHangman(root) {
   render();
 
   return removeKey;
-}
+});

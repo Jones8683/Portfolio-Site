@@ -1,4 +1,4 @@
-import { onBlur, onGameKey } from '../game';
+import { defineElement, onGameKey, onPause } from '../game';
 
 const NEIGHBORS = [
   [-1, -1],
@@ -46,7 +46,7 @@ function createGrid({ rows, cols }) {
   );
 }
 
-export function createMinesweeper(root) {
+defineElement('game-minesweeper', (root) => {
   const gridEl = root.querySelector('.grid');
   const cellTemplate = root.querySelector('template[data-cell]');
   const startOverlay = root.querySelector('[data-start]');
@@ -258,16 +258,7 @@ export function createMinesweeper(root) {
   }
   root.querySelector('[data-restart]').addEventListener('click', showStartScreen);
 
-  const cleanups = [
-    onGameKey(['r'], showStartScreen),
-    onGameKey(['Escape', 'p'], (event) => {
-      event.preventDefault();
-      togglePause();
-    }),
-    onBlur(() => {
-      if (!isPaused) togglePause();
-    }),
-  ];
+  const cleanups = [onGameKey(['r'], showStartScreen), onPause(togglePause, () => isPaused)];
 
   showStartScreen();
 
@@ -275,4 +266,4 @@ export function createMinesweeper(root) {
     stopTimer();
     for (const cleanup of cleanups) cleanup();
   };
-}
+});

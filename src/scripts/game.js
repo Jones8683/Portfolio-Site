@@ -1,3 +1,18 @@
+export function defineElement(name, setup) {
+  customElements.define(
+    name,
+    class extends HTMLElement {
+      connectedCallback() {
+        this.cleanup = setup(this);
+      }
+
+      disconnectedCallback() {
+        this.cleanup?.();
+      }
+    },
+  );
+}
+
 export function onGameKey(keys, handler) {
   const wanted = new Set(keys.map((key) => key.toLowerCase()));
 
@@ -10,7 +25,24 @@ export function onGameKey(keys, handler) {
   return () => removeEventListener('keydown', listener);
 }
 
-export function trackKeys(preventCodes, onChange) {
+export function onPause(togglePause, isPaused) {
+  const removeKey = onGameKey(['Escape', 'p'], (event) => {
+    event.preventDefault();
+    togglePause();
+  });
+
+  const blur = () => {
+    if (!isPaused()) togglePause();
+  };
+
+  addEventListener('blur', blur);
+  return () => {
+    removeKey();
+    removeEventListener('blur', blur);
+  };
+}
+
+export function trackKeys(preventCodes, onChange = () => {}) {
   const down = new Set();
 
   const press = (event) => {
@@ -73,9 +105,15 @@ export function createLoop(update) {
   };
 }
 
-export function onBlur(handler) {
-  addEventListener('blur', handler);
-  return () => removeEventListener('blur', handler);
+export function setupCanvas(canvas, width, height, scale = 1) {
+  const ratio = window.devicePixelRatio;
+  canvas.width = width * ratio;
+  canvas.height = height * ratio;
+  canvas.style.width = `${width}px`;
+  canvas.style.height = `${height}px`;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(scale * ratio, scale * ratio);
+  return ctx;
 }
 
 export function readNumber(key) {

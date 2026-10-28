@@ -4,16 +4,16 @@ import GameLayout from '../../layouts/GameLayout.astro';
 ---
 
 <GameLayout title="Pong">
-  <pong-game class="game-wrapper">
+  <game-pong class="game-wrapper">
     <div class="left-section">
       <canvas></canvas>
       <div class="overlay-msg" data-start>
         <h2 class="menu-title">Pong</h2>
         <div class="overlay-actions">
-          <button class="overlay-btn" type="button" data-mode="cpu">
+          <button class="overlay-btn" data-mode="cpu">
             1 Player
           </button>
-          <button class="overlay-btn" type="button" data-mode="pvp">
+          <button class="overlay-btn" data-mode="pvp">
             2 Players
           </button>
         </div>
@@ -21,7 +21,7 @@ import GameLayout from '../../layouts/GameLayout.astro';
       <div class="overlay-msg" data-over hidden>
         <h2 class="menu-title">Game Over</h2>
         <div class="outcome" data-outcome></div>
-        <button class="overlay-btn" type="button" data-restart>
+        <button class="overlay-btn" data-restart>
           Play Again
         </button>
       </div>
@@ -46,26 +46,10 @@ import GameLayout from '../../layouts/GameLayout.astro';
         ]}
       />
     </div>
-  </pong-game>
+  </game-pong>
 </GameLayout>
 
-<script>
-  import { createPong } from '../../scripts/games/pong';
-
-  class PongGame extends HTMLElement {
-    destroy = () => {};
-
-    connectedCallback() {
-      this.destroy = createPong(this);
-    }
-
-    disconnectedCallback() {
-      this.destroy();
-    }
-  }
-
-  customElements.define('pong-game', PongGame);
-</script>
+<script src="../../scripts/games/pong.js"></script>
 
 <style>
   .left-section {
@@ -74,11 +58,6 @@ import GameLayout from '../../layouts/GameLayout.astro';
     justify-content: center;
     width: 724px;
     height: 524px;
-  }
-
-  .overlay-actions {
-    display: flex;
-    gap: 10px;
   }
 
   canvas {
