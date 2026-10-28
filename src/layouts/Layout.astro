@@ -7,7 +7,7 @@ import NavBar from '../components/NavBar.astro';
 
 import '../styles/global.css';
 
-const { title, description = 'Jones Jankovic - Student & Creator' } = Astro.props;
+const { title, description = 'Student and creator from Australia.' } = Astro.props;
 
 const fullTitle = title ? `${title} • Jones Jankovic` : 'Jones Jankovic';
 const canonical = new URL(Astro.url.pathname, Astro.site);

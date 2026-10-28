@@ -4,7 +4,7 @@ import Layout from './Layout.astro';
 const { title } = Astro.props;
 ---
 
-<Layout title={title}>
+<Layout title={title} description={`Play ${title} in your browser.`}>
   <div class="game-page animate">
     <div class="touch-message content-wrap">
       <h1 class="page-title">Not Supported on Touch Screens</h1>
