@@ -1,0 +1,692 @@
+<now-playing class="pill-slot">
+  <div class="pill">
+    <span class="pill-idle">Student | Australia</span>
+  </div>
+  <template>
+    <a class="pill-live" target="_blank" rel="noopener noreferrer">
+      <span class="pill-art">
+        <img
+          class="pill-cover"
+          alt=""
+          width="40"
+          height="40"
+          crossorigin="anonymous"
+          decoding="sync"
+        />
+        <span class="pill-pause" aria-hidden="true">
+          <svg viewBox="0 0 16 16" width="22" height="22">
+            <rect x="3" y="2" width="3.5" height="12" rx="1" />
+            <rect x="9.5" y="2" width="3.5" height="12" rx="1" />
+          </svg>
+        </span>
+      </span>
+      <span class="pill-text">
+        <span class="pill-title"></span>
+        <span class="pill-artist"></span>
+        <span class="pill-progress" aria-hidden="true">
+          <span class="pill-bar">
+            <span class="pill-fill"></span>
+          </span>
+          <span class="pill-thumb"></span>
+        </span>
+      </span>
+    </a>
+  </template>
+</now-playing>
+
+<script>
+  interface Track {
+    id: number;
+    title: string;
+    artist: string;
+    art: string | null;
+    url: string;
+    durationMs: number;
+    progressMs: number;
+    startedAt: number;
+    playing: boolean;
+  }
+
+  const ENDPOINT = 'https://jjank.com/api/now-playing';
+  const POLL_MS = 5000;
+  const MIN_POLL_MS = 1000;
+  const TRACK_END_MARGIN_MS = 300;
+  const IDLE_GRACE_MS = 6000;
+  const SEEK_TOLERANCE_MS = 1500;
+  const REQUEST_TIMEOUT_MS = 8000;
+  const MORPH_MS = 560;
+  const MORPH_EASING = 'cubic-bezier(0.16, 1, 0.3, 1)';
+  const FADE_OUT_MS = 140;
+  const FADE_IN_MS = 260;
+  const LIVE_RADIUS = 18;
+  const PRELOAD_TIMEOUT_MS = 1500;
+  const TINT_SAMPLE_SIZE = 16;
+  const TINT_LIGHTNESS = 70;
+  const SPIN_STOP_MS = 600;
+
+  const position = (track: Track) =>
+    track.playing ? Date.now() - track.startedAt : track.progressMs;
+
+  function readTint(image: HTMLImageElement) {
+    const canvas = document.createElement('canvas');
+    canvas.width = TINT_SAMPLE_SIZE;
+    canvas.height = TINT_SAMPLE_SIZE;
+
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    if (!ctx) return null;
+    ctx.drawImage(image, 0, 0, TINT_SAMPLE_SIZE, TINT_SAMPLE_SIZE);
+    const { data } = ctx.getImageData(0, 0, TINT_SAMPLE_SIZE, TINT_SAMPLE_SIZE);
+
+    let red = 0;
+    let green = 0;
+    let blue = 0;
+    let total = 0;
+
+    for (let i = 0; i < data.length; i += 4) {
+      const [r, g, b] = data.subarray(i, i + 3);
+      const weight = Math.max(r, g, b) - Math.min(r, g, b) + 1;
+
+      red += r * weight;
+      green += g * weight;
+      blue += b * weight;
+      total += weight;
+    }
+
+    const r = red / total / 255;
+    const g = green / total / 255;
+    const b = blue / total / 255;
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const delta = max - min;
+
+    if (delta === 0) return `hsl(0 0% ${TINT_LIGHTNESS}%)`;
+
+    const saturation = delta / (1 - Math.abs(max + min - 1));
+    const sector =
+      max === r ? (g - b) / delta + 6 : max === g ? (b - r) / delta + 2 : (r - g) / delta + 4;
+    const hue = (sector % 6) * 60;
+
+    return `hsl(${Math.round(hue)} ${Math.round(saturation * 100)}% ${TINT_LIGHTNESS}%)`;
+  }
+
+  function preload(url: string | null): Promise<string | null> {
+    if (!url) return Promise.resolve(null);
+
+    const image = new Image();
+    image.crossOrigin = 'anonymous';
+    image.src = url;
+
+    return Promise.race([
+      image
+        .decode()
+        .then(() => readTint(image))
+        .catch(() => null),
+      new Promise<null>((resolve) => {
+        setTimeout(resolve, PRELOAD_TIMEOUT_MS, null);
+      }),
+    ]);
+  }
+
+  class NowPlaying extends HTMLElement {
+    pill!: HTMLElement;
+    idle!: HTMLElement;
+    template!: HTMLTemplateElement;
+    link: HTMLAnchorElement | null = null;
+    cover: HTMLImageElement | null = null;
+
+    track: Track | null = null;
+    isStale = false;
+    shown: Track | null = null;
+    tint: string | null = null;
+    isSwapped = false;
+    hasCoverError = false;
+    isStopped = true;
+    isFrozen: boolean | undefined;
+    lastArt: string | null = null;
+    progressId = 0;
+
+    trackId = 0;
+    changeToken = 0;
+    hasWarned = false;
+    stopFrame = 0;
+    pollTimer: ReturnType<typeof setTimeout> | undefined;
+    graceTimer: ReturnType<typeof setTimeout> | undefined;
+
+    connectedCallback() {
+      this.pill = this.querySelector('.pill') as HTMLElement;
+      this.idle = this.querySelector('.pill-idle') as HTMLElement;
+      this.template = this.querySelector('template') as HTMLTemplateElement;
+
+      document.addEventListener('visibilitychange', this.onVisibility);
+      this.updateFrozen();
+      if (!document.hidden) this.poll();
+    }
+
+    disconnectedCallback() {
+      document.removeEventListener('visibilitychange', this.onVisibility);
+      clearTimeout(this.pollTimer);
+      clearTimeout(this.graceTimer);
+      cancelAnimationFrame(this.stopFrame);
+      this.changeToken++;
+    }
+
+    onVisibility = () => {
+      clearTimeout(this.pollTimer);
+      if (!document.hidden) this.poll();
+    };
+
+    poll = async () => {
+      try {
+        const response = await fetch(ENDPOINT, {
+          signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+        });
+        const data = await response.json();
+
+        if (data.needsReauth && !this.hasWarned) {
+          this.hasWarned = true;
+          console.warn('Spotify needs to be linked again.');
+        }
+
+        if (response.ok && data.track) this.showTrack(data);
+        else this.hideTrack();
+      } catch {
+        this.hideTrack();
+      }
+
+      this.schedule();
+    };
+
+    schedule() {
+      clearTimeout(this.pollTimer);
+      if (!this.isConnected || document.hidden) return;
+      this.pollTimer = setTimeout(this.poll, this.nextDelay());
+    }
+
+    nextDelay() {
+      const { track } = this;
+      if (track === null || this.isStale || !track.playing) return POLL_MS;
+
+      const remaining = track.durationMs - (Date.now() - track.startedAt);
+      return Math.min(POLL_MS, Math.max(MIN_POLL_MS, remaining + TRACK_END_MARGIN_MS));
+    }
+
+    showTrack(data: {
+      track: string;
+      artist: string;
+      art: string | null;
+      url: string;
+      durationMs: number;
+      progressMs: number;
+      isPlaying: boolean;
+    }) {
+      clearTimeout(this.graceTimer);
+      this.graceTimer = undefined;
+
+      const startedAt = Date.now() - data.progressMs;
+      const current = this.track;
+      const unchanged =
+        current !== null &&
+        !this.isStale &&
+        current.url === data.url &&
+        current.playing === data.isPlaying &&
+        Math.abs(position(current) - data.progressMs) <= SEEK_TOLERANCE_MS;
+
+      this.isStale = false;
+      this.updateFrozen();
+
+      if (unchanged) return;
+
+      this.trackId++;
+      this.track = {
+        id: this.trackId,
+        title: data.track,
+        artist: data.artist,
+        art: data.art,
+        url: data.url,
+        durationMs: data.durationMs,
+        progressMs: data.progressMs,
+        startedAt,
+        playing: data.isPlaying,
+      };
+      this.onTrack(this.track);
+    }
+
+    hideTrack() {
+      if (this.track === null || this.graceTimer !== undefined) return;
+
+      this.isStale = true;
+      this.updateFrozen();
+      this.graceTimer = setTimeout(() => {
+        this.graceTimer = undefined;
+        this.isStale = false;
+        this.track = null;
+        this.onTrack(null);
+        this.updateFrozen();
+      }, IDLE_GRACE_MS);
+    }
+
+    onTrack(next: Track | null) {
+      this.changeToken++;
+      const current = this.shown;
+
+      if (next === null) {
+        if (current !== null) this.morph(() => this.show(null));
+      } else if (current === null) {
+        this.appear(next);
+      } else if (current.url === next.url) {
+        this.show(next);
+      } else {
+        this.switchTrack(next);
+      }
+    }
+
+    show(next: Track | null, tint?: string | null) {
+      this.shown = next;
+      if (tint !== undefined) this.tint = tint;
+      this.render();
+      this.updateFrozen();
+    }
+
+    render() {
+      const { pill, shown } = this;
+
+      pill.classList.toggle('live', shown !== null);
+      pill.classList.toggle('paused', shown !== null && !shown.playing);
+      pill.classList.toggle('swapped', this.isSwapped);
+      if (this.tint) pill.style.setProperty('--tint', this.tint);
+      else pill.style.removeProperty('--tint');
+
+      if (shown === null) {
+        this.link?.replaceWith(this.idle);
+        this.link = null;
+        this.cover = null;
+        return;
+      }
+
+      if (this.link === null) {
+        const link = this.template.content.firstElementChild?.cloneNode(true) as HTMLAnchorElement;
+        this.cover = link.querySelector('.pill-cover');
+        this.cover?.addEventListener('error', () => {
+          this.hasCoverError = true;
+          this.render();
+        });
+        this.idle.replaceWith(link);
+        this.link = link;
+        this.progressId = 0;
+      }
+
+      const { link, cover } = this;
+      link.href = shown.url;
+      link.ariaLabel = `${shown.playing ? 'Listening to' : 'Paused on'} ${shown.title} by ${shown.artist} on Spotify`;
+      (link.querySelector('.pill-title') as HTMLElement).textContent = shown.title;
+      (link.querySelector('.pill-artist') as HTMLElement).textContent = shown.artist;
+
+      if (shown.art !== this.lastArt) {
+        this.lastArt = shown.art;
+        this.hasCoverError = false;
+      }
+
+      const art = link.querySelector('.pill-art') as HTMLElement;
+      art.hidden = !shown.art || this.hasCoverError;
+      art.classList.toggle('stopped', this.isStopped);
+      if (cover && shown.art && cover.getAttribute('src') !== shown.art) cover.src = shown.art;
+
+      if (shown.id !== this.progressId) {
+        this.progressId = shown.id;
+        const fresh = this.template.content.querySelector('.pill-progress')?.cloneNode(true);
+        link.querySelector('.pill-progress')?.replaceWith(fresh as HTMLElement);
+        const progress = link.querySelector('.pill-progress') as HTMLElement;
+        progress.style.setProperty('--duration', `${shown.durationMs}ms`);
+        progress.style.setProperty('--delay', `${shown.startedAt - Date.now()}ms`);
+      }
+
+      link.querySelector('.pill-progress')?.classList.toggle('frozen', this.frozen());
+    }
+
+    frozen() {
+      return this.isStale || !this.shown?.playing;
+    }
+
+    setStopped(stopped: boolean) {
+      this.isStopped = stopped;
+      this.link?.querySelector('.pill-art')?.classList.toggle('stopped', stopped);
+    }
+
+    updateFrozen() {
+      const frozen = this.frozen();
+      this.link?.querySelector('.pill-progress')?.classList.toggle('frozen', frozen);
+      if (frozen === this.isFrozen) return;
+      this.isFrozen = frozen;
+
+      cancelAnimationFrame(this.stopFrame);
+
+      const spin = this.cover?.getAnimations()[0];
+      if (spin) spin.playbackRate = 1;
+
+      if (!frozen || !spin) {
+        this.setStopped(frozen);
+        return;
+      }
+
+      let start: number | undefined;
+      const slow = (now: number) => {
+        start ??= now;
+        const progress = Math.min((now - start) / SPIN_STOP_MS, 1);
+        spin.playbackRate = 1 - progress;
+
+        if (progress < 1) {
+          this.stopFrame = requestAnimationFrame(slow);
+        } else {
+          this.setStopped(true);
+          spin.playbackRate = 1;
+        }
+      };
+
+      this.stopFrame = requestAnimationFrame(slow);
+    }
+
+    morph(update: () => void) {
+      this.isSwapped = true;
+      const { pill } = this;
+
+      this.link?.style.removeProperty('width');
+
+      const from = pill.getBoundingClientRect();
+      const fromRadius = this.shown === null ? from.height / 2 : LIVE_RADIUS;
+
+      update();
+
+      const to = pill.getBoundingClientRect();
+      const toRadius = this.shown === null ? to.height / 2 : LIVE_RADIUS;
+
+      const content = this.link;
+      if (content) content.style.width = `${content.getBoundingClientRect().width}px`;
+
+      const animation = pill.animate(
+        [
+          {
+            width: `${from.width}px`,
+            minWidth: `${from.width}px`,
+            height: `${from.height}px`,
+            borderRadius: `${fromRadius}px`,
+          },
+          {
+            width: `${to.width}px`,
+            minWidth: `${to.width}px`,
+            height: `${to.height}px`,
+            borderRadius: `${toRadius}px`,
+          },
+        ],
+        { duration: MORPH_MS, easing: MORPH_EASING },
+      );
+
+      animation.addEventListener('finish', () => content?.style.removeProperty('width'), {
+        once: true,
+      });
+    }
+
+    async switchTrack(next: Track) {
+      const token = this.changeToken;
+      const ready = preload(next.art);
+      const content = this.link;
+
+      if (!content) {
+        const nextTint = await ready;
+        if (token === this.changeToken) this.show(next, nextTint);
+        return;
+      }
+
+      const fadeOut = content.animate([{ opacity: 1 }, { opacity: 0 }], {
+        duration: FADE_OUT_MS,
+        easing: 'ease-in',
+        fill: 'forwards',
+      });
+
+      const [, nextTint] = await Promise.all([fadeOut.finished.catch(() => {}), ready]);
+
+      if (token !== this.changeToken) {
+        fadeOut.cancel();
+        return;
+      }
+
+      this.morph(() => this.show(next, nextTint));
+
+      for (const animation of this.link?.getAnimations() ?? []) animation.cancel();
+      this.link?.animate([{ opacity: 0 }, { opacity: 1 }], {
+        duration: FADE_IN_MS,
+        easing: 'ease-out',
+      });
+    }
+
+    async appear(next: Track) {
+      const token = this.changeToken;
+      const nextTint = await preload(next.art);
+
+      if (token === this.changeToken) this.morph(() => this.show(next, nextTint));
+    }
+  }
+
+  customElements.define('now-playing', NowPlaying);
+</script>
+
+<style>
+  .pill-slot {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+    height: 58px;
+    margin-bottom: -10px;
+    pointer-events: none;
+  }
+
+  .pill {
+    position: relative;
+    overflow: hidden;
+    max-width: min(calc(100vw - 40px), 384px);
+    padding: 6px 14px;
+    font-family: var(--font-satoshi);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: #64a8ff;
+    background: rgba(58, 123, 213, 0.28);
+    border-radius: 999px;
+    border: 1px solid rgba(58, 123, 213, 0.44);
+    pointer-events: auto;
+    user-select: none;
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  .pill.live {
+    min-width: min(192px, calc(100vw - 40px));
+    padding: 0;
+    background: color-mix(in srgb, var(--tint) 28%, transparent);
+    border-radius: 18px;
+    border-color: color-mix(in srgb, var(--tint) 44%, transparent);
+  }
+
+  .pill:has(.pill-live:focus-visible) {
+    outline: 2px solid var(--tint);
+    outline-offset: 3px;
+  }
+
+  .pill-idle {
+    display: block;
+    white-space: nowrap;
+  }
+
+  .pill-live {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    padding: 8px 18px 8px 8px;
+  }
+
+  .pill-live:has(.pill-art[hidden]) {
+    padding-left: 18px;
+  }
+
+  .pill-live:focus-visible {
+    outline: none;
+  }
+
+  .pill-art {
+    position: relative;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    overflow: hidden;
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+  }
+
+  .pill-cover {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    animation: record-spin 8s linear infinite;
+  }
+
+  .stopped .pill-cover {
+    animation-play-state: paused;
+  }
+
+  .pill-pause {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: #f4f7fb;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .pill-pause svg {
+    fill: currentColor;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4));
+  }
+
+  .paused .pill-pause {
+    opacity: 1;
+  }
+
+  .pill-text {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .pill-title,
+  .pill-artist {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .pill-title {
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 16px;
+    letter-spacing: 0.02em;
+    color: #cbd5e1;
+  }
+
+  .pill-artist {
+    line-height: 15px;
+    color: #94a3b8;
+  }
+
+  .pill-progress {
+    position: relative;
+    margin-top: 6px;
+  }
+
+  .pill-bar {
+    display: block;
+    height: 3px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 999px;
+  }
+
+  .pill-fill,
+  .pill-thumb {
+    transform: translateX(-100%);
+    animation: track-progress var(--duration) linear var(--delay) both;
+  }
+
+  .pill-fill {
+    display: block;
+    height: 100%;
+    background: var(--tint);
+    border-radius: inherit;
+  }
+
+  .pill-thumb {
+    position: absolute;
+    inset: 0;
+  }
+
+  .pill-thumb::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 0;
+    width: 7px;
+    height: 7px;
+    background: #f4f7fb;
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+    transform: translate(50%, -50%);
+  }
+
+  .frozen .pill-fill,
+  .frozen .pill-thumb {
+    animation-play-state: paused;
+  }
+
+  .swapped .pill-idle,
+  .swapped .pill-live {
+    animation: swap-in 0.3s ease-out 0.14s both;
+  }
+
+  @keyframes track-progress {
+    to {
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes record-spin {
+    to {
+      transform: rotate(1turn);
+    }
+  }
+
+  @keyframes swap-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @media (hover: hover) {
+    .pill.live:hover {
+      background: color-mix(in srgb, var(--tint) 36%, transparent);
+      border-color: color-mix(in srgb, var(--tint) 60%, transparent);
+    }
+  }
+
+  @media (width <= 720px) {
+    .pill-slot {
+      margin-bottom: 8px;
+    }
+  }
+</style>

@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["eslint", "typescript", "unicorn", "oxc", "vue", "import", "promise"],
+  "plugins": ["eslint", "typescript", "unicorn", "oxc", "import", "promise"],
   "categories": {
     "correctness": "error",
     "suspicious": "error",
@@ -16,10 +16,7 @@
   },
   "env": {
     "browser": true,
-    "es2024": true
+    "es2026": true
   },
-  "globals": {
-    "definePage": "readonly"
-  },
-  "ignorePatterns": ["dist", "public/gameassets"]
+  "ignorePatterns": ["public/gameassets"]
 }

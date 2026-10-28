@@ -1,0 +1,107 @@
+---
+import GameControls from '../../components/GameControls.astro';
+import GameLayout from '../../layouts/GameLayout.astro';
+---
+
+<GameLayout title="Stickman Hook">
+  <stickman-hook class="game-wrapper">
+    <div class="left-section">
+      <iframe
+        class="game-iframe"
+        src="/gameassets/stickmanhook.html"
+        title="Stickman Hook game"
+        scrolling="no"
+        allow="fullscreen"
+      ></iframe>
+    </div>
+
+    <div class="right-section">
+      <h1 class="game-title">Stickman Hook</h1>
+
+      <GameControls
+        controls={[
+          { action: 'Swing / Hook', keys: 'Click' },
+          { action: 'Alternative', keys: 'Space' },
+        ]}
+      />
+
+      <button class="fullscreen-btn" type="button">
+        <svg
+          viewBox="0 0 24 24"
+          width="14"
+          height="14"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+        </svg>
+        Fullscreen
+      </button>
+    </div>
+  </stickman-hook>
+</GameLayout>
+
+<script>
+  class StickmanHook extends HTMLElement {
+    connectedCallback() {
+      const iframe = this.querySelector('iframe') as HTMLIFrameElement;
+      const focus = () => iframe.focus();
+
+      this.querySelector('.left-section')?.addEventListener('click', focus);
+      this.querySelector('.fullscreen-btn')?.addEventListener('click', () =>
+        iframe.requestFullscreen(),
+      );
+      iframe.addEventListener('load', focus);
+      focus();
+    }
+  }
+
+  customElements.define('stickman-hook', StickmanHook);
+</script>
+
+<style>
+  .game-iframe {
+    width: 880px;
+    height: 550px;
+    background: #000000;
+  }
+
+  .fullscreen-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 16px;
+    margin-top: 5px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    cursor: pointer;
+    transition:
+      background-color 0.3s ease,
+      border-color 0.3s ease,
+      transform 0.3s ease;
+  }
+
+  .fullscreen-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+  }
+
+  @media (width <= 960px) {
+    .game-iframe {
+      width: 580px;
+      height: 435px;
+    }
+  }
+</style>

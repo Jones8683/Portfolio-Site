@@ -1,0 +1,52 @@
+---
+import { Font } from 'astro:assets';
+import { ClientRouter } from 'astro:transitions';
+
+import Footer from '../components/Footer.astro';
+import NavBar from '../components/NavBar.astro';
+
+import '../styles/global.css';
+
+const { title, description = 'Jones Jankovic - Student & Creator' } = Astro.props;
+
+const fullTitle = title ? `${title} • Jones Jankovic` : 'Jones Jankovic';
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL('/og-image.png', Astro.site);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#1a1c24" />
+    <meta name="color-scheme" content="dark" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="/favicon.png" />
+    <link rel="canonical" href={canonical} />
+    <Font cssVariable="--font-andika" preload={[{ weight: 400 }]} />
+    <Font cssVariable="--font-satoshi" preload={[{ weight: 400 }, { weight: 700 }]} />
+    <Font cssVariable="--font-cherry-bomb-one" preload />
+    <ClientRouter />
+    <script is:inline>
+      const style = document.createElement('style');
+      style.textContent = '* { transition: none !important; }';
+      document.addEventListener('astro:after-swap', () => {
+        document.head.append(style);
+        setTimeout(() => style.remove(), 100);
+      });
+    </script>
+  </head>
+  <body>
+    <NavBar />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

@@ -1,0 +1,101 @@
+---
+import GameControls from '../../components/GameControls.astro';
+import GameLayout from '../../layouts/GameLayout.astro';
+---
+
+<GameLayout title="Pong">
+  <pong-game class="game-wrapper">
+    <div class="left-section">
+      <canvas></canvas>
+      <div class="overlay-msg" data-start>
+        <h2 class="menu-title">Pong</h2>
+        <div class="overlay-actions">
+          <button class="overlay-btn" type="button" data-mode="cpu">
+            1 Player
+          </button>
+          <button class="overlay-btn" type="button" data-mode="pvp">
+            2 Players
+          </button>
+        </div>
+      </div>
+      <div class="overlay-msg" data-over hidden>
+        <h2 class="menu-title">Game Over</h2>
+        <div class="outcome" data-outcome></div>
+        <button class="overlay-btn" type="button" data-restart>
+          Play Again
+        </button>
+      </div>
+      <div class="overlay-msg" data-paused hidden>
+        <h2 class="menu-title">Paused</h2>
+      </div>
+    </div>
+
+    <div class="right-section">
+      <h1 class="game-title">Pong</h1>
+      <div class="info-box score-box">
+        <div class="label score-label">Score</div>
+        <div class="value score-value" data-score>
+          0 - 0
+        </div>
+      </div>
+      <GameControls
+        controls={[
+          { action: 'Left Paddle', keys: ['W', 'S'] },
+          { action: 'Right Paddle', keys: ['↑', '↓'] },
+          { action: 'Pause', keys: ['Esc', 'P'] },
+        ]}
+      />
+    </div>
+  </pong-game>
+</GameLayout>
+
+<script>
+  import { createPong } from '../../scripts/games/pong';
+
+  class PongGame extends HTMLElement {
+    destroy = () => {};
+
+    connectedCallback() {
+      this.destroy = createPong(this);
+    }
+
+    disconnectedCallback() {
+      this.destroy();
+    }
+  }
+
+  customElements.define('pong-game', PongGame);
+</script>
+
+<style>
+  .left-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 724px;
+    height: 524px;
+  }
+
+  .overlay-actions {
+    display: flex;
+    gap: 10px;
+  }
+
+  canvas {
+    background: #0d0d0d;
+    border-radius: 8px;
+    border: 1px solid #333333;
+    box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.5);
+  }
+
+  .outcome {
+    margin-bottom: 20px;
+    color: #94a3b8;
+    font-size: 14px;
+    text-transform: uppercase;
+  }
+
+  .score-box {
+    min-height: 100px;
+  }
+</style>

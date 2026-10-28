@@ -1,3 +1,3 @@
-# My Portfolio Site
+# Personal Site
 
-https://jjank.com. Built with Vue 3 and Vite.
+https://jjank.com. Built with Astro.

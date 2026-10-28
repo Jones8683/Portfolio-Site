@@ -1,0 +1,114 @@
+---
+import GameControls from '../../components/GameControls.astro';
+import GameLayout from '../../layouts/GameLayout.astro';
+---
+
+<GameLayout title="Tetris">
+  <tetris-game class="game-wrapper">
+    <div class="left-section">
+      <canvas class="game-canvas" data-game></canvas>
+      <div class="overlay-msg" data-over hidden>
+        <h2 class="menu-title">Game Over</h2>
+        <button class="overlay-btn" type="button" data-restart>
+          Play Again
+        </button>
+      </div>
+      <div class="overlay-msg" data-paused hidden>
+        <h2 class="menu-title">Paused</h2>
+      </div>
+    </div>
+
+    <div class="right-section">
+      <h1 class="game-title">Tetris</h1>
+      <div class="row">
+        <div class="info-box">
+          <div class="label">Next</div>
+          <canvas data-next></canvas>
+        </div>
+        <div class="info-box">
+          <div class="label">Hold</div>
+          <canvas data-hold></canvas>
+        </div>
+      </div>
+      <div class="info-box score-box">
+        <div class="label score-label">Score</div>
+        <div class="value score-value" data-score>
+          0
+        </div>
+        <div class="score-divider"></div>
+        <div class="label high-score-label">High Score</div>
+        <div class="value high-score-value" data-high-score>
+          0
+        </div>
+      </div>
+      <GameControls
+        controls={[
+          { action: 'Move', keys: ['←', '↓', '→'] },
+          { action: 'Rotate', keys: '↑' },
+          { action: 'Alternative', keys: ['A', 'S', 'D', 'W'] },
+          { action: 'Hard Drop', keys: 'Space' },
+          { action: 'Hold', keys: 'C' },
+          { action: 'Pause', keys: ['Esc', 'P'] },
+        ]}
+      />
+    </div>
+  </tetris-game>
+</GameLayout>
+
+<script>
+  import { createTetris } from '../../scripts/games/tetris';
+
+  class TetrisGame extends HTMLElement {
+    destroy = () => {};
+
+    connectedCallback() {
+      this.destroy = createTetris(this);
+    }
+
+    disconnectedCallback() {
+      this.destroy();
+    }
+  }
+
+  customElements.define('tetris-game', TetrisGame);
+</script>
+
+<style>
+  .row {
+    display: flex;
+    gap: 15px;
+    width: 100%;
+  }
+
+  .high-score-label {
+    margin-bottom: 2px;
+    font-size: 11px;
+  }
+
+  .high-score-value {
+    font-size: 24px;
+    color: #ffd700;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+  }
+
+  .score-divider {
+    width: 100%;
+    height: 1px;
+    margin: 8px 0;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .info-box {
+    flex: 1;
+    aspect-ratio: 1;
+  }
+
+  .score-box {
+    aspect-ratio: auto;
+  }
+
+  .game-canvas {
+    background: #0d0d0d;
+    user-select: none;
+  }
+</style>

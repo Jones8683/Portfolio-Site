@@ -1,0 +1,244 @@
+---
+import GameControls from '../../components/GameControls.astro';
+import GameLayout from '../../layouts/GameLayout.astro';
+---
+
+<GameLayout title="Connect 4">
+  <connect-four class="game-wrapper">
+    <div class="left-section">
+      <div class="board">
+        {Array.from({ length: 7 }, () => (
+          <div class="column">
+            {Array.from({ length: 6 }, () => (
+              <div class="cell">
+                <div class="drop-target" hidden></div>
+                <div class="piece"></div>
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+
+      <div class="overlay-msg" data-over hidden>
+        <h2 class="menu-title">
+          <span class="player-text" data-winner hidden></span>
+          <span data-draw>Draw!</span>
+        </h2>
+        <button class="overlay-btn" type="button" data-restart>
+          Play Again
+        </button>
+      </div>
+    </div>
+
+    <div class="right-section">
+      <h1 class="game-title">Connect 4</h1>
+
+      <div class="row">
+        <div class="info-box score-box">
+          <div class="label score-label player-text p1">Player 1</div>
+          <div class="value score-value" data-score="1">
+            0
+          </div>
+        </div>
+        <div class="info-box score-box">
+          <div class="label score-label player-text p2">Player 2</div>
+          <div class="value score-value" data-score="2">
+            0
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="info-box turn-box">
+          <div class="label">Turn</div>
+          <div class="value">
+            <div class="turn-piece p1"></div>
+            <span data-turn-empty hidden>
+              -
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <GameControls
+        controls={[
+          { action: 'Drop Piece', keys: 'Click' },
+          { action: 'Restart', keys: 'R' },
+        ]}
+      />
+    </div>
+  </connect-four>
+</GameLayout>
+
+<script>
+  import { createConnect4 } from '../../scripts/games/connect-4';
+
+  class ConnectFour extends HTMLElement {
+    destroy = () => {};
+
+    connectedCallback() {
+      this.destroy = createConnect4(this);
+    }
+
+    disconnectedCallback() {
+      this.destroy();
+    }
+  }
+
+  customElements.define('connect-four', ConnectFour);
+</script>
+
+<style>
+  .row {
+    display: flex;
+    gap: 15px;
+    width: 100%;
+  }
+
+  .left-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .game-title {
+    font-size: 48px;
+  }
+
+  .board {
+    display: flex;
+    gap: 8px;
+    padding: 16px;
+    background: #0d0d0d;
+    border-radius: 12px;
+  }
+
+  .column {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 4px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+  }
+
+  .column.hovered {
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  .cell {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 54px;
+    height: 54px;
+    overflow: visible;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .drop-target {
+    position: absolute;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+  }
+
+  .piece {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    transition:
+      background-color 0.1s ease,
+      box-shadow 0.1s ease;
+  }
+
+  .p1 {
+    --player: #0dc2ff;
+  }
+
+  .p2 {
+    --player: #ff0d72;
+  }
+
+  .player-text {
+    color: var(--player);
+  }
+
+  .piece.p1,
+  .piece.p2,
+  .turn-piece {
+    background: var(--player);
+    box-shadow: 0 0 10px color-mix(in srgb, var(--player) 35%, transparent);
+  }
+
+  .drop-target,
+  .piece.ghost {
+    background: color-mix(in srgb, var(--player) 25%, transparent);
+    box-shadow: 0 0 8px color-mix(in srgb, var(--player) 15%, transparent);
+    pointer-events: none;
+  }
+
+  .piece.dropping {
+    position: relative;
+    z-index: 10;
+    animation: drop-in var(--drop-dur) forwards;
+  }
+
+  .piece.winning-piece {
+    animation: pulse 0.75s ease-in-out infinite alternate;
+  }
+
+  .info-box {
+    flex: 1;
+    aspect-ratio: 1;
+  }
+
+  .turn-box {
+    aspect-ratio: auto;
+    min-height: 60px;
+    padding: 8px;
+  }
+
+  .turn-piece {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+  }
+
+  @keyframes drop-in {
+    0% {
+      transform: translateY(var(--drop-dist));
+      animation-timing-function: cubic-bezier(0.55, 0, 1, 0.6);
+    }
+    82% {
+      transform: translateY(0);
+      animation-timing-function: cubic-bezier(0.33, 1, 0.66, 1);
+    }
+    91% {
+      transform: translateY(5px);
+      animation-timing-function: ease-out;
+    }
+    96% {
+      transform: translateY(-2px);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes pulse {
+    from {
+      opacity: 1;
+      transform: scale(1);
+    }
+    to {
+      opacity: 0.55;
+      transform: scale(0.88);
+    }
+  }
+</style>

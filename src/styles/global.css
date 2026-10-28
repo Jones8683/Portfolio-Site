@@ -1,60 +1,22 @@
-@font-face {
-  font-family: 'Cherry Bomb One';
-  font-weight: 400;
-  font-display: swap;
-  src: url('/fonts/cherry-bomb-one-400.woff2') format('woff2');
-}
-
-@font-face {
-  font-family: 'Andika';
-  font-weight: 400;
-  font-display: swap;
-  src: url('/fonts/andika-400.woff2') format('woff2');
-}
-
-@font-face {
-  font-family: 'Andika';
-  font-weight: 700;
-  font-display: swap;
-  src: url('/fonts/andika-700.woff2') format('woff2');
-}
-
-@font-face {
-  font-family: 'Satoshi';
-  font-weight: 400;
-  font-display: swap;
-  src: url('/fonts/satoshi-400.woff2') format('woff2');
-}
-
-@font-face {
-  font-family: 'Satoshi';
-  font-weight: 700;
-  font-display: swap;
-  src: url('/fonts/satoshi-700.woff2') format('woff2');
-}
-
-@font-face {
-  font-family: 'Satoshi';
-  font-weight: 900;
-  font-display: swap;
-  src: url('/fonts/satoshi-900.woff2') format('woff2');
-}
-
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 html {
   background: #1a1c24;
-  color-scheme: dark;
-  scrollbar-gutter: stable;
+  text-size-adjust: none;
 }
 
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -71,7 +33,7 @@ body {
   flex-direction: column;
   min-height: 100dvh;
   color: #ffffff;
-  font-family: 'Andika', sans-serif;
+  font-family: var(--font-andika);
 }
 
 body::before {
@@ -86,7 +48,6 @@ body::before {
     radial-gradient(farthest-side at 50% 50%, rgba(58, 123, 213, 0.12) 0, transparent 100%),
     radial-gradient(farthest-side at 0% 100%, rgba(0, 123, 255, 0.07) 0, transparent 100%),
     radial-gradient(farthest-side at 100% 100%, rgba(58, 123, 213, 0.07) 0, transparent 100%);
-  pointer-events: none;
 }
 
 img {
@@ -108,7 +69,7 @@ a {
 
 a,
 button {
-  font-family: 'Satoshi', sans-serif;
+  font-family: var(--font-satoshi);
 }
 
 :focus-visible {
@@ -118,16 +79,10 @@ button {
 
 h1,
 h2 {
-  font-family: 'Cherry Bomb One', sans-serif;
+  font-family: var(--font-cherry-bomb-one);
   font-weight: 400;
   letter-spacing: 0.01em;
   user-select: none;
-}
-
-#app {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
 }
 
 main {
@@ -148,12 +103,36 @@ main {
   text-align: center;
 }
 
-.page-enter-active,
-.page-leave-active {
-  transition: opacity 0.15s ease;
+.animate {
+  opacity: 0;
+  animation: fade-in-up 300ms forwards;
 }
 
-.page-enter-from,
-.page-leave-to {
-  opacity: 0;
+@media (prefers-reduced-motion) {
+  .animate {
+    animation-duration: 100ms;
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(2rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-title {
+  font-size: clamp(48px, 10vw, 72px);
+  line-height: 1;
+  text-wrap: balance;
+}
+
+.page-subtitle {
+  margin-bottom: 12px;
+  color: #94a3b8;
 }
