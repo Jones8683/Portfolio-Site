@@ -64,7 +64,7 @@ const interests = [
 
 const palette = ['#b79cff', '#9a97ff', '#80b5ff', '#5fe3d6', '#86ebb0'];
 
-const contacts = [
+const socials = [
   {
     label: 'Instagram',
     value: 'jonesjankovic',
@@ -199,24 +199,24 @@ const isExternal = (href: string) => href.startsWith('http');
         <h2 class="about-title">Socials</h2>
         <div class="about-body">
           <p>Find me on…</p>
-          <div class="contact-list">
-            {contacts.map((contact) => (
+          <div class="social-list">
+            {socials.map((social) => (
               <a
-                class="contact-row"
-                href={contact.href}
-                target={isExternal(contact.href) ? '_blank' : undefined}
-                rel={isExternal(contact.href) ? 'noopener noreferrer' : undefined}
+                class="social-row"
+                href={social.href}
+                target={isExternal(social.href) ? '_blank' : undefined}
+                rel={isExternal(social.href) ? 'noopener noreferrer' : undefined}
               >
                 <svg
-                  class:list={['contact-row-icon', { outline: contact.outline }]}
+                  class:list={['social-row-icon', { outline: social.outline }]}
                   viewBox="0 0 24 24"
                   aria-hidden="true"
                 >
-                  <path d={contact.icon} />
+                  <path d={social.icon} />
                 </svg>
-                <span class="contact-row-label">{contact.label}</span>
-                <span class="contact-row-value">{contact.value}</span>
-                <svg class="contact-row-arrow" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <span class="social-row-label">{social.label}</span>
+                <span class="social-row-value">{social.value}</span>
+                <svg class="social-row-arrow" viewBox="0 0 20 20" fill="none" aria-hidden="true">
                   <path
                     d="M4 10h11m0 0-4-4m4 4-4 4"
                     stroke="currentColor"
@@ -228,7 +228,7 @@ const isExternal = (href: string) => href.startsWith('http');
               </a>
             ))}
           </div>
-          <p class="contact-outro">Feel free to reach out if you want to chat!</p>
+          <p class="social-outro">Feel free to reach out if you want to chat!</p>
         </div>
       </section>
     </div>
@@ -467,14 +467,14 @@ const isExternal = (href: string) => href.startsWith('http');
     border-radius: 999px;
   }
 
-  .contact-list {
+  .social-list {
     display: flex;
     flex-direction: column;
     gap: 8px;
     margin-top: 8px;
   }
 
-  .contact-row {
+  .social-row {
     display: flex;
     align-items: center;
     gap: 14px;
@@ -490,13 +490,13 @@ const isExternal = (href: string) => href.startsWith('http');
       transform 0.25s cubic-bezier(0.23, 1, 0.32, 1);
   }
 
-  .contact-row:hover {
+  .social-row:hover {
     background: rgba(255, 255, 255, 0.045);
     border-color: rgba(135, 206, 250, 0.2);
     transform: translateX(4px);
   }
 
-  .contact-row-icon {
+  .social-row-icon {
     flex-shrink: 0;
     width: 22px;
     height: 22px;
@@ -505,7 +505,7 @@ const isExternal = (href: string) => href.startsWith('http');
     transition: color 0.25s ease;
   }
 
-  .contact-row-icon.outline {
+  .social-row-icon.outline {
     fill: none;
     stroke: currentColor;
     stroke-width: 1.8;
@@ -513,11 +513,11 @@ const isExternal = (href: string) => href.startsWith('http');
     stroke-linejoin: round;
   }
 
-  .contact-row:hover .contact-row-icon {
+  .social-row:hover .social-row-icon {
     color: #87cefa;
   }
 
-  .contact-row-label {
+  .social-row-label {
     flex: 1;
     font-size: 15px;
     font-weight: 700;
@@ -525,11 +525,11 @@ const isExternal = (href: string) => href.startsWith('http');
     transition: color 0.25s ease;
   }
 
-  .contact-row:hover .contact-row-label {
+  .social-row:hover .social-row-label {
     color: #f1f5f9;
   }
 
-  .contact-row-value {
+  .social-row-value {
     min-width: 0;
     overflow: hidden;
     font-size: 15px;
@@ -538,7 +538,7 @@ const isExternal = (href: string) => href.startsWith('http');
     text-overflow: ellipsis;
   }
 
-  .contact-row-arrow {
+  .social-row-arrow {
     position: relative;
     top: 1px;
     flex-shrink: 0;
@@ -556,7 +556,7 @@ const isExternal = (href: string) => href.startsWith('http');
       color 0.3s ease;
   }
 
-  .contact-row:hover .contact-row-arrow {
+  .social-row:hover .social-row-arrow {
     width: 16px;
     margin-left: 0;
     color: #87cefa;
@@ -564,7 +564,7 @@ const isExternal = (href: string) => href.startsWith('http');
     transform: translateX(0);
   }
 
-  .contact-outro {
+  .social-outro {
     margin-top: 12px;
   }
 
@@ -642,21 +642,21 @@ const isExternal = (href: string) => href.startsWith('http');
       justify-content: center;
     }
 
-    .contact-row {
+    .social-row {
       gap: 10px;
       padding: 10px 12px;
     }
-    .contact-row-label {
+    .social-row-label {
       text-align: left;
     }
 
-    .contact-row-arrow {
+    .social-row-arrow {
       margin-left: -10px;
     }
   }
 
   @media (width <= 480px) {
-    .contact-row-value {
+    .social-row-value {
       display: none;
     }
   }
