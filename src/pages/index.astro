@@ -66,13 +66,6 @@ const palette = ['#b79cff', '#9a97ff', '#80b5ff', '#5fe3d6', '#86ebb0'];
 
 const contacts = [
   {
-    label: 'Email',
-    value: 'contact@jjank.com',
-    href: 'mailto:contact@jjank.com',
-    icon: 'M4.5 4.5h15A2.5 2.5 0 0 1 22 7v10a2.5 2.5 0 0 1-2.5 2.5h-15A2.5 2.5 0 0 1 2 17V7a2.5 2.5 0 0 1 2.5-2.5zM3 6.2l9 7.1 9-7.1',
-    outline: true,
-  },
-  {
     label: 'Instagram',
     value: 'jonesjankovic',
     href: 'https://www.instagram.com/jonesjankovic',
@@ -101,6 +94,13 @@ const contacts = [
     value: 'Jones',
     href: 'https://discord.com/users/1562426082185973802',
     icon: 'M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z',
+  },
+  {
+    label: 'Email',
+    value: 'contact@jjank.com',
+    href: 'mailto:contact@jjank.com',
+    icon: 'M4.5 4.5h15A2.5 2.5 0 0 1 22 7v10a2.5 2.5 0 0 1-2.5 2.5h-15A2.5 2.5 0 0 1 2 17V7a2.5 2.5 0 0 1 2.5-2.5zM3 6.2l9 7.1 9-7.1',
+    outline: true,
   },
 ];
 
@@ -196,9 +196,9 @@ const isExternal = (href: string) => href.startsWith('http');
       </section>
 
       <section class="about-section">
-        <h2 class="about-title">Contact</h2>
+        <h2 class="about-title">Socials</h2>
         <div class="about-body">
-          <p>Check out my socials to see what I'm up to:</p>
+          <p>Find me on…</p>
           <div class="contact-list">
             {contacts.map((contact) => (
               <a
@@ -228,7 +228,7 @@ const isExternal = (href: string) => href.startsWith('http');
               </a>
             ))}
           </div>
-          <p class="contact-outro">Feel free to reach out if you want to talk!</p>
+          <p class="contact-outro">Feel free to reach out if you want to chat!</p>
         </div>
       </section>
     </div>
@@ -500,7 +500,7 @@ const isExternal = (href: string) => href.startsWith('http');
     flex-shrink: 0;
     width: 22px;
     height: 22px;
-    color: #4a5e7a;
+    color: #5d7394;
     fill: currentColor;
     transition: color 0.25s ease;
   }
@@ -518,19 +518,18 @@ const isExternal = (href: string) => href.startsWith('http');
   }
 
   .contact-row-label {
-    min-width: 68px;
+    flex: 1;
     font-size: 15px;
     font-weight: 700;
-    color: #94a3b8;
+    color: #cbd5e1;
     transition: color 0.25s ease;
   }
 
   .contact-row:hover .contact-row-label {
-    color: #cbd5e1;
+    color: #f1f5f9;
   }
 
   .contact-row-value {
-    flex: 1;
     min-width: 0;
     overflow: hidden;
     font-size: 15px;
@@ -540,19 +539,26 @@ const isExternal = (href: string) => href.startsWith('http');
   }
 
   .contact-row-arrow {
+    position: relative;
+    top: 1px;
     flex-shrink: 0;
-    width: 16px;
+    width: 0;
     height: 16px;
+    margin-left: -14px;
     color: #3a4f6a;
     opacity: 0;
     transform: translateX(-6px);
     transition:
+      width 0.3s ease,
+      margin-left 0.3s ease,
       opacity 0.3s ease,
       transform 0.3s ease,
       color 0.3s ease;
   }
 
   .contact-row:hover .contact-row-arrow {
+    width: 16px;
+    margin-left: 0;
     color: #87cefa;
     opacity: 1;
     transform: translateX(0);
@@ -640,21 +646,16 @@ const isExternal = (href: string) => href.startsWith('http');
       gap: 10px;
       padding: 10px 12px;
     }
-
     .contact-row-label {
-      min-width: 0;
+      text-align: left;
     }
 
-    .contact-row-value {
-      font-size: 14px;
+    .contact-row-arrow {
+      margin-left: -10px;
     }
   }
 
   @media (width <= 480px) {
-    .contact-row-label {
-      flex: 1;
-    }
-
     .contact-row-value {
       display: none;
     }
