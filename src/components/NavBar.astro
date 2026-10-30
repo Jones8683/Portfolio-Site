@@ -93,9 +93,10 @@ const toLetters = (word: string) =>
     lastY = Infinity;
 
     update = () => {
-      this.header?.classList.toggle('minimized', scrollY > 20);
-      this.header?.classList.toggle('hidden', scrollY >= 350 && scrollY >= this.lastY);
-      this.lastY = scrollY;
+      const y = scrollY;
+      this.header?.classList.toggle('minimized', y > 20);
+      this.header?.classList.toggle('hidden', y >= 350 && y >= this.lastY);
+      this.lastY = y;
     };
 
     connectedCallback() {
