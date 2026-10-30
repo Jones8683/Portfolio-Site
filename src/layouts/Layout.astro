@@ -36,14 +36,6 @@ const ogImage = new URL('/og-image.png', Astro.site);
     <Font cssVariable="--font-satoshi" preload={[{ weight: 400 }, { weight: 700 }]} />
     <Font cssVariable="--font-cherry-bomb-one" preload />
     <ClientRouter />
-    <script is:inline>
-      const style = document.createElement('style');
-      style.textContent = '* { transition: none !important; }';
-      document.addEventListener('astro:after-swap', () => {
-        document.head.append(style);
-        setTimeout(() => style.remove(), 100);
-      });
-    </script>
   </head>
   <body>
     <NavBar path={path} />
