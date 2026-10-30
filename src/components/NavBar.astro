@@ -10,7 +10,7 @@ const toLetters = (word: string) =>
   [...word].map((char, i) => ({ char, offset: i / (word.length - 1) }));
 ---
 
-<nav-bar class="nav-shell">
+<nav-bar class="nav-shell" transition:persist>
   <header class="main-header">
     <div class="nav-left">
       <a class="nav-brand" href="/" aria-label="Jones Jankovic — Home">
@@ -88,6 +88,8 @@ const toLetters = (word: string) =>
 </nav-bar>
 
 <script>
+  import type { TransitionBeforeSwapEvent } from 'astro:transitions/client';
+
   class NavBar extends HTMLElement {
     header: Element | null = null;
     lastY = Infinity;
@@ -99,15 +101,27 @@ const toLetters = (word: string) =>
       this.lastY = y;
     };
 
+    syncLinks = ({ newDocument }: TransitionBeforeSwapEvent) => {
+      const next = newDocument.querySelectorAll('.glass-btn');
+      this.querySelectorAll('.glass-btn').forEach((link, i) => {
+        const current = next[i].getAttribute('aria-current');
+        link.className = next[i].className;
+        if (current) link.setAttribute('aria-current', current);
+        else link.removeAttribute('aria-current');
+      });
+    };
+
     connectedCallback() {
       this.header = this.querySelector('.main-header');
       this.lastY = Infinity;
       addEventListener('scroll', this.update, { passive: true });
+      document.addEventListener('astro:before-swap', this.syncLinks);
       this.update();
     }
 
     disconnectedCallback() {
       removeEventListener('scroll', this.update);
+      document.removeEventListener('astro:before-swap', this.syncLinks);
     }
   }
 

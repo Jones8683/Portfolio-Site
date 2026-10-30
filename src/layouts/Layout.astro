@@ -35,7 +35,10 @@ const ogImage = new URL('/og-image.png', Astro.site);
     <Font cssVariable="--font-andika" preload={[{ weight: 400 }]} />
     <Font cssVariable="--font-satoshi" preload={[{ weight: 400 }, { weight: 700 }]} />
     <Font cssVariable="--font-cherry-bomb-one" preload />
-    <ClientRouter />
+    <script is:inline>
+      delete Document.prototype.startViewTransition;
+    </script>
+    <ClientRouter fallback="swap" />
   </head>
   <body>
     <NavBar path={path} />
@@ -45,3 +48,24 @@ const ogImage = new URL('/og-image.png', Astro.site);
     <Footer />
   </body>
 </html>
+
+<script>
+  document.addEventListener(
+    'click',
+    (event) => {
+      const link = (event.target as Element).closest('a');
+      const isPlainClick =
+        !event.button && !event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey;
+      if (
+        link?.origin !== location.origin ||
+        link.pathname !== location.pathname ||
+        link.hash ||
+        !isPlainClick
+      )
+        return;
+      event.preventDefault();
+      scrollTo({ top: 0, behavior: 'smooth' });
+    },
+    { capture: true },
+  );
+</script>
