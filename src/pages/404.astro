@@ -9,7 +9,7 @@ import Layout from '../layouts/Layout.astro';
     <p class="not-found-subtitle">This is not the page you're looking for</p>
 
     <a class="back-link" href="/">
-      <svg class="arrow-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <svg class="back-link-arrow" viewBox="0 0 20 20" fill="none" aria-hidden="true">
         <path
           d="M4 10h11m0 0-4-4m4 4-4 4"
           stroke="currentColor"
@@ -18,7 +18,7 @@ import Layout from '../layouts/Layout.astro';
           stroke-linejoin="round"
         ></path>
       </svg>
-      Take Me Home
+      <span class="back-link-text">Take Me Home</span>
     </a>
   </div>
 </Layout>
@@ -40,25 +40,7 @@ import Layout from '../layouts/Layout.astro';
   }
 
   .back-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
     margin-top: 20px;
     font-size: 16px;
-    font-weight: 700;
-    line-height: 1;
-    white-space: nowrap;
-    color: #87cefa;
-  }
-
-  .back-link:hover {
-    text-decoration: underline;
-  }
-
-  .arrow-icon {
-    flex-shrink: 0;
-    width: 16px;
-    height: 16px;
-    transform: scaleX(-1);
   }
 </style>

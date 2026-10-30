@@ -163,7 +163,7 @@ const isExternal = (href: string) => href.startsWith('http');
     </scroll-cue>
 
     <div class="content-wrap home-content animate">
-      <section class="about-section">
+      <section class="about-section reveal">
         <h2 class="about-title">About</h2>
         <div class="about-body">
           <p>
@@ -174,7 +174,7 @@ const isExternal = (href: string) => href.startsWith('http');
         </div>
       </section>
 
-      <section class="about-section">
+      <section class="about-section reveal">
         <h2 class="about-title">Interests</h2>
         <div class="about-body">
           {interests.map((group, groupIndex) => (
@@ -195,7 +195,7 @@ const isExternal = (href: string) => href.startsWith('http');
         </div>
       </section>
 
-      <section class="about-section">
+      <section class="about-section reveal">
         <h2 class="about-title">Socials</h2>
         <div class="about-body">
           <p>Find me on…</p>
@@ -354,6 +354,7 @@ const isExternal = (href: string) => href.startsWith('http');
     background: linear-gradient(130deg, #80b5ff 0%, #6eeded 100%);
     -webkit-background-clip: text;
     background-clip: text;
+    user-select: text;
   }
 
   .snake-wrap {
@@ -523,6 +524,7 @@ const isExternal = (href: string) => href.startsWith('http');
     font-weight: 700;
     color: #cbd5e1;
     transition: color 0.25s ease;
+    user-select: none;
   }
 
   .social-row:hover .social-row-label {

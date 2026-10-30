@@ -244,6 +244,11 @@ import GameLayout from '../../layouts/GameLayout.astro';
     flex-shrink: 0;
     width: 16px;
     height: 16px;
+    transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .submit-btn:not(:disabled):hover .arrow-icon {
+    transform: translateX(4px);
   }
 
   .gallows-section {

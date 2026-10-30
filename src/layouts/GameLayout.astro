@@ -9,7 +9,7 @@ const { title } = Astro.props;
     <div class="touch-message content-wrap">
       <h1 class="page-title">Not Supported on Touch Screens</h1>
       <a class="back-link" href="/play">
-        <svg class="arrow-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <svg class="back-link-arrow" viewBox="0 0 20 20" fill="none" aria-hidden="true">
           <path
             d="M4 10h11m0 0-4-4m4 4-4 4"
             stroke="currentColor"
@@ -18,7 +18,7 @@ const { title } = Astro.props;
             stroke-linejoin="round"
           ></path>
         </svg>
-        Back to Arcade
+        <span class="back-link-text">Back to Arcade</span>
       </a>
     </div>
     <div class="game-content">
@@ -36,6 +36,11 @@ const { title } = Astro.props;
     min-height: 85vh;
     text-align: center;
     font-family: var(--font-satoshi);
+    user-select: none;
+  }
+
+  .game-page input {
+    user-select: text;
   }
 
   .game-wrapper {
@@ -149,6 +154,15 @@ const { title } = Astro.props;
     justify-content: center;
     background: rgba(0, 0, 0, 0.85);
     border-radius: 16px;
+    animation: overlay-in 0.25s ease-out;
+  }
+
+  .overlay-msg > :not(.overlay-btn, .overlay-actions) {
+    animation: overlay-content-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.05s backwards;
+  }
+
+  .overlay-msg > :nth-child(2) {
+    animation-delay: 0.1s;
   }
 
   .menu-title {
@@ -171,6 +185,19 @@ const { title } = Astro.props;
   .overlay-actions {
     display: flex;
     gap: 10px;
+  }
+
+  @keyframes overlay-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @keyframes overlay-content-in {
+    from {
+      opacity: 0;
+      transform: translateY(12px) scale(0.97);
+    }
   }
 
   :where(.game-page) canvas,
@@ -217,24 +244,6 @@ const { title } = Astro.props;
   }
 
   .back-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
     font-size: 14px;
-    font-weight: 700;
-    line-height: 1;
-    white-space: nowrap;
-    color: #87cefa;
-  }
-
-  .back-link:hover {
-    text-decoration: underline;
-  }
-
-  .arrow-icon {
-    flex-shrink: 0;
-    width: 16px;
-    height: 16px;
-    transform: scaleX(-1);
   }
 </style>
