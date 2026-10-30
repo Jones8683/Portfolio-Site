@@ -4,7 +4,7 @@ const links = [
   { href: '/play', label: 'Arcade' },
 ];
 
-const path = Astro.url.pathname;
+const { path } = Astro.props;
 const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
 const toLetters = (word: string) =>
   [...word].map((char, i) => ({ char, offset: i / (word.length - 1) }));

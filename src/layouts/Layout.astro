@@ -10,7 +10,8 @@ import '../styles/global.css';
 const { title, description = 'Student and creator from Australia.' } = Astro.props;
 
 const fullTitle = title ? `${title} • Jones Jankovic` : 'Jones Jankovic';
-const canonical = new URL(Astro.url.pathname, Astro.site);
+const path = Astro.url.pathname.replace(/\/index\.html$/u, '/').replace(/\.html$/u, '');
+const canonical = path === '/404' ? null : new URL(path, Astro.site);
 const ogImage = new URL('/og-image.png', Astro.site);
 ---
 
@@ -23,12 +24,14 @@ const ogImage = new URL('/og-image.png', Astro.site);
     <meta name="description" content={description} />
     <meta name="theme-color" content="#1a1c24" />
     <meta name="color-scheme" content="dark" />
+    <meta property="og:type" content="website" />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={ogImage} />
+    {canonical && <meta property="og:url" content={canonical} />}
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" href="/favicon.png" />
-    <link rel="canonical" href={canonical} />
+    {canonical && <link rel="canonical" href={canonical} />}
     <Font cssVariable="--font-andika" preload={[{ weight: 400 }]} />
     <Font cssVariable="--font-satoshi" preload={[{ weight: 400 }, { weight: 700 }]} />
     <Font cssVariable="--font-cherry-bomb-one" preload />
@@ -43,7 +46,7 @@ const ogImage = new URL('/og-image.png', Astro.site);
     </script>
   </head>
   <body>
-    <NavBar />
+    <NavBar path={path} />
     <main>
       <slot />
     </main>
