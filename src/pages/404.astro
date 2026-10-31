@@ -1,4 +1,5 @@
 ---
+import ArrowIcon from '../components/ArrowIcon.astro';
 import Layout from '../layouts/Layout.astro';
 ---
 
@@ -9,15 +10,7 @@ import Layout from '../layouts/Layout.astro';
     <p class="not-found-subtitle">This is not the page you're looking for</p>
 
     <a class="back-link" href="/">
-      <svg class="back-link-arrow" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-        <path
-          d="M4 10h11m0 0-4-4m4 4-4 4"
-          stroke="currentColor"
-          stroke-width="1.8"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        ></path>
-      </svg>
+      <ArrowIcon class="back-link-arrow" />
       <span class="back-link-text">Take Me Home</span>
     </a>
   </div>

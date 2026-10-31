@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets';
 
 import profilePic from '../assets/kenobi.jpg';
+import ArrowIcon from '../components/ArrowIcon.astro';
 import NowPlayingPill from '../components/NowPlayingPill.astro';
 import Layout from '../layouts/Layout.astro';
 
@@ -216,15 +217,7 @@ const isExternal = (href: string) => href.startsWith('http');
                 </svg>
                 <span class="social-row-label">{social.label}</span>
                 <span class="social-row-value">{social.value}</span>
-                <svg class="social-row-arrow" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                  <path
-                    d="M4 10h11m0 0-4-4m4 4-4 4"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
+                <ArrowIcon class="social-row-arrow" />
               </a>
             ))}
           </div>

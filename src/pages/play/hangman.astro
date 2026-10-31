@@ -1,4 +1,5 @@
 ---
+import ArrowIcon from '../../components/ArrowIcon.astro';
 import GameControls from '../../components/GameControls.astro';
 import GameLayout from '../../layouts/GameLayout.astro';
 ---
@@ -23,15 +24,7 @@ import GameLayout from '../../layouts/GameLayout.astro';
             />
             <button class="submit-btn" disabled>
               Set Word
-              <svg class="arrow-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                <path
-                  d="M4 10h11m0 0-4-4m4 4-4 4"
-                  stroke="currentColor"
-                  stroke-width="1.8"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                ></path>
-              </svg>
+              <ArrowIcon class="arrow-icon" />
             </button>
           </div>
         </div>

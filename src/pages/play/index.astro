@@ -1,4 +1,5 @@
 ---
+import ArrowIcon from '../../components/ArrowIcon.astro';
 import Layout from '../../layouts/Layout.astro';
 
 const games = [
@@ -28,15 +29,7 @@ const games = [
           </div>
           <a class="arcade-card-bottom" style={`--game-color: ${game.color}`} href={game.path}>
             Play Now
-            <svg class="arcade-play-arrow" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-              <path
-                d="M4 10h11m0 0-4-4m4 4-4 4"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
+            <ArrowIcon class="arcade-play-arrow" strokeWidth={2} />
           </a>
         </div>
       ))}
