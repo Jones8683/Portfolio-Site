@@ -2453,8 +2453,7 @@
                     rejected: e,
                   };
                   return (
-                    this.state_ === c || this.state_ === u ? m(g, n) : this.then_.push(n),
-                    n.then
+                    this.state_ === c || this.state_ === u ? m(g, n) : this.then_.push(n), n.then
                   );
                 },
                 catch: function (t) {
@@ -25933,11 +25932,7 @@
             }),
             (Kt.prototype.copyTo = function (t) {
               return (
-                (t.x = this.x),
-                (t.y = this.y),
-                (t.width = this.width),
-                (t.height = this.height),
-                t
+                (t.x = this.x), (t.y = this.y), (t.width = this.width), (t.height = this.height), t
               );
             }),
             (Kt.prototype.contains = function (t, e) {
@@ -28722,9 +28717,7 @@
               )
                 this.buffers[t] !== this.indexBuffer && this.buffers[t].destroy();
               return (
-                (this.buffers = [r]),
-                this.indexBuffer && this.buffers.push(this.indexBuffer),
-                this
+                (this.buffers = [r]), this.indexBuffer && this.buffers.push(this.indexBuffer), this
               );
             }),
             (qe.prototype.getSize = function () {
@@ -29592,11 +29585,7 @@
                       x._glBuffers[r].refCount++);
                   }
                   return (
-                    this.activateVao(t, e),
-                    (this._activeVao = a),
-                    (o[e.id] = a),
-                    (o[i] = a),
-                    a
+                    this.activateVao(t, e), (this._activeVao = a), (o[e.id] = a), (o[i] = a), a
                   );
                 }),
                 (e.prototype.disposeBuffer = function (t, e) {
@@ -29801,8 +29790,7 @@
             if ('precision' !== t.substring(0, 9)) {
               var r = e;
               return (
-                e === X.HIGH && n !== X.HIGH && (r = X.MEDIUM),
-                'precision ' + r + ' float;\n' + t
+                e === X.HIGH && n !== X.HIGH && (r = X.MEDIUM), 'precision ' + r + ' float;\n' + t
               );
             }
             return n !== X.HIGH && 'precision highp' === t.substring(0, 15)
@@ -31315,10 +31303,7 @@
                       0 === r.height && (r.height = 1));
                     var i = Ue.create(0 | r.width, 0 | r.height, e, n);
                     return (
-                      (Ar.tx = -r.x),
-                      (Ar.ty = -r.y),
-                      this.render(t, i, !1, Ar, !!t.parent),
-                      i
+                      (Ar.tx = -r.x), (Ar.ty = -r.y), this.render(t, i, !1, Ar, !!t.parent), i
                     );
                   }),
                   (e.prototype.destroy = function (t) {
@@ -33498,9 +33483,7 @@
                 }),
                 (e.prototype.bezierCurveTo = function (t, e, n, r, i, o) {
                   return (
-                    this._initCurve(),
-                    Gr.curveTo(t, e, n, r, i, o, this.currentPath.points),
-                    this
+                    this._initCurve(), Gr.curveTo(t, e, n, r, i, o, this.currentPath.points), this
                   );
                 }),
                 (e.prototype.arcTo = function (t, e, n, r, i) {
@@ -34580,10 +34563,7 @@
                 l -= c;
               }
               return (
-                (e.descent = u - a),
-                (e.fontSize = e.ascent + e.descent),
-                (hi._fonts[t] = e),
-                e
+                (e.descent = u - a), (e.fontSize = e.ascent + e.descent), (hi._fonts[t] = e), e
               );
             }),
             (hi.clearMetrics = function (t) {
@@ -38454,9 +38434,7 @@
                   n = this.y,
                   r = t.elements;
                 return (
-                  (this.x = r[0] * e + r[3] * n + r[6]),
-                  (this.y = r[1] * e + r[4] * n + r[7]),
-                  this
+                  (this.x = r[0] * e + r[3] * n + r[6]), (this.y = r[1] * e + r[4] * n + r[7]), this
                 );
               },
               min: function (t) {
