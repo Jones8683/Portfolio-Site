@@ -1,7 +1,7 @@
 ---
 import { execFileSync } from 'node:child_process';
 
-const repo = 'https://github.com/Jones8683/Portfolio-Site';
+const repo = 'https://github.com/jonesjnk/Portfolio-Site';
 const git = (...args: string[]) => execFileSync('git', args, { encoding: 'utf8' }).trim();
 
 const hash = git('rev-parse', '--short', 'HEAD');
