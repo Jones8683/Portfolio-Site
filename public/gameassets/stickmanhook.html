@@ -16,6 +16,7 @@
         width: 100%;
       }
     </style>
+    <script src="/gameassets/storage.js"></script>
   </head>
   <body>
     <script>
@@ -40186,28 +40187,19 @@
           })(Ti);
 
           ((Sc.instance = null), (Sc.SCALE = 5e-4), (Sc.AIR_FRICTION = 0));
-          function readStoredNumber(t) {
-            var e = Number(localStorage.getItem(t));
-            return Number.isFinite(e) ? Math.max(0, Math.floor(e)) : 0;
-          }
-
-          function writeStoredNumber(t, e) {
-            localStorage.setItem(t, String(Math.max(0, Math.floor(e)) || 0));
-          }
-
           function Rc() {
             return {
-              level: readStoredNumber('stickman-hook-current-level'),
-              skin: localStorage.getItem('stickman-hook-current-skin'),
+              level: window.gameStorage.get('stickman-hook-current-level', 0),
+              skin: window.gameStorage.get('stickman-hook-current-skin', null),
             };
           }
 
           function Bc(t) {
-            writeStoredNumber('stickman-hook-current-level', t);
+            window.gameStorage.set('stickman-hook-current-level', t);
           }
 
           function Mc(t) {
-            localStorage.setItem('stickman-hook-current-skin', t);
+            window.gameStorage.set('stickman-hook-current-skin', t);
           }
           var playerInfos = Rc(),
             game = _c(playerInfos);

@@ -117,9 +117,9 @@ export function setupCanvas(canvas, width, height, scale = 1) {
 }
 
 export function readNumber(key) {
-  return Number(localStorage.getItem(key) ?? 0) || 0;
+  return window.gameStorage.get(key, 0);
 }
 
 export function writeNumber(key, value) {
-  localStorage.setItem(key, String(value));
+  window.gameStorage.set(key, value);
 }

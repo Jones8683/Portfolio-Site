@@ -38,6 +38,7 @@ const ogImage = new URL('/og-image.png', Astro.site);
     <script is:inline>
       delete Document.prototype.startViewTransition;
     </script>
+    <script is:inline src="/gameassets/storage.js"></script>
     <ClientRouter fallback="swap" />
   </head>
   <body>
